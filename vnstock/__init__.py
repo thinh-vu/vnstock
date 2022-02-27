@@ -5,10 +5,9 @@ __author__ = "Thinh Vu @thinh-vu in GitHub"
 __version__ = "0.0.3"
 
 from .stock import (
-    company_ls,
+    listing_companies,
     last_xd,
     start_xm,
-    company_ls,
     stock_historical_data,
     stock_intraday_data,
     financial_ratio,
@@ -19,6 +18,8 @@ from .stock import (
     biz_operation_rating,
     financial_health_rating,
     valuation_rating,
+    industry_financial_health,
     industry_analysis,
-    industry_financial_health
+    stock_ls_analysis,
+    market_top_mover
 )
