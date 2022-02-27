@@ -9,24 +9,37 @@ from datetime import datetime
 from datetime import timedelta
 import time
 
-import pkg_resources
 
 ## STOCK LISTING
 
-def company_ls ():
-    """ List of all stocks available on HOSE, HNX, and UPCoM
-    Args: None
+def listing_companies ():
     """
-    resource_package = "tcbs"
-    resource_path = "/".join((("resources", "vn_stock_listing_companies_2022-02-23.csv")))
-    if pkg_resources.resource_exists(resource_package, resource_path):
-        df = pd.read_csv(
-            pkg_resources.resource_filename(resource_package, resource_path),
-            keep_default_na=False,
-        )
-        return df
-    else:
-        raise FileNotFoundError("ERR#0056: stocks file not found or errored.")
+    This function returns the list of all available stock symbols.
+    """
+    url = 'https://fiin-core.ssi.com.vn/Master/GetListOrganization?language=vi'
+    headers = {
+            'Connection': 'keep-alive',
+            'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
+            'DNT': '1',
+            'sec-ch-ua-mobile': '?0',
+            'X-Fiin-Key': 'KEY',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Fiin-User-ID': 'ID',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
+            'X-Fiin-Seed': 'SEED',
+            'sec-ch-ua-platform': 'Windows',
+            'Origin': 'https://iboard.ssi.com.vn',
+            'Sec-Fetch-Site': 'same-site',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Dest': 'empty',
+            'Referer': 'https://iboard.ssi.com.vn/',
+            'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
+            }
+    r = requests.get(url, headers=headers).json()
+    df = pd.DataFrame(r['items']).drop(columns=['organCode', 'icbCode', 'organTypeCode', 'comTypeCode']).rename(columns={'comGroupCode': 'group_code', 'organName': 'company_name', 'organShortName':'company_short_name'})
+    return df
+
 
 
 ## STOCK TRADING HISTORICAL DATA
@@ -204,16 +217,6 @@ def valuation_rating (symbol):
     return df
 
 
-def industry_analysis (symbol):
-    """
-    This function returns an overview of rating for companies at the same industry with the desired stock symbol.
-    Args:
-        symbol (:obj:`str`, required): 3 digits name of the desired stock.
-    """
-    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/council?tickers={}&fType=INDUSTRIES'.format(symbol)).json()
-    df = json_normalize(data)
-    return df
-
 def industry_financial_health (symbol):
     """
     This function returns the industry financial health rating for the seed stock symbol.
@@ -224,7 +227,73 @@ def industry_financial_health (symbol):
     df = json_normalize(data)
     return df
 
+## STOCK COMPARISON
+
+def industry_analysis (symbol):
+    """
+    This function returns an overview of rating for companies at the same industry with the desired stock symbol.
+    Args:
+        symbol (:obj:`str`, required): 3 digits name of the desired stock.
+    """
+    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/council?tickers={}&fType=INDUSTRIES'.format(symbol)).json()
+    df = json_normalize(data)
+    data1 = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/single?ticker={}&fType=TICKER'.format(symbol)).json()
+    df1 = json_normalize(data1)
+    df = df1.append(df)
+    return df
+
+def stock_ls_analysis (symbol_ls):
+    """
+    This function returns an overview of rating for a list of companies by entering list of stock symbols.
+    Args:
+        symbol (:obj:`str`, required): 3 digits name of the desired stock.
+    """
+    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/council?tickers={}&fType=TICKERS'.format(symbol_ls)).json()
+    df = json_normalize(data)
+    return df
+
 ## MARKET WATCH
+
+def market_top_mover (report_name): #Value, Losers, Gainers, Volume, ForeignTrading, NewLow, Breakout, NewHigh
+    """
+    This function returns the list of Top Stocks by one of criteria: 'Value', 'Losers', 'Gainers', 'Volume', 'ForeignTrading', 'NewLow', 'Breakout', 'NewHigh'.
+    Args:
+        report_name(:obj:`str`, required): name of the report
+    """
+    ls1 = ['Gainers', 'Losers', 'Value', 'Volume']
+    # ls2 = ['ForeignTrading', 'NewLow', 'Breakout', 'NewHigh']
+    if report_name in ls1:
+        url = 'https://fiin-market.ssi.com.vn/TopMover/GetTop{}?language=vi&ComGroupCode=All'.format(report_name)
+    elif report_name == 'ForeignTrading':
+        url = 'https://fiin-market.ssi.com.vn/TopMover/GetTopForeignTrading?language=vi&ComGroupCode=All&Option=NetBuyVol'
+    elif report_name == 'NewLow':
+        url = 'https://fiin-market.ssi.com.vn/TopMover/GetTopNewLow?language=vi&ComGroupCode=All&TimeRange=ThreeMonths'
+    elif report_name == 'Breakout':
+        url = 'https://fiin-market.ssi.com.vn/TopMover/GetTopBreakout?language=vi&ComGroupCode=All&TimeRange=OneWeek&Rate=OnePointFive'
+    elif report_name == 'NewHigh':
+        url = 'https://fiin-market.ssi.com.vn/TopMover/GetTopNewHigh?language=vi&ComGroupCode=All&TimeRange=ThreeMonths'
+    headers = {
+            'Connection': 'keep-alive',
+            'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
+            'DNT': '1',
+            'sec-ch-ua-mobile': '?0',
+            'X-Fiin-Key': 'KEY',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Fiin-User-ID': 'ID',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
+            'X-Fiin-Seed': 'SEED',
+            'sec-ch-ua-platform': 'Windows',
+            'Origin': 'https://iboard.ssi.com.vn',
+            'Sec-Fetch-Site': 'same-site',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Dest': 'empty',
+            'Referer': 'https://iboard.ssi.com.vn/',
+            'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
+            }
+    r = requests.get(url, headers=headers).json()
+    df = pd.DataFrame(r['items'])
+    return df
 
 
 

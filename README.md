@@ -1,6 +1,6 @@
-<h2 align="center">Vietnam Stock Market data extraction from TCBS with Python</h2>
+<h2 align="center">Vietnam Stock Market data extraction from TCBS & SSI with Python</h2>
 
-vnstock is a Python package to retrieve the Vietnam stock market data from [TCBS](https://tcbs.com.vn).
+vnstock is a Python package to retrieve the Vietnam stock market data from [TCBS](https://tcbs.com.vn) and [SSI]('https://iboard.ssi.com.vn/').
 
 vnstock allows the user to download historical, intraday stock data and market insights from [TCBS](https://tcbs.com.vn).
 
@@ -13,12 +13,34 @@ To get this package working, you will need to **install it via pip** (with a Pyt
 
 ``$ pip install vnstock``
 
+Additionally, **if you want to use the latest investpy version instead of the stable one, you can install it from source** with the following command:
+
+``$ pip install git+https://github.com/thinh-vu/vnstock.git@master``
+
+**The master branch ensures the user that the most updated version will always be working and fully operative** so as not to wait until the 
+the stable release comes out (which eventually may take some time depending on the number of issues to solve).
+
 ---
 
 ## 💻 Usage
 You can understand some basic functionality of the vnstock package by following this guide.
 
-### :chart_with_upwards_trend: Historical Data Retrieval
+### 📰 All listing companies
+```python
+listing_companies()
+```
+
+Output:
+```
+     ticker  group_code                                       company_name            company_short_name
+0       HSV  UpcomIndex                   Công ty Cổ phần Gang Thép Hà Nội              Gang Thép Hà Nội
+1       SCV  UpcomIndex                      Công ty Cổ phần Muối Việt Nam                  Visalco.,JSC
+2       LYF  UpcomIndex              Công ty Cổ phần  Lương Thực Lương Yên  Công ty Lương Thực Lương Yên
+3       CST  UpcomIndex                 Công ty Cổ phần Than Cao Sơn - TKV            Than Cao Sơn - TKV
+4       BVL  UpcomIndex                            Công ty Cổ phần BV Land                       BV Land
+```
+
+### 📈 Historical Data Retrieval
 
 vnstock allows the user to **download stock historical data from TCBS**. In 
 the example presented below, the historical data from the past years of a stock is retrieved. 
@@ -86,13 +108,48 @@ Output:
 4     TCB        4  2020             9.0          1.5              None     None  ...           0.003                 0.372             4.9      0.013                None                   0.057         0.202
 ```
 
+## Stock comparison
+### 🏭 Industry Analysis
+```python
+from vnstock import *
+industry_analysis("VNM")
+```
+
+Output: [preview]('./../src/stock_comparison_industries.png)
+```
+>>> industry_analysis("VNM")
+   ticker  marcap   price  numberOfDays  priceToEarning   peg  priceToBook  valueBeforeEbitda  dividend  ...  debtOnEbitda  income5year  sale5year income1quarter sale1quarter nextIncome  nextSale   rsi    rs
+0     VNM  164897   78900             1            15.7  -3.1          5.0               12.6     0.037  ...           0.6        0.024      0.054         -0.249       -0.023       None      None  34.9  18.0
+0     MSN  186524  158000            -1            21.8   0.0          5.7               22.5     0.008  ...           5.5        0.251      0.154          4.610        0.009        NaN       NaN  54.5  58.0
+1     MCH   80250  112100             1            14.7   0.7          4.9               12.0     0.000  ...           1.2        0.152      0.150          0.381        0.372        NaN       NaN  48.6  36.0
+2     MML   26061   79700            -1            19.6   0.0          4.7               24.9     0.000  ...           4.2       -0.029     -0.050          6.771       -0.243      0.904      0.22  58.8  60.0
+```
+
+### 🔬 Stocks List Analysis
+```python
+from vnstock import *
+stocks_ls_analysis("TCB, BID, CEO, GMD")
+```
+
+Output: [preview](./src/stock_ls_comparison.png)
+```
+  ticker  marcap  price  numberOfDays  priceToEarning  peg  priceToBook  valueBeforeEbitda  dividend  ...  debtOnEbitda  income5year  sale5year income1quarter  sale1quarter  nextIncome  nextSale   rsi    rs
+0    GMD   15220  50500            -3            25.2  0.4          2.4               16.2       0.0  ...           1.8        0.092     -0.030          0.500         0.425         NaN       NaN  60.3  50.0
+1    CEO   17062  66300             1           183.2 -0.8          5.7               81.8       0.0  ...           7.8       -0.099     -0.086            NaN         3.002      -1.469      -0.2  51.9  82.0
+2    BID  225357  44550            -3            21.3  0.4          2.6                NaN       0.0  ...           NaN        0.115      0.154          0.083         0.000         NaN       NaN  49.1  34.0
+3    TCB  178003  50700             1             9.9  0.2          1.9                NaN       0.0  ...           NaN        0.418      0.255          0.059         0.157         NaN       NaN  45.2  28.0
+```
+
 ### 💵 Income Statement, Balance Sheet & Cashflow report
 
 #### 📄 Income Statement
+
+![income_statement](./src/financial_income_statement.png)
 ```python
 from vnstock import *
 financial_flow(symbol="TCB", report_type='incomestatement', report_range='quarterly')
 ```
+
 Output:
 
 ```
@@ -105,6 +162,8 @@ index                                                                           
 ```
 
 #### 🧾Balance Sheet
+
+![balance_sheet](./src/financial_balancesheet.png)
 ```python
 from vnstock import *
 financial_flow(symbol="TCB", report_type='balancesheet', report_range='quarterly')
@@ -226,28 +285,33 @@ Output:
 0       None        None             None         None             None    VNM              3.4              4             4           3                 3              3
 ```
 
-### 🏭 Industry Analysis
+## 🌏 Market Watch
+Top Breakout > Top Gainers > Top Losers > Top Value > Top Volume
+![top_mover](./src/ssi_top_breakout_gainer_loser.png)
+
+Top New High > Top Foreign Trading > Top New Low
+![top_foreigntrading_high_low](./src/top_foreigntrading_newhigh_newlow.png)
+
+Input one of these following names to get your report: Breakout, Gainers, Losers, Value, Volume, ForeignTrading, NewLow, NewHigh
 ```python
-from vnstock import *
-industry_analysis("VNM")
+market_top_mover('ForeignTrading')
 ```
 
 Output:
 ```
->>> industry_analysis("VNM")
-   ticker  marcap   price  numberOfDays  priceToEarning   peg  priceToBook  valueBeforeEbitda  dividend  ...  debtOnEbitda  income5year  sale5year income1quarter sale1quarter nextIncome  nextSale   rsi    rs
-0     MSN  186524  158000            -1            21.8   0.0          5.7               22.5     0.008  ...           5.5        0.251      0.154          4.610        0.009        NaN       NaN  54.5  58.0
-1     MCH   80250  112100             1            14.7   0.7          4.9               12.0     0.000  ...           1.2        0.152      0.150          0.381        0.372        NaN       NaN  48.6  36.0
-2     MML   26061   79700            -1            19.6   0.0          4.7               24.9     0.000  ...           4.2       -0.029     -0.050          6.771       -0.243      0.904      0.22  58.8  60.0
-3     QNS   16340   45800            -2            13.2   0.7          2.3                9.9     0.000  ...           1.1       -0.025      0.010          0.070       -0.263      0.106      0.10  34.8  18.0
-4     SBT   14902   22900             1            19.2   0.6          1.7               14.3     0.000  ...           5.9        0.210      0.308          0.101        0.157        NaN       NaN  48.6  42.0
+    foreignBuyVolume  foreignBuyValue  ...                                          financial                                          technical
+0          3826600.0     1.703888e+11  ...  {'organCode': 'DXG', 'rtd7': 14713.265320738, ...  {'organCode': 'DXG', 'sma20Past4': 34887.5, 's...
+1          3270200.0     1.088892e+11  ...  {'organCode': 'STB', 'rtd7': 18173.6958318461,...  {'organCode': 'STB', 'sma20Past4': 34332.5, 's...
+2          1456800.0     4.199166e+10  ...  {'organCode': 'FUEVFVND', 'rtd7': None, 'rtd11...  {'organCode': 'FUEVFVND', 'sma20Past4': 27993....
+3          1033300.0     1.281170e+10  ...  {'organCode': 'FLC', 'rtd7': 12898.0038031343,...  {'organCode': 'FLC', 'sma20Past4': 12062.5, 's...
+4           998600.0     5.324337e+10  ...  {'organCode': 'NLG', 'rtd7': 23318.1252311207,...  {'organCode': 'NLG', 'sma20Past4': 52385.0, 's...
 ```
 
 ## 🙋‍♂️ Contact Information
 
 You can contact me at one of my social network profiles:
 
-- :briefcase: LinkedIn: https://linkedin.com/in/thinh-vu
+- 💼 LinkedIn: https://linkedin.com/in/thinh-vu
 - :octocat: GitHub: https://github.com/thinh-vu
 
 ---
@@ -257,6 +321,6 @@ You can contact me at one of my social network profiles:
 This Python package has been made for **research purposes** to fit the needs that tcbs.com does not cover, 
 so this package works like an Application Programming Interface (API) of tcbs.com developed in an **altruistic way**.
 
-Conclude that **vnstock is not affiliated in any way to tcbs.com or any dependant company**.
+Conclude that **vnstock is not affiliated in any way to tcbs.com or ssi.com.vn or any dependant company**.
 
 
