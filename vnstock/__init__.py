@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 __author__ = "Thinh Vu @thinh-vu in GitHub"
-__version__ = "0.0.3"
+__version__ = "0.0.6"
 
 from .stock import (
     listing_companies,
@@ -10,6 +10,8 @@ from .stock import (
     start_xm,
     stock_historical_data,
     stock_intraday_data,
+    financial_report,
+    financial_ratio_compare,
     financial_ratio,
     financial_flow,
     dividend_history,

@@ -93,7 +93,32 @@ p     volume       cp       rcp   a   ba   sa     hl  pcp      time
 4     50700.0     300  0.0  0.0  SD  0.0  0.0  False  0.0  14:29:53
 ```
 ### 💰Financial Ratio
+#### 1. Report from SSI
+```python
+financial_ratio_compare (symbol_ls=['TCB', 'CTG', 'BID'], industry_comparison='true', frequency= 'Yearly', start_year=2020)
+```
+- _symbol_ls_: a list of ticker that needs to be compared
+- _industry_comparison_: `true` or `false`
+- _frequency:_ `Yearly` or `Quarterly`
 
+Output:
+```
+                                  Chỉ số          2017          2018          2019          2020          2021
+0                                    P/E           NaN           NaN           NaN           NaN           NaN
+1                                    BID  1.931659e+01  1.579755e+01  2.156374e+01  2.392118e+01  2.109997e+01
+2                                    TCB  1.589460e+01  1.099041e+01  7.712361e+00  1.110489e+01  9.790559e+00
+3                                    CTG  1.578063e+01  1.476715e+01  1.015345e+01  1.031625e+01  1.135594e+01
+4                                    BID  1.931659e+01  1.579755e+01  2.156374e+01  2.392118e+01  2.109997e+01
+..                                   ...           ...           ...           ...           ...           ...
+171                           Toàn ngành  2.272894e+10  2.932384e+10  3.172492e+10  3.927128e+10  5.101939e+10
+172                                  NaN           NaN           NaN           NaN           NaN           NaN
+173                                  NaN           NaN           NaN           NaN           NaN           NaN
+174  Dữ liệu được cung cấp bởi FiinTrade           NaN           NaN           NaN           NaN           NaN
+175                https://fiintrade.vn/           NaN           NaN           NaN           NaN           NaN
+```
+
+
+#### 2. Report from TCBS
 ```python
 from vnstock import *
 financial_ratio("TCB")
@@ -142,7 +167,32 @@ Output: [preview](./src/stock_ls_comparison.png)
 
 ### 💵 Income Statement, Balance Sheet & Cashflow report
 
-#### 📄 Income Statement
+#### 1. Report from SSI
+```python
+financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly)
+```
+- _report_type:_ You can choose 1 of 3 reports: `BalanceSheet`, `IncomeStatement`, or `CashFlow`
+- _frequency:_ `Yearly` or `Quarterly`
+
+Output:
+```
+                                      CHỈ TIÊU          2012          2013  ...          2019          2020          2021
+0                            TỔNG CỘNG TÀI SẢN  7.980876e+12  7.705074e+12  ...  2.704412e+13  3.576953e+13  5.079306e+13
+1                             TÀI SẢN NGẮN HẠN  4.837002e+12  4.467396e+12  ...  2.229087e+13  2.904003e+13  4.653960e+13
+3                    Tiền và tương đương tiền   1.947090e+12  1.838619e+12  ...  1.040783e+12  3.632519e+11  1.114235e+12
+4                                         Tiền  8.068605e+11  1.437619e+12  ...  2.606318e+11  2.319712e+11  4.741978e+11
+5                   Các khoản tương đương tiền  1.140230e+12  4.010000e+11  ...  7.801508e+11  1.312807e+11  6.400373e+11
+..                                         ...           ...           ...  ...           ...           ...           ...
+149                   Lợi nhuận chưa phân phối  1.127003e+12  1.118080e+12  ...  2.941467e+12  2.676816e+12  2.927813e+12
+153         Vốn Ngân sách nhà nước và quỹ khác  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
+154    Quỹ khen thưởng , phúc lợi (trước 2010)  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
+157  LỢI ÍCH CỦA CỔ ĐÔNG THIỂU SỐ (trước 2015)  8.369917e+10  8.299030e+10  ...  0.000000e+00  0.000000e+00  0.000000e+00
+158                        TỔNG CỘNG NGUỒN VỐN  7.980876e+12  7.705074e+12  ...  2.704412e+13  3.576953e+13  5.079306e+13
+```
+
+#### 2. Report from TCBS
+
+##### 📄 Income Statement
 
 ![income_statement](./src/financial_income_statement.png)
 ```python
@@ -161,7 +211,7 @@ index                                                                           
 2021-Q1    TCB     6124              0.454                 0.122           None        None  ...           812           1325          671              -851            6369    None
 ```
 
-#### 🧾Balance Sheet
+##### 🧾Balance Sheet
 
 ![balance_sheet](./src/financial_balancesheet.png)
 ```python
@@ -180,7 +230,7 @@ index                                                                           
 2021-Q1    TCB       None  4273        None            None      None      None        4726  ...             2897                5664  287446     26035  6790                36213                     563   3837
 ```
 
-#### 💶Cashflow Report
+##### 💶Cashflow Report
 
 ```python
 from vnstock import *

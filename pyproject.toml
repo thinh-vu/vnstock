@@ -1,6 +1,7 @@
 [build-system]
 requires = [
     "setuptools>=42",
-    "wheel"
+    "wheel",
+    "openpyxl>=3.0.0"
 ]
 build-backend = "setuptools.build_meta"
