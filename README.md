@@ -69,6 +69,27 @@ The result should look like this:
 4    33547.0  33937.0  32669.0  33059.0  4587500  2021-01-08
 ```
 
+### 📊 Price Table
+You can download the price board of a target list of stocks to analyze with ease compared to viewing it directly on TCBS.
+
+![price_board](./src/tcbs_trading_board_sector.png)
+
+All you need to do is pass the list of stock symbols to the function as below:
+
+```
+price_board('TCB,SSI,VND')
+```
+
+Output:
+
+```
+>>> price_board('TCB,SSI,VND')
+  Mã CP  Giá Khớp Lệnh  KLBD/TB5D  T.độ GD  KLGD ròng(CM)  ...  vnid1m  vnid3m  vnid1y  vnipe    vnipb
+0   TCB        48600.0        0.6     0.49         -23200  ...    -3.7    -2.0    22.4  17.99  2.46159
+1   SSI        43300.0        0.5     0.50        -112200  ...    -3.7    -2.0    22.4  17.99  2.46159
+2   VND        32600.0        0.7     0.68          37300  ...    -3.7    -2.0    22.4  17.99  2.46159
+```
+
 ### 🔥 Intraday Trading Data
 ![intraday](./src/tcbs_intraday_screen1.png)
 ![intraday](./src/tcbs_intraday_screen2.png)
@@ -121,7 +142,7 @@ Output:
 #### 2. Report from TCBS
 ```python
 from vnstock import *
-financial_ratio("TCB")
+financial_ratio("TCB", 'quarterly', True)
 ```
 Output:
 ```
@@ -163,6 +184,17 @@ Output: [preview](./src/stock_ls_comparison.png)
 1    CEO   17062  66300             1           183.2 -0.8          5.7               81.8       0.0  ...           7.8       -0.099     -0.086            NaN         3.002      -1.469      -0.2  51.9  82.0
 2    BID  225357  44550            -3            21.3  0.4          2.6                NaN       0.0  ...           NaN        0.115      0.154          0.083         0.000         NaN       NaN  49.1  34.0
 3    TCB  178003  50700             1             9.9  0.2          1.9                NaN       0.0  ...           NaN        0.418      0.255          0.059         0.157         NaN       NaN  45.2  28.0
+```
+
+### 🏢 Company Overview
+```python
+financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly)
+```
+Output:
+```
+>>> company_overview('TCB')
+  exchange    shortName  industryID industryIDv2  ... deltaInYear outstandingShare issueShare  ticker
+0     HOSE  Techcombank         289         8355  ...      -0.075           3510.9     3510.9     TCB
 ```
 
 ### 💵 Income Statement, Balance Sheet & Cashflow report
@@ -336,6 +368,7 @@ Output:
 ```
 
 ## 🌏 Market Watch
+### 1. Top stocks
 Top Breakout > Top Gainers > Top Losers > Top Value > Top Volume
 ![top_mover](./src/ssi_top_breakout_gainer_loser.png)
 
@@ -355,6 +388,13 @@ Output:
 2          1456800.0     4.199166e+10  ...  {'organCode': 'FUEVFVND', 'rtd7': None, 'rtd11...  {'organCode': 'FUEVFVND', 'sma20Past4': 27993....
 3          1033300.0     1.281170e+10  ...  {'organCode': 'FLC', 'rtd7': 12898.0038031343,...  {'organCode': 'FLC', 'sma20Past4': 12062.5, 's...
 4           998600.0     5.324337e+10  ...  {'organCode': 'NLG', 'rtd7': 23318.1252311207,...  {'organCode': 'NLG', 'sma20Past4': 52385.0, 's...
+```
+### 2. Foreign Trade Insights
+```python
+fr_trade_heatmap ('All', 'FrBuyVol')
+```
+Output:
+```
 ```
 
 ## 🙋‍♂️ Contact Information

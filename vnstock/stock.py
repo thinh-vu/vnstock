@@ -43,7 +43,6 @@ def listing_companies ():
     return df
 
 
-
 ## STOCK TRADING HISTORICAL DATA
 def stock_historical_data (symbol, start_date, end_date):
     """
@@ -70,9 +69,25 @@ def stock_historical_data (symbol, start_date, end_date):
     df.rename(columns={'Tradingdate':'TradingDate'}, inplace=True)
     return df
 
+## TCBS TRADING PRICE TABLE
+def price_board (symbol_ls):
+    """
+    This function returns the trading price board of a target stocks list.
+    Args:
+        symbol_ls (:obj:`str`, required): STRING list of symbols separated by "," without any space. Ex: "TCB,SSI,BID"
+    """ 
+    data = requests.get('https://apipubaws.tcbs.com.vn/stock-insight/v1/stock/second-tc-price?tickers={}'.format(symbol_ls)).json()
+    df = json_normalize(data['data'])
+    df = df[['t', 'cp', 'fv', 'mav', 'nstv', 'nstp', 'rsi', 'macdv', 'macdsignal', 'tsignal', 'avgsignal', 'ma20', 'ma50', 'ma100', 'session', 'mscore', 'pe', 'pb', 'roe', 'oscore', 'ev', 'mw3d', 'mw1m', 'mw3m', 'mw1y', 'rs3d', 'rs1m', 'rs3m', 'rs1y', 'rsavg', 'hp1m', 'hp3m', 'hp1y', 'lp1m', 'lp3m', 'lp1y', 'hp1yp', 'lp1yp', 'delta1m', 'delta1y', 'bv', 'av', 'hmp', 'seq', 'vnid3d', 'vnid1m', 'vnid3m', 'vnid1y', 'vnipe', 'vnipb']]
+    df = df.rename(columns={'t' : 'Mã CP', 'cp' : 'Giá Khớp Lệnh', 'fv' : 'KLBD/TB5D', 'mav' : 'T.độ GD', 'nstv' : 'KLGD ròng(CM)', 'nstp' : '%KLGD ròng (CM)', 'rsi' : 'RSI', '' : 'MACD Histogram', 'macdv' : 'MACD Volume', 'macdsignal' : 'MACD Signal', 'tsignal' : 'Tín hiệu KT', 'avgsignal' : 'Tín hiệu TB động', 'ma20' : 'MA20', 'ma50' : 'MA50', 'ma100' : 'MA100', 'session' : 'Phiên +/- ', 'mscore' : 'Đ.góp VNI', 'pe' : 'P/E', 'pb' : 'P/B', 'roe' : 'ROE', 'oscore' : 'TCRating', 'ev' : 'TCBS định giá', 'mw3d' : '% thay đổi giá 3D', 'mw1m' : '% thay đổi giá 1M', 'mw3m' : '% thay đổi giá 3M', 'mw1y' : '% thay đổi giá 1Y', 'rs3d' : 'RS 3D', 'rs1m' : 'RS 1M', 'rs3m' : 'RS 3M', 'rs1y' : 'RS 1Y', 'rsavg' : 'RS TB', 'hp1m' : 'Đỉnh 1M', 'hp3m' : 'Đỉnh 3M', 'hp1y' : 'Đỉnh 1Y', 'lp1m' : 'Đáy 1M', 'lp3m' : 'Đáy 3M', 'lp1y' : 'Đáy 1Y', 'hp1yp' : '%Đỉnh 1Y', 'lp1yp' : '%Đáy 1Y', 'delta1m' : '%Giá - %VNI (1M)', 'delta1y' : '%Giá - %VNI (1Y)', 'bv' : 'Khối lượng Dư mua', 'av' : 'Khối lượng Dư bán', 'hmp' : 'Khớp nhiều nhất'})
+    return df
+
 # TRADING INTELLIGENT
 today_val = datetime.now()
-today = today_val.strftime('%Y-%m-%d')
+
+def today():
+    today = today_val.strftime('%Y-%m-%d')
+    return today
 
 def last_xd (day_num): # return the date of last x days
     """
@@ -123,6 +138,17 @@ def stock_intraday_data (symbol, page_num, page_size):
     else: #today is weekday
         data = requests.get('https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{}/his/paging?page={}&size={}'.format(symbol, page_num, page_size)).json()
     df = json_normalize(data['data']).rename(columns={'p':'price', 'v':'volume', 't': 'time'})
+    return df
+
+# COMPANY OVERVIEW
+def company_overview (symbol):
+    """
+    This function returns the company overview of a target stock symbol
+    Args:
+        symbol (:obj:`str`, required): 3 digits name of the desired stock.
+    """
+    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/ticker/{}/overview'.format(symbol)).json()
+    df = json_normalize(data)
     return df
 
 
@@ -208,13 +234,25 @@ def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_ye
 
 # STOCK FILTERING
 
-def financial_ratio (symbol): #TCBS source
+def financial_ratio (symbol, report_range, is_all): #TCBS source
     """
     This function returns the quarterly financial ratios of a stock symbol. Some of expected ratios are: priceToEarning, priceToBook, roe, roa, bookValuePerShare, etc
     Args:
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
+        report_range (:obj:`str`, required): 'yearly' or 'quarterly'.
+        is_all (:obj:`boo`, required): True or False
     """
-    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{}/financialratio?yearly=0&isAll=true'.format(symbol)).json()
+    if report_range == 'yearly':
+        x = 1
+    elif report_range == 'quarterly':
+        x = 0
+    
+    if is_all == True:
+      y = 'true'
+    else:
+      y = 'false'
+
+    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{}/financialratio?yearly={}&isAll={}'.format(symbol, x, y)).json()
     df = json_normalize(data)
     return df
 
@@ -256,7 +294,7 @@ def  general_rating (symbol):
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
     """
     data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/{}/general?fType=TICKER'.format(symbol)).json()
-    df = json_normalize(data)
+    df = json_normalize(data).drop(columns='stockRecommend')
     return df
 
 def biz_model_rating (symbol):
@@ -323,7 +361,7 @@ def industry_analysis (symbol):
     df = json_normalize(data)
     data1 = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/single?ticker={}&fType=TICKER'.format(symbol)).json()
     df1 = json_normalize(data1)
-    df = df1.append(df).reset_index(drop=True).dropna(axis=1)
+    df = df1.append(df).reset_index(drop=True)
     return df
 
 def stock_ls_analysis (symbol_ls):
@@ -379,5 +417,55 @@ def market_top_mover (report_name): #Value, Losers, Gainers, Volume, ForeignTrad
     df = pd.DataFrame(r['items'])
     return df
 
+
+def fr_trade_heatmap (exchange, report_type): 
+    # FrBuyVal, FrSellVal, FrBuyVol, FrSellVol, Volume, Value, MarketCap
+    # Exchange: HOSE, HNX, UPCOM, All
+    """
+    This function returns the foreign investors trading insights which is being rendered as the heatmap on SSI iBoard
+    Args:
+        exchange (:obj:`str`, required): Choose All, HOSE, HNX, or UPCOM.
+        report_type (:obj:`str`, required): choose one of these report types: FrBuyVal, FrSellVal, FrBuyVol, FrSellVol, Volume, Value, MarketCap
+    """
+  url = 'https://fiin-market.ssi.com.vn/HeatMap/GetHeatMap?language=vi&Exchange={}&Criteria={}'.format(exchange, report_type)
+  headers = {
+          'Connection': 'keep-alive',
+          'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
+          'DNT': '1',
+          'sec-ch-ua-mobile': '?0',
+          'X-Fiin-Key': 'KEY',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Fiin-User-ID': 'ID',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
+          'X-Fiin-Seed': 'SEED',
+          'sec-ch-ua-platform': 'Windows',
+          'Origin': 'https://iboard.ssi.com.vn',
+          'Sec-Fetch-Site': 'same-site',
+          'Sec-Fetch-Mode': 'cors',
+          'Sec-Fetch-Dest': 'empty',
+          'Referer': 'https://iboard.ssi.com.vn/',
+          'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
+          }
+  r = requests.get(url, headers=headers).json()
+  # df = pd.DataFrame(r['items'])
+  for i in range(len(r['items'])):
+    for j in range(len(r['items'][i]['sectors'])):
+      if j == 0:
+        name = r['items'][i]['sectors'][j]['name']
+        rate = r['items'][i]['sectors'][j]['rate']
+        r['items'][i]['sectors'][j]['tickers']
+        df = json_normalize(r['items'][i]['sectors'][j]['tickers'])
+        df['industry_name'] = name
+        df['rate'] = rate
+      if j != 0:
+        name = r['items'][i]['sectors'][j]['name']
+        rate = r['items'][i]['sectors'][j]['rate']
+        r['items'][i]['sectors'][j]['tickers']
+        df1 = json_normalize(r['items'][i]['sectors'][j]['tickers'])
+        df1['industry_name'] = name
+        df1['rate'] = rate
+        df = df.append(df1)
+    return df
 
 
