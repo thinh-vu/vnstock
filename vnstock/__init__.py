@@ -2,10 +2,11 @@
 # See LICENSE for details.
 
 __author__ = "Thinh Vu @thinh-vu in GitHub"
-__version__ = "0.0.9"
+__version__ = "0.1.0"
 
 from .stock import (
     listing_companies,
+    ticker_overview,
     last_xd,
     start_xm,
     stock_historical_data,

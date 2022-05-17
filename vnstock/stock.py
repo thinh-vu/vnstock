@@ -42,6 +42,10 @@ def listing_companies ():
     df = pd.DataFrame(r['items']).drop(columns=['organCode', 'icbCode', 'organTypeCode', 'comTypeCode']).rename(columns={'comGroupCode': 'group_code', 'organName': 'company_name', 'organShortName':'company_short_name'})
     return df
 
+def ticker_overview (symbol):
+    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/ticker/{}/overview'.format(symbol)).json()
+    df = json_normalize(data)
+    return df
 
 ## STOCK TRADING HISTORICAL DATA
 def stock_historical_data (symbol, start_date, end_date):

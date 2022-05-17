@@ -40,6 +40,18 @@ Output:
 4       BVL  UpcomIndex                            Công ty Cổ phần BV Land                       BV Land
 ```
 
+### Ticker overview
+```python
+ticker_overview('TCB')
+```
+
+Output:
+```
+>>> ticker_overview('TCB')
+  exchange    shortName  industryID industryIDv2   industry  ... deltaInMonth deltaInYear  outstandingShare  issueShare  ticker
+0     HOSE  Techcombank         289         8355  Ngân hàng  ...       -0.027      -0.038            3510.9      3510.9     TCB
+```
+
 ### 📈 Historical Data Retrieval
 
 vnstock allows the user to **download stock historical data from TCBS**. In 
