@@ -9,7 +9,7 @@ from datetime import datetime
 from datetime import timedelta
 import time
 from io import BytesIO
-import openpyxl
+#import openpyxl
 
 
 ## STOCK LISTING
