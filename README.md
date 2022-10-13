@@ -6,6 +6,8 @@ vnstock allows the user to download historical, intraday stock data and market i
 
 vnstock is relying on public/private APIs to provide stock data. It is **FREE** and has **NO LIMITATIONS**.
 
+You can get more context and a demo notebook of using this package on my blog post in Vietnamses/English [here](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python/)
+
 
 ## 🛠 Installation
 
