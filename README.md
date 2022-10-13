@@ -186,7 +186,7 @@ Output: [preview]('./../src/stock_comparison_industries.png)
 ### 🔬 Stocks List Analysis
 ```python
 from vnstock import *
-stocks_ls_analysis("TCB, BID, CEO, GMD")
+stock_ls_analysis("TCB, BID, CEO, GMD")
 ```
 
 Output: [preview](./src/stock_ls_comparison.png)
