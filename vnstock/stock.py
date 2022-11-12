@@ -4,12 +4,9 @@
 import pandas as pd
 import requests
 from pandas import json_normalize
-
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 import time
 from io import BytesIO
-#import openpyxl
 
 
 ## STOCK LISTING
@@ -365,7 +362,7 @@ def industry_analysis (symbol):
     df = json_normalize(data)
     data1 = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/single?ticker={}&fType=TICKER'.format(symbol)).json()
     df1 = json_normalize(data1)
-    df = df1.append(df).reset_index(drop=True)
+    df = pd.concat([df1, df]).reset_index(drop=True)
     return df
 
 def stock_ls_analysis (symbol_ls):
@@ -469,7 +466,7 @@ def fr_trade_heatmap (exchange, report_type):
                 df1 = json_normalize(r['items'][i]['sectors'][j]['tickers'])
                 df1['industry_name'] = name
                 df1['rate'] = rate
-                df = df.append(df1)
+                df = pd.concat([df, df1])
     return df
 
 
