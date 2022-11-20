@@ -9,7 +9,7 @@ vnstock is relying on public/private APIs to provide stock data. It is **FREE** 
 👉 You can get more context and a demo notebook of using this package on my blog post available in Vietnamses/English [here](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python/)
 
 
-## 🛠 Installation
+# I. 🛠 Installation
 
 To get this package working, you will need to **install it via pip** (with a Python 3.7 version or higher) on the terminal by typing:
 
@@ -24,10 +24,10 @@ the stable release comes out (which eventually may take some time depending on t
 
 ---
 
-## 💻 Usage
+# II. 💻 Usage
 You can understand some basic functionality of the vnstock package by following this guide.
 
-### 📰 All listing companies
+## 2.1 📰 All listing companies
 ```python
 listing_companies()
 ```
@@ -42,7 +42,7 @@ Output:
 4       BVL  UpcomIndex                            Công ty Cổ phần BV Land                       BV Land
 ```
 
-### Ticker overview
+## 2.2. Ticker overview
 ```python
 ticker_overview('TCB')
 ```
@@ -54,7 +54,7 @@ Output:
 0     HOSE  Techcombank         289         8355  Ngân hàng  ...       -0.027      -0.038            3510.9      3510.9     TCB
 ```
 
-### 📈 Historical Data Retrieval
+## 2.3. 📈 Historical Data Retrieval
 
 vnstock allows the user to **download stock historical data from TCBS**. In 
 the example presented below, the historical data from the past years of a stock is retrieved. 
@@ -83,7 +83,7 @@ The result should look like this:
 4    33547.0  33937.0  32669.0  33059.0  4587500  2021-01-08
 ```
 
-### 📊 Price Table
+## 2.4. 📊 Price Table
 You can download the price board of a target list of stocks to analyze with ease compared to viewing it directly on TCBS.
 
 ![price_board](./src/tcbs_trading_board_sector.png)
@@ -104,7 +104,7 @@ Output:
 2   VND        32600.0        0.7     0.68          37300  ...    -3.7    -2.0    22.4  17.99  2.46159
 ```
 
-### 🔥 Intraday Trading Data
+## 2.5. 🔥 Intraday Trading Data
 ![intraday](./src/tcbs_intraday_screen1.png)
 ![intraday](./src/tcbs_intraday_screen2.png)
 
@@ -127,8 +127,8 @@ p     volume       cp       rcp   a   ba   sa     hl  pcp      time
 3     50800.0   20000  0.0  0.0  BU  0.0  0.0   True  0.0  14:29:54
 4     50700.0     300  0.0  0.0  SD  0.0  0.0  False  0.0  14:29:53
 ```
-### 💰Financial Ratio
-#### 1. Report from SSI
+## 2.6. 💰Financial Ratio
+### 2.6.1. Report from SSI
 ```python
 financial_ratio_compare (symbol_ls=['TCB', 'CTG', 'BID'], industry_comparison='true', frequency= 'Yearly', start_year=2020)
 ```
@@ -153,7 +153,7 @@ Output:
 ```
 
 
-#### 2. Report from TCBS
+### 2.6.2. Report from TCBS
 ```python
 from vnstock import *
 financial_ratio("TCB", 'quarterly', True)
@@ -168,8 +168,8 @@ Output:
 4     TCB        4  2020             9.0          1.5              None     None  ...           0.003                 0.372             4.9      0.013                None                   0.057         0.202
 ```
 
-## Stock comparison
-### 🏭 Industry Analysis
+## 2.7. Stock comparison
+### 2.7.1. 🏭 Industry Analysis
 ```python
 from vnstock import *
 industry_analysis("VNM")
@@ -185,7 +185,7 @@ Output: [preview]('./../src/stock_comparison_industries.png)
 2     MML   26061   79700            -1            19.6   0.0          4.7               24.9     0.000  ...           4.2       -0.029     -0.050          6.771       -0.243      0.904      0.22  58.8  60.0
 ```
 
-### 🔬 Stocks List Analysis
+### 2.7.2. 🔬 Stocks List Analysis
 ```python
 from vnstock import *
 stock_ls_analysis("TCB, BID, CEO, GMD")
@@ -200,7 +200,7 @@ Output: [preview](./src/stock_ls_comparison.png)
 3    TCB  178003  50700             1             9.9  0.2          1.9                NaN       0.0  ...           NaN        0.418      0.255          0.059         0.157         NaN       NaN  45.2  28.0
 ```
 
-### 🏢 Company Overview
+### 2.7.3. 🏢 Company Overview
 ```python
 financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly)
 ```
@@ -211,9 +211,9 @@ Output:
 0     HOSE  Techcombank         289         8355  ...      -0.075           3510.9     3510.9     TCB
 ```
 
-### 💵 Income Statement, Balance Sheet & Cashflow report
+### 2.7.4. 💵 Income Statement, Balance Sheet & Cashflow report
 
-#### 1. Report from SSI
+#### 2.7.4.1. Report from SSI
 ```python
 financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly)
 ```
@@ -236,7 +236,7 @@ Output:
 158                        TỔNG CỘNG NGUỒN VỐN  7.980876e+12  7.705074e+12  ...  2.704412e+13  3.576953e+13  5.079306e+13
 ```
 
-#### 2. Report from TCBS
+#### 2.7.4.2. Report from TCBS
 
 ##### 📄 Income Statement
 
@@ -292,11 +292,11 @@ index
 2021-Q1    TCB        -143        -143              0     -6954             0
 ```
 
-### 🧧 Dividend Historical Data
+## 2.8. 🧧 Dividend Historical Data
 
 ```python
 from vnstock import *
-divident_history("VNM")
+dividend_history("VNM")
 ```
 
 Output:
@@ -308,7 +308,7 @@ Output:
 3      05/01/21      2020                    0.10        cash
 ```
 
-### ⭐General Rating
+## 2.9. ⭐General Rating
 
 ```python
 from vnstock import *
@@ -321,7 +321,7 @@ Output:
 0          2.4        1.5              4.8            3.0                3.2       1.0      1.0  ...    VNM     102722.2      78600.0         -0.092         -0.232  0.49 -0.0014
 ```
 
-### 🌱 Business Model Rating
+## 2.10. 🌱 Business Model Rating
 ```python
 from vnstock import *
 biz_model_rating("VNM")
@@ -333,7 +333,7 @@ Output:
 0    VNM            3.0                   3             3                3    3                       3               3                  3                3         3              3
 ```
 
-### 🎮 Business Operation Rating
+## 2.11. 🎮 Business Operation Rating
 ```python
 from vnstock import *
 biz_operation_rating("VNM")
@@ -345,7 +345,7 @@ Output:
 0  Food Products       None          None                    None              None  ...                    2                         5                             3                        4       None
 ```
 
-### 📑 Financial Health Rating
+## 2.12. 📑 Financial Health Rating
 ```python
 from vnstock import *
 financial_health_rating("VNM")
@@ -357,7 +357,7 @@ Output:
 0  Food Products        None             None         None             None    VNM              4.8              4             5           5                 5              5
 ```
 
-### 💲 Valuation Rating
+## 2.13. 💲 Valuation Rating
 ```python
 from vnstock import *
 valuation_rating("VNM")
@@ -369,7 +369,7 @@ Output:
 0  Food Products    VNM        1.5   2   1   1         1             3
 ```
 
-### 💳 Industry Financial Health
+## 2.14.  💳 Industry Financial Health
 ```python
 from vnstock import *
 industry_financial_health("VNM")
@@ -381,8 +381,8 @@ Output:
 0       None        None             None         None             None    VNM              3.4              4             4           3                 3              3
 ```
 
-## 🌏 Market Watch
-### 1. Top stocks
+## 2.15. 🌏 Market Watch
+### 2.15.1. Top stocks
 Top Breakout > Top Gainers > Top Losers > Top Value > Top Volume
 ![top_mover](./src/ssi_top_breakout_gainer_loser.png)
 
@@ -403,7 +403,7 @@ Output:
 3          1033300.0     1.281170e+10  ...  {'organCode': 'FLC', 'rtd7': 12898.0038031343,...  {'organCode': 'FLC', 'sma20Past4': 12062.5, 's...
 4           998600.0     5.324337e+10  ...  {'organCode': 'NLG', 'rtd7': 23318.1252311207,...  {'organCode': 'NLG', 'sma20Past4': 52385.0, 's...
 ```
-### 2. Foreign Trade Insights
+### 2.15.2. Foreign Trade Insights
 ```python
 fr_trade_heatmap ('All', 'FrBuyVol')
 ```
@@ -411,7 +411,7 @@ Output:
 ```
 ```
 
-## 🙋‍♂️ Contact Information
+# III. 🙋‍♂️ Contact Information
 
 You can contact me at one of my social network profiles:
 
@@ -420,11 +420,29 @@ You can contact me at one of my social network profiles:
 
 ---
 
-## ⚠ Disclaimer
+If you want to support my open-source projects, you can "buy me a coffee" via [Patreon](https://patreon.com/thinhvu?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=creatorshare_creator) or Momo e-wallet (VN). Your support will help to maintain my blog hosting fee & to develop high-quality content.
+
+![momo-qr](./src/momo-qr-thinhvu.jpeg)
+
+# IV. ⚠ Disclaimer
 
 This Python package has been made for **research purposes** to fit the needs that tcbs.com does not cover, 
 so this package works like an Application Programming Interface (API) of tcbs.com developed in an **altruistic way**.
 
 Conclude that **vnstock is not affiliated in any way to tcbs.com or ssi.com.vn or any dependant company**.
+
+## V. Licensing
+
+```
+Copyright (c) 2022 Thinh Vu | thinh-vu @ Github
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 
