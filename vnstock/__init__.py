@@ -2,6 +2,6 @@
 # See LICENSE for details.
 
 __author__ = "Thinh Vu @thinh-vu in GitHub"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .stock import *

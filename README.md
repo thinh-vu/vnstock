@@ -1,5 +1,13 @@
 <h2 align="center">Vietnam Stock Market data extraction from TCBS & SSI with Python</h2>
 
+---
+<div id="badges" align="center">
+<img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=plastic" alt= "Version"/>
+<img src="https://img.shields.io/pypi/dm/vnstock" alt="Download Badge"/>
+<img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock" alt="Commit Badge"/>
+<img src="https://img.shields.io/github/license/thinh-vu/vnstock?color=red" alt="License Badge"/>
+</div>
+
 vnstock is a Python package to retrieve the Vietnam stock market data from [TCBS](https://tcbs.com.vn) and [SSI]('https://iboard.ssi.com.vn/').
 
 vnstock allows the user to download historical, intraday stock data and market insights from [TCBS](https://tcbs.com.vn).

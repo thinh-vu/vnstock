@@ -5,3 +5,7 @@ vnstock.egg-info/dependency_links.txt
 vnstock.egg-info/PKG-INFO
 vnstock.egg-info/SOURCES.txt
 vnstock.egg-info/top_level.txt
+dist/vnstock-0.1.1-py3-none-any.whl
+dist/vnstock-0.1.1.tar.gz
+dist/vnstock-0.1.2-py3-none-any.whl
+dist/vnstock-0.1.2.tar.gz
