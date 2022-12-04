@@ -16,26 +16,7 @@ def listing_companies ():
     This function returns the list of all available stock symbols.
     """
     url = 'https://fiin-core.ssi.com.vn/Master/GetListOrganization?language=vi'
-    headers = {
-            'Connection': 'keep-alive',
-            'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
-            'DNT': '1',
-            'sec-ch-ua-mobile': '?0',
-            'X-Fiin-Key': 'KEY',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-Fiin-User-ID': 'ID',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
-            'X-Fiin-Seed': 'SEED',
-            'sec-ch-ua-platform': 'Windows',
-            'Origin': 'https://iboard.ssi.com.vn',
-            'Sec-Fetch-Site': 'same-site',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Dest': 'empty',
-            'Referer': 'https://iboard.ssi.com.vn/',
-            'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
-            }
-    r = requests.get(url, headers=headers).json()
+    r = api_request(url)
     df = pd.DataFrame(r['items']).drop(columns=['organCode', 'icbCode', 'organTypeCode', 'comTypeCode']).rename(columns={'comGroupCode': 'group_code', 'organName': 'company_name', 'organShortName':'company_short_name'})
     return df
 
@@ -163,31 +144,11 @@ def financial_report (symbol, report_type, frequency): # Quarterly, Yearly
         report_range (:obj:`str`, required): Yearly or Quarterly.
     """
     url = 'https://fiin-fundamental.ssi.com.vn/FinancialStatement/Download{}?language=vi&OrganCode={}&Skip=0&Frequency={}'.format(report_type, symbol, frequency)
-    
-    headers = {
-            'Connection': 'keep-alive',
-            'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
-            'DNT': '1',
-            'sec-ch-ua-mobile': '?0',
-            'X-Fiin-Key': 'KEY',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-Fiin-User-ID': 'ID',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
-            'X-Fiin-Seed': 'SEED',
-            'sec-ch-ua-platform': 'Windows',
-            'Origin': 'https://iboard.ssi.com.vn',
-            'Sec-Fetch-Site': 'same-site',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Dest': 'empty',
-            'Referer': 'https://iboard.ssi.com.vn/',
-            'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
-            }
-    r = requests.get(url, headers=headers)
+    r = api_request(url)
     df = pd.read_excel(BytesIO(r.content), skiprows=7).dropna()
     return df
 
-
+# Need attention!
 def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_year): 
     """
     This function returns the balance sheet of a stock symbol by a Quarterly or Yearly range.
@@ -209,26 +170,7 @@ def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_ye
       elif i > 0:
         company_join = '&'.join([company_join, 'CompareToCompanies={}'.format(symbol_ls[i])])
         url = 'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/DownloadFinancialRatio2?language=vi&OrganCode={}&CompareToIndustry={}{}&Frequency={}&Ratios=ryd21&Ratios=ryd25&Ratios=ryd14&Ratios=ryd7&Ratios=rev&Ratios=isa22&Ratios=ryq44&Ratios=ryq14&Ratios=ryq12&Ratios=rtq51&Ratios=rtq50&Ratios=ryq48&Ratios=ryq47&Ratios=ryq45&Ratios=ryq46&Ratios=ryq54&Ratios=ryq55&Ratios=ryq56&Ratios=ryq57&Ratios=nob151&Ratios=casa&Ratios=ryq58&Ratios=ryq59&Ratios=ryq60&Ratios=ryq61&Ratios=ryd11&Ratios=ryd3&TimeLineFrom=2017_5'.format(symbol_ls[i], industry_comparison, company_join, frequency, timeline)
-    headers = {
-            'Connection': 'keep-alive',
-            'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
-            'DNT': '1',
-            'sec-ch-ua-mobile': '?0',
-            'X-Fiin-Key': 'KEY',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-Fiin-User-ID': 'ID',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
-            'X-Fiin-Seed': 'SEED',
-            'sec-ch-ua-platform': 'Windows',
-            'Origin': 'https://iboard.ssi.com.vn',
-            'Sec-Fetch-Site': 'same-site',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Dest': 'empty',
-            'Referer': 'https://iboard.ssi.com.vn/',
-            'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
-            }
-    r = requests.get(url, headers=headers)
+    r = api_request(url)
     df = pd.read_excel(BytesIO(r.content), skiprows=7)
     return df
 
@@ -395,33 +337,12 @@ def market_top_mover (report_name): #Value, Losers, Gainers, Volume, ForeignTrad
         url = 'https://fiin-market.ssi.com.vn/TopMover/GetTopBreakout?language=vi&ComGroupCode=All&TimeRange=OneWeek&Rate=OnePointFive'
     elif report_name == 'NewHigh':
         url = 'https://fiin-market.ssi.com.vn/TopMover/GetTopNewHigh?language=vi&ComGroupCode=All&TimeRange=ThreeMonths'
-    headers = {
-            'Connection': 'keep-alive',
-            'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
-            'DNT': '1',
-            'sec-ch-ua-mobile': '?0',
-            'X-Fiin-Key': 'KEY',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-Fiin-User-ID': 'ID',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
-            'X-Fiin-Seed': 'SEED',
-            'sec-ch-ua-platform': 'Windows',
-            'Origin': 'https://iboard.ssi.com.vn',
-            'Sec-Fetch-Site': 'same-site',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Dest': 'empty',
-            'Referer': 'https://iboard.ssi.com.vn/',
-            'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
-            }
-    r = requests.get(url, headers=headers).json()
+    r = api_request(url)
     df = pd.DataFrame(r['items'])
     return df
 
 
 def fr_trade_heatmap (exchange, report_type): 
-    # FrBuyVal, FrSellVal, FrBuyVol, FrSellVol, Volume, Value, MarketCap
-    # Exchange: HOSE, HNX, UPCOM, All
     """
     This function returns the foreign investors trading insights which is being rendered as the heatmap on SSI iBoard
     Args:
@@ -429,6 +350,21 @@ def fr_trade_heatmap (exchange, report_type):
         report_type (:obj:`str`, required): choose one of these report types: FrBuyVal, FrSellVal, FrBuyVol, FrSellVol, Volume, Value, MarketCap
     """
     url = 'https://fiin-market.ssi.com.vn/HeatMap/GetHeatMap?language=vi&Exchange={}&Criteria={}'.format(exchange, report_type)
+    r = api_request(url)
+    concat_ls = []
+    for i in range(len(r['items'])):
+        for j in range(len(r['items'][i]['sectors'])):
+            name = r['items'][i]['sectors'][j]['name']
+            rate = r['items'][i]['sectors'][j]['rate']
+            df = json_normalize(r['items'][i]['sectors'][j]['tickers'])
+            df['industry_name'] = name
+            df['rate'] = rate
+            concat_ls.append(df)
+    combine_df = pd.concat(concat_ls)
+    return combine_df
+
+# API request config for SSI API endpoints
+def api_request(url):
     headers = {
             'Connection': 'keep-alive',
             'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
@@ -449,24 +385,6 @@ def fr_trade_heatmap (exchange, report_type):
             'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
             }
     r = requests.get(url, headers=headers).json()
-    # df = pd.DataFrame(r['items'])
-    for i in range(len(r['items'])):
-        for j in range(len(r['items'][i]['sectors'])):
-            if j == 0:
-                name = r['items'][i]['sectors'][j]['name']
-                rate = r['items'][i]['sectors'][j]['rate']
-                r['items'][i]['sectors'][j]['tickers']
-                df = json_normalize(r['items'][i]['sectors'][j]['tickers'])
-                df['industry_name'] = name
-                df['rate'] = rate
-            if j != 0:
-                name = r['items'][i]['sectors'][j]['name']
-                rate = r['items'][i]['sectors'][j]['rate']
-                r['items'][i]['sectors'][j]['tickers']
-                df1 = json_normalize(r['items'][i]['sectors'][j]['tickers'])
-                df1['industry_name'] = name
-                df1['rate'] = rate
-                df = pd.concat([df, df1])
-    return df
+    return r
 
 
