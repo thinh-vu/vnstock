@@ -8,6 +8,30 @@ from datetime import datetime, timedelta
 import time
 from io import BytesIO
 
+# API request config for SSI API endpoints
+headers = {
+        'Connection': 'keep-alive',
+        'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
+        'DNT': '1',
+        'sec-ch-ua-mobile': '?0',
+        'X-Fiin-Key': 'KEY',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Fiin-User-ID': 'ID',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
+        'X-Fiin-Seed': 'SEED',
+        'sec-ch-ua-platform': 'Windows',
+        'Origin': 'https://iboard.ssi.com.vn',
+        'Sec-Fetch-Site': 'same-site',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+        'Referer': 'https://iboard.ssi.com.vn/',
+        'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
+        }
+
+def api_request(url, headers=headers):
+    r = requests.get(url, headers).json()
+    return r
 
 ## STOCK LISTING
 
@@ -135,20 +159,7 @@ def company_overview (symbol):
 
 
 # FINANCIAL REPORT
-# def financial_report (symbol, report_type, frequency): # Quarterly, Yearly
-#     """
-#     This function returns the balance sheet of a stock symbol by a Quarterly or Yearly range.
-#     Args:
-#         symbol (:obj:`str`, required): 3 digits name of the desired stock.
-#         report_type (:obj:`str`, required): BalanceSheet, IncomeStatement, CashFlow
-#         report_range (:obj:`str`, required): Yearly or Quarterly.
-#     """
-#     url = 'https://fiin-fundamental.ssi.com.vn/FinancialStatement/Download{}?language=vi&OrganCode={}&Skip=0&Frequency={}'.format(report_type, symbol, frequency)
-#     r = api_request(url)
-#     df = pd.read_excel(BytesIO(r.content), skiprows=7).dropna()
-#     return df
-
-def financial_report (symbol, report_type, frequency): # Quarterly, Yearly
+def financial_report (symbol, report_type, frequency, headers=headers): # Quarterly, Yearly
     """
     This function returns the balance sheet of a stock symbol by a Quarterly or Yearly range.
     Args:
@@ -157,26 +168,6 @@ def financial_report (symbol, report_type, frequency): # Quarterly, Yearly
         report_range (:obj:`str`, required): Yearly or Quarterly.
     """
     url = 'https://fiin-fundamental.ssi.com.vn/FinancialStatement/Download{}?language=vi&OrganCode={}&Skip=0&Frequency={}'.format(report_type, symbol, frequency)
-    
-    headers = {
-            'Connection': 'keep-alive',
-            'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
-            'DNT': '1',
-            'sec-ch-ua-mobile': '?0',
-            'X-Fiin-Key': 'KEY',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-Fiin-User-ID': 'ID',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
-            'X-Fiin-Seed': 'SEED',
-            'sec-ch-ua-platform': 'Windows',
-            'Origin': 'https://iboard.ssi.com.vn',
-            'Sec-Fetch-Site': 'same-site',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Dest': 'empty',
-            'Referer': 'https://iboard.ssi.com.vn/',
-            'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
-            }
     r = requests.get(url, headers=headers)
     df = pd.read_excel(BytesIO(r.content), skiprows=7).dropna()
     return df
@@ -396,28 +387,6 @@ def fr_trade_heatmap (exchange, report_type):
     combine_df = pd.concat(concat_ls)
     return combine_df
 
-# API request config for SSI API endpoints
-def api_request(url):
-    headers = {
-            'Connection': 'keep-alive',
-            'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
-            'DNT': '1',
-            'sec-ch-ua-mobile': '?0',
-            'X-Fiin-Key': 'KEY',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-Fiin-User-ID': 'ID',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
-            'X-Fiin-Seed': 'SEED',
-            'sec-ch-ua-platform': 'Windows',
-            'Origin': 'https://iboard.ssi.com.vn',
-            'Sec-Fetch-Site': 'same-site',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Dest': 'empty',
-            'Referer': 'https://iboard.ssi.com.vn/',
-            'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
-            }
-    r = requests.get(url, headers=headers).json()
-    return r
+
 
 
