@@ -113,7 +113,7 @@ You can download the price board of a target list of stocks to analyze with ease
 <details>
   <summary>Price Board</summary>
 
-  ![price_board](./src/tcbs_trading_board_sector.png)
+  ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png)
 
 </details>
 
@@ -140,8 +140,8 @@ price_board('TCB,SSI,VND')
 <details>
   <summary>Intraday view on TCBS</summary>
 
-  ![intraday](./src/tcbs_intraday_screen1.png)
-  ![intraday](./src/tcbs_intraday_screen2.png)
+  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen1.png)
+  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen2.png)
 
 </details>
 vnstock allows the user to **download intraday real-time/historical data**. In 
@@ -150,7 +150,7 @@ the example presented below, you can see the intraday historical data from the l
 ```python
 df =  stock_intraday_data(symbol='GMD', 
                             page_num=0, 
-                            page_size=5000))
+                            page_size=5000)
 print(df.head())
 ```
 
@@ -302,7 +302,7 @@ financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly
 
 ##### 📄 Income Statement
 
-![income_statement](./src/financial_income_statement.png)
+![income_statement](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_income_statement.png)
 ```python
 financial_flow(symbol="TCB", report_type='incomestatement', report_range='quarterly')
 ```
@@ -323,7 +323,7 @@ index                                                                           
 
 ##### 🧾Balance Sheet
 
-![balance_sheet](./src/financial_balancesheet.png)
+![balance_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_balancesheet.png)
 ```python
 financial_flow(symbol="TCB", report_type='balancesheet', report_range='quarterly')
 ```
@@ -342,7 +342,7 @@ index                                                                           
 ```
 </details>
 
-##### 💶Cashflow Report
+##### 💶 Cashflow Report
 
 ```python
 financial_flow(symbol="TCB", report_type='cashflow', report_range='quarterly')
@@ -478,7 +478,6 @@ Top New High > Top Foreign Trading > Top New Low
 
 </details>
 
-Input one of these following names to get your report: Breakout, Gainers, Losers, Value, Volume, ForeignTrading, NewLow, NewHigh
 ```python
 market_top_mover('ForeignTrading')
 ```
@@ -503,22 +502,108 @@ fr_trade_heatmap ('All', 'FrBuyVol')
 <details>
   <summary>Output</summary>
 
-```
-   organCode  name      value  percentPriceChange  ...  ceilingPrice  floorPrice        industry_name      rate
-0        PVD   PVD  1433300.0            0.068627  ...       16350.0     14250.0              Dầu khí  0.040308
-1        PVS   PVS   370100.0            0.096154  ...       22800.0     18800.0              Dầu khí  0.040308
-2      PETRO   PLX   249700.0            0.014516  ...       33150.0     28850.0              Dầu khí  0.040308
-3   PETECHIM   PTV     4000.0            0.064000  ...        5400.0      4000.0              Dầu khí  0.040308
-4       BSRC   BSR     3800.0            0.002000  ...       17200.0     12800.0              Dầu khí  0.040308
-..       ...   ...        ...                 ...  ...           ...         ...                  ...       ...
-10      None  Khác   210200.0            0.027762  ...           0.0         0.0            Ngân hàng  0.050653
-0        CMG   CMG    74400.0            0.024390  ...       43850.0     38150.0  Công nghệ Thông tin  0.034816
-1        SAM   SAM    35700.0            0.020833  ...        7700.0      6700.0  Công nghệ Thông tin  0.034816
-2        ELC   ELC     4100.0            0.049197  ...       10650.0      9270.0  Công nghệ Thông tin  0.034816
-3        ITD   ITD     2000.0            0.068548  ...       13250.0     11550.0  Công nghệ Thông tin  0.034816
+  ```
+    organCode  name      value  percentPriceChange  ...  ceilingPrice  floorPrice        industry_name      rate
+  0        PVD   PVD  1433300.0            0.068627  ...       16350.0     14250.0              Dầu khí  0.040308
+  1        PVS   PVS   370100.0            0.096154  ...       22800.0     18800.0              Dầu khí  0.040308
+  2      PETRO   PLX   249700.0            0.014516  ...       33150.0     28850.0              Dầu khí  0.040308
+  3   PETECHIM   PTV     4000.0            0.064000  ...        5400.0      4000.0              Dầu khí  0.040308
+  4       BSRC   BSR     3800.0            0.002000  ...       17200.0     12800.0              Dầu khí  0.040308
+  ..       ...   ...        ...                 ...  ...           ...         ...                  ...       ...
+  10      None  Khác   210200.0            0.027762  ...           0.0         0.0            Ngân hàng  0.050653
+  0        CMG   CMG    74400.0            0.024390  ...       43850.0     38150.0  Công nghệ Thông tin  0.034816
+  1        SAM   SAM    35700.0            0.020833  ...        7700.0      6700.0  Công nghệ Thông tin  0.034816
+  2        ELC   ELC     4100.0            0.049197  ...       10650.0      9270.0  Công nghệ Thông tin  0.034816
+  3        ITD   ITD     2000.0            0.068548  ...       13250.0     11550.0  Công nghệ Thông tin  0.034816
 
-[92 rows x 10 columns]
+  [92 rows x 10 columns]
+  ```
+</details>
+
+### 2.15.3. Market latest indices & values
+![latest_indices](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_latest_indices.png)
+
+Retrieve the latest indices values & brief insights
+
+```python
+get_latest_indices()
 ```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> get_latest_indices()
+    indexId comGroupCode  indexValue          tradingDate  ...  matchValue  ceiling  floor  marketStatus
+0         0      VNINDEX     1108.08  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+1         0         VN30     1121.92  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+2         0     HNXIndex      219.87  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+3         0        HNX30      378.94  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+4         0   UpcomIndex       73.98  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+5         0       VNXALL     1707.39  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+6         0        VN100     1063.59  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+7         0        VNALL     1066.54  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+8         0       VNCOND     1537.34  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+9         0       VNCONS      793.25  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+10        0    VNDIAMOND     1689.15  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+11        0        VNENE      541.51  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+12        0        VNFIN     1252.54  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+13        0    VNFINLEAD     1631.16  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+14        0  VNFINSELECT     1676.21  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+15        0       VNHEAL     1552.19  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+16        0        VNIND      628.34  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+17        0         VNIT     2631.82  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+18        0        VNMAT     1534.50  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+19        0        VNMID     1394.75  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+20        0       VNREAL      981.94  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+21        0         VNSI     1715.37  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+22        0        VNSML     1140.40  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+23        0        VNUTI      874.84  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+24        0        VNX50     1805.33  2023-01-19T00:00:00  ...         0.0      0.0    0.0          None
+  ```
+</details>
+
+### 2.15.4. Market latest indices in depth data
+![index_series_data](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_index_series_data.png)
+
+```python
+get_index_series(index_code='VNINDEX', time_range='OneYear')
+```
+- Data provider: FiinTrade on SSI iBoard
+- Use one of the following index code:
+  
+  ```
+  'VNINDEX', 'VN30', 'HNXIndex', 'HNX30', 'UpcomIndex', 'VNXALL',
+  'VN100','VNALL', 'VNCOND', 'VNCONS','VNDIAMOND', 'VNENE', 'VNFIN',
+  'VNFINLEAD', 'VNFINSELECT', 'VNHEAL', 'VNIND', 'VNIT', 'VNMAT', 'VNMID',
+  'VNREAL', 'VNSI', 'VNSML', 'VNUTI', 'VNX50'
+  ```
+  You can get the complete list of the latest indices from `get_latest_indices()` function
+
+- `time_range`: Use one of the following values:
+ ```
+ 'OneDay', 'OneWeek', 'OneMonth', 'ThreeMonth', 'SixMonths', 'YearToDate', 'OneYear', 'ThreeYears', 'FiveYears'
+ ```
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> get_index_series(index_code='VNINDEX', time_range='OneYear')
+      comGroupCode  indexValue          tradingDate  ...    matchValue  totalMatchVolume  totalMatchValue
+  0        VNINDEX     1470.76  2022-01-27T00:00:00  ...  1.554536e+13       498256400.0     1.554536e+13
+  1        VNINDEX     1478.96  2022-01-28T00:00:00  ...  1.913215e+13       634887600.0     1.913215e+13
+  2        VNINDEX     1497.66  2022-02-07T00:00:00  ...  1.710999e+13       516533800.0     1.710999e+13
+  3        VNINDEX     1500.99  2022-02-08T00:00:00  ...  2.106676e+13       660158600.0     2.106676e+13
+  4        VNINDEX     1505.38  2022-02-09T00:00:00  ...  2.360041e+13       722161500.0     2.360041e+13
+  ..           ...         ...                  ...  ...           ...               ...              ...
+  241      VNINDEX     1060.17  2023-01-13T00:00:00  ...  7.884840e+12       459494342.0     7.884840e+12
+  242      VNINDEX     1066.68  2023-01-16T00:00:00  ...  6.724499e+12       391079501.0     6.724499e+12
+  243      VNINDEX     1088.29  2023-01-17T00:00:00  ...  1.016031e+13       566247477.0     1.016031e+13
+  244      VNINDEX     1098.28  2023-01-18T00:00:00  ...  9.377296e+12       531786150.0     9.377296e+12
+  245      VNINDEX     1108.08  2023-01-19T00:00:00  ...  1.054607e+13       556193050.0     1.054607e+13
+
+  [246 rows x 14 columns]
+  ```
 </details>
 
 # III. 🙋‍♂️ Contact Information

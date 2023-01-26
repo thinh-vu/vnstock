@@ -172,8 +172,7 @@ def financial_report (symbol, report_type, frequency, headers=headers): # Quarte
     df = pd.read_excel(BytesIO(r.content), skiprows=7).dropna()
     return df
 
-# Need attention!
-def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_year): 
+def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_year, headers=headers): 
     """
     This function returns the balance sheet of a stock symbol by a Quarterly or Yearly range.
     Args:
@@ -194,7 +193,7 @@ def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_ye
       elif i > 0:
         company_join = '&'.join([company_join, 'CompareToCompanies={}'.format(symbol_ls[i])])
         url = 'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/DownloadFinancialRatio2?language=vi&OrganCode={}&CompareToIndustry={}{}&Frequency={}&Ratios=ryd21&Ratios=ryd25&Ratios=ryd14&Ratios=ryd7&Ratios=rev&Ratios=isa22&Ratios=ryq44&Ratios=ryq14&Ratios=ryq12&Ratios=rtq51&Ratios=rtq50&Ratios=ryq48&Ratios=ryq47&Ratios=ryq45&Ratios=ryq46&Ratios=ryq54&Ratios=ryq55&Ratios=ryq56&Ratios=ryq57&Ratios=nob151&Ratios=casa&Ratios=ryq58&Ratios=ryq59&Ratios=ryq60&Ratios=ryq61&Ratios=ryd11&Ratios=ryd3&TimeLineFrom=2017_5'.format(symbol_ls[i], industry_comparison, company_join, frequency, timeline)
-    r = api_request(url)
+    r = requests.get(url, headers=headers)
     df = pd.read_excel(BytesIO(r.content), skiprows=7)
     return df
 
@@ -386,6 +385,34 @@ def fr_trade_heatmap (exchange, report_type):
             concat_ls.append(df)
     combine_df = pd.concat(concat_ls)
     return combine_df
+
+# GET MARKET IN DEPT DATA - INDEX SERIES
+
+def get_index_series(index_code='VNINDEX', time_range='OneYear', headers=headers):
+    """
+    Retrieve the Stock market index series, maximum in 5 years
+    Args:
+        index_code (:obj:`str`, required): Use one of the following code'VNINDEX', 'VN30', 'HNXIndex', 'HNX30', 'UpcomIndex', 'VNXALL',
+                                        'VN100','VNALL', 'VNCOND', 'VNCONS','VNDIAMOND', 'VNENE', 'VNFIN',
+                                        'VNFINLEAD', 'VNFINSELECT', 'VNHEAL', 'VNIND', 'VNIT', 'VNMAT', 'VNMID',
+                                        'VNREAL', 'VNSI', 'VNSML', 'VNUTI', 'VNX50'. You can get the complete list of the latest indices from `get_latest_indices()` function
+        time_range (:obj: `str`, required): Use one of the following values 'OneDay', 'OneWeek', 'OneMonth', 'ThreeMonth', 'SixMonths', 'YearToDate', 'OneYear', 'ThreeYears', 'FiveYears'
+    """
+    url = f"https://fiin-market.ssi.com.vn/MarketInDepth/GetIndexSeries?language=vi&ComGroupCode={index_code}&TimeRange={time_range}&id=1"
+    payload={}
+    response = requests.request("GET", url, headers=headers, data=payload)
+    result = json_normalize(response.json()['items'])
+    return result
+
+def get_latest_indices(headers=headers):
+    """
+    Retrieve the latest indices values
+    """
+    url = "https://fiin-market.ssi.com.vn/MarketInDepth/GetLatestIndices?language=vi&pageSize=999999&status=1"
+    payload={}
+    response = requests.request("GET", url, headers=headers, data=payload)
+    result = json_normalize(response.json()['items'])
+    return result
 
 
 
