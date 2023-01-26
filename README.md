@@ -257,7 +257,7 @@ stock_ls_analysis("TCB, BID, CEO, GMD")
 
 ### 2.7.3. 🏢 Company Overview
 ```python
-financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly')
+company_overview('TCB')
 ```
 
 <details>
@@ -274,7 +274,7 @@ financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly
 
 #### 2.7.4.1. Report from SSI
 ```python
-financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly)
+financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly')
 ```
 - _report_type:_ You can choose 1 of 3 reports: `BalanceSheet`, `IncomeStatement`, or `CashFlow`
 - _frequency:_ `Yearly` or `Quarterly`
