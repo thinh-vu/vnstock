@@ -16,6 +16,9 @@ vnstock is relying on public/private APIs to provide stock data. It is **FREE** 
 
 👉 You can get more context and a demo notebook of using this package on my blog post available in Vietnamses/English [here](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python/)
 
+👉 Please find the Jupyter notebook [vnstock demo index - all functions testing // 2023-03-25.ipynb](https://github.com/thinh-vu/vnstock/blob/main/vnstock_demo_index_all_functions_testing_2023_03_25.ipynb) for all functions demo & testing. You can choose ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) button at the notebook's top header to start using with Google Colab.
+
+
 
 # I. 🛠 Installation
 
