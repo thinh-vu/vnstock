@@ -630,7 +630,7 @@ You can contact me at one of my social network profiles:
 
 ---
 
-If you want to support my open-source projects, you can "buy me a coffee" via [Patreon](https://patreon.com/thinhvu?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=creatorshare_creator) or Momo e-wallet (VN). Your support will help to maintain my blog hosting fee & to develop high-quality content.
+If you find value in my open-source projects and would like to support their development, you can buy me a coffee by donating via [Paypal](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US) or Momo e-wallet (VN). Your contribution will help me maintain my blog hosting fee and continue to create high-quality content. Thank you for your support!
 
 ![momo-qr](./src/momo-qr-thinhvu.jpeg)
 
