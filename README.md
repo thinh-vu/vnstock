@@ -18,6 +18,8 @@ vnstock is relying on public/private APIs to provide stock data. It is **FREE** 
 
 👉 Please find the Jupyter notebook [vnstock demo index - all functions testing // 2023-03-25.ipynb](https://github.com/thinh-vu/vnstock/blob/main/vnstock_demo_index_all_functions_testing_2023_03_25.ipynb) for all functions demo & testing. You can choose ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) button at the notebook's top header to start using with Google Colab.
 
+🖐 You also have the opportunity to contribute to the development of the VNStock community by joining in efforts to raise funds for package maintenance and to develop [advanced features for future releases](https://github.com/users/thinh-vu/projects/1). For more information, please refer to the following blog post: [Join hands to build a strong VNStock community](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/)
+
 
 
 # I. 🛠 Installation
