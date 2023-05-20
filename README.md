@@ -20,6 +20,7 @@ vnstock is relying on public/private APIs to provide stock data. It is **FREE** 
 
 🖐 You also have the opportunity to contribute to the development of the VNStock community by joining in efforts to raise funds for package maintenance and to develop [advanced features for future releases](https://github.com/users/thinh-vu/projects/1/views/4). For more information, please refer to the following blog post: [Join hands to build a strong VNStock community](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/)
 
+👉 You can find the changes log for this package [here](./changes_log.md)
 
 
 # I. 🛠 Installation
@@ -30,9 +31,9 @@ To get this package working, you will need to **install it via pip** (with a Pyt
 
 Additionally, **if you want to use the latest `vnstock` version instead of the stable one, you can install it from source** with the following command:
 
-``$ pip install git+https://github.com/thinh-vu/vnstock.git@main``
+``$ pip install git+https://github.com/thinh-vu/vnstock.git@beta``
 
-**The master branch ensures the user that the most updated version will always be working and fully operative** so as not to wait until the 
+**The `main` branch ensures the user that the most updated version will always be working and fully operative** so as not to wait until the 
 the stable release comes out (which eventually may take some time depending on the number of issues to solve).
 
 ---
