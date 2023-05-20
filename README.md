@@ -48,6 +48,7 @@ from vnstock import *
 ```python
 listing_companies()
 ```
+The function reads from the csv file by default. If mode is set to live, it requests realtime data from the API.
 
 <details>
   <summary>Output</summary>
@@ -155,7 +156,7 @@ the example presented below, you can see the intraday historical data from the l
 ```python
 df =  stock_intraday_data(symbol='GMD', 
                             page_num=0, 
-                            page_size=5000)
+                            page_size=100)
 print(df.head())
 ```
 

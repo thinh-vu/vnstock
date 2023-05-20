@@ -35,13 +35,21 @@ def api_request(url, headers=headers):
 
 ## STOCK LISTING
 
-def listing_companies ():
+import pandas as pd
+def listing_companies (mode='', file='vn_stock_listing_companies_2022-02-23.csv'):
     """
-    This function returns the list of all available stock symbols.
+    This function returns the list of all available stock symbols from a csv file or a live api request.
+    Parameters: 
+        mode (str): The mode of getting the data. If empty, read from the csv file. If 'live', request from the api url. 
+        file (str): The name of the csv file to read from. Default is 'vn_stock_listing_companies_2022-02-23.csv'. You can find the latest updated file at `https://github.com/thinh-vu/vnstock/tree/main/src`
+    Returns: df (DataFrame): A pandas dataframe containing the stock symbols and other information. 
     """
-    url = 'https://fiin-core.ssi.com.vn/Master/GetListOrganization?language=vi'
-    r = api_request(url)
-    df = pd.DataFrame(r['items']).drop(columns=['organCode', 'icbCode', 'organTypeCode', 'comTypeCode']).rename(columns={'comGroupCode': 'group_code', 'organName': 'company_name', 'organShortName':'company_short_name'})
+    if mode == '':
+        df = pd.read_csv(f'https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/{file}')
+    elif mode == 'live':
+        url = 'https://fiin-core.ssi.com.vn/Master/GetListOrganization?language=vi'
+        r = api_request(url)
+        df = pd.DataFrame(r['items']).drop(columns=['organCode', 'icbCode', 'organTypeCode', 'comTypeCode']).rename(columns={'comGroupCode': 'group_code', 'organName': 'company_name', 'organShortName':'company_short_name'})
     return df
 
 def ticker_overview (symbol):
@@ -125,24 +133,23 @@ def start_xm (period): # return the start date of x months
 
 def stock_intraday_data (symbol, page_num, page_size):
     """
-    This function returns the stock realtime intraday data.
-    Args:
-        symbol (:obj:`str`, required): 3 digits name of the desired stock.
-        page_size (:obj:`int`, required): the number of rows in a page to be returned by this query, suggest to use 5000.
-        page_num (:obj:`str`, required): the page index starting from 0.
-    Returns:
-        :obj:`pandas.DataFrame`:
-        | tradingDate | open | high | low | close | volume |
-        | ----------- | ---- | ---- | --- | ----- | ------ |
-        | YYYY-mm-dd  | xxxx | xxxx | xxx | xxxxx | xxxxxx |
-    Raises:
-        ValueError: raised whenever any of the introduced arguments is not valid.
+    This function returns the stock realtime intraday data (or data of the last working day = Friday) as a pandas dataframe.
+    Parameters: 
+        symbol (str): The 3-digit name of the desired stock. Example: `TCB`. 
+        page_num (int): The page index starting from 0. Example: 0. 
+        page_size (int): The number of rows in a page to be returned by this query, maximum of 100.
+    Returns: 
+        df (DataFrame): A pandas dataframe containing the price, volume, time, percentage of changes, etc of the stock intraday data.
+    Raises: 
+        ValueError: If any of the arguments is not valid or the request fails. 
     """
     d = datetime.now()
+    base_url = f'https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/his/paging?page={page_num}&size={page_size}'
+    print(base_url)
     if d.weekday() > 4: #today is weekend
-        data = requests.get('https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{}/his/paging?page={}&size={}&headIndex=-1'.format(symbol, page_num, page_size)).json()
+        data = requests.get(f'{base_url}&headIndex=-1').json()
     else: #today is weekday
-        data = requests.get('https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{}/his/paging?page={}&size={}'.format(symbol, page_num, page_size)).json()
+        data = requests.get(base_url).json()
     df = json_normalize(data['data']).rename(columns={'p':'price', 'v':'volume', 't': 'time'})
     return df
 
