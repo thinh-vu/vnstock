@@ -36,16 +36,16 @@ def api_request(url, headers=headers):
 ## STOCK LISTING
 
 import pandas as pd
-def listing_companies (mode='', file='vn_stock_listing_companies_2022-02-23.csv'):
+def listing_companies (mode='', path='https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/vn_stock_listing_companies_2023-05-20.csv'):
     """
     This function returns the list of all available stock symbols from a csv file or a live api request.
     Parameters: 
         mode (str): The mode of getting the data. If empty, read from the csv file. If 'live', request from the api url. 
-        file (str): The name of the csv file to read from. Default is 'vn_stock_listing_companies_2022-02-23.csv'. You can find the latest updated file at `https://github.com/thinh-vu/vnstock/tree/main/src`
+        path (str): The path of the csv file to read from. Default is the path of the file 'vn_stock_listing_companies_2023-02-23.csv'. You can find the latest updated file at `https://github.com/thinh-vu/vnstock/tree/main/src`
     Returns: df (DataFrame): A pandas dataframe containing the stock symbols and other information. 
     """
     if mode == '':
-        df = pd.read_csv(f'https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/{file}')
+        df = pd.read_csv(path)
     elif mode == 'live':
         url = 'https://fiin-core.ssi.com.vn/Master/GetListOrganization?language=vi'
         r = api_request(url)
