@@ -36,7 +36,7 @@ def api_request(url, headers=headers):
 ## STOCK LISTING
 
 import pandas as pd
-def listing_companies (mode='', path='https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/vn_stock_listing_companies_2023-05-20.csv'):
+def listing_companies (mode='', path='https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vn_stock_listing_companies_2023-05-20.csv'):
     """
     This function returns the list of all available stock symbols from a csv file or a live api request.
     Parameters: 
