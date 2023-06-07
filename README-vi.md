@@ -1,83 +1,52 @@
-<h2 align="center">Vietnam Stock Market data loader using Python</h2>
+# I. 🎤 Giới thiệu
+## 1.1. Giới thiệu chung
+vnstock là thư viện Python được thiết kế để tải dữ liệu chứng khoán Việt Nam một cách dễ dàng và miễn phí. vnstock sử dụng các nguồn cấp dữ liệu đáng tin cậy, bao gồm nhưng không giới hạn từ công ty chứng khoán và công ty phân tích thị trường tại Việt Nam. Gói thư viện được thiết kế dựa trên nguyên tắc về sự đơn giản và mã nguồn mở, hầu hết các hàm được viết dựa trên thư viện request và pandas có sẵn trên môi trường Google Colab do đó người dùng không cần cài đặt thêm các gói thư viện kèm theo.
 
----
-<div id="badges" align="center">
-<img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=plastic" alt= "Version"/>
-<img src="https://img.shields.io/pypi/dm/vnstock" alt="Download Badge"/>
-<img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock" alt="Commit Badge"/>
-<img src="https://img.shields.io/github/license/thinh-vu/vnstock?color=red" alt="License Badge"/>
-</div>
+## 1.2. Tính năng chính
+vnstock cung cấp nhiều tính năng đa dạng như tải dữ liệu lịch sử giá, thông tin công ty niêm yết, thông tin thị trường cho tất cả các mã chứng khoán niêm yết.
 
-# I. Introduction
-> 🇻🇳 The README file is provided in **Vietnamese** language. You can access it at [README-vi](README-vi.md).
+## 1.3. Nguồn cấp dữ liệu
+Thư viện python này kết nối tới các API công khai của các nguồn cấp dữ liệu để tải về để làm việc dưới dạng các DataFrame trong dự án Python. Việc truy xuất dữ liệu này là hoàn toàn **MIỄN PHÍ** và không có **GIỚI HẠN**. 
 
-## 1.1. Overview
-vnstock is a Python library designed to easily and freely retrieve Vietnam stock market data. vnstock utilizes reliable data sources, including but not limited to stock companies and market analysis firms in Vietnam. 
+# II. Hướng dẫn sử dụng cho người mới
 
-The library is built based on principles of simplicity and open-source, with most functions written using the `requests` and `pandas` libraries available in the Google Colab environment, eliminating the need for additional library installations.
+👉 Để biết thêm thông tin và minh hoạt về cách sử dụng, bạn vui lòng truy cập bài viết trên blog của tôi, có sẵn bằng tiếng Việt/Anh [tại đây](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
 
-## 1.2. Key Features
-vnstock provides a range of diverse features, including downloading historical price data, retrieving information about listed companies, and obtaining market insights for all listed stock codes.
+👉 Bạn có thể mở tệp Jupyter Notebook [vnstock demo index - all functions testing // 2023-03-25.ipynb](https://github.com/thinh-vu/vnstock/blob/main/vnstock_demo_index_all_functions_testing_2023_03_25.ipynb) để dùng thử tất cả các hàm của vnstock. Để sử dụng, nhấp vào nút ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) ở đầu trang của notebook để mở với Google Colab.
 
-## 1.3. Data Sources
-This Python library connects to public APIs of data providers to download and work with data in the form of DataFrames in Python projects. Access to this data is completely **FREE** and has **NO LIMITATIONS**.
+🖐 Nếu bạn thấy thư viện này có giá trị và muốn hỗ trợ tác giả duy trì vnstock dưới dạng mã nguồn mở, miễn phí thì có thể tham gia ủng hộ gây quỹ phát triển dự án này. Để biết thêm chi tiết, vui lòng tham khảo bài viết trên blog sau: [Cùng nhau xây dựng cộng đồng VNStock vững mạnh](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/).
 
-## 1.4. ⚖ Disclaimer
-vnstock is designed solely for the purpose of analysis and practical investment research. Any misuse or unauthorized use of the library for malicious purposes, such as attacking public APIs or causing harm to systems through denial of service or similar actions, is strictly beyond the intended scope of usage and falls outside the responsibility of the development team.
+🔥 Bạn có thể tham khảo thêm [Ý tưởng cho các tính năng nâng cao cho các phiên bản sắp tới](https://github.com/users/thinh-vu/projects/1/views/4) để đồng hành cùng vnstock. 
 
-vnstock is developed with the purpose of providing simple and free research tools to facilitate easy access and analysis of stock market data. The availability and accuracy of the data depend on the data sources. Therefore, users are advised to exercise caution and discretion when utilizing the library.
-<details>
-  <summary>Read more</summary>
+👉 Từ phiên bản 1.0.3, tất cả các cập nhật về tính năng và nâng cấp cho thư viện được tổng hợp trong file [Lịch sử thay đổi](https://chat.openai.com/changes_log.md).
 
-  In any circumstances, the user assumes full responsibility for the decision to use the data extracted from vnstock and bears complete liability for any resulting losses. It is strongly recommended to independently verify the accuracy and reliability of the data before making use of it.
+## 2.2 🛠 Cài đặt
 
-  Engaging in stock market data usage and investment decisions entails risks and may lead to financial losses. Users are encouraged to seek guidance from financial experts and comply with securities regulations in Vietnam and internationally when participating in stock trading activities.
+Để sử dụng thư viên vnstock,bạn cần **sử dụng pip để cài đặt** (yêu cầu phiên bản Python 3.7 trở lên) với câu lệnh sau trong giao diện cửa sổ dòng lệnh Terminal với macOS, Linux hoặc Command Prompt với Windows. Bạn cũng có thể chèn đoạn mã này vào một ô lệnh trong Jupyter Notebook và thực thi nó, có thể cần sử dụng dấu `!` trước câu lệnh:
 
-  Please note that vnstock does not assume responsibility and holds no legal liability for any losses or damages arising from the utilization of this software package.
+`pip install vnstock`
 
-</details>
+Ngoài ra, **nếu bạn muốn sử dụng phiên bản `vnstock` mới nhất từ nguồn Github thay vì phiên bản ổn định từ [Pypi](https://pypi.org/project/vnstock/)** thì sử dụng lệnh cài đặt sau:
 
-# II. Getting Started for Beginners
+`pip install git+https://github.com/thinh-vu/vnstock.git@beta`
 
-## 2.1. Helpful documents
-👉 For more information and illustrative examples of usage, please visit my blog post available in Vietnamese/English [here](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
-
-👉 You can open the Jupyter Notebook file [vnstock demo index - all functions testing // 2023-03-25.ipynb](https://github.com/thinh-vu/vnstock/blob/main/vnstock_demo_index_all_functions_testing_2023_03_25.ipynb) to try out all the functions of vnstock. To use it, click on the ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) button at the top of the notebook to open it with Google Colab.
-
-🖐 If you find this library valuable and would like to support the author in maintaining vnstock as an open-source and free project, you can contribute to the development fund. For more details, please refer to the following blog post: [Joining Together to Build a Strong VNStock Community](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/).
-
-🔥 You can also explore [Ideas for Advanced Features for Future Releases](https://github.com/users/thinh-vu/projects/1/views/4) to contribute to vnstock's development.
-
-👉 Starting from version 1.0.3, all feature updates and enhancements for the library are consolidated in the [Change Log](https://chat.openai.com/changes_log.md) file.
-
-
-## 2.2 🛠 Installation
-
-To get this package working, you will need to **install it via pip** (with a Python 3.7 version or higher) on the terminal by typing:
-
-``$ pip install vnstock``
-
-Additionally, **if you want to use the latest `vnstock` version instead of the stable one, you can install it from source** with the following command:
-
-``$ pip install git+https://github.com/thinh-vu/vnstock.git@beta``
-
-**The `main` branch ensures the user that the most updated version will always be working and fully operative** so as not to wait until the 
-the stable release comes out (which eventually may take some time depending on the number of issues to solve).
-
+**Nhánh `main` của repository này đảm bảo thể hiện mã nguồn vnstock được phát hành trên Pypi** trong khi đó, nhánh `beta` cho phép tải những cập nhật mới nhất từ thư viện, đôi khi có thể phát sinh lỗi.
 ---
 
-# III. 💻 Usage
-You can understand some basic functionality of the vnstock package by following this guide.
-First of all, you need to import the vnstock package to your python project by running this code. After that, feel free to call any functions listed below.
+# III. 💻 Cách sử dụng các hàm trong vnstock
+Bạn có thể hiểu cách sử dụng các hàm cơ bản của vnstock bằng cách tham khảo hướng dẫn này hoặc đơn giản là mở file [vnstock demo index - all functions testing // 2023-03-25.ipynb](https://github.com/thinh-vu/vnstock/blob/main/vnstock_demo_index_all_functions_testing_2023_03_25.ipynb) để chạy các dòng lệnh mẫu và xem kết quả. Ngoài ra, tất cả các hàm có trong vnstock đều được cung cấp docstring đầy đủ, do đó bạn có thể xem phần lời nhắc khi viết câu lệnh trên các IDE như Google Colab, Visual Studio Code, hay Jupyter Notebook, ... để biết thêm thông tin chi tiết về cách sử dụng các hàm.
+
+Để nạp các hàm của vnstock vào dự án Python của bạn, cần dùng lệnh `import` như dưới đây, sau đó bạn có thể sử dụng các hàm được liệt kê bên dưới.
+
 ```python
 from vnstock import *
 ```
 
-## 2.1 📰 All listing companies
+## 2.1 📰 Danh sách các công ty niêm yết
 ```python
 listing_companies()
 ```
-The function reads from the csv file by default. If mode is set to live, it requests realtime data from the API.
+Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc định (trong thư mục /src của repo này). Nếu tham số `mode="live"` được chỉ rõ, nó sẽ đọc dữ liệu trực tiếp từ API. Bởi danh sách các công ty niêm yết thường không thay đổi liên tục trong thời gian dài nên các bạn hạn chế sử dụng chế độ đọc dữ liệu trực tiếp từ API để đỡ gây sự chú ý và tốn tài nguyên của nhà cung cấp dữ liệu dẫn đến việc họ sử dụng các biện pháp chặn truy cập từ bot.
 
 <details>
   <summary>Output</summary>
@@ -93,7 +62,7 @@ The function reads from the csv file by default. If mode is set to live, it requ
 
 </details>
 
-## 2.2. Ticker overview
+## 2.2. Tổng quan về một mã chứng khoán cụ thể
 ```python
 ticker_overview('TCB')
 ```
@@ -109,10 +78,12 @@ ticker_overview('TCB')
 
 </details>
 
-## 2.3. 📈 Historical Data Retrieval
+## 2.3. 📈 Truy xuất dữ liệu giá lịch sử
 
 vnstock allows the user to **download stock historical data from TCBS**. In 
 the example presented below, the historical data from the past years of a stock is retrieved. 
+
+vnstock cho phép người dùng **tải xuống dữ liệu lịch sử giao dịch cổ phiếu** với hai các cấp độ chi bao gồm 5 cấp độ: 1 phút, 5 phút, 15 phút, 1 giờ, 1 ngày. Trong ví dụ dưới đây, dữ liệu giá được truy xuất theo cấp độ ngày.
 
 ```python
 df =  stock_historical_data(symbol='GMD', 
@@ -120,13 +91,13 @@ df =  stock_historical_data(symbol='GMD',
                             end_date='2022-02-25')
 print(df.head())
 ```
-You can also try the short form of every function in this library, for example:
+Bạn cũng có thể viết hàm theo dạng rút gọn như dưới đây, điều này đúng với tất cả các hàm, miễn là thông số được nhập vào đúng thứ tự:
 
 ```python
 df = stock_historical_data("GMD", "2021-01-01", "2022-02-25")
 print(df.head())
 ```
-The result should look like this:
+Và đây là kết quả
 
 <details>
   <summary>Output</summary>
@@ -142,17 +113,17 @@ The result should look like this:
 
 </details>
 
-## 2.4. 📊 Price Table
-You can download the price board of a target list of stocks to analyze with ease compared to viewing it directly on TCBS.
+## 2.4. 📊 Bảng giá
+Bạn có thể tải xuống bảng giá của một danh sách các cổ phiếu được chọn để phân tích dễ dàng hơn (khi xuất ra Google Sheets/Excel) so với việc xem trực tiếp trên bảng giá của các công ty chứng khoán.
 
 <details>
-  <summary>Price Board</summary>
+  <summary>Bảng giá</summary>
 
   ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png)
 
 </details>
 
-All you need to do is pass the list of stock symbols to the function as below:
+Tất cả việc bạn cần làm là nhập vào danh sách các mã cổ phiếu bạn chọn:
 
 ```
 price_board('TCB,SSI,VND')
@@ -170,7 +141,7 @@ price_board('TCB,SSI,VND')
 ```
 </details>
 
-## 2.5. 🔥 Intraday Trading Data
+## 2.5. 🔥 Dữ liệu thời gian thực trong ngày giao dịch (Intraday)
 
 <details>
   <summary>Intraday view on TCBS</summary>
@@ -179,8 +150,7 @@ price_board('TCB,SSI,VND')
   ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen2.png)
 
 </details>
-vnstock allows the user to **download intraday real-time/historical data**. In 
-the example presented below, you can see the intraday historical data from the last weekday of the current week.
+vnstock cho phép người dùng tải xuống dữ liệu giao dịch theo thời gian thực trong ngày ngày giao dịch. Nếu mốc thời gian bạn truy cứu rơi vào Thứ Bảy, Chủ Nhật thì dữ liệu nhận được thể hiện cho ngày giao dịch của Thứ 6 của tuần đó.
 
 ```python
 df =  stock_intraday_data(symbol='GMD', 
@@ -203,14 +173,14 @@ print(df.head())
 
 </details>
 
-## 2.6. 💰Financial Ratio
-### 2.6.1. Report from SSI
+## 2.6. 💰 Các chỉ số tài chính
+### 2.6.1. So sánh các chỉ số tài chính của nhiều mã cổ phiếu
 ```python
 financial_ratio_compare (symbol_ls=['TCB', 'CTG', 'BID'], industry_comparison='true', frequency= 'Yearly', start_year=2020)
 ```
-- _symbol_ls_: a list of ticker that needs to be compared
-- _industry_comparison_: `true` or `false`
-- _frequency:_ `Yearly` or `Quarterly`
+- _symbol_ls_: danh sách các mã cổ phiếu quán tâm
+- _industry_comparison_: `true` hoặc `false`
+- _frequency:_ `Yearly` hoặc `Quarterly`
 
 <details>
   <summary>Output</summary>
@@ -231,7 +201,7 @@ financial_ratio_compare (symbol_ls=['TCB', 'CTG', 'BID'], industry_comparison='t
 ```
 </details>
 
-### 2.6.2. Report from TCBS
+### 2.6.2. Chỉ số tài chính của một mã cổ phiếu
 ```python
 financial_ratio("TCB", 'quarterly', True)
 ```
@@ -249,11 +219,12 @@ financial_ratio("TCB", 'quarterly', True)
   ```
 </details>
 
-## 2.7. Stock comparison
-### 2.7.1. 🏭 Industry Analysis
+## 2.7. So sánh cổ phiếu
+### 2.7.1. 🏭 Phân tích các mã cổ phiếu cùng ngành
 ```python
 industry_analysis("VNM")
 ```
+Trả về thông tin các mã cổ phiếu cùng ngành với mã cổ phiếu nằm trong cùng nhóm ngành với mã `VNM`.
 
 <details>
   <summary>Output</summary>
@@ -270,7 +241,7 @@ industry_analysis("VNM")
 ```
 </details>
 
-### 2.7.2. 🔬 Stocks List Analysis
+### 2.7.2. 🔬 So sánh các chỉ số của danh sách các cổ phiếu tùy chọn
 ```python
 stock_ls_analysis("TCB, BID, CEO, GMD")
 ```
@@ -290,7 +261,7 @@ stock_ls_analysis("TCB, BID, CEO, GMD")
 
 </details>
 
-### 2.7.3. 🏢 Company Overview
+### 2.7.3. 🏢 Tổng quan công ty
 ```python
 company_overview('TCB')
 ```
@@ -305,13 +276,15 @@ company_overview('TCB')
 ```
 </details>
 
-### 2.7.4. 💵 Income Statement, Balance Sheet & Cashflow report
+### 2.7.4. 💵 Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
 
-#### 2.7.4.1. Report from SSI
+#### 2.7.4.1. Báo cáo từ SSI
+> Theo nhận định của tác giả, định dạng báo cáo được cung cấp bởi SSI khá đầy đủ và dễ theo dõi so với bản báo cáo tài chính được phát hành của các công ty hơn so với phiên bản do TCBS cung cấp (rút gọn).
+
 ```python
 financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly')
 ```
-- _report_type:_ You can choose 1 of 3 reports: `BalanceSheet`, `IncomeStatement`, or `CashFlow`
+- _report_type:_ Bạn có thể chọn 1 trong ba mẫu báo cáo: `BalanceSheet` cho Bảng cân đối kế toán, `IncomeStatement` cho báo cáo kết quả kinh doanh, hoặc `CashFlow` cho báo cáo lưu chuyển tiền tệ
 - _frequency:_ `Yearly` or `Quarterly`
 
 <details>
@@ -333,9 +306,9 @@ financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly
   ```
 </details>
 
-#### 2.7.4.2. Report from TCBS
+#### 2.7.4.2. Báo cáo từ TCBS
 
-##### 📄 Income Statement
+##### 📄 Báo cáo kinh doanh
 
 ![income_statement](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_income_statement.png)
 ```python
@@ -356,7 +329,7 @@ index                                                                           
 ```
 </details>
 
-##### 🧾Balance Sheet
+##### 🧾 Bảng cân đối kế toán
 
 ![balance_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_balancesheet.png)
 ```python
@@ -377,7 +350,7 @@ index                                                                           
 ```
 </details>
 
-##### 💶 Cashflow Report
+##### 💶 Báo cáo lưu chuyển tiền tệ
 
 ```python
 financial_flow(symbol="TCB", report_type='cashflow', report_range='quarterly')
@@ -396,7 +369,7 @@ index
 ```
 </details>
 
-## 2.8. 🧧 Dividend Historical Data
+## 2.8. 🧧 Lịch sử chi trả cổ tức
 
 ```python
 dividend_history("VNM")
@@ -414,7 +387,8 @@ dividend_history("VNM")
 ```
 </details>
 
-## 2.9. ⭐General Rating
+## 2.9. ⭐ Đánh giá xếp hạng chung
+![general_rating](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/general_rating.png)
 
 ```python
 general_rating("VNM")
@@ -429,7 +403,7 @@ general_rating("VNM")
 ```
 </details>
 
-## 2.10. 🌱 Business Model Rating
+## 2.10. 🌱 Đánh giá mô hình kinh doanh
 ```python
 biz_model_rating("VNM")
 ```
@@ -443,7 +417,7 @@ biz_model_rating("VNM")
 ```
 </details>
 
-## 2.11. 🎮 Business Operation Rating
+## 2.11. 🎮 Đánh giá hiệu quả hoạt động
 ```python
 biz_operation_rating("VNM")
 ```
@@ -457,7 +431,7 @@ biz_operation_rating("VNM")
 ```
 </details>
 
-## 2.12. 📑 Financial Health Rating
+## 2.12. 📑 Đánh giá sức khỏe tài chính
 ```python
 financial_health_rating("VNM")
 ```
@@ -471,7 +445,7 @@ financial_health_rating("VNM")
 ```
 </details>
 
-## 2.13. 💲 Valuation Rating
+## 2.13. 💲 Đánh giá về Định giá
 ```python
 valuation_rating("VNM")
 ```
@@ -485,7 +459,7 @@ valuation_rating("VNM")
 ```
 </details>
 
-## 2.14.  💳 Industry Financial Health
+## 2.14.  💳 Sức khỏe tài chính theo ngành
 ```python
 industry_financial_health("VNM")
 ```
@@ -499,16 +473,16 @@ industry_financial_health("VNM")
 ```
 </details>
 
-## 2.15. 🌏 Market Watch
-### 2.15.1. Top stocks
+## 2.15. 🌏 Thông tin thị trường
+### 2.15.1. Các mã cổ phiếu đứng đầu theo tiêu chí xếp loại 
 
 <details>
   <summary>SSI Top Stocks</summary>
 
-Top Breakout > Top Gainers > Top Losers > Top Value > Top Volume
+Top Breakout (Đột phá) > Top Gainers (Tăng giá) > Top Losers (Giảm giá) > Top Value (Giá trị) > Top Volume (Khối lượng)
 ![top_mover](./src/ssi_top_breakout_gainer_loser.png)
 
-Top New High > Top Foreign Trading > Top New Low
+Top New High (vượt đỉnh) > Top Foreign Trading (nhà đầu tư ngước ngoài) > Top New Low (thủng đáy)
 ![top_foreigntrading_high_low](./src/top_foreigntrading_newhigh_newlow.png)
 
 </details>
@@ -530,7 +504,9 @@ market_top_mover('ForeignTrading')
 ```
 </details>
 
-### 2.15.2. Foreign Trade Insights
+### 2.15.2. Thông tin giao dịch nhà đầu tư nước ngoài (NDTNN)
+Trong ví dụ dưới đây, thể hiện giao dịch mua vào của NDTNN.
+
 ```python
 fr_trade_heatmap ('All', 'FrBuyVol')
 ```
@@ -555,10 +531,10 @@ fr_trade_heatmap ('All', 'FrBuyVol')
   ```
 </details>
 
-### 2.15.3. Market latest indices & values
+### 2.15.3. Biến động của các nhóm chỉ số
 ![latest_indices](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_latest_indices.png)
 
-Retrieve the latest indices values & brief insights
+Thông tin các nhóm chỉ số phổ biến của thị trường chứng khoán Việt Nam.
 
 ```python
 get_latest_indices()
@@ -598,14 +574,14 @@ get_latest_indices()
   ```
 </details>
 
-### 2.15.4. Market latest indices in depth data
+### 2.15.4. Dữ liệu chuyên sâu theo nhóm chỉ số cụ thể
 ![index_series_data](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_index_series_data.png)
 
 ```python
 get_index_series(index_code='VNINDEX', time_range='OneYear')
 ```
-- Data provider: FiinTrade on SSI iBoard
-- Use one of the following index code:
+- Nhà cung cấp dữ liệu: SSI iBoard sử dụng dữ liệu từ FiinTrade.
+- Sử dụng một trong các mã chỉ số sau để tra cứu:
   
   ```
   'VNINDEX', 'VN30', 'HNXIndex', 'HNX30', 'UpcomIndex', 'VNXALL',
@@ -613,9 +589,9 @@ get_index_series(index_code='VNINDEX', time_range='OneYear')
   'VNFINLEAD', 'VNFINSELECT', 'VNHEAL', 'VNIND', 'VNIT', 'VNMAT', 'VNMID',
   'VNREAL', 'VNSI', 'VNSML', 'VNUTI', 'VNX50'
   ```
-  You can get the complete list of the latest indices from `get_latest_indices()` function
+  Bạn có thể liệt kê toàn bộ các nhóm chỉ số với hàm `get_latest_indices()`.
 
-- `time_range`: Use one of the following values:
+- `time_range`: Sử dụng khung thời gian là một trong các giá trị sau
  ```
  'OneDay', 'OneWeek', 'OneMonth', 'ThreeMonth', 'SixMonths', 'YearToDate', 'OneYear', 'ThreeYears', 'FiveYears'
  ```
@@ -643,7 +619,7 @@ get_index_series(index_code='VNINDEX', time_range='OneYear')
 
 # IV. 🙋‍♂️ Contact Information
 
-You can contact me at one of my social network profiles:
+Bạn có thể kết nối với tác giả qua các hình thức sau. Trong trường hợp cần hỗ trợ nhanh, bạn có thể chọn nhắn tin qua Messenger hoặc Linkedin, tôi sẽ phản hồi ngay lập tức nếu có thể trong hầu hết các trường hợp.
 
 <div id="badges" align="center">
   <a href="https://www.linkedin.com/in/thinh-vu">
@@ -660,30 +636,34 @@ You can contact me at one of my social network profiles:
   </a>
 </div>
 
----
+# V. 💪 Hỗ trợ phát triển dự án vnstock
 
-# V. 💪 Join Us in Supporting vnstock
-
-If you find value in vnstock and my open-source projects, you can support their development by making a contribution or simply treating me to a cup of coffee as a token of appreciation.
-
-You have three options to contribute: Momo, Bank Transfer, and Paypal. Your contribution will help me cover the hosting fees for my blog and continue creating high-quality content. Thank you for your support!
+Nếu bạn nhận thấy giá trị từ vnstock và các dự án mã nguồn mở của tôi, bạn có thể hỗ trợ phát triển chúng bằng cách quyên góp hoặc đơn giản là gửi tặng tôi một ly cà phê để cảm ơn.
+Bạn có thể chọn 1 trong 3 hình thức đóng góp bao gồm Momo, Chuyển khoản ngân hàng và Gửi tiền qua Paypal. Sự đóng góp của bạn sẽ giúp tôi duy trì phí lưu trữ blog và tiếp tục tạo ra nội dung chất lượng cao. Cảm ơn sự ủng hộ của bạn!
 
 - [Paypal](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US)
-- ![momo-qr](./src/momo-qr-thinhvu.jpeg)
-- ![vcb-qr](./src/vcb-qr-thinhvu.jpg)
+- ![momo-qr](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/momo-qr-thinhvu.jpeg)
+- ![vcb-qr](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vcb-qr-thinhvu.jpg)
 
-## VI. Licensing
+# VI. ⚖ Tuyên bố miễn trừ trách nhiệm
+vnstock được phát triển nhằm mục đích cung cấp các công cụ nghiên cứu đơn giản và miễn phí, nhằm giúp người nghiên cứu tiếp cận và phân tích dữ liệu chứng khoán một cách dễ dàng. Dữ liệu được cung cấp phụ thuộc vào nguồn cấp dữ liệu, do đó, khi sử dụng, bạn cần thận trọng và cân nhắc.
+
+💰 Trong bất kỳ trường hợp nào, người sử dụng hoàn toàn chịu trách nhiệm về quyết định sử dụng dữ liệu trích xuất từ vnstock và chịu trách nhiệm với bất kỳ tổn thất nào có thể phát sinh. Bạn nên tự mình đảm bảo tính chính xác và đáng tin cậy của dữ liệu trước khi sử dụng chúng.
+
+Việc sử dụng dữ liệu chứng khoán và quyết định đầu tư là hoạt động có rủi ro và có thể gây mất mát tài sản. Bạn nên tìm kiếm lời khuyên từ các chuyên gia tài chính và tuân thủ các quy định pháp luật về chứng khoán tại Việt Nam và quốc tế khi tham gia vào hoạt động giao dịch chứng khoán.
+
+Xin lưu ý rằng vnstock không chịu trách nhiệm và không có bất kỳ trách nhiệm pháp lý nào đối với bất kỳ tổn thất hoặc thiệt hại nào phát sinh từ việc sử dụng gói phần mềm này.
+
+🐱‍👤 vnstock được thiết kế hoàn toàn cho mục đích phân tích và thực hành nghiên cứu đầu tư. Mọi hình thức sử dụng không đúng mục đích hoặc việc sử dụng trái phép thư viện với mục đích xấu như tấn công public API hay gây hại cho hệ thống thông qua từ chối truy cập hoặc các hành động tương tự, hoàn toàn nằm ngoài phạm vi sử dụng dự định và không thuộc trách nhiệm của nhóm phát triển.
+
+## V. Bản quyền và giấy phép
+
 
 ```
-Copyright (c) 2022 Thinh Vu | thinh-vu @ Github | MIT
+Bản quyền (c) 2022 Thinh Vu | thinh-vu @ Github | MIT
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Được cấp phép theo quyền tự do, miễn phí, cho bất kỳ cá nhân nào nhận được một bản sao của phần mềm này và các tệp tài liệu liên quan (gọi chung là "Phần mềm"), để sử dụng Phần mềm mà không có bất kỳ hạn chế nào, bao gồm nhưng không giới hạn quyền sử dụng, sao chép, sửa đổi, hợp nhất, xuất bản, phân phối, cấp phép lại và/hoặc bán các bản sao của Phần mềm, và cho phép những người nhận Phần mềm được nhúng vào Phần mềm này, tuân thủ các điều kiện sau đây:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+Thông báo bản quyền trên và thông báo giấy phép này phải được bao gồm trong tất cả các bản sao hoặc phần quan trọng của Phần mềm.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
-
+PHẦN MỀM ĐƯỢC CUNG CẤP "NHƯ NÓ LÀ", KHÔNG BẢO ĐẢM BẤT KỲ LOẠI NÀO, BAO GỒM NHƯNG KHÔNG GIỚI HẠN ĐẾN SỰ BẢO ĐẢM VỀ CHẤT LƯỢNG KINH DOANH, PHÙ HỢP VỚI MỤC ĐÍCH CỤ THỂ VÀ VI PHẠM QUYỀN SỞ HỮU. TRONG MỌI TRƯỜNG HỢP, TÁC GIẢ HOẶC CHỦ SỞ HỮU BẢN QUYỀN KHÔNG CHỊU TRÁCH NHIỆM ĐỐI VỚI BẤT KỲ YÊU CẦU BỒI THƯỜNG, THIỆT HẠI HOẶC TRÁCH NHIỆM PHÁP LÝ NÀO PHÁT SINH TỪ HOẶC LIÊN QUAN ĐẾN SỬ DỤNG HOẶC HIỆN HỮU CỦA PHẦN MỀM.

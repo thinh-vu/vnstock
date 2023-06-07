@@ -1,12 +1,13 @@
 # Copyright 2022 Thinh Vu @ GitHub
 # See LICENSE for details.
 
+# from .utils import *
 import pandas as pd
 import requests
 from pandas import json_normalize
-from datetime import datetime, timedelta
-import time
 from io import BytesIO
+import time
+from datetime import datetime, timedelta
 
 # API request config for SSI API endpoints
 headers = {

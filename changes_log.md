@@ -1,3 +1,6 @@
+# Updated 2023-06-07
+Assist in providing a Vietnamese translation for the README.md file, which will be beneficial for local users.
+
 # Updated 2023-05-20
 > The `main` branch is for major updates only, while the `beta` branch is for minor updates. Pypi package will be reflected the `main` branch from now on.
 
