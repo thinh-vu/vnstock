@@ -12,6 +12,15 @@
 
 🌐 View in **[Vietnamese](https://github.com/thinh-vu/vnstock/blob/main/README.md)**
 
+TABLE OF CONTENTS
+- [I. Introduction](#i-introduction)
+- [II. Getting Started for Beginners](#ii-getting-started-for-beginners)
+- [III. 💻 Usage](#iii--usage)
+- [IV. 🙋‍♂️ Contact Information](#iv-️-contact-information)
+- [V. 💪 Join Us in Supporting vnstock](#v--join-us-in-supporting-vnstock)
+- [VI. Licensing](#vi-licensing)
+
+
 # I. Introduction
 ## 1.1. Overview
 vnstock is a Python library designed to easily and freely retrieve Vietnam stock market data. vnstock utilizes reliable data sources, including but not limited to stock companies and market analysis firms in Vietnam. 

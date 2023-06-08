@@ -9,6 +9,15 @@
 
 🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/main/README-en.md)**
 
+MỤC LỤC
+- [I. 🎤 Giới thiệu](#i--giới-thiệu)
+- [II. 📚 Hướng dẫn sử dụng cho người mới](#ii-hướng-dẫn-sử-dụng-cho-người-mới)
+- [III. 💻 Cách sử dụng các hàm trong vnstock](#iii--cách-sử-dụng-các-hàm-trong-vnstock)
+- [IV. 🙋‍♂️ Contact Information](#iv-️-contact-information)
+- [V. 💪 Hỗ trợ phát triển dự án vnstock](#v--hỗ-trợ-phát-triển-dự-án-vnstock)
+- [VI. ⚖ Tuyên bố miễn trừ trách nhiệm](#vi--tuyên-bố-miễn-trừ-trách-nhiệm)
+- [VII. Bản quyền và giấy phép](#vii-bản-quyền-và-giấy-phép)
+
 # I. 🎤 Giới thiệu
 ## 1.1. Giới thiệu chung
 vnstock là thư viện Python được thiết kế để tải dữ liệu chứng khoán Việt Nam một cách dễ dàng và miễn phí. vnstock sử dụng các nguồn cấp dữ liệu đáng tin cậy, bao gồm nhưng không giới hạn từ công ty chứng khoán và công ty phân tích thị trường tại Việt Nam. Gói thư viện được thiết kế dựa trên nguyên tắc về sự đơn giản và mã nguồn mở, hầu hết các hàm được viết dựa trên thư viện request và pandas có sẵn trên môi trường Google Colab do đó người dùng không cần cài đặt thêm các gói thư viện kèm theo.
@@ -19,7 +28,7 @@ vnstock cung cấp nhiều tính năng đa dạng như tải dữ liệu lịch 
 ## 1.3. Nguồn cấp dữ liệu
 Thư viện python này kết nối tới các API công khai của các nguồn cấp dữ liệu để tải về để làm việc dưới dạng các DataFrame trong dự án Python. Việc truy xuất dữ liệu này là hoàn toàn **MIỄN PHÍ** và không có **GIỚI HẠN**. 
 
-# II. Hướng dẫn sử dụng cho người mới
+# II. 📚 Hướng dẫn sử dụng cho người mới
 
 👉 Để biết thêm thông tin và minh hoạt về cách sử dụng, bạn vui lòng truy cập bài viết trên blog của tôi, có sẵn bằng tiếng Việt/Anh [tại đây](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
 
@@ -685,7 +694,7 @@ Xin lưu ý rằng vnstock không chịu trách nhiệm và không có bất k�
 
 🐱‍👤 vnstock được thiết kế hoàn toàn cho mục đích phân tích và thực hành nghiên cứu đầu tư. Mọi hình thức sử dụng không đúng mục đích hoặc việc sử dụng trái phép thư viện với mục đích xấu như tấn công public API hay gây hại cho hệ thống thông qua từ chối truy cập hoặc các hành động tương tự, hoàn toàn nằm ngoài phạm vi sử dụng dự định và không thuộc trách nhiệm của nhóm phát triển.
 
-## V. Bản quyền và giấy phép
+## VII. Bản quyền và giấy phép
 
 
 ```
