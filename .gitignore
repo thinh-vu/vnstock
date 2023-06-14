@@ -1,4 +1,3 @@
-
 dist/vnstock-0.1.0-py3-none-any.whl
 dist/vnstock-0.1.0.tar.gz
 vnstock.egg-info/dependency_links.txt
@@ -10,3 +9,4 @@ dist/vnstock-0.1.1.tar.gz
 dist/vnstock-0.1.2-py3-none-any.whl
 dist/vnstock-0.1.2.tar.gz
 test_notebook.ipynb
+.DS_Store
