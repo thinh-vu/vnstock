@@ -38,7 +38,7 @@ Thư viện python này kết nối tới các API công khai của các nguồn
 
 🔥 Bạn có thể tham khảo thêm [Ý tưởng cho các tính năng nâng cao cho các phiên bản sắp tới](https://github.com/users/thinh-vu/projects/1/views/4) để đồng hành cùng vnstock. 
 
-👉 Từ phiên bản 1.0.3, tất cả các cập nhật về tính năng và nâng cấp cho thư viện được tổng hợp trong file [Lịch sử thay đổi](https://chat.openai.com/changes_log.md).
+👉 Từ phiên bản 1.0.3, tất cả các cập nhật về tính năng và nâng cấp cho thư viện được tổng hợp trong file [Lịch sử thay đổi](https://github.com/thinh-vu/vnstock/blob/beta/changes_log.md).
 
 ## 2.2 🛠 Cài đặt
 
