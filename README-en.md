@@ -53,7 +53,7 @@ vnstock is developed with the purpose of providing simple and free research tool
 ## 2.1. Helpful documents
 👉 For more information and illustrative examples of usage, please visit my blog post available in Vietnamese/English [here](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
 
-👉 You can open the Jupyter Notebook file [vnstock demo index - all functions testing // 2023-06-22.ipynb](https://github.com/thinh-vu/vnstock/blob/beta/vnstock_demo_index_all_functions_testing_2023_06_22.ipynb) to try out all the functions of vnstock. To use it, click on the ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) button at the top of the notebook to open it with Google Colab.
+👉 You can open the Jupyter Notebook file [vnstock demo index - all functions testing // 2023-06-22.ipynb](https://github.com/thinh-vu/vnstock/blob/beta/demo/vnstock_demo_index_all_functions_testing_2023_06_22.ipynb) to try out all the functions of vnstock. To use it, click on the ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) button at the top of the notebook to open it with Google Colab.
 
 🖐 If you find this library valuable and would like to support the author in maintaining vnstock as an open-source and free project, you can contribute to the development fund. For more details, please refer to the following blog post: [Joining Together to Build a Strong VNStock Community](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/).
 
