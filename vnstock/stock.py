@@ -30,6 +30,22 @@ headers = {
         'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7'
         }
 
+entrade_headers = {
+  'authority': 'services.entrade.com.vn',
+  'accept': 'application/json, text/plain, */*',
+  'accept-language': 'en-US,en;q=0.9',
+  'dnt': '1',
+  'origin': 'https://banggia.dnse.com.vn',
+  'referer': 'https://banggia.dnse.com.vn/',
+  'sec-ch-ua': '"Edge";v="114", "Chromium";v="114", "Not=A?Brand";v="24"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"Windows"',
+  'sec-fetch-dest': 'empty',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-site': 'cross-site',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1788.0'
+}
+
 def api_request(url, headers=headers):
     r = requests.get(url, headers).json()
     return r
@@ -37,51 +53,57 @@ def api_request(url, headers=headers):
 ## STOCK LISTING
 
 import pandas as pd
-def listing_companies (mode='', path='https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vn_stock_listing_companies_2023-05-20.csv'):
+def listing_companies (path='https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023-06-17.csv'):
     """
     This function returns the list of all available stock symbols from a csv file or a live api request.
     Parameters: 
-        mode (str): The mode of getting the data. If empty, read from the csv file. If 'live', request from the api url. 
-        path (str): The path of the csv file to read from. Default is the path of the file 'vn_stock_listing_companies_2023-02-23.csv'. You can find the latest updated file at `https://github.com/thinh-vu/vnstock/tree/main/src`
+        path (str): The path of the csv file to read from. Default is the path of the file 'listing_companies_enhanced-2023-06-17.csv'. You can find the latest updated file at `https://github.com/thinh-vu/vnstock/tree/main/src`
     Returns: df (DataFrame): A pandas dataframe containing the stock symbols and other information. 
     """
-    if mode == '':
-        df = pd.read_csv(path)
-    elif mode == 'live':
-        url = 'https://fiin-core.ssi.com.vn/Master/GetListOrganization?language=vi'
-        r = api_request(url)
-        df = pd.DataFrame(r['items']).drop(columns=['organCode', 'icbCode', 'organTypeCode', 'comTypeCode']).rename(columns={'comGroupCode': 'group_code', 'organName': 'company_name', 'organShortName':'company_short_name'})
+    df = pd.read_csv(path)
     return df
 
-def ticker_overview (symbol):
-    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/ticker/{}/overview'.format(symbol)).json()
+def company_overview (symbol):
+    """
+    This function returns the company overview of a target stock symbol
+    Args:
+        symbol (:obj:`str`, required): 3 digits name of the desired stock.
+    """
+    data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/ticker/{symbol}/overview').json()
     df = json_normalize(data)
+    # Rearrange columns
+    df = df[['ticker', 'exchange', 'industry', 'companyType',
+            'noShareholders', 'foreignPercent', 'outstandingShare', 'issueShare',
+            'establishedYear', 'noEmployees',  
+            'stockRating', 'deltaInWeek', 'deltaInMonth', 'deltaInYear', 
+            'shortName', 'industryEn', 'industryID', 'industryIDv2', 'website']]
     return df
 
 ## STOCK TRADING HISTORICAL DATA
-def stock_historical_data (symbol, start_date, end_date):
+
+def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', headers=entrade_headers): # DNSE source (will be published on vnstock)
     """
-    This function returns the stock historical daily data.
-    Args:
-        symbol (:obj:`str`, required): 3 digits name of the desired stock.
-        start_date (:obj:`str`, required): the start date to get data (YYYY-mm-dd).
-        end_date (:obj:`str`, required): the end date to get data (YYYY-mm-dd).
+    Get historical price data from entrade.com.vn
+    Parameters:
+        symbol (str): ticker of the stock
+        from_date (str): start date of the historical price data
+        to_date (str): end date of the historical price data
+        resolution (str): resolution of the historical price data. Default is '1D' (daily), other options are '1' (1 minute), 15 (15 minutes), 30 (30 minutes), '1H' (hourly)
+        headers (dict): headers of the request
     Returns:
         :obj:`pandas.DataFrame`:
-        | tradingDate | open | high | low | close | volume |
+        | time | open | high | low | close | volume |
         | ----------- | ---- | ---- | --- | ----- | ------ |
         | YYYY-mm-dd  | xxxx | xxxx | xxx | xxxxx | xxxxxx |
-
-    Raises:
-        ValueError: raised whenever any of the introduced arguments is not valid.
-    """ 
-    fd = int(time.mktime(time.strptime(start_date, "%Y-%m-%d")))
-    td = int(time.mktime(time.strptime(end_date, "%Y-%m-%d")))
-    data = requests.get('https://apipubaws.tcbs.com.vn/stock-insight/v1/stock/bars-long-term?ticker={}&type=stock&resolution=D&from={}&to={}'.format(symbol, fd, td)).json()
-    df = json_normalize(data['data'])
-    df['tradingDate'] = pd.to_datetime(df.tradingDate.str.split("T", expand=True)[0])
-    df.columns = df.columns.str.title()
-    df.rename(columns={'Tradingdate':'TradingDate'}, inplace=True)
+    """
+    # convert from_date, to_date to timestamp
+    from_timestamp = int(datetime.strptime(start_date, '%Y-%m-%d').timestamp())
+    to_timestamp = int(datetime.strptime(end_date, '%Y-%m-%d').timestamp())
+    url = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from={from_timestamp}&to={to_timestamp}&symbol={symbol}&resolution={resolution}"
+    response = requests.request("GET", url, headers=headers).json()
+    df = pd.DataFrame(response)
+    df['t'] = pd.to_datetime(df['t'], unit='s') # convert timestamp to datetime
+    df = df.rename(columns={'t': 'time', 'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'}).drop(columns=['nextTime'])
     return df
 
 ## TCBS TRADING PRICE TABLE
@@ -161,7 +183,7 @@ def company_overview (symbol):
     Args:
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
     """
-    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/ticker/{}/overview'.format(symbol)).json()
+    data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/ticker/{symbol}/overview').json()
     df = json_normalize(data)
     return df
 
@@ -226,11 +248,11 @@ def financial_ratio (symbol, report_range, is_all): #TCBS source
     else:
       y = 'false'
 
-    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{}/financialratio?yearly={}&isAll={}'.format(symbol, x, y)).json()
+    data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{symbol}/financialratio?yearly={x}&isAll={y}').json()
     df = json_normalize(data)
     return df
 
-def financial_flow(symbol, report_type, report_range): # incomestatement, balancesheet, cashflow | report_range: 0 for quarterly, 1 for yearly
+def financial_flow(symbol='TCB', report_type='incomestatement', report_range='quarterly'): # incomestatement, balancesheet, cashflow | report_range: 0 for quarterly, 1 for yearly
     """
     This function returns the quarterly financial ratios of a stock symbol. Some of expected ratios are: priceToEarning, priceToBook, roe, roa, bookValuePerShare, etc
     Args:
@@ -242,7 +264,7 @@ def financial_flow(symbol, report_type, report_range): # incomestatement, balanc
         x = 1
     elif report_range == 'quarterly':
         x = 0
-    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{}/{}'.format(symbol, report_type), params={'yearly': x, 'isAll':'true'}).json()
+    data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{symbol}/{report_type}', params={'yearly': x, 'isAll':'true'}).json()
     df = json_normalize(data)
     df[['year', 'quarter']] = df[['year', 'quarter']].astype(str)
     df['index'] = df['year'].str.cat('-Q' + df['quarter'])

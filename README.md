@@ -66,7 +66,7 @@ from vnstock import *
 ```python
 listing_companies()
 ```
-Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc định (trong thư mục /src của repo này). Nếu tham số `mode="live"` được chỉ rõ, nó sẽ đọc dữ liệu trực tiếp từ API. Bởi danh sách các công ty niêm yết thường không thay đổi liên tục trong thời gian dài nên các bạn hạn chế sử dụng chế độ đọc dữ liệu trực tiếp từ API để đỡ gây sự chú ý và tốn tài nguyên của nhà cung cấp dữ liệu dẫn đến việc họ sử dụng các biện pháp chặn truy cập từ bot.
+Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc định (trong thư mục /data của repo này). Bởi danh sách các công ty niêm yết thường không thay đổi liên tục nên việc này không gây trở ngại nhiều. Hiện tại chế độ đọc dữ liệu từ APIs đã được tạm gỡ bỏ do bị chặn truy cập bởi các nhà cung cấp dữ liệu.
 
 <details>
   <summary>Output</summary>
@@ -84,14 +84,14 @@ Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc 
 
 ## 2.2. Tổng quan về một mã chứng khoán cụ thể
 ```python
-ticker_overview('TCB')
+company_overview('TCB')
 ```
 
 <details>
   <summary>Output</summary>
 
   ```
-  >>> ticker_overview('TCB')
+  >>> company_overview('TCB')
     exchange    shortName  industryID industryIDv2   industry  ... deltaInMonth deltaInYear  outstandingShare  issueShare  ticker
   0     HOSE  Techcombank         289         8355  Ngân hàng  ...       -0.027      -0.038            3510.9      3510.9     TCB
   ```
@@ -100,21 +100,20 @@ ticker_overview('TCB')
 
 ## 2.3. 📈 Truy xuất dữ liệu giá lịch sử
 
-vnstock allows the user to **download stock historical data from TCBS**. In 
-the example presented below, the historical data from the past years of a stock is retrieved. 
-
-vnstock cho phép người dùng **tải xuống dữ liệu lịch sử giao dịch cổ phiếu** với hai các cấp độ chi bao gồm 5 cấp độ: 1 phút, 5 phút, 15 phút, 1 giờ, 1 ngày. Trong ví dụ dưới đây, dữ liệu giá được truy xuất theo cấp độ ngày.
+vnstock cho phép người dùng **tải xuống dữ liệu lịch sử giao dịch cổ phiếu** với theo 5 mức độ chi tiết theo khoảng thời gian bao gồm: 1 phút, 15 phút, 30 phút, 1 giờ, 1 ngày. Trong ví dụ dưới đây, dữ liệu giá được truy xuất theo cấp độ ngày.
 
 ```python
 df =  stock_historical_data(symbol='GMD', 
                             start_date="2021-01-01", 
-                            end_date='2022-02-25')
+                            end_date='2022-02-25', resolution='1D')
 print(df.head())
 ```
+- Mới: Giá trị mà tham số `resolution` có thể nhận là `1D` (mặc định, 1 ngày), '1' (1 phút), 15 (15 phút), 30 (30 phút), '1H' (hàng giờ).
+
 Bạn cũng có thể viết hàm theo dạng rút gọn như dưới đây, điều này đúng với tất cả các hàm, miễn là thông số được nhập vào đúng thứ tự:
 
 ```python
-df = stock_historical_data("GMD", "2021-01-01", "2022-02-25")
+df = stock_historical_data("GMD", "2021-01-01", "2022-02-25", "1D")
 print(df.head())
 ```
 Và đây là kết quả
@@ -123,12 +122,10 @@ Và đây là kết quả
   <summary>Output</summary>
 
   ```{r, engine='python', count_lines}
-          open     high      low    close   volume tradingDate
-  0    32182.0  33157.0  31987.0  32279.0  4226500  2021-01-04
-  1    32279.0  33596.0  31938.0  32962.0  4851900  2021-01-05
-  2    33352.0  33352.0  32279.0  32572.0  3641300  2021-01-06
-  3    32864.0  33644.0  31694.0  33157.0  5753700  2021-01-07
-  4    33547.0  33937.0  32669.0  33059.0  4587500  2021-01-08
+   time        open     high     low      close    volume
+0  2021-01-04  32182.0  33157.0  31987.0  32279.0  4226500
+1  2021-01-05  32279.0  33596.0  31938.0  32962.0  4851900
+2  2021-01-06  33352.0  33352.0  32279.0  32572.0  3641300
   ```
 
 </details>

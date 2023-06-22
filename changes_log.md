@@ -1,3 +1,14 @@
+# Updated 2023-06-22
+- Referred to as version 0.15 (coming soon on Pypi)
+- Introduce a new feature to the stock_historical_data function, enabling retrieval of data with multiple time resolutions. The corresponding API endpoint supporting this function has been upgraded.
+  - Include a resolution parameter to allow users to obtain price data at intervals of 1 minute, 15 minutes, 30 minutes, 1 hour, or 1 day.
+  - Modify the column name in the returned dataframe from tradingDate to time.
+- Clearly mark functions that are not available for SSI API endpoints.
+- The `mode='live'` option in the function listing_companies() has been removed. The function will now only read the company listing from a csv file on this github repo.
+
+# Updated 2023-06-07
+Assist in providing a Vietnamese translation for the README.md file, which will be beneficial for local users.
+
 # Updated 2023-05-20
 > The `main` branch is for major updates only, while the `beta` branch is for minor updates. Pypi package will be reflected the `main` branch from now on.
 
