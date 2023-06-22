@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 __author__ = "Thinh Vu @thinh-vu in GitHub"
-__version__ = "0.1.5"
+__version__ = "0.1.6"
 
 from .stock import *
 # from .utils import *

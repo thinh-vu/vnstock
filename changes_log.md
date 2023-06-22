@@ -5,6 +5,7 @@
   - Modify the column name in the returned dataframe from tradingDate to time.
 - Clearly mark functions that are not available for SSI API endpoints.
 - The `mode='live'` option in the function listing_companies() has been removed. The function will now only read the company listing from a csv file on this github repo.
+- Update the repo folder tree, added data folder data files, demo folder to store demo files.
 
 # Updated 2023-06-07
 Assist in providing a Vietnamese translation for the README.md file, which will be beneficial for local users.
@@ -14,4 +15,4 @@ Assist in providing a Vietnamese translation for the README.md file, which will 
 
 - The listing_companies() function can now read the company listing from either a csv file on this github repo or a live API request.
 - The stock_intraday_data () function has a new limit of 100 for the page_size parameter imposed by the TCBS.
-- The README.md file reflects the changes made to the above functions.
+- The README.md file reflects the changes made to the above functions.pip
