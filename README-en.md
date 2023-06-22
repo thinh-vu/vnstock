@@ -59,7 +59,7 @@ vnstock is developed with the purpose of providing simple and free research tool
 
 🔥 You can also explore [Ideas for Advanced Features for Future Releases](https://github.com/users/thinh-vu/projects/1/views/4) to contribute to vnstock's development.
 
-👉 Starting from version 1.0.3, all feature updates and enhancements for the library are consolidated in the [Change Log](https://chat.openai.com/changes_log.md) file.
+👉 Starting from version 1.0.3, all feature updates and enhancements for the library are consolidated in the [Change Log](https://github.com/thinh-vu/vnstock/blob/beta/changes_log.md) file.
 
 
 ## 2.2 🛠 Installation
