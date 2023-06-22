@@ -88,32 +88,30 @@ from vnstock import *
 ```python
 listing_companies()
 ```
-The function reads from the csv file by default. If mode is set to live, it requests realtime data from the API.
+This function reads data from the attached CSV file on Github by default (in the /data directory of this repository). Since the list of listed companies doesn't change frequently, this doesn't pose much of an obstacle. Currently, the mode to read data from APIs has been temporarily removed due to access restrictions imposed by the data providers."
 
 <details>
   <summary>Output</summary>
 
 ```
-     ticker  group_code                                       company_name            company_short_name
-0       HSV  UpcomIndex                   Công ty Cổ phần Gang Thép Hà Nội              Gang Thép Hà Nội
-1       SCV  UpcomIndex                      Công ty Cổ phần Muối Việt Nam                  Visalco.,JSC
-2       LYF  UpcomIndex              Công ty Cổ phần  Lương Thực Lương Yên  Công ty Lương Thực Lương Yên
-3       CST  UpcomIndex                 Công ty Cổ phần Than Cao Sơn - TKV            Than Cao Sơn - TKV
-4       BVL  UpcomIndex                            Công ty Cổ phần BV Land                       BV Land
+  ticker comGroupCode                                       organName  ...  VNMAT VNREAL  VNUTI
+0    VVS   UpcomIndex  Công ty Cổ phần Đầu tư Phát triển Máy Việt Nam  ...  False  False  False
+1    XDC   UpcomIndex   Công ty TNHH MTV Xây dựng Công trình Tân Cảng  ...  False  False  False
+2    HSV   UpcomIndex           Công ty Cổ phần Tập đoàn HSV Việt Nam  ...  False  False  False
 ```
 
 </details>
 
 ## 2.2. Ticker overview
 ```python
-ticker_overview('TCB')
+company_overview('TCB')
 ```
 
 <details>
   <summary>Output</summary>
 
   ```
-  >>> ticker_overview('TCB')
+  >>> company_overview('TCB')
     exchange    shortName  industryID industryIDv2   industry  ... deltaInMonth deltaInYear  outstandingShare  issueShare  ticker
   0     HOSE  Techcombank         289         8355  Ngân hàng  ...       -0.027      -0.038            3510.9      3510.9     TCB
   ```
@@ -122,19 +120,20 @@ ticker_overview('TCB')
 
 ## 2.3. 📈 Historical Data Retrieval
 
-vnstock allows the user to **download stock historical data from TCBS**. In 
-the example presented below, the historical data from the past years of a stock is retrieved. 
+vnstock allows users to download historical stock trading data with 5 levels of detail based on time intervals: 1 minute, 15 minutes, 30 minutes, 1 hour, 1 day. In the example below, price data is retrieved at the daily resolution.
 
 ```python
-df =  stock_historical_data(symbol='GMD', 
-                            start_date="2021-01-01", 
-                            end_date='2022-02-25')
+df = stock_historical_data(symbol='GMD', 
+                           start_date="2021-01-01", 
+                           end_date='2022-02-25', 
+                           resolution='1D')
 print(df.head())
 ```
-You can also try the short form of every function in this library, for example:
+- New: The resolution parameter can accept the following values: 1D (default, 1 day), '1' (1 minute), 15 (15 minutes), 30 (30 minutes), '1H' (1 hour).
+- You can also use a shorter function format as shown below, which applies to all functions as long as the parameters are entered in the correct order:
 
 ```python
-df = stock_historical_data("GMD", "2021-01-01", "2022-02-25")
+df = stock_historical_data("GMD", "2021-01-01", "2022-02-25", "1D")
 print(df.head())
 ```
 The result should look like this:
@@ -143,12 +142,10 @@ The result should look like this:
   <summary>Output</summary>
 
   ```{r, engine='python', count_lines}
-          open     high      low    close   volume tradingDate
-  0    32182.0  33157.0  31987.0  32279.0  4226500  2021-01-04
-  1    32279.0  33596.0  31938.0  32962.0  4851900  2021-01-05
-  2    33352.0  33352.0  32279.0  32572.0  3641300  2021-01-06
-  3    32864.0  33644.0  31694.0  33157.0  5753700  2021-01-07
-  4    33547.0  33937.0  32669.0  33059.0  4587500  2021-01-08
+     time        open     high     low      close    volume
+  0  2021-01-04  32182.0  33157.0  31987.0  32279.0  4226500
+  1  2021-01-05  32279.0  33596.0  31938.0  32962.0  4851900
+  2  2021-01-06  33352.0  33352.0  32279.0  32572.0  3641300
   ```
 
 </details>
