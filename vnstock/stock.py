@@ -104,6 +104,7 @@ def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17
     df = pd.DataFrame(response)
     df['t'] = pd.to_datetime(df['t'], unit='s') # convert timestamp to datetime
     df = df.rename(columns={'t': 'time', 'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'}).drop(columns=['nextTime'])
+    df['time'] = df['time'].dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
     return df
 
 ## TCBS TRADING PRICE TABLE
