@@ -1,3 +1,7 @@
+# Updated 2023-06-29
+- Updated the stock_intraday_data function to elaborate more insights the data returned by the function and make it usable.
+- Updated the stock_historical_data to support getting indices historical data.
+
 # Updated 2023-06-22
 - Referred to as version 0.15 (coming soon on Pypi)
 - Introduce a new feature to the stock_historical_data function, enabling retrieval of data with multiple time resolutions. The corresponding API endpoint supporting this function has been upgraded.
