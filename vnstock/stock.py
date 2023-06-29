@@ -10,7 +10,7 @@ import time
 from datetime import datetime, timedelta
 
 # API request config for SSI API endpoints
-headers = {
+ssi_headers = {
         'Connection': 'keep-alive',
         'sec-ch-ua': '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
         'DNT': '1',
@@ -46,7 +46,19 @@ entrade_headers = {
   'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1788.0'
 }
 
-def api_request(url, headers=headers):
+tcbs_headers = {
+  'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
+  'DNT': '1',
+  'Accept-language': 'vi',
+  'sec-ch-ua-mobile': '?0',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Referer': 'https://tcinvest.tcbs.com.vn/',
+  'sec-ch-ua-platform': '"Windows"'
+}
+
+def api_request(url, headers=ssi_headers):
     r = requests.get(url, headers).json()
     return r
 
@@ -81,14 +93,15 @@ def company_overview (symbol):
 
 ## STOCK TRADING HISTORICAL DATA
 
-def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', headers=entrade_headers): # DNSE source (will be published on vnstock)
+def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', type='stock', headers=entrade_headers): # DNSE source (will be published on vnstock)
     """
     Get historical price data from entrade.com.vn
     Parameters:
-        symbol (str): ticker of the stock
+        symbol (str): ticker of a stock or index. Available indices are: VNINDEX, VN30, HNX, HNX30, UPCOM, VNXALLSHARE, VN30F1M, VN30F2M, VN30F1Q, VN30F2Q
         from_date (str): start date of the historical price data
         to_date (str): end date of the historical price data
         resolution (str): resolution of the historical price data. Default is '1D' (daily), other options are '1' (1 minute), 15 (15 minutes), 30 (30 minutes), '1H' (hourly)
+        type (str): stock or index. Default is 'stock'
         headers (dict): headers of the request
     Returns:
         :obj:`pandas.DataFrame`:
@@ -99,7 +112,7 @@ def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17
     # convert from_date, to_date to timestamp
     from_timestamp = int(datetime.strptime(start_date, '%Y-%m-%d').timestamp())
     to_timestamp = int(datetime.strptime(end_date, '%Y-%m-%d').timestamp())
-    url = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from={from_timestamp}&to={to_timestamp}&symbol={symbol}&resolution={resolution}"
+    url = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/{type}?from={from_timestamp}&to={to_timestamp}&symbol={symbol}&resolution={resolution}"
     response = requests.request("GET", url, headers=headers).json()
     df = pd.DataFrame(response)
     df['t'] = pd.to_datetime(df['t'], unit='s') # convert timestamp to datetime
@@ -155,26 +168,47 @@ def start_xm (period): # return the start date of x months
     date = pd.date_range(end=today, periods=period+1, freq='MS')[0].strftime('%Y-%m-%d')
     return date
 
-def stock_intraday_data (symbol, page_num, page_size):
+def stock_intraday_data (symbol='ACB', page_size=50, page=0, headers=tcbs_headers):
     """
-    This function returns the stock realtime intraday data (or data of the last working day = Friday) as a pandas dataframe.
-    Parameters: 
-        symbol (str): The 3-digit name of the desired stock. Example: `TCB`. 
-        page_num (int): The page index starting from 0. Example: 0. 
-        page_size (int): The number of rows in a page to be returned by this query, maximum of 100.
-    Returns: 
-        df (DataFrame): A pandas dataframe containing the price, volume, time, percentage of changes, etc of the stock intraday data.
-    Raises: 
-        ValueError: If any of the arguments is not valid or the request fails. 
+    Get intraday stock insights from TCBS Trade Station
+    Parameters:
+        symbol (str): ticker of the stock
+        page_size (int): number of data points per page. Default is 50. You can increase this parameter to about 1000 to get all data in one trading day.
+        page (int): page number. Default is 0. You can ignore this parameter.
+        headers (dict): headers of the request. You can ignore this parameter.
     """
-    d = datetime.now()
-    base_url = f'https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/his/paging?page={page_num}&size={page_size}'
-    print(base_url)
-    if d.weekday() > 4: #today is weekend
-        data = requests.get(f'{base_url}&headIndex=-1').json()
-    else: #today is weekday
-        data = requests.get(base_url).json()
-    df = json_normalize(data['data']).rename(columns={'p':'price', 'v':'volume', 't': 'time'})
+    # if the page_size is greater than 100, loop through the pages to get all data
+    if page_size > 100:
+        df = pd.DataFrame()
+        for i in range(0, page_size//100):
+            # create url
+            url = f"https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/investor/his/paging?page={i}&size=100&headIndex=-1"
+            # send request to get response
+            response = requests.request("GET", url, headers=headers).json()
+            df_temp = pd.DataFrame(response['data'])
+            df_temp['ticker'] = response['ticker']
+            df = pd.concat([df, df_temp])
+    else:
+        # create url
+        url = f"https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/investor/his/paging?page={page}&size={page_size}&headIndex=-1"
+        # send request to get response
+        response = requests.request("GET", url, headers=headers).json()
+        df = pd.DataFrame(response['data'])
+        df['ticker'] = response['ticker']
+    # move ticker column to the first column
+    cols = df.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    df = df[cols]
+    # drop columns cp, rcp, pcp
+    df.drop(columns=['cp', 'rcp', 'pcp'], inplace=True)
+    # rename columns ap to averagePrice, v to volume, a to orderType, t to time, n to orderCount, type to investorType
+    df.rename(columns={'ap': 'averagePrice', 'v': 'volume', 'a': 'orderType', 't': 'time', 'n': 'orderCount', 'type': 'investorType'}, inplace=True)
+    # arrange columns by ticker, time, orderType, investorType, volume, averagePrice, orderCount
+    df = df[['ticker', 'time', 'orderType', 'investorType', 'volume', 'averagePrice', 'orderCount']]
+    # rename values of orderType, SD to Sell Down, BU to Buy Up
+    df['orderType'] = df['orderType'].replace({'SD': 'Sell Down', 'BU': 'Buy Up'})
+    # reset index
+    df.reset_index(drop=True, inplace=True)
     return df
 
 # COMPANY OVERVIEW
@@ -190,7 +224,7 @@ def company_overview (symbol):
 
 
 # FINANCIAL REPORT
-def financial_report (symbol, report_type, frequency, headers=headers): # Quarterly, Yearly
+def financial_report (symbol, report_type, frequency, headers=ssi_headers): # Quarterly, Yearly
     """
     This function returns the balance sheet of a stock symbol by a Quarterly or Yearly range.
     Args:
@@ -203,7 +237,7 @@ def financial_report (symbol, report_type, frequency, headers=headers): # Quarte
     df = pd.read_excel(BytesIO(r.content), skiprows=7).dropna()
     return df
 
-def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_year, headers=headers): 
+def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_year, headers=ssi_headers): 
     """
     This function returns the balance sheet of a stock symbol by a Quarterly or Yearly range.
     Args:
@@ -419,7 +453,7 @@ def fr_trade_heatmap (exchange, report_type):
 
 # GET MARKET IN DEPT DATA - INDEX SERIES
 
-def get_index_series(index_code='VNINDEX', time_range='OneYear', headers=headers):
+def get_index_series(index_code='VNINDEX', time_range='OneYear', headers=ssi_headers):
     """
     Retrieve the Stock market index series, maximum in 5 years
     Args:
@@ -435,7 +469,7 @@ def get_index_series(index_code='VNINDEX', time_range='OneYear', headers=headers
     result = json_normalize(response.json()['items'])
     return result
 
-def get_latest_indices(headers=headers):
+def get_latest_indices(headers=ssi_headers):
     """
     Retrieve the latest indices values
     """

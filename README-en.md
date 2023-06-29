@@ -129,9 +129,13 @@ df = stock_historical_data(symbol='GMD',
                            resolution='1D')
 print(df.head())
 ```
-- New: The resolution parameter can accept the following values: 1D (default, 1 day), '1' (1 minute), 15 (15 minutes), 30 (30 minutes), '1H' (1 hour).
+- New: 
+  - The resolution parameter can accept the following values: 1D (default, 1 day), '1' (1 minute), 15 (15 minutes), 30 (30 minutes), '1H' (1 hour).
+  - The `type = 'stock'` parameter allows retrieving price data for stock symbols. The `type = 'index'` parameter allows retrieving price data for index codes. Supported index codes include: VNINDEX, VN30, HNX, HNX30, UPCOM, VNXALLSHARE, VN30F1M, VN30F2M, VN30F1Q, VN30F2Q.
+
 - You can also use a shorter function format as shown below, which applies to all functions as long as the parameters are entered in the correct order:
 
+- Retrieve historical data of a stock code.
 ```python
 df = stock_historical_data("GMD", "2021-01-01", "2022-02-25", "1D")
 print(df.head())
@@ -147,8 +151,13 @@ The result should look like this:
   1  2021-01-05  32279.0  33596.0  31938.0  32962.0  4851900
   2  2021-01-06  33352.0  33352.0  32279.0  32572.0  3641300
   ```
-
 </details>
+
+  - Retrieve historical data of an index code.
+  ```python
+  df = stock_historical_data("VNINDEX", "2021-01-01", "2022-02-25", "1D", 'index')
+  print(df)
+  ```
 
 ## 2.4. 📊 Price Table
 You can download the price board of a target list of stocks to analyze with ease compared to viewing it directly on TCBS.
@@ -191,23 +200,41 @@ vnstock allows the user to **download intraday real-time/historical data**. In
 the example presented below, you can see the intraday historical data from the last weekday of the current week.
 
 ```python
-df =  stock_intraday_data(symbol='GMD', 
-                            page_num=0, 
-                            page_size=100)
-print(df.head())
+df =  stock_intraday_data(symbol='TCB', 
+                            page_size=500)
+print(df)
 ```
 
 <details>
-  <summary>Output</summary>
+  <summary>Terminal output</summary>
 
   ```{r, engine='python', count_lines}
-  p     volume       cp       rcp   a   ba   sa     hl  pcp      time
-  0     50700.0  169700  0.0  0.0      0.0  0.0   True  0.0  14:45:08
-  1     50800.0    1000  0.0  0.0  BU  0.0  0.0  False  0.0  14:30:05
-  2     50800.0     500  0.0  0.0  BU  0.0  0.0  False  0.0  14:30:05
-  3     50800.0   20000  0.0  0.0  BU  0.0  0.0   True  0.0  14:29:54
-  4     50700.0     300  0.0  0.0  SD  0.0  0.0  False  0.0  14:29:53
+>>> stock_intraday_data('TCB', 500)
+
+  ticker      time  orderType investorType  volume  averagePrice  orderCount
+0    TCB  14:29:55  Sell Down        SHEEP    1000       32700.0           1
+1    TCB  14:29:47     Buy Up        SHEEP     200       32750.0           1
+2    TCB  14:29:44  Sell Down         WOLF    8000       32700.0          14
+3    TCB  14:29:41  Sell Down        SHEEP    1000       32700.0           5
+4    TCB  14:29:36  Sell Down         WOLF   23800       32700.0          10
   ```
+
+</details>
+
+<details>
+  <summary>Glossary</summary>
+  
+  - When a large order (from Sharks, big players, organizations, etc.) is actively placed for buying or selling on the Exchange, it typically gets matched with multiple small orders awaiting execution (buy or sell). If we only observe real-time individual matched orders, it becomes difficult to detect the entry of large orders (from Sharks, big players, etc.) that have just been pushed into the Exchange. Therefore, we "accumulate" these matched orders (resulting from a large active order being placed on the Exchange within a very short period) to help investors identify large orders (from Sharks, big players, etc.) more accurately. Shark orders are highlighted in green (for active buying) and red (for active selling).
+
+  - Sharks (CM) refer to large investors, institutions, or market leaders who have a significant influence on the market. The value of an order is greater than 1 billion Vietnamese dong per order. The 1-minute chart reflects the last 60 minutes of data, the 1-week chart summarizes data every 15 minutes for one week, and the 1-month chart aggregates daily data for one month.
+
+  - Wolves (SG) refer to experienced investors with relatively high-value orders. The value of an order ranges from 200 million to 1 billion Vietnamese dong per order.
+
+  - Sheep (CN) refer to small retail investors with low-value transactions and low active buying or selling. The value of a Buy or Sell active order is less than 200 million Vietnamese dong per order.
+
+  - Active buying (or Buy Up) occurs when an investor proactively places a buy order at the best ask price to match immediately. As a result, the matched price for this order typically pushes the price higher than the previous market price.
+
+  - Active selling (or Sell Down) occurs when an investor proactively places a sell order below the current price (or market price) of the stock, matching it immediately with the best bid price. Consequently, the market price is pulled down lower than the previous market price. Analyzing the volume of Buy Up and Sell Down transactions helps evaluate the relationship between supply (Sell Down) and demand (Buy Up) in actual matched order transactions, providing a relative assessment of money flow trends. When the percentage of Buy Up transactions compared to the total of Buy Up and Sell Down transactions is greater than 50%, it indicates that the market is inclined towards more buying than selling, and vice versa. This helps determine the money flow in and out of each stock. When this percentage undergoes a sudden significant change (>70% or <30%) compared to the equilibrium point (50%), it signals market buying or selling regardless of other factors.
 
 </details>
 
