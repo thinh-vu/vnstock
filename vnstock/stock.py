@@ -63,8 +63,6 @@ def api_request(url, headers=ssi_headers):
     return r
 
 ## STOCK LISTING
-
-import pandas as pd
 def listing_companies (path='https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023-06-17.csv'):
     """
     This function returns the list of all available stock symbols from a csv file or a live api request.
@@ -95,7 +93,7 @@ def company_overview (symbol):
 
 def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', type='stock', headers=entrade_headers): # DNSE source (will be published on vnstock)
     """
-    Get historical price data from entrade.com.vn
+    Get historical price data from entrade.com.vn. The unit price is 1000 VND.
     Parameters:
         symbol (str): ticker of a stock or index. Available indices are: VNINDEX, VN30, HNX, HNX30, UPCOM, VNXALLSHARE, VN30F1M, VN30F2M, VN30F1Q, VN30F2Q
         from_date (str): start date of the historical price data
@@ -265,13 +263,13 @@ def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_ye
 
 # STOCK FILTERING
 
-def financial_ratio (symbol, report_range, is_all): #TCBS source
+def financial_ratio (symbol, report_range, is_all=False):
     """
-    This function returns the quarterly financial ratios of a stock symbol. Some of expected ratios are: priceToEarning, priceToBook, roe, roa, bookValuePerShare, etc
+    This function retrieves the essential financial ratios of a stock symbol on a quarterly or yearly basis. Some of the expected ratios include: P/E, P/B, ROE, ROA, BVPS, etc
     Args:
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
         report_range (:obj:`str`, required): 'yearly' or 'quarterly'.
-        is_all (:obj:`boo`, required): True or False
+        is_all (:obj:`boo`, required): Set to True to retrieve all available years of data,  False to retrieve the last 5 years data (or the last 10 quarters). Default is True.
     """
     if report_range == 'yearly':
         x = 1
@@ -285,6 +283,21 @@ def financial_ratio (symbol, report_range, is_all): #TCBS source
 
     data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{symbol}/financialratio?yearly={x}&isAll={y}').json()
     df = json_normalize(data)
+    # drop nan columns
+    df = df.dropna(axis=1, how='all')
+    #if report_range == 'yearly' then set index column to be df['year'] and drop quarter column, else set index to df['year'] + df['quarter']
+    if report_range == 'yearly':
+        df = df.set_index('year').drop(columns={'quarter'})
+    elif report_range == 'quarterly':
+        # add prefix 'Q' to quarter column
+        df['quarter'] = 'Q' + df['quarter'].astype(str)
+        # concatenate quarter and year columns
+        df['range'] = df['quarter'].str.cat(df['year'].astype(str), sep='-')
+        # move range column to the first column
+        df = df[['range'] + [col for col in df.columns if col != 'range']]
+        # set range column as index
+        df = df.set_index('range')
+    df = df.T
     return df
 
 def financial_flow(symbol='TCB', report_type='incomestatement', report_range='quarterly'): # incomestatement, balancesheet, cashflow | report_range: 0 for quarterly, 1 for yearly
@@ -302,7 +315,11 @@ def financial_flow(symbol='TCB', report_type='incomestatement', report_range='qu
     data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{symbol}/{report_type}', params={'yearly': x, 'isAll':'true'}).json()
     df = json_normalize(data)
     df[['year', 'quarter']] = df[['year', 'quarter']].astype(str)
-    df['index'] = df['year'].str.cat('-Q' + df['quarter'])
+    # if report_range == 'yearly' then set index to df['year'], else set index to df['year'] + df['quarter']
+    if report_range == 'yearly':
+        df['index'] = df['year']
+    elif report_range == 'quarterly':
+        df['index'] = df['year'].str.cat('-Q' + df['quarter'])
     df = df.set_index('index').drop(columns={'year', 'quarter'})
     return df
 
@@ -382,27 +399,55 @@ def industry_financial_health (symbol):
 
 ## STOCK COMPARISON
 
-def industry_analysis (symbol):
+def industry_analysis (symbol, lang='vi'):
     """
     This function returns an overview of rating for companies at the same industry with the desired stock symbol.
     Args:
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
+        lang (:obj:`str`, optional): 'vi' for Vietnamese, 'en' for English. Default is 'vi'.
     """
     data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/council?tickers={}&fType=INDUSTRIES'.format(symbol)).json()
     df = json_normalize(data)
     data1 = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/single?ticker={}&fType=TICKER'.format(symbol)).json()
     df1 = json_normalize(data1)
     df = pd.concat([df1, df]).reset_index(drop=True)
+    # if label=vi, then rename all columns: ticker to Mã CP, marcap to Vốn hóa (tỷ), price to Giá, numberOfDays to Số phiên tăng/giảm liên tiếp, priceToEarning to P/E, peg to PEG, priceToBook to P/B, dividend to Cổ tức, roe to ROE, roa to ROA, ebitOnInterest to Thanh toán lãi vay, currentPayment to Thanh toán hiện hành, quickPayment to Thanh toán nhanh, grossProfitMargin to Biên LNG, postTaxMargin to Biên LNST, debtOnEquity to Nợ/Vốn CSH, debtOnEbitda to Nợ/EBITDA, income5year to LNST 5 năm,  sale5year to Doanh thu 5 năm, income1quarter to LNST quý gần nhất, sale1quarter to Doanh thu quý gần nhất, nextIncome to LNST năm tới, nextSale to Doanh thu quý tới, rsi to RSI
+    # drop na columns
+    df = df.dropna(axis=1, how='all')
+    if lang == 'vi':
+        column_names = {'ticker': 'Mã CP', 'marcap': 'Vốn hóa (tỷ)', 'price': 'Giá', 'numberOfDays': 'Số phiên tăng/giảm liên tiếp', 'priceToEarning': 'P/E', 'peg': 'PEG', 'priceToBook': 'P/B', 'valueBeforeEbitda':'EV/EBITDA', 'dividend': 'Cổ tức', 'roe': 'ROE', 'roa': 'ROA', 'badDebtPercentage' : ' Tỉ lệ nợ xấu', 'ebitOnInterest': 'Thanh toán lãi vay', 'currentPayment': 'Thanh toán hiện hành', 'quickPayment': 'Thanh toán nhanh', 'grossProfitMargin': 'Biên LNG', 'postTaxMargin': 'Biên LNST', 'debtOnEquity': 'Nợ/Vốn CSH', 'debtOnEbitda': 'Nợ/EBITDA', 'income5year': 'LNST 5 năm',  'sale5year':  'Doanh thu 5 năm',  'income1quarter':  'LNST quý gần nhất',  'sale1quarter':  'Doanh thu quý gần nhất',  'nextIncome':  'LNST năm tới',  'nextSale':  'Doanh thu năm tới',  "rsi": "RSI"}
+        df.rename(columns=column_names, inplace=True)
+    elif lang == 'en':
+        pass
+    # transpose dataframe
+    df = df.T
+    # set ticker row as column name then drop ticker row
+    df.columns = df.iloc[0]
+    df = df.drop(df.index[0])
     return df
 
-def stock_ls_analysis (symbol_ls):
+def stock_ls_analysis (symbol_ls, lang='vi'):
     """
     This function returns an overview of rating for a list of companies by entering list of stock symbols.
     Args:
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
+        lang (:obj:`str`, optional): Set to 'vi' to retrieve the column labels in Vietnamese, 'en' to retrieve the data in English. Default is 'vi'.
     """
     data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/council?tickers={}&fType=TICKERS'.format(symbol_ls)).json()
     df = json_normalize(data).dropna(axis=1)
+    # if label=vi, then rename all columns: ticker to Mã CP, marcap to Vốn hóa (tỷ), price to Giá, numberOfDays to Số phiên tăng/giảm liên tiếp, priceToEarning to P/E, peg to PEG, priceToBook to P/B, dividend to Cổ tức, roe to ROE, roa to ROA, ebitOnInterest to Thanh toán lãi vay, currentPayment to Thanh toán hiện hành, quickPayment to Thanh toán nhanh, grossProfitMargin to Biên LNG, postTaxMargin to Biên LNST, debtOnEquity to Nợ/Vốn CSH, debtOnEbitda to Nợ/EBITDA, income5year to LNST 5 năm,  sale5year to Doanh thu 5 năm, income1quarter to LNST quý gần nhất, sale1quarter to Doanh thu quý gần nhất, nextIncome to LNST năm tới, nextSale to Doanh thu quý tới, rsi to RSI
+    # drop na columns
+    df = df.dropna(axis=1, how='all')
+    if lang == 'vi':
+        column_names = {'ticker': 'Mã CP', 'marcap': 'Vốn hóa (tỷ)', 'price': 'Giá', 'numberOfDays': 'Số phiên tăng/giảm liên tiếp', 'priceToEarning': 'P/E', 'peg': 'PEG', 'priceToBook': 'P/B', 'valueBeforeEbitda':'EV/EBITDA', 'dividend': 'Cổ tức', 'roe': 'ROE', 'roa': 'ROA', 'badDebtPercentage' : ' Tỉ lệ nợ xấu', 'ebitOnInterest': 'Thanh toán lãi vay', 'currentPayment': 'Thanh toán hiện hành', 'quickPayment': 'Thanh toán nhanh', 'grossProfitMargin': 'Biên LNG', 'postTaxMargin': 'Biên LNST', 'debtOnEquity': 'Nợ/Vốn CSH', 'debtOnEbitda': 'Nợ/EBITDA', 'income5year': 'LNST 5 năm',  'sale5year':  'Doanh thu 5 năm',  'income1quarter':  'LNST quý gần nhất',  'sale1quarter':  'Doanh thu quý gần nhất',  'nextIncome':  'LNST năm tới',  'nextSale':  'Doanh thu năm tới',  "rsi": "RSI", "rs":"RS"}
+        df.rename(columns=column_names, inplace=True)
+    elif lang == 'en':
+        pass
+    # transpose dataframe
+    df = df.T
+    # set ticker row as column name then drop ticker row
+    df.columns = df.iloc[0]
+    df = df.drop(df.index[0])
     return df
 
 ## MARKET WATCH

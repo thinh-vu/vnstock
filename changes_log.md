@@ -1,3 +1,13 @@
+# Updated 2023-07-05
+- The README.md file has been revised (applied to the Vietnamese language first).
+- Functions related to SSI data source that were unavailable have been removed.
+- The `financial_ratio` function has been enhanced with the following updates:
+  - The resulting DataFrame now has a transposed structure, with the year/quarter serving as the index, facilitating usability.
+  - The `is_all` parameter has been made optional.
+- The `industry_analysis` and stock_ls_analysis functions have been improved:
+  - The resulting DataFrame now has a transposed structure, with the stock ticker names as column headers, making it more user-friendly.
+  - An additional `lang` parameter has been introduced, allowing the display of DataFrame columns in Vietnamese/English labels.
+
 # Updated 2023-06-29
 - Updated the stock_intraday_data function to elaborate more insights the data returned by the function and make it usable.
 - Updated the stock_historical_data to support getting indices historical data.

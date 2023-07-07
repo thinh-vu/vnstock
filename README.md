@@ -26,43 +26,73 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 vnstock cung cấp nhiều tính năng đa dạng như tải dữ liệu lịch sử giá, thông tin công ty niêm yết, thông tin thị trường cho tất cả các mã chứng khoán niêm yết.
 
 ## 1.3. Nguồn cấp dữ liệu
-Thư viện python này kết nối tới các API công khai của các nguồn cấp dữ liệu để tải về để làm việc dưới dạng các DataFrame trong dự án Python. Việc truy xuất dữ liệu này là hoàn toàn **MIỄN PHÍ** và không có **GIỚI HẠN**. 
+Thư viện python này kết nối tới các API công khai của các nguồn cấp dữ liệu để tải về để làm việc dưới dạng các DataFrame trong dự án Python. Việc truy xuất dữ liệu này là hoàn toàn **MIỄN PHÍ**.
 
 # II. 📚 Hướng dẫn sử dụng cho người mới
+## 2.1. Tài nguyên quan trọng
 
-👉 Để biết thêm thông tin và minh hoạt về cách sử dụng, bạn vui lòng truy cập bài viết trên blog của tôi, có sẵn bằng tiếng Việt/Anh [tại đây](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
+### 2.1.2 Blog
 
-👉 Bạn có thể mở tệp Jupyter Notebook [vnstock_demo_index_all_functions_testing_2023_06_22.ipynb](https://github.com/thinh-vu/vnstock/blob/beta/demo/vnstock_demo_index_all_functions_testing_2023_06_22.ipynb) để dùng thử tất cả các hàm của vnstock. Để sử dụng, nhấp vào nút ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) ở đầu trang của notebook để mở với Google Colab.
+👉 Để biết thêm thông tin và minh hoạ về cách sử dụng, bạn vui lòng truy cập bài viết trên blog của tôi, có sẵn bằng tiếng Việt/Anh [tại đây](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
+
+### 2.1.2 Notebook minh hoạ
+
+👉 Bạn có thể mở tệp Jupyter Notebook [vnstock_demo_index_all_functions_testing](https://github.com/thinh-vu/vnstock/blob/beta/demo/vnstock_demo_index_all_functions_testing_2023_06_29.ipynb) để dùng thử tất cả các hàm của vnstock. Để sử dụng, nhấp vào nút ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) ở đầu trang của notebook để mở với Google Colab.
+
+### 2.1.3. Docstring
+Tất cả các hàm của vnstock đều được cung cấp docstring đầy đủ trong khi file README.md này có thể không cập nhật toàn bộ mô tả về các tham số cho phép của từng hàm. Bạn có thể xem phần gợi ý khi viết câu lệnh trên các IDE như Google Colab, Visual Studio Code, hay Jupyter Notebook hoặc mở phần source code của Github để xem chi tiết. Trong thời gian tới, vnstock sẽ được bổ sung mô tả đầy đủ tại README.md khi có thể.
+
+### 2.1.4. Xây dựng cộng đồng vnstock
 
 🖐 Nếu bạn thấy thư viện này có giá trị và muốn hỗ trợ tác giả duy trì vnstock dưới dạng mã nguồn mở, miễn phí thì có thể tham gia ủng hộ gây quỹ phát triển dự án này. Để biết thêm chi tiết, vui lòng tham khảo bài viết trên blog sau: [Cùng nhau xây dựng cộng đồng VNStock vững mạnh](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/).
 
+### 2.1.5. Lộ trình phát triển
+
 🔥 Bạn có thể tham khảo thêm [Ý tưởng cho các tính năng nâng cao cho các phiên bản sắp tới](https://github.com/users/thinh-vu/projects/1/views/4) để đồng hành cùng vnstock. 
+
+### 2.1.6. Lưu ý
 
 👉 Từ phiên bản 1.0.3, tất cả các cập nhật về tính năng và nâng cấp cho thư viện được tổng hợp trong file [Lịch sử thay đổi](https://github.com/thinh-vu/vnstock/blob/beta/changes_log.md).
 
-## 2.2 🛠 Cài đặt
+## 2.2 🛠 Cài đặt vnstock
+### Bước 1. Chọn phiên bản phù hợp
 
-Để sử dụng thư viên vnstock,bạn cần **sử dụng pip để cài đặt** (yêu cầu phiên bản Python 3.7 trở lên) với câu lệnh sau trong giao diện cửa sổ dòng lệnh Terminal với macOS, Linux hoặc Command Prompt với Windows. Bạn cũng có thể chèn đoạn mã này vào một ô lệnh trong Jupyter Notebook và thực thi nó, có thể cần sử dụng dấu `!` trước câu lệnh:
+> vnstock được phát triển thành hai nhánh riêng biệt. Bạn cần chọn phiên bản phù hợp và *copy câu lệnh tương ứng để thực hiện cài đặt ở bước tiếp theo*:
 
-`pip install vnstock`
+- Bản `stable` (đã phát triển ổn định) được chia sẻ qua pypi.org và nhánh `main` tại Github repo này. Để cài đặt bản stable bạn dùng câu lệnh đơn giản sau: 
+`pip install vnstock` hoặc cài đặt trực tiếp từ Github với câu lệnh:
 
-Ngoài ra, **nếu bạn muốn sử dụng phiên bản `vnstock` mới nhất từ nguồn Github thay vì phiên bản ổn định từ [Pypi](https://pypi.org/project/vnstock/)** thì sử dụng lệnh cài đặt sau:
+  `pip install git+https://github.com/thinh-vu/vnstock.git@main`
 
-`pip install git+https://github.com/thinh-vu/vnstock.git@beta`
+- Bản `beta` (nhận cập nhật mới nhất) được chia sẻ tại `beta` branch của Github repo.
 
-**Nhánh `main` của repository này đảm bảo thể hiện mã nguồn vnstock được phát hành trên Pypi** trong khi đó, nhánh `beta` cho phép tải những cập nhật mới nhất từ thư viện, đôi khi có thể phát sinh lỗi.
+  `pip install git+https://github.com/thinh-vu/vnstock.git@beta`
+
+<details>
+  <summary> Chọn xem branch phù hợp </summary>
+  ![select_branch](https://github.com/thinh-vu/vnstock/blob/beta/src/vnstock_select_branch.jpeg)
+</details>
+
+### Bước 2. Chạy câu lệnh cài đặt
+
+> Khi sử dụng file demo [vnstock_demo_index_all_functions_testing_2023_06_22.ipynb](https://github.com/thinh-vu/vnstock/blob/beta/demo/vnstock_demo_index_all_functions_testing_2023_06_22.ipynb) để bắt đầu, các câu lệnh cài đặt cần thiết đã được cung cấp sẵn để bạn thực thi (run).
+
+**pip được sử dụng để cài đặt vnstock**. pip có sẵn trong hầu hết các bản phân phối Python được cài đặt. Phiên bản python cần thiết cho vnstock tối thiểu là 3.7. Bạn có thể paste câu lệnh đã copy ở Bước 1 và chạy nó trong môi trường Python bạn đang sử dụng.
+
+- CLI: Mở Terminal (macOS/Linux) hoặc Command Prompt (Windows Desktop) và paste dòng lệnh trên, bấm Enter để cài đặt.pad
 ---
 
 # III. 💻 Cách sử dụng các hàm trong vnstock
-Bạn có thể hiểu cách sử dụng các hàm cơ bản của vnstock bằng cách tham khảo hướng dẫn này hoặc đơn giản là mở file [vnstock demo index - all functions testing // 2023-03-25.ipynb](https://github.com/thinh-vu/vnstock/blob/main/vnstock_demo_index_all_functions_testing_2023_03_25.ipynb) để chạy các dòng lệnh mẫu và xem kết quả. Ngoài ra, tất cả các hàm có trong vnstock đều được cung cấp docstring đầy đủ, do đó bạn có thể xem phần lời nhắc khi viết câu lệnh trên các IDE như Google Colab, Visual Studio Code, hay Jupyter Notebook, ... để biết thêm thông tin chi tiết về cách sử dụng các hàm.
 
-Để nạp các hàm của vnstock vào dự án Python của bạn, cần dùng lệnh `import` như dưới đây, sau đó bạn có thể sử dụng các hàm được liệt kê bên dưới.
+Bạn sẽ nắm được cách sử dụng các hàm của vnstock thông qua tài liệu hướng dẫn này, hoặc mở file demo [vnstock demo index](https://github.com/thinh-vu/vnstock/blob/beta/demo/vnstock_demo_index_all_functions_testing_2023_06_29.ipynb) để chạy các dòng lệnh mẫu, làm quen và xem kết quả trực tiếp.
+
+Để nạp các hàm của vnstock vào dự án Python của bạn, cần `import` chúng thông qua câu lệnh như dưới đây. Như vậy mọi thứ đã sẵn sàng để truy cập dữ liệu do vnstock cung cấp thông qua các hàm được liệt kê trong tài liệu hướng dẫn.
 
 ```python
 from vnstock import *
 ```
 
-## 2.1 📰 Danh sách các công ty niêm yết
+## 3.1 📰 Danh sách các công ty niêm yết
 ```python
 listing_companies()
 ```
@@ -82,7 +112,7 @@ Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc 
 
 </details>
 
-## 2.2. Tổng quan về một mã chứng khoán cụ thể
+## 3.2. Tổng quan về công ty
 ```python
 company_overview('TCB')
 ```
@@ -98,9 +128,9 @@ company_overview('TCB')
 
 </details>
 
-## 2.3. 📈 Truy xuất dữ liệu giá lịch sử
+## 3.3. 📈 Truy xuất dữ liệu giá lịch sử
 
-vnstock cho phép người dùng **tải xuống dữ liệu lịch sử giao dịch cổ phiếu** với theo 5 mức độ chi tiết theo khoảng thời gian bao gồm: 1 phút, 15 phút, 30 phút, 1 giờ, 1 ngày. Trong ví dụ dưới đây, dữ liệu giá được truy xuất theo cấp độ ngày.
+vnstock cho phép người dùng **tải xuống dữ liệu lịch sử giao dịch cổ phiếu** với theo 5 mức độ chi tiết theo khoảng thời gian bao gồm: 1 phút, 15 phút, 30 phút, 1 giờ, 1 ngày. Trong ví dụ dưới đây, dữ liệu giá được truy xuất theo cấp độ ngày. Đơn vị giá mặc định là 1000 VND.
 
 ```python
 df =  stock_historical_data(symbol='GMD', 
@@ -131,15 +161,15 @@ Và đây là kết quả
 2  2021-01-06  33352.0  33352.0  32279.0  32572.0  3641300
   ```
 
-  - Lấy dữ liệu lịch sử của mã chỉ số
-  ```python
-  df = stock_historical_data("VNINDEX", "2021-01-01", "2022-02-25", "1D", 'index')
-  print(df)
-  ```
-
 </details>
 
-## 2.4. 📊 Bảng giá
+- Lấy dữ liệu lịch sử của mã chỉ số
+```python
+df = stock_historical_data("VNINDEX", "2021-01-01", "2022-02-25", "1D", 'index')
+print(df)
+```
+
+## 3.4. 📊 Bảng giá
 Bạn có thể tải xuống bảng giá của một danh sách các cổ phiếu được chọn để phân tích dễ dàng hơn (khi xuất ra Google Sheets/Excel) so với việc xem trực tiếp trên bảng giá của các công ty chứng khoán.
 
 <details>
@@ -167,16 +197,16 @@ price_board('TCB,SSI,VND')
 ```
 </details>
 
-## 2.5. 🔥 Dữ liệu thời gian thực trong ngày giao dịch (Intraday)
+## 3.5. 🔥 Dữ liệu khớp lệnh trong ngày giao dịch
 
 <details>
-  <summary>Intraday view on TCBS</summary>
+  <summary>Minh hoạ giao diện TCBS</summary>
 
   ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen1.png)
   ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen2.png)
 
 </details>
-vnstock cho phép người dùng tải xuống dữ liệu giao dịch theo thời gian thực trong ngày giao dịch. Nếu mốc thời gian bạn truy cứu rơi vào Thứ Bảy, Chủ Nhật thì dữ liệu nhận được thể hiện cho ngày giao dịch của Thứ 6 của tuần đó.
+vnstock cho phép người dùng tải xuống dữ liệu khớp lệnh trong ngày giao dịch theo thời gian thực. Nếu mốc thời gian bạn truy cứu rơi vào Thứ Bảy, Chủ Nhật thì dữ liệu nhận được thể hiện cho ngày giao dịch của Thứ 6 của tuần đó.
 
 ```python
 df =  stock_intraday_data(symbol='TCB', 
@@ -216,83 +246,103 @@ print(df)
 
 </details>
 
-## 2.6. 💰 Các chỉ số tài chính
-### 2.6.1. So sánh các chỉ số tài chính của nhiều mã cổ phiếu
+## 3.6. 💰 Các chỉ số tài chính
 
-<details>
-  <summary>Tạm ngưng hoạt động do nguồn dữ liệu từ SSI bị chặn</summary>
-
-  ```python
-  financial_ratio_compare (symbol_ls=['TCB', 'CTG', 'BID'], industry_comparison='true', frequency= 'Yearly', start_year=2020)
-  ```
-  - _symbol_ls_: danh sách các mã cổ phiếu quán tâm
-  - _industry_comparison_: `true` hoặc `false`
-  - _frequency:_ `Yearly` hoặc `Quarterly`
-
-  <details>
-    <summary>Output</summary>
-
-  ```
-                                    Chỉ số          2017          2018          2019          2020          2021
-  0                                    P/E           NaN           NaN           NaN           NaN           NaN
-  1                                    BID  1.931659e+01  1.579755e+01  2.156374e+01  2.392118e+01  2.109997e+01
-  2                                    TCB  1.589460e+01  1.099041e+01  7.712361e+00  1.110489e+01  9.790559e+00
-  3                                    CTG  1.578063e+01  1.476715e+01  1.015345e+01  1.031625e+01  1.135594e+01
-  4                                    BID  1.931659e+01  1.579755e+01  2.156374e+01  2.392118e+01  2.109997e+01
-  ..                                   ...           ...           ...           ...           ...           ...
-  171                           Toàn ngành  2.272894e+10  2.932384e+10  3.172492e+10  3.927128e+10  5.101939e+10
-  172                                  NaN           NaN           NaN           NaN           NaN           NaN
-  173                                  NaN           NaN           NaN           NaN           NaN           NaN
-  174  Dữ liệu được cung cấp bởi FiinTrade           NaN           NaN           NaN           NaN           NaN
-  175                https://fiintrade.vn/           NaN           NaN           NaN           NaN           NaN
-  ```
-  </details>
-
-</details>
-
-### 2.6.2. Chỉ số tài chính của một mã cổ phiếu
+### 3.6.1. Bộ chỉ số tài chính của một mã cổ phiếu
 ```python
-financial_ratio("TCB", 'quarterly', True)
+financial_ratio(symbol="TCB", report_range='yearly', is_all=False)
 ```
+Trong đó:
+- `report_range` nhận 1 trong 2 giá trị: `yearly` cho phép trả về chỉ số theo năm, `quarterly` trả về dữ liệu theo quý
+- `is_all` có giá trị mặc định là `True` cho phép lấy chỉ số qua tất cả các kỳ (năm hoặc quý), `False` cho phép lấy các kỳ gần nhất (5 năm hoặc 10 quý gần đây).
 
 <details>
   <summary>Output</summary>
 
   ```
-  ticker  quarter  year  priceToEarning  priceToBook valueBeforeEbitda dividend  ...  badDebtOnAsset  liquidityOnLiability payableOnEquity cancelDebt ebitdaOnStockChange bookValuePerShareChange  creditGrowth
-  0     TCB        4  2021             9.9          1.9              None     None  ...           0.004                 0.382             5.1      0.004                None                   0.053         0.252
-  1     TCB        3  2021            10.0          2.0              None     None  ...           0.003                 0.405             5.1      0.004                None                   0.053         0.392
-  2     TCB        2  2021            11.4          2.2              None     None  ...           0.002                 0.370             5.0      0.008                None                   0.061         0.353
-  3     TCB        1  2021             9.9          1.8              None     None  ...           0.002                 0.354             4.9      0.012                None                   0.060         0.277
-  4     TCB        4  2020             9.0          1.5              None     None  ...           0.003                 0.372             4.9      0.013                None                   0.057         0.202
+>>> financial_ratio('TCB', 'yearly')
+year                      2022   2021   2020   2019   2018
+ticker                     TCB    TCB    TCB    TCB    TCB
+priceToEarning             4.5    9.7    9.0    8.2   10.7
+priceToBook                0.8    1.9    1.5    1.3    1.8
+roe                      0.197  0.217  0.181  0.178  0.215
+roa                      0.032  0.036   0.03  0.029  0.029
+earningPerShare           5729   5132   3504   2869   2410
+bookValuePerShare        32248  26452  21214  17679  14749
+interestMargin           0.053  0.057  0.049  0.043  0.041
+nonInterestOnToi         0.259   0.28  0.307  0.323  0.379
+badDebtPercentage        0.007  0.007  0.005  0.013  0.018
+provisionOnBadDebt       1.573  1.629   1.71  0.948  0.851
+costOfFinancing          0.028  0.022  0.031  0.038  0.041
+equityOnTotalAsset       0.162  0.164   0.17  0.162  0.161
+equityOnLoan              0.27  0.268  0.269  0.269  0.324
+costToIncome             0.328  0.301  0.319  0.347  0.318
+equityOnLiability          0.2    0.2    0.2    0.2    0.2
+epsChange                0.116  0.465  0.221  0.191  0.313
+assetOnEquity              6.2    6.1    5.9    6.2    6.2
+preProvisionOnToi        0.537  0.554  0.542   0.52  0.542
+postTaxOnToi               0.5  0.497  0.465  0.485  0.462
+loanOnEarnAsset          0.684  0.665  0.681  0.649  0.537
+loanOnAsset              0.602  0.611  0.631  0.602  0.498
+loanOnDeposit            1.173  1.104    1.0  0.998  0.794
+depositOnEarnAsset       0.583  0.603   0.68  0.651  0.676
+badDebtOnAsset           0.004  0.004  0.003  0.008  0.009
+liquidityOnLiability     0.347  0.382  0.372  0.411  0.531
+payableOnEquity            5.2    5.1    4.9    5.2    5.2
+cancelDebt               0.002  0.004  0.013  0.002  0.008
+bookValuePerShareChange  0.219  0.247    0.2  0.199  0.923
+creditGrowth             0.211  0.252  0.202  0.443 -0.006
   ```
 </details>
 
-## 2.7. So sánh cổ phiếu
-### 2.7.1. 🏭 Phân tích các mã cổ phiếu cùng ngành
+## 3.7. So sánh cổ phiếu
+### 3.7.1. 🏭 Phân tích chỉ số các cổ phiếu cùng ngành
 ```python
-industry_analysis("VNM")
+industry_analysis("VNM", lang='vi)
 ```
-Trả về thông tin các mã cổ phiếu cùng ngành với mã cổ phiếu nằm trong cùng nhóm ngành với mã `VNM`.
+- Trả về thông tin các mã cổ phiếu cùng ngành với mã cổ phiếu nằm trong cùng nhóm ngành với mã `VNM`.
+- Tham số `lang='vi` mặc định trả về tên các chỉ số bằng tiếng Việt, đổi thành `en` để giữ nguyên chỉ số với tên tiếng Anh.
+
+- Trong đó các chỉ số sau được thể hiện dưới dạng thập phân sử dụng để thể hiện chỉ số dưới dạng %: 
+  ```dividend (Cổ tức), ROE, ROA, ebitOnInterest (Thanh toán lãi vay), currentPayment (Thanh toán hiện hành), quickPayment (Thanh toán nhanh), grossProfitMargin (Biên LNG), postTaxMargin (Biên LNST), badDebtPercentage (Tỉ lệ nợ xấu), debtOnEquity (Nợ/Vốn CSH), debtOnEbitda (Nợ/EBITDA), income5year (LNST 5 năm),  sale5year (Doanh thu 5 năm), income1quarter (LNST quý gần nhất), sale1quarter (Doanh thu quý gần nhất), nextIncome (LNST năm tới), nextSale (Doanh thu quý tới)```
+- Lưu ý: Tên các column có thể chưa được chuyển đổi đầy đủ thành tiếng Việt. Nếu gặp chỉ số nào chưa được chuyển đổi tên thành tiếng Việt, bạn vui lòng comment cho tác giả nhé.
 
 <details>
   <summary>Output</summary>
 
-![preview](./src/stock_comparison_industries.png?raw=true)
-
 ```
->>> industry_analysis("VNM")
-   ticker  marcap   price  numberOfDays  priceToEarning   peg  priceToBook  valueBeforeEbitda  dividend  ...  debtOnEbitda  income5year  sale5year income1quarter sale1quarter nextIncome  nextSale   rsi    rs
-0     VNM  164897   78900             1            15.7  -3.1          5.0               12.6     0.037  ...           0.6        0.024      0.054         -0.249       -0.023       None      None  34.9  18.0
-0     MSN  186524  158000            -1            21.8   0.0          5.7               22.5     0.008  ...           5.5        0.251      0.154          4.610        0.009        NaN       NaN  54.5  58.0
-1     MCH   80250  112100             1            14.7   0.7          4.9               12.0     0.000  ...           1.2        0.152      0.150          0.381        0.372        NaN       NaN  48.6  36.0
-2     MML   26061   79700            -1            19.6   0.0          4.7               24.9     0.000  ...           4.2       -0.029     -0.050          6.771       -0.243      0.904      0.22  58.8  60.0
+>>> industry_analysis('VNM', label='vi')
+Mã CP                          VNM     MSN    MCH    QNS    KDC     IDP    SBT    MML    PAN    MCM    VSF    VOC    OCH    VSN    CLX    LSS     KTC    HSL    HKB
+Vốn hóa (tỷ)                  None  107634  51307  17543  16102   13204  11478  10108   4303   4232   3979   2890   1680   1618   1274    932     383    219     46
+Giá                           None   75600  71603  49149  62600  224000  15500  30900  20600  38473   7958  23727   8400  19994  14713  12500   10500   6180    900
+Số phiên tăng/giảm liên tiếp  None       3      2      4      0      -3      3      1     -1      1     -2      0      0      0      1      3       0     -1      0
+P/E                            NaN    49.2    9.1   12.3 -215.9    16.7   16.6  -18.7   13.2   11.7 -384.1    2.4   15.2   11.9    7.1   23.5    37.3   14.6   -0.8
+PEG                            NaN    -0.6   -8.0    0.9    1.9    -1.6   -1.4    0.1   -1.9    5.9    4.0    0.0   -0.1   -1.6    1.1    2.2    -0.8    0.8    0.5
+P/B                            NaN     4.1    2.2    2.3    2.5     6.5    1.2    1.9    1.0    1.8    1.7    1.1    1.3    1.2    0.8    0.6     1.0    0.5    0.2
+EV/EBITDA                      NaN    20.0    8.2   10.4   36.1    13.1   13.7 -267.0    7.2   11.4   25.9   -8.9    6.3    8.3   10.5    6.5    20.0   12.8   -3.1
+Cổ tức                         NaN   0.009    0.0    0.0  0.086   0.033    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0     0.0    0.0    0.0
+ROE                            NaN   0.081  0.277  0.195 -0.011   0.442  0.076 -0.098  0.075  0.159 -0.005  0.591  0.086  0.107  0.118  0.025   0.025  0.036 -0.263
+ROA                            NaN   0.016  0.175  0.128 -0.006    0.22  0.025 -0.042  0.021   0.14 -0.001  0.484  0.049  0.067  0.082  0.014   0.007  0.031  -0.15
+Thanh toán lãi vay             NaN     0.5    9.1    8.5   -0.2    19.4    0.9   -0.8    1.3    NaN    0.3   -2.0   -3.2   67.7   22.1    2.2     0.9    6.9   -4.4
+Thanh toán hiện hành           NaN     0.8    2.7    1.8    1.6     1.5    1.2    1.4    1.3    8.6    1.0    4.2    1.9    2.5    3.1    1.3     0.9    9.7    0.3
+Thanh toán nhanh               NaN     0.6    2.5    1.4    1.2     1.3    0.9    1.1    0.9    7.7    0.4    3.4    1.7    1.7    2.9    0.3     0.5    8.6    0.3
+Biên LNG                       NaN   0.272  0.432   0.28  0.188   0.385  0.115  0.117  0.171  0.323  0.067    NaN  0.286  0.247  0.264  0.121   0.035  0.039  0.728
+Biên LNST                      NaN   0.011  0.228  0.149    NaN   0.138  0.026    NaN  0.016  0.138    NaN  6.467    NaN  0.039  0.372  0.017   0.004  0.024    NaN
+Nợ/Vốn CSH                     NaN     2.0    0.3    0.4    0.6     0.4    1.3    1.0    0.7    0.0    1.5    0.1    0.1    0.0    0.0    0.4     2.3    0.0    0.5
+Nợ/EBITDA                      NaN     7.6    1.1    1.5    8.1     0.7    7.2  -88.3    3.4    0.1   12.3   -1.1    0.7    1.1    0.4    2.6    15.5    0.8   -2.0
+LNST 5 năm                     NaN   0.028  0.207  0.046  -0.04     NaN   0.12    NaN  0.001  0.098    NaN    NaN    NaN  0.012  0.065   -0.1  -0.157 -0.081    NaN
+Doanh thu 5 năm                NaN   0.152  0.153  0.016  0.123     NaN   0.22 -0.239  0.274  0.049 -0.053 -0.181 -0.018 -0.002  0.088 -0.008   0.067   0.16 -0.474
+LNST quý gần nhất              NaN  -0.519 -0.255 -0.258    NaN   0.316  0.443    NaN -0.694  0.397    NaN    NaN    NaN -0.131  0.092    NaN  36.983  -0.44    NaN
+Doanh thu quý gần nhất         NaN  -0.094 -0.252  0.093 -0.302  -0.057 -0.181  0.031 -0.352 -0.067  -0.31 -0.675 -0.197 -0.134 -0.123  0.102  -0.122 -0.142  0.009
+LNST năm tới                   NaN   0.285   0.26  0.173 -0.202   0.074  0.047 -0.719 -0.041   0.04 -0.939  0.116  6.025 -0.034   0.09 -0.155   0.813  0.022    NaN
+Doanh thu năm tới              NaN     0.2    0.3  0.162  0.283     0.1    0.1   -0.7   0.05   0.05   0.03   0.15   -0.5    0.1    0.3  -0.08   -0.06   0.02    NaN
+RSI                            NaN    50.7   43.1   71.8   24.0    28.5   59.2   33.7   68.2   53.5   46.6   44.1   51.1   32.3   55.5   55.3    33.3   54.8   61.1
 ```
 </details>
 
-### 2.7.2. 🔬 So sánh các chỉ số của danh sách các cổ phiếu tùy chọn
+### 3.7.2. 🔬 So sánh các chỉ số của danh sách các cổ phiếu tùy chọn
 ```python
-stock_ls_analysis("TCB, BID, CEO, GMD")
+stock_ls_analysis("TCB, BID, CEO, GMD", lang='vi')
 ```
 
 <details>
@@ -310,60 +360,9 @@ stock_ls_analysis("TCB, BID, CEO, GMD")
 
 </details>
 
-### 2.7.3. 🏢 Tổng quan công ty
-```python
-company_overview('TCB')
-```
+### 3.7.4. 💵 Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
 
-<details>
-  <summary>Output</summary>
-
-```
->>> company_overview('TCB')
-  exchange    shortName  industryID industryIDv2  ... deltaInYear outstandingShare issueShare  ticker
-0     HOSE  Techcombank         289         8355  ...      -0.075           3510.9     3510.9     TCB
-```
-</details>
-
-### 2.7.4. 💵 Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
-
-#### 2.7.4.1. Báo cáo từ SSI
-
-<details>
-  <summary>Tạm ngưng hoạt động do SSI từ chối truy cập</summary>
-
-> Theo nhận định của tác giả, định dạng báo cáo được cung cấp bởi SSI khá đầy đủ và dễ theo dõi so với bản báo cáo tài chính do TCBS cung cấp (rút gọn).
-
-```python
-financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly')
-```
-- _report_type:_ Bạn có thể chọn 1 trong ba mẫu báo cáo: `BalanceSheet` cho Bảng cân đối kế toán, `IncomeStatement` cho báo cáo kết quả kinh doanh, hoặc `CashFlow` cho báo cáo lưu chuyển tiền tệ
-- _frequency:_ `Yearly` or `Quarterly`
-
-<details>
-  <summary>Output</summary>
-
-  ```
-                                        CHỈ TIÊU          2012          2013  ...          2019          2020          2021
-  0                            TỔNG CỘNG TÀI SẢN  7.980876e+12  7.705074e+12  ...  2.704412e+13  3.576953e+13  5.079306e+13
-  1                             TÀI SẢN NGẮN HẠN  4.837002e+12  4.467396e+12  ...  2.229087e+13  2.904003e+13  4.653960e+13
-  3                    Tiền và tương đương tiền   1.947090e+12  1.838619e+12  ...  1.040783e+12  3.632519e+11  1.114235e+12
-  4                                         Tiền  8.068605e+11  1.437619e+12  ...  2.606318e+11  2.319712e+11  4.741978e+11
-  5                   Các khoản tương đương tiền  1.140230e+12  4.010000e+11  ...  7.801508e+11  1.312807e+11  6.400373e+11
-  ..                                         ...           ...           ...  ...           ...           ...           ...
-  149                   Lợi nhuận chưa phân phối  1.127003e+12  1.118080e+12  ...  2.941467e+12  2.676816e+12  2.927813e+12
-  153         Vốn Ngân sách nhà nước và quỹ khác  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
-  154    Quỹ khen thưởng , phúc lợi (trước 2010)  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
-  157  LỢI ÍCH CỦA CỔ ĐÔNG THIỂU SỐ (trước 2015)  8.369917e+10  8.299030e+10  ...  0.000000e+00  0.000000e+00  0.000000e+00
-  158                        TỔNG CỘNG NGUỒN VỐN  7.980876e+12  7.705074e+12  ...  2.704412e+13  3.576953e+13  5.079306e+13
-  ```
-</details>
-
-</details>
-
-#### 2.7.4.2. Báo cáo từ TCBS
-
-##### 📄 Báo cáo kinh doanh
+#### 3.7.4.1. 📄 Báo cáo kinh doanh
 
 ![income_statement](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_income_statement.png)
 ```python
@@ -384,7 +383,7 @@ index                                                                           
 ```
 </details>
 
-##### 🧾 Bảng cân đối kế toán
+#### 3.7.4.2. 🧾 Bảng cân đối kế toán
 
 ![balance_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_balancesheet.png)
 ```python
@@ -405,7 +404,7 @@ index                                                                           
 ```
 </details>
 
-##### 💶 Báo cáo lưu chuyển tiền tệ
+#### 3.7.4.3. 💶 Báo cáo lưu chuyển tiền tệ
 
 ```python
 financial_flow(symbol="TCB", report_type='cashflow', report_range='quarterly')
@@ -424,7 +423,7 @@ index
 ```
 </details>
 
-## 2.8. 🧧 Lịch sử chi trả cổ tức
+## 3.8. 🧧 Lịch sử chi trả cổ tức
 
 ```python
 dividend_history("VNM")
@@ -442,7 +441,8 @@ dividend_history("VNM")
 ```
 </details>
 
-## 2.9. ⭐ Đánh giá xếp hạng chung
+## 3.9. ⭐ Đánh giá xếp hạng 
+### 3.9.1. Đánh giá chung
 ![general_rating](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/general_rating.png)
 
 ```python
@@ -458,7 +458,7 @@ general_rating("VNM")
 ```
 </details>
 
-## 2.10. 🌱 Đánh giá mô hình kinh doanh
+### 3.9.2. 🌱 Đánh giá mô hình kinh doanh
 ```python
 biz_model_rating("VNM")
 ```
@@ -472,7 +472,7 @@ biz_model_rating("VNM")
 ```
 </details>
 
-## 2.11. 🎮 Đánh giá hiệu quả hoạt động
+### 3.9.3. 🎮 Đánh giá hiệu quả hoạt động
 ```python
 biz_operation_rating("VNM")
 ```
@@ -486,7 +486,7 @@ biz_operation_rating("VNM")
 ```
 </details>
 
-## 2.12. 📑 Đánh giá sức khỏe tài chính
+### 3.9.4. 📑 Đánh giá sức khỏe tài chính
 ```python
 financial_health_rating("VNM")
 ```
@@ -500,7 +500,7 @@ financial_health_rating("VNM")
 ```
 </details>
 
-## 2.13. 💲 Đánh giá về Định giá
+### 3.9.5. 💲 Đánh giá về Định giá
 ```python
 valuation_rating("VNM")
 ```
@@ -514,7 +514,7 @@ valuation_rating("VNM")
 ```
 </details>
 
-## 2.14.  💳 Sức khỏe tài chính theo ngành
+## 3.10.  💳 Sức khỏe tài chính theo ngành
 ```python
 industry_financial_health("VNM")
 ```
@@ -528,12 +528,12 @@ industry_financial_health("VNM")
 ```
 </details>
 
-## 2.15. 🌏 Thông tin thị trường
+## 3.11. 🌏 Thông tin thị trường
 
 <details>
   <summary>Tạm ngưng hoạt động do SSI từ chối truy cập</summary>
 
-### 2.15.1. Các mã cổ phiếu đứng đầu theo tiêu chí xếp loại 
+### 3.11.1. Các mã cổ phiếu đứng đầu theo tiêu chí xếp loại 
 
 <details>
   <summary>SSI Top Stocks</summary>
@@ -563,7 +563,7 @@ market_top_mover('ForeignTrading')
 ```
 </details>
 
-### 2.15.2. Thông tin giao dịch nhà đầu tư nước ngoài (NDTNN)
+### 3.11.2. Thông tin giao dịch nhà đầu tư nước ngoài (NDTNN)
 Trong ví dụ dưới đây, thể hiện giao dịch mua vào của NDTNN.
 
 ```python
@@ -590,7 +590,7 @@ fr_trade_heatmap ('All', 'FrBuyVol')
   ```
 </details>
 
-### 2.15.3. Biến động của các nhóm chỉ số
+### 3.11.3. Biến động của các nhóm chỉ số
 ![latest_indices](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_latest_indices.png)
 
 Thông tin các nhóm chỉ số phổ biến của thị trường chứng khoán Việt Nam.
@@ -633,7 +633,7 @@ get_latest_indices()
   ```
 </details>
 
-### 2.15.4. Dữ liệu chuyên sâu theo nhóm chỉ số cụ thể
+### 3.11.4. Dữ liệu chuyên sâu theo nhóm chỉ số cụ thể
 ![index_series_data](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_index_series_data.png)
 
 ```python
