@@ -1,3 +1,12 @@
+# Update 2023-07-07
+- Classified vnstock functions in the demo Jupyter Notebook based on 5 main pillars:
+  1. Market Watch
+  2. Fundamental Analysis
+  3. Technical Analysis
+  4. Stock Pick
+  5. Trading Center
+- Revised function demos to include recently updated functions.
+
 # Updated 2023-07-05
 - The README.md file has been revised (applied to the Vietnamese language first).
 - Functions related to SSI data source that were unavailable have been removed.
