@@ -52,6 +52,7 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 
 <details>
   <summary>Docstring trong mã nguồn</summary>
+  
   Mở mã nguồn tại file [vnstock.py](https://github.com/thinh-vu/vnstock/blob/beta/vnstock/stock.py), tìm hàm bạn cần tra cứu docstring.
 
   ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_source_code.jpeg)
@@ -157,7 +158,9 @@ company_overview('TCB')
 
 ## 3.3. 📈 Truy xuất dữ liệu giá lịch sử
 
-vnstock cho phép người dùng **tải xuống dữ liệu lịch sử giao dịch cổ phiếu** với theo 5 mức độ chi tiết theo khoảng thời gian bao gồm: 1 phút, 15 phút, 30 phút, 1 giờ, 1 ngày. Trong ví dụ dưới đây, dữ liệu giá được truy xuất theo cấp độ ngày. Đơn vị giá mặc định là 1000 VND.
+> Phiên bản API hiện tại cho phép truy cập giá lịch sử tối đa đến ngày 2012-03-20 đối với tất cả mã cổ phiếu. Nếu bạn có nhu cầu lấy lịch sử giá từ thời điểm thị trường chứng khoán bắt đầu hoạt động (REE là mã cổ phiếu có giao dịch sớm nhất thị trường vào 2000-07-31), hãy là một thành viên của [ vnstock membership](https://www.facebook.com/groups/vnstock) để được hỗ trợ.
+
+vnstock cho phép người dùng **tải xuống dữ liệu lịch sử giao dịch cổ phiếu** với theo 5 mức độ chi tiết theo khoảng thời gian bao gồm: 1 phút, 15 phút, 30 phút, 1 giờ, 1 ngày. Trong ví dụ dưới đây, dữ liệu giá được truy xuất theo cấp độ ngày. Đơn vị giá mặc định là VND.
 
 ```python
 df =  stock_historical_data(symbol='GMD', 
@@ -197,31 +200,38 @@ print(df)
 ```
 
 ## 3.4. 📊 Bảng giá
-Bạn có thể tải xuống bảng giá của một danh sách các cổ phiếu được chọn để phân tích dễ dàng hơn (khi xuất ra Google Sheets/Excel) so với việc xem trực tiếp trên bảng giá của các công ty chứng khoán.
+
+> Tạm dừng sử dụng hàm price_board để xác thực thông tin trả về từ API.
 
 <details>
-  <summary>Bảng giá</summary>
 
-  ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png)
+  Bạn có thể tải xuống bảng giá của một danh sách các cổ phiếu được chọn để phân tích dễ dàng hơn (khi xuất ra Google Sheets/Excel) so với việc xem trực tiếp trên bảng giá của các công ty chứng khoán.
 
-</details>
+  <details>
+    <summary>Bảng giá</summary>
 
-Tất cả việc bạn cần làm là nhập vào danh sách các mã cổ phiếu bạn chọn:
+    ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png)
 
-```
-price_board('TCB,SSI,VND')
-```
+  </details>
 
-<details>
-  <summary>Output</summary>
+  Tất cả việc bạn cần làm là nhập vào danh sách các mã cổ phiếu bạn chọn:
 
-```
->>> price_board('TCB,SSI,VND')
-  Mã CP  Giá Khớp Lệnh  KLBD/TB5D  T.độ GD  KLGD ròng(CM)  ...  vnid1m  vnid3m  vnid1y  vnipe    vnipb
-0   TCB        48600.0        0.6     0.49         -23200  ...    -3.7    -2.0    22.4  17.99  2.46159
-1   SSI        43300.0        0.5     0.50        -112200  ...    -3.7    -2.0    22.4  17.99  2.46159
-2   VND        32600.0        0.7     0.68          37300  ...    -3.7    -2.0    22.4  17.99  2.46159
-```
+  ```
+  price_board('TCB,SSI,VND')
+  ```
+
+  <details>
+    <summary>Output</summary>
+
+  ```
+  >>> price_board('TCB,SSI,VND')
+    Mã CP  Giá Khớp Lệnh  KLBD/TB5D  T.độ GD  KLGD ròng(CM)  ...  vnid1m  vnid3m  vnid1y  vnipe    vnipb
+  0   TCB        48600.0        0.6     0.49         -23200  ...    -3.7    -2.0    22.4  17.99  2.46159
+  1   SSI        43300.0        0.5     0.50        -112200  ...    -3.7    -2.0    22.4  17.99  2.46159
+  2   VND        32600.0        0.7     0.68          37300  ...    -3.7    -2.0    22.4  17.99  2.46159
+  ```
+  </details>
+
 </details>
 
 ## 3.5. 🔥 Dữ liệu khớp lệnh trong ngày giao dịch

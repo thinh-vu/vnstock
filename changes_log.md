@@ -1,4 +1,4 @@
-# Update 2023-07-07
+# Update 2023-07-13
 - Classified vnstock functions in the demo Jupyter Notebook based on 5 main pillars:
   1. Market Watch
   2. Fundamental Analysis
@@ -6,6 +6,8 @@
   4. Stock Pick
   5. Trading Center
 - Revised function demos to include recently updated functions.
+- Restore the unit price of stock_historical_data from 1000 VND to VND by multiplying it by 1000.
+- The  `price_board` function has been temporarily suspended to verify the accuracy and reliability of the data provided by the TCBS API.
 
 # Updated 2023-07-05
 - The README.md file has been revised (applied to the Vietnamese language first).
