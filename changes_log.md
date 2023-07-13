@@ -7,7 +7,8 @@
   5. Trading Center
 - Revised function demos to include recently updated functions.
 - Restore the unit price of stock_historical_data from 1000 VND to VND by multiplying it by 1000.
-- The  `price_board` function has been temporarily suspended to verify the accuracy and reliability of the data provided by the TCBS API.
+- The `price_board` function has been updated.
+- A new function `price_board_listing` has been added to retrieve trading prices and volume for a list of stocks. This function can be utilized alongside the price_board function.
 - Implemented additional functions in the `utils.py` module to extract date values in the format of YYYY-mm-dd.
 
 # Updated 2023-07-05
