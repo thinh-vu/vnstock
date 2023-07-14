@@ -28,6 +28,18 @@ vnstock cung cấp nhiều tính năng đa dạng như tải dữ liệu lịch 
 ## 1.3. Nguồn cấp dữ liệu
 Thư viện python này kết nối tới các API công khai của các nguồn cấp dữ liệu để tải về để làm việc dưới dạng các DataFrame trong dự án Python. Việc truy xuất dữ liệu này là hoàn toàn **MIỄN PHÍ**.
 
+## 1.4. Tips
+- Theo dõi những cập nhật về thay đổi của vnstock bằng tính năng `Watch`. Hiện tại vnstock được cập nhật thường xuyên hàng tuần qua nhánh `beta`, vì vậy theo dõi repo này giúp bạn luôn nắm bắt được kịp thời những thay đổi mới nhất.
+- Đánh dấu yêu thích repo `vnstock` bằng tính năng `Star`. Đây cũng là cách giúp vnstock có thể tiếp cận tới nhiều người quan tâm hơn.
+
+<details>
+  <summary> Minh họa tính năng Watch và Star </summary>
+![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/src/vnstock-watch-and-star.png?raw=true)
+</details>
+
+## 1.5. Đóng góp xây dựng ã nguồn vnstock
+- Bạn có thể đóng góp xây dựng vnstock thông qua nhiều hình thức khác nhau, trong đó có việc xây dựng và cải tiến mã nguồn hoặc dịch tài liệu của dự án. Để bắt đầu, bạn có thể `folk` repo này về tài khoản của mình, sửa đổi mã nguồn và tạo `pull request` để yêu cầu cập nhật mã nguồn. Sau khi kiểm tra các thay đổi và phê duyệt, mã nguồn do bạn đóng góp sẽ được gộp vào vnstock.
+
 # II. 📚 Hướng dẫn sử dụng cho người mới
 ## 2.1. Tài nguyên quan trọng
 
@@ -46,7 +58,7 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
   <summary>Docstring trên Google Colab</summary>
   Gợi ý cú pháp hàm được hiển thị khi viết bất kỳ hàm nào thuộc vnstock, trong ví dụ này hiển thị trong giao diện Google Colab.
 
-  ![docstring_ide](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_suggestion.jpeg)
+  ![docstring_ide](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_suggestion.jpeg?raw=true)
 
 </details>
 
@@ -55,7 +67,7 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
   
   Mở mã nguồn tại file [vnstock.py](https://github.com/thinh-vu/vnstock/blob/beta/vnstock/stock.py), tìm hàm bạn cần tra cứu docstring.
 
-  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_source_code.jpeg)
+  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_source_code.jpeg?raw=true)
 
 </details>
 
@@ -124,18 +136,17 @@ from vnstock import *
 ```python
 listing_companies()
 ```
-Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc định (trong thư mục /data của repo này). Bởi danh sách các công ty niêm yết thường không thay đổi liên tục nên việc này không gây trở ngại nhiều. Hiện tại chế độ đọc dữ liệu từ APIs đã được tạm gỡ bỏ do bị chặn truy cập bởi các nhà cung cấp dữ liệu.
+Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc định (trong thư mục /data của repo này). Bởi danh sách các công ty niêm yết thường không thay đổi liên tục nên việc này không gây trở ngại nhiều.
 
 <details>
   <summary>Output</summary>
 
 ```
-     ticker  group_code                                       company_name            company_short_name
-0       HSV  UpcomIndex                   Công ty Cổ phần Gang Thép Hà Nội              Gang Thép Hà Nội
-1       SCV  UpcomIndex                      Công ty Cổ phần Muối Việt Nam                  Visalco.,JSC
-2       LYF  UpcomIndex              Công ty Cổ phần  Lương Thực Lương Yên  Công ty Lương Thực Lương Yên
-3       CST  UpcomIndex                 Công ty Cổ phần Than Cao Sơn - TKV            Than Cao Sơn - TKV
-4       BVL  UpcomIndex                            Công ty Cổ phần BV Land                       BV Land
+>>> listing_companies()
+  ticker comGroupCode                                       organName                  organShortName organTypeCode comTypeCode  ... VNHEAL  VNIND   VNIT  VNMAT VNREAL  VNUTI
+0    VVS   UpcomIndex  Công ty Cổ phần Đầu tư Phát triển Máy Việt Nam  Đầu tư Phát triển Máy Việt Nam            DN          CT  ...  False  False  False  False  False  False
+1    XDC   UpcomIndex   Công ty TNHH MTV Xây dựng Công trình Tân Cảng    Xây dựng Công trình Tân Cảng            DN          CT  ...  False  False  False  False  False  False
+2    HSV   UpcomIndex           Công ty Cổ phần Tập đoàn HSV Việt Nam                Gang Thép Hà Nội            DN          CT  ...  False  False  False  False  False  False
 ```
 
 </details>
@@ -201,37 +212,49 @@ print(df)
 
 ## 3.4. 📊 Bảng giá
 
-> Tạm dừng sử dụng hàm price_board để xác thực thông tin trả về từ API.
+Bạn có thể tải xuống bảng giá của một danh sách các cổ phiếu được chọn để phân tích, thiết lập thuật toán dễ dàng hơn (khi xuất ra Google Sheets/Excel) so với việc xem trực tiếp trên bảng giá của các công ty chứng khoán.
 
 <details>
+  <summary>Bảng giá</summary>
 
-  Bạn có thể tải xuống bảng giá của một danh sách các cổ phiếu được chọn để phân tích dễ dàng hơn (khi xuất ra Google Sheets/Excel) so với việc xem trực tiếp trên bảng giá của các công ty chứng khoán.
+  ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png)
 
-  <details>
-    <summary>Bảng giá</summary>
+</details>
 
-    ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png)
+### 3.4.1. Thông tin bước giá, khối lượng và khớp lệnh
+```python
+price_depth('TCB,SSI,VND')
+```
+Sử dụng hàm này cho phép thống kê các bước giá và khối lượng trên bảng giá của một hoặc một danh sách các mã cổ phiếu. Bạn có thể sử dụng kết hợp hàm này với hàm `price_board` để kết hợp các thông tin đa dạng về giá, khối lượng, chỉ số, thông tin giao dịch để chọn lọc và theo dõi cổ phiếu theo mục đích sử dụng của mình.
 
-  </details>
+<details>
+  <summary>Output</summary>
+  >>> price_depth('TCB,SSI,VND')
+  Mã CP  Giá tham chiếu  Giá Trần  Giá Sàn  Giá mua 3 KL mua 3  Giá mua 2 KL mua 2  Giá mua 1  ... KL bán 1  Giá bán 2  KL bán 2  Giá bán 3 KL bán 3  Tổng Khối Lượng ĐTNN Mua  ĐTNN Bán  ĐTNN Room
+0   TCB           31950     34150    29750      31900       10      31850      130      31800  ...     9240      32000     19940      32049     7750           447200        0         0          0     
+1   SSI           28400     30350    26450      28450      100      28400     9850      28350  ...    30640      28550     22730      28600    48410          1610280   142759     17353  803963854     
+2   VND           17950     19200    16700      18450    11620      18400    38790      18350  ...    73180      18550     87830      18600   223700          4360710   152966      8355  932083910     
 
-  Tất cả việc bạn cần làm là nhập vào danh sách các mã cổ phiếu bạn chọn:
+[3 rows x 22 columns]
+</details>
 
-  ```
-  price_board('TCB,SSI,VND')
-  ```
+### 3.4.2. Thông tin giao dịch bổ sung và các chỉ số
 
-  <details>
-    <summary>Output</summary>
+```
+price_board('TCB,SSI,VND')
+```
+Hàm này cho phép tải về thông tin giá, khối lượng và các chỉ số quan trọng cho một hoặc một danh sách mã cổ phiếu. Sử dụng kết hợp với hàm `price_depth` cho hiệu quả tốt nhất.
 
-  ```
-  >>> price_board('TCB,SSI,VND')
-    Mã CP  Giá Khớp Lệnh  KLBD/TB5D  T.độ GD  KLGD ròng(CM)  ...  vnid1m  vnid3m  vnid1y  vnipe    vnipb
-  0   TCB        48600.0        0.6     0.49         -23200  ...    -3.7    -2.0    22.4  17.99  2.46159
-  1   SSI        43300.0        0.5     0.50        -112200  ...    -3.7    -2.0    22.4  17.99  2.46159
-  2   VND        32600.0        0.7     0.68          37300  ...    -3.7    -2.0    22.4  17.99  2.46159
-  ```
-  </details>
+<details>
+  <summary>Output</summary>
 
+```
+>>> price_board('TCB,SSI,VND')
+  Mã CP  Giá Khớp Lệnh  KLBD/TB5D  T.độ GD  KLGD ròng(CM)  ...  vnid1m  vnid3m  vnid1y  vnipe    vnipb
+0   TCB        48600.0        0.6     0.49         -23200  ...    -3.7    -2.0    22.4  17.99  2.46159
+1   SSI        43300.0        0.5     0.50        -112200  ...    -3.7    -2.0    22.4  17.99  2.46159
+2   VND        32600.0        0.7     0.68          37300  ...    -3.7    -2.0    22.4  17.99  2.46159
+```
 </details>
 
 ## 3.5. 🔥 Dữ liệu khớp lệnh trong ngày giao dịch

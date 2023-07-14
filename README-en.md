@@ -13,68 +13,118 @@
 🌐 View in **[Vietnamese](https://github.com/thinh-vu/vnstock/blob/main/README.md)**
 
 TABLE OF CONTENTS
-- [I. Introduction](#i-introduction)
-- [II. Getting Started for Beginners](#ii-getting-started-for-beginners)
+
+- [I. 🎤 Introduction](#i--introduction)
+- [II. 📚 User Guide for Beginners](#ii--user-guide-for-beginners)
 - [III. 💻 Usage](#iii--usage)
 - [IV. 🙋‍♂️ Contact Information](#iv-️-contact-information)
 - [V. 💪 Join Us in Supporting vnstock](#v--join-us-in-supporting-vnstock)
-- [VI. Licensing](#vi-licensing)
+- [VI. ⚖ Disclaimer](#vi--disclaimer)
+- [VII. Licensing](#vii-licensing)
 
 
-# I. Introduction
-## 1.1. Overview
-vnstock is a Python library designed to easily and freely retrieve Vietnam stock market data. vnstock utilizes reliable data sources, including but not limited to stock companies and market analysis firms in Vietnam. 
-
-The library is built based on principles of simplicity and open-source, with most functions written using the `requests` and `pandas` libraries available in the Google Colab environment, eliminating the need for additional library installations.
+# I. 🎤 Introduction
+## 1.1. General Introduction
+vnstock is a Python library designed to easily and freely download Vietnamese stock market data. vnstock utilizes reliable data sources, including but not limited to securities companies and market analysis firms in Vietnam. The library is built based on the principles of simplicity and open-source, with most functions written using the request and pandas libraries available in the Google Colab environment. Therefore, users do not need to install additional libraries.
 
 ## 1.2. Key Features
-vnstock provides a range of diverse features, including downloading historical price data, retrieving information about listed companies, and obtaining market insights for all listed stock codes.
+vnstock provides a variety of features, such as downloading historical price data, listed company information, and market information for all listed securities.
 
 ## 1.3. Data Sources
-This Python library connects to public APIs of data providers to download and work with data in the form of DataFrames in Python projects. Access to this data is completely **FREE** and has **NO LIMITATIONS**.
+This Python library connects to public APIs of data providers to download data and work with them as DataFrames in Python projects. Accessing this data is completely **FREE**.
 
-## 1.4. ⚖ Disclaimer
-vnstock is designed solely for the purpose of analysis and practical investment research. Any misuse or unauthorized use of the library for malicious purposes, such as attacking public APIs or causing harm to systems through denial of service or similar actions, is strictly beyond the intended scope of usage and falls outside the responsibility of the development team.
+## 1.4. Tips
+- Stay updated on vnstock changes using the `Watch` feature. Currently, vnstock is regularly updated on a weekly basis through the `beta` branch, so following this repository will help you stay up to date with the latest changes.
+- Show your support for the `vnstock` repository by starring it. This also helps vnstock reach a wider audience of interested users.
 
-vnstock is developed with the purpose of providing simple and free research tools to facilitate easy access and analysis of stock market data. The availability and accuracy of the data depend on the data sources. Therefore, users are advised to exercise caution and discretion when utilizing the library.
 <details>
-  <summary>Read more</summary>
+  <summary> Minh họa tính năng Watch và Star </summary>
+![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/src/vnstock-watch-and-star.png?raw=true)
+</details>
 
-  In any circumstances, the user assumes full responsibility for the decision to use the data extracted from vnstock and bears complete liability for any resulting losses. It is strongly recommended to independently verify the accuracy and reliability of the data before making use of it.
 
-  Engaging in stock market data usage and investment decisions entails risks and may lead to financial losses. Users are encouraged to seek guidance from financial experts and comply with securities regulations in Vietnam and internationally when participating in stock trading activities.
+## 1.5. Contributing to the vnstock Open Source Project
+You can contribute to the development of vnstock through various means, including building and improving the source code or translating project documentation. To get started, you can fork this repository to your account, make modifications to the source code, and create a pull request to request source code updates. After reviewing and approving the changes, the contributed source code will be merged into vnstock.
 
-  Please note that vnstock does not assume responsibility and holds no legal liability for any losses or damages arising from the utilization of this software package.
+# II. 📚 User Guide for Beginners
+## 2.1. Important Resources
+
+### 2.1.2 Blog
+
+👉 For more information and illustrations on how to use, please visit the blog post, available in Vietnamese/English [here](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
+
+### 2.1.2 Notebook Illustration
+👉 You can open the Jupyter Notebook file [vnstock_demo_index_all_functions_testing](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023_07_07.ipynb) to try out all the functions of vnstock. To use, click the ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) button at the top of the notebook to open it with Google Colab.
+
+### 2.1.3. Docstring
+All functions of vnstock are provided with complete docstrings, while this README.md file may not include a full description of the parameters allowed for each function. You can refer to the code hints when writing commands in IDEs like Google Colab, Visual Studio Code, or Jupyter Notebook, or open the source code on Github for more details. In the future, vnstock will provide full descriptions in the README.md when possible.
+
+<details>
+  <summary>Docstring in Google Colab</summary>
+  Syntax hints for functions are displayed when writing any function belonging to vnstock. In this example, it is shown in the Google Colab interface.
+
+  ![docstring_ide](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_suggestion.jpeg?raw=true)
 
 </details>
 
-# II. Getting Started for Beginners
+<details>
+  <summary>Docstring in source code</summary>
+  
+  Open the source code file [vnstock.py](https://github.com/thinh-vu/vnstock/blob/beta/vnstock/stock.py) and find the function you want to look up the docstring for.
 
-## 2.1. Helpful documents
-👉 For more information and illustrative examples of usage, please visit my blog post available in Vietnamese/English [here](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
+  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_source_code.jpeg?raw=true)
 
-👉 You can open the Jupyter Notebook file [vnstock demo index - all functions testing // 2023-06-22.ipynb](https://github.com/thinh-vu/vnstock/blob/beta/demo/vnstock_demo_index_all_functions_testing_2023_06_22.ipynb) to try out all the functions of vnstock. To use it, click on the ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) button at the top of the notebook to open it with Google Colab.
+</details>
 
-🖐 If you find this library valuable and would like to support the author in maintaining vnstock as an open-source and free project, you can contribute to the development fund. For more details, please refer to the following blog post: [Joining Together to Build a Strong VNStock Community](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/).
+### 2.1.4. Building the vnstock Community
 
-🔥 You can also explore [Ideas for Advanced Features for Future Releases](https://github.com/users/thinh-vu/projects/1/views/4) to contribute to vnstock's development.
+🖐 If you find this library valuable and would like to support the author in maintaining vnstock as open-source and free, you can contribute to the development of this project. For more details, please refer to the blog post: [Building a Strong VNStock Community Together](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/).
 
-👉 Starting from version 1.0.3, all feature updates and enhancements for the library are consolidated in the [Change Log](https://github.com/thinh-vu/vnstock/blob/beta/changes_log.md) file.
+<details>
+  <summary>Supporting the vnstock Development Fund</summary>
+  If vnstock has been helpful to you, you can contribute to the development fund of this application through either bank transfer or Momo. All contributions are greatly appreciated and serve as motivation for the author to maintain vnstock as a useful, free, and accessible resource for the community.
 
+  - ![vcb-qr](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vcb-qr-thinhvu.jpg?raw=true)
+  - ![momo-qr](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/momo-qr-thinhvu.jpeg?raw=true)
 
-## 2.2 🛠 Installation
+</details>
 
-To get this package working, you will need to **install it via pip** (with a Python 3.7 version or higher) on the terminal by typing:
+### 2.1.5. Development Roadmap
 
-``$ pip install vnstock``
+🔥 You can refer to [Ideas for Advanced Features in upcoming versions](https://github.com/users/thinh-vu/projects/1/views/4) to accompany vnstock on its journey.
 
-Additionally, **if you want to use the latest `vnstock` version instead of the stable one, you can install it from source** with the following command:
+### 2.1.6. Notes
 
-``$ pip install git+https://github.com/thinh-vu/vnstock.git@beta``
+👉 Starting from version 0.1.3, all updates regarding features and enhancements for the library are compiled in the [Changelog](https://github.com/thinh-vu/vnstock/blob/beta/changes_log.md) file.
 
-**The `main` branch ensures the user that the most updated version will always be working and fully operative** so as not to wait until the 
-the stable release comes out (which eventually may take some time depending on the number of issues to solve).
+## 2.2 🛠 Installing vnstock
+### Step 1. Choose the appropriate version
 
+> vnstock is developed in two separate branches. You need to choose the appropriate version and *copy the corresponding command to perform the installation in the next step*:
+
+- `stable` version (stable development) is shared through pypi.org and the `main` branch on this Github repository. To install the stable version, use the following simple command: 
+`pip install vnstock` or install directly from Github with the command:
+
+  `pip install git+https://github.com/thinh-vu/vnstock.git@main`
+
+- `beta` version (receives the latest updates) is shared in the `beta` branch of the Github repository.
+
+  `pip install git+https://github.com/thinh-vu/vnstock.git@beta`
+
+<details>
+  <summary> Choose the appropriate branch </summary>
+
+  ![select_branch](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock_select_branch.jpeg)
+
+</details>
+
+### Step 2. Run the installation command
+
+> When using the demo file [vnstock_demo_index_all_functions_testing_2023_06_22.ipynb](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023_07_07.ipynb) to get started, the necessary installation commands are provided for you to execute (run).
+
+**pip is used to install vnstock**. pip is available in most Python distributions. The minimum required Python version for vnstock is 3.7. You can paste the command you copied in Step 1 and run it in your Python environment.
+
+- CLI: Open Terminal (macOS/Linux) or Command Prompt (Windows Desktop) and paste the command above, then press Enter to install.
 ---
 
 # III. 💻 Usage
@@ -160,31 +210,31 @@ The result should look like this:
   ```
 
 ## 2.4. 📊 Price Table
-You can download the price board of a target list of stocks to analyze with ease compared to viewing it directly on TCBS.
+You can download the price table of a selected list of stocks to facilitate analysis and algorithm setup, making it easier than directly viewing the stock prices on the stock brokage's website.
 
 <details>
-  <summary>Price Board</summary>
+  <summary>Price Table</summary>
 
-  ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png)
+  ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png?raw=true)
 
 </details>
 
-All you need to do is pass the list of stock symbols to the function as below:
+### 3.4.1. Price Depth, Volume, and Matched Orders Information
+```python
+price_depth('TCB,SSI,VND')
+```
 
-```
-price_board('TCB,SSI,VND')
-```
+Using this function allows you to analyze price depth and volume on the price table of one or a list of stock codes. You can combine this function with the price_board function to gather diverse information about price, volume, indices, and trading information to filter and track stocks according to your needs.
 
 <details>
   <summary>Output</summary>
+  >>> price_depth('TCB,SSI,VND')
+  Mã CP  Giá tham chiếu  Giá Trần  Giá Sàn  Giá mua 3 KL mua 3  Giá mua 2 KL mua 2  Giá mua 1  ... KL bán 1  Giá bán 2  KL bán 2  Giá bán 3 KL bán 3  Tổng Khối Lượng ĐTNN Mua  ĐTNN Bán  ĐTNN Room
+0   TCB           31950     34150    29750      31900       10      31850      130      31800  ...     9240      32000     19940      32049     7750           447200        0         0          0     
+1   SSI           28400     30350    26450      28450      100      28400     9850      28350  ...    30640      28550     22730      28600    48410          1610280   142759     17353  803963854     
+2   VND           17950     19200    16700      18450    11620      18400    38790      18350  ...    73180      18550     87830      18600   223700          4360710   152966      8355  932083910     
 
-```
->>> price_board('TCB,SSI,VND')
-  Mã CP  Giá Khớp Lệnh  KLBD/TB5D  T.độ GD  KLGD ròng(CM)  ...  vnid1m  vnid3m  vnid1y  vnipe    vnipb
-0   TCB        48600.0        0.6     0.49         -23200  ...    -3.7    -2.0    22.4  17.99  2.46159
-1   SSI        43300.0        0.5     0.50        -112200  ...    -3.7    -2.0    22.4  17.99  2.46159
-2   VND        32600.0        0.7     0.68          37300  ...    -3.7    -2.0    22.4  17.99  2.46159
-```
+[3 rows x 22 columns]
 </details>
 
 ## 2.5. 🔥 Intraday Trading Data
@@ -192,8 +242,8 @@ price_board('TCB,SSI,VND')
 <details>
   <summary>Intraday view on TCBS</summary>
 
-  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen1.png)
-  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen2.png)
+  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen1.png?raw=true)
+  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen2.png?raw=true)
 
 </details>
 vnstock allows the user to **download intraday real-time/historical data**. In 
@@ -299,7 +349,7 @@ industry_analysis("VNM")
 <details>
   <summary>Output</summary>
 
-![preview](./src/stock_comparison_industries.png?raw=true)
+![preview](https://github.com/thinh-vu/vnstock/blob/beta/src/stock_comparison_industries.png?raw=true)
 
 ```
 >>> industry_analysis("VNM")
@@ -319,7 +369,7 @@ stock_ls_analysis("TCB, BID, CEO, GMD")
 <details>
   <summary>Output</summary>
 
-![preview](./src/stock_ls_comparison.png)
+![preview](https://github.com/thinh-vu/vnstock/blob/beta/src/stock_ls_comparison.png?raw=true)
 
 ```
   ticker  marcap  price  numberOfDays  priceToEarning  peg  priceToBook  valueBeforeEbitda  dividend  ...  debtOnEbitda  income5year  sale5year income1quarter  sale1quarter  nextIncome  nextSale   rsi    rs
@@ -384,7 +434,7 @@ financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly
 
 ##### 📄 Income Statement
 
-![income_statement](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_income_statement.png)
+![income_statement](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_income_statement.png?raw=true)
 ```python
 financial_flow(symbol="TCB", report_type='incomestatement', report_range='quarterly')
 ```
@@ -405,7 +455,7 @@ index                                                                           
 
 ##### 🧾Balance Sheet
 
-![balance_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_balancesheet.png)
+![balance_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_balancesheet.png?raw=true)
 ```python
 financial_flow(symbol="TCB", report_type='balancesheet', report_range='quarterly')
 ```
@@ -557,10 +607,10 @@ industry_financial_health("VNM")
   <summary>SSI Top Stocks</summary>
 
 Top Breakout > Top Gainers > Top Losers > Top Value > Top Volume
-![top_mover](./src/ssi_top_breakout_gainer_loser.png)
+![top_mover](https://github.com/thinh-vu/vnstock/blob/beta/src/ssi_top_breakout_gainer_loser.png?raw=true)
 
 Top New High > Top Foreign Trading > Top New Low
-![top_foreigntrading_high_low](./src/top_foreigntrading_newhigh_newlow.png)
+![top_foreigntrading_high_low](https://github.com/thinh-vu/vnstock/blob/beta/src/top_foreigntrading_newhigh_newlow.png?raw=true)
 
 </details>
 
@@ -607,7 +657,7 @@ fr_trade_heatmap ('All', 'FrBuyVol')
 </details>
 
 ### 2.15.3. Market latest indices & values
-![latest_indices](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_latest_indices.png)
+![latest_indices](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_latest_indices.png?raw=true)
 
 Retrieve the latest indices values & brief insights
 
@@ -650,7 +700,7 @@ get_latest_indices()
 </details>
 
 ### 2.15.4. Market latest indices in depth data
-![index_series_data](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_index_series_data.png)
+![index_series_data](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_index_series_data.png?raw=true)
 
 ```python
 get_index_series(index_code='VNINDEX', time_range='OneYear')
@@ -722,16 +772,30 @@ If you find value in vnstock and my open-source projects, you can support their 
 You have three options to contribute: Momo, Bank Transfer, and Paypal. Your contribution will help me cover the hosting fees for my blog and continue creating high-quality content. Thank you for your support!
 
 - [Paypal](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US)
-- ![momo-qr](./src/momo-qr-thinhvu.jpeg)
-- ![vcb-qr](./src/vcb-qr-thinhvu.jpg)
+- ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/src/momo-qr-thinhvu.jpeg)
+- ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/src/vcb-qr-thinhvu.jpg)
 
-## VI. Licensing
+# VI. ⚖ Disclaimer
+vnstock is designed solely for the purpose of analysis and practical investment research. Any misuse or unauthorized use of the library for malicious purposes, such as attacking public APIs or causing harm to systems through denial of service or similar actions, is strictly beyond the intended scope of usage and falls outside the responsibility of the development team.
+
+vnstock is developed with the purpose of providing simple and free research tools to facilitate easy access and analysis of stock market data. The availability and accuracy of the data depend on the data sources. Therefore, users are advised to exercise caution and discretion when utilizing the library.
+<details>
+  <summary>Read more</summary>
+
+  In any circumstances, the user assumes full responsibility for the decision to use the data extracted from vnstock and bears complete liability for any resulting losses. It is strongly recommended to independently verify the accuracy and reliability of the data before making use of it.
+
+  Engaging in stock market data usage and investment decisions entails risks and may lead to financial losses. Users are encouraged to seek guidance from financial experts and comply with securities regulations in Vietnam and internationally when participating in stock trading activities.
+
+  Please note that vnstock does not assume responsibility and holds no legal liability for any losses or damages arising from the utilization of this software package.
+
+</details>
+
+# VII. Licensing
 
 ```
 Copyright (c) 2022 Thinh Vu | thinh-vu @ Github | MIT
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 

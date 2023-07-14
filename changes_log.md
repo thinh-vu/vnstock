@@ -1,3 +1,8 @@
+# Updated 2023-07-14
+- The README.md file has been updated to synchronize the English and Vietnamese versions.
+- The database file listing_companies_enhanced-2023.csv in the data folder of this repository has been updated for the listing_companies function.
+- A new function, price_depth, has been introduced to retrieve trading prices and volume for a list of stocks. This function can be used in conjunction with the price_board function.
+
 # Update 2023-07-13
 - Classified vnstock functions in the demo Jupyter Notebook based on 5 main pillars:
   1. Market Watch
@@ -8,7 +13,6 @@
 - Revised function demos to include recently updated functions.
 - Restore the unit price of stock_historical_data from 1000 VND to VND by multiplying it by 1000.
 - The `price_board` function has been updated.
-- A new function `price_board_listing` has been added to retrieve trading prices and volume for a list of stocks. This function can be utilized alongside the price_board function.
 - Implemented additional functions in the `utils.py` module to extract date values in the format of YYYY-mm-dd.
 
 # Updated 2023-07-05

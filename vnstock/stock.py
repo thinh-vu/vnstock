@@ -79,11 +79,11 @@ def api_request(url, headers=ssi_headers):
     return r
 
 ## STOCK LISTING
-def listing_companies (path='https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023-06-17.csv'):
+def listing_companies (path='https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023.csv'):
     """
     This function returns the list of all available stock symbols from a csv file or a live api request.
     Parameters: 
-        path (str): The path of the csv file to read from. Default is the path of the file 'listing_companies_enhanced-2023-06-17.csv'. You can find the latest updated file at `https://github.com/thinh-vu/vnstock/tree/main/src`
+        path (str): The path of the csv file to read from. Default is the path of the file 'listing_companies_enhanced-2023.csv'. You can find the latest updated file at `https://github.com/thinh-vu/vnstock/tree/main/src`
     Returns: df (DataFrame): A pandas dataframe containing the stock symbols and other information. 
     """
     df = pd.read_csv(path)
@@ -146,7 +146,7 @@ def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17
     return df
 
 ## TRADING PRICE TABLE
-def price_board_listing (stock_list='VPB,TCB', headers=vps_headers):
+def price_depth (stock_list='VPB,TCB', headers=vps_headers):
     """
     This function returns the trading price board of a target stocks list.
     Args:
