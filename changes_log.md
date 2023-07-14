@@ -1,4 +1,6 @@
 # Updated 2023-07-14
+- Released version 0.17 on Pypi
+- The `beta` branch has been promoted to become the default branch, while the `main` branch will now serve as the stable version repository.
 - The `beta` branch will be committed to the `main` branch and released on PyPI within every month, starting from now onwards.
 - The README.md file has been updated to synchronize the English and Vietnamese versions.
 - The database file listing_companies_enhanced-2023.csv in the data folder of this repository has been updated for the listing_companies function.
