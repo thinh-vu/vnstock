@@ -5,4 +5,4 @@ __author__ = "Thinh Vu @thinh-vu in GitHub"
 __version__ = "0.1.6"
 
 from .stock import *
-# from .utils import *
+from .utils import *

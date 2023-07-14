@@ -1,4 +1,18 @@
-# from datetime import datetime, timedelta
+from datetime import datetime, timedelta
+
+def get_date(n, unit):
+    """
+    Return YYYY-mm-dd value from today to n days, months or years in the past
+    Parameters:
+        n: number of days, months or years
+        unit: 'day', 'month' or 'year'
+    """
+    if unit == 'day':
+        return (datetime.now() - timedelta(days=n)).strftime('%Y-%m-%d')
+    elif unit == 'month':
+        return (datetime.now() - relativedelta(months=n)).strftime('%Y-%m-%d')
+    elif unit == 'year':
+        return (datetime.now() - relativedelta(years=n)).strftime('%Y-%m-%d')
 
 # def previous_weekday (date):
 #   date_value = datetime.strptime(date, '%Y-%m-%d')
