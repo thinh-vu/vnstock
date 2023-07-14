@@ -34,7 +34,9 @@ Thư viện python này kết nối tới các API công khai của các nguồn
 
 <details>
   <summary> Minh họa tính năng Watch và Star </summary>
+  
 ![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/src/vnstock-watch-and-star.png?raw=true)
+
 </details>
 
 ## 1.5. Đóng góp xây dựng ã nguồn vnstock
