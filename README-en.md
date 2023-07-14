@@ -39,7 +39,9 @@ This Python library connects to public APIs of data providers to download data a
 
 <details>
   <summary> Minh họa tính năng Watch và Star </summary>
+
 ![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/src/vnstock-watch-and-star.png?raw=true)
+
 </details>
 
 

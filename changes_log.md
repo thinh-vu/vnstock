@@ -1,4 +1,5 @@
 # Updated 2023-07-14
+- The `beta` branch will be committed to the `main` branch and released on PyPI within every month, starting from now onwards.
 - The README.md file has been updated to synchronize the English and Vietnamese versions.
 - The database file listing_companies_enhanced-2023.csv in the data folder of this repository has been updated for the listing_companies function.
 - A new function, price_depth, has been introduced to retrieve trading prices and volume for a list of stocks. This function can be used in conjunction with the price_board function.
