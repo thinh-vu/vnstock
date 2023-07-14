@@ -229,6 +229,7 @@ Sử dụng hàm này cho phép thống kê các bước giá và khối lượn
 
 <details>
   <summary>Output</summary>
+
   >>> price_depth('TCB,SSI,VND')
   Mã CP  Giá tham chiếu  Giá Trần  Giá Sàn  Giá mua 3 KL mua 3  Giá mua 2 KL mua 2  Giá mua 1  ... KL bán 1  Giá bán 2  KL bán 2  Giá bán 3 KL bán 3  Tổng Khối Lượng ĐTNN Mua  ĐTNN Bán  ĐTNN Room
 0   TCB           31950     34150    29750      31900       10      31850      130      31800  ...     9240      32000     19940      32049     7750           447200        0         0          0     
@@ -236,6 +237,7 @@ Sử dụng hàm này cho phép thống kê các bước giá và khối lượn
 2   VND           17950     19200    16700      18450    11620      18400    38790      18350  ...    73180      18550     87830      18600   223700          4360710   152966      8355  932083910     
 
 [3 rows x 22 columns]
+
 </details>
 
 ### 3.4.2. Thông tin giao dịch bổ sung và các chỉ số
