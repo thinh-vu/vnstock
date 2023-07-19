@@ -34,12 +34,33 @@ Thư viện python này kết nối tới các API công khai của các nguồn
 
 <details>
   <summary> Minh họa tính năng Watch và Star </summary>
+  
 ![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/src/vnstock-watch-and-star.png?raw=true)
 
 </details>
 
 ## 1.5. Đóng góp xây dựng mã nguồn vnstock
-- Bạn có thể đóng góp xây dựng vnstock thông qua nhiều hình thức khác nhau, trong đó có việc xây dựng và cải tiến mã nguồn hoặc dịch tài liệu của dự án. Để bắt đầu, bạn có thể `folk` repo này về tài khoản của mình, sửa đổi mã nguồn và tạo `pull request` để yêu cầu cập nhật mã nguồn. Sau khi kiểm tra các thay đổi và phê duyệt, mã nguồn do bạn đóng góp sẽ được gộp vào vnstock.
+- Bạn có thể đóng góp xây dựng vnstock thông qua nhiều hình thức khác nhau, trong đó có việc xây dựng và cải tiến mã nguồn hoặc dịch tài liệu của dự án. 
+- Để bắt đầu, bạn có thể `folk` nhánh `beta` của repo này về tài khoản của mình, sửa đổi mã nguồn và tạo `pull request` để yêu cầu cập nhật mã nguồn. Sau khi kiểm tra các thay đổi và phê duyệt, mã nguồn do bạn đóng góp sẽ được gộp vào vnstock.
+- Lưu ý: Những thay đổi do bạn đóng góp sẽ được phát hành trong phiên bản tiếp theo của `vnstock` trên Pypi.org đồng thời với những cập nhật của tác giả trên nhánh `beta`.
+
+## 1.6. Hoàn thành khảo sát về vnstock
+> vnstock là một dự án tôi tâm huyết, đầu tư nhiều thời gian để phát triển giúp bản thân và cộng đồng tiếp cận nguồn dữ liệu chứng khoán miễn phí và đáng tin cậy.
+
+Hoàn thành bản khảo sát: [Tại đây](https://forms.gle/zaJnbgUCjjL1GoTF6)
+Để đảm bảo rằng vnstock phát triển theo hướng đáp ứng nhu cầu của bạn, tôi rất mong nhận được phản hồi từ bạn. Bạn là người dùng quan trọng của vnstock và ý kiến của bạn sẽ giúp chúng tôi xây dựng một kế hoạch phát triển vnstock một cách toàn diện.
+
+## 1.7. Dịch vụ "code dạo", gây quỹ phát triển dự án
+
+Ngoài ra, để gây quỹ phát triển dự án, tôi cũng cung cấp dịch vụ "code dạo" theo đặt hàng bao gồm nhưng không giới hạn với các hoạt động dưới đây:
+- Tải dữ liệu thị trường
+- Viết workflow quét dữ liệu, cập nhật cơ sở dữ liệu, vv
+- Thiết lập dự án phân tích chứng khoán toàn diện
+- Tạo bộ lọc cổ phiếu độc quyền
+- Tạo robot giao dịch qua API
+- Cung cấp API dữ liệu độc quyền
+
+Nếu bạn nào quan tâm và có nhu cầu, vui lòng [inbox](https://www.messenger.com/t/mr.thinh.ueh) để trao đổi thêm. Hoạt động này cũng giúp tôi hiểu thêm về những ứng dụng thực tế và phát triển vnstock trong tương lai.
 
 # II. 📚 Hướng dẫn sử dụng cho người mới
 ## 2.1. Tài nguyên quan trọng
@@ -75,6 +96,9 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 ### 2.1.4. Xây dựng cộng đồng vnstock
 
 🖐 Nếu bạn thấy thư viện này có giá trị và muốn hỗ trợ tác giả duy trì vnstock dưới dạng mã nguồn mở, miễn phí thì có thể tham gia ủng hộ gây quỹ phát triển dự án này. Để biết thêm chi tiết, vui lòng tham khảo bài viết trên blog sau: [Cùng nhau xây dựng cộng đồng VNStock vững mạnh](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/).
+
+- Tham gia nhóm vnstock trên Facebook: [Tại đây](https://www.facebook.com/groups/vnstock)
+- Tham gia Discord channel: [Tại đây](https://discord.gg/qJvxJcChJ3)
 
 <details>
   <summary>Ủng hộ quỹ phát triển vnstock</summary>
@@ -577,7 +601,7 @@ valuation_rating("VNM")
 ```
 </details>
 
-## 3.10.  💳 Sức khỏe tài chính theo ngành
+### 3.10.  💳 Sức khỏe tài chính theo ngành
 ```python
 industry_financial_health("VNM")
 ```
@@ -591,12 +615,12 @@ industry_financial_health("VNM")
 ```
 </details>
 
-## 3.11. 🌏 Thông tin thị trường
+### 3.11. 🌏 Thông tin thị trường
 
 <details>
   <summary>Tạm ngưng hoạt động do SSI từ chối truy cập</summary>
 
-### 3.11.1. Các mã cổ phiếu đứng đầu theo tiêu chí xếp loại 
+#### 3.11.1. Các mã cổ phiếu đứng đầu theo tiêu chí xếp loại 
 
 <details>
   <summary>SSI Top Stocks</summary>
@@ -626,7 +650,7 @@ market_top_mover('ForeignTrading')
 ```
 </details>
 
-### 3.11.2. Thông tin giao dịch nhà đầu tư nước ngoài (NDTNN)
+#### 3.11.2. Thông tin giao dịch nhà đầu tư nước ngoài (NDTNN)
 Trong ví dụ dưới đây, thể hiện giao dịch mua vào của NDTNN.
 
 ```python
@@ -653,7 +677,7 @@ fr_trade_heatmap ('All', 'FrBuyVol')
   ```
 </details>
 
-### 3.11.3. Biến động của các nhóm chỉ số
+#### 3.11.3. Biến động của các nhóm chỉ số
 ![latest_indices](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_latest_indices.png)
 
 Thông tin các nhóm chỉ số phổ biến của thị trường chứng khoán Việt Nam.
@@ -696,7 +720,7 @@ get_latest_indices()
   ```
 </details>
 
-### 3.11.4. Dữ liệu chuyên sâu theo nhóm chỉ số cụ thể
+#### 3.11.4. Dữ liệu chuyên sâu theo nhóm chỉ số cụ thể
 ![index_series_data](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_index_series_data.png)
 
 ```python
