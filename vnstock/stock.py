@@ -177,8 +177,11 @@ def price_depth (stock_list='VPB,TCB', headers=vps_headers):
     # for all columns has "Giá" in the name, convert to value then multiply by 1000, set as integer
     for col in df.columns:
         if 'Giá' in col:
-            df[col] = df[col].astype(float)*1000
-            df[col] = df[col].astype(int)
+            try:
+                df[col] = df[col].astype(float)*1000
+                df[col] = df[col].astype(int)
+            except:
+                pass
     return df
 
 def price_board (symbol_ls):
