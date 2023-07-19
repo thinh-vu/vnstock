@@ -1,7 +1,7 @@
 # Updated 2023-07-14
 - Released version 0.17 on Pypi
 - The `beta` branch has been promoted to become the default branch, while the `main` branch will now serve as the stable version repository.
-- The `beta` branch will be committed to the `main` branch and released on PyPI within every month, starting from now onwards.
+- The changes made in the `beta` branch will be merged into the `main` branch and released on PyPI on a monthly basis, starting from now onwards
 - The README.md file has been updated to synchronize the English and Vietnamese versions.
 - The database file listing_companies_enhanced-2023.csv in the data folder of this repository has been updated for the listing_companies function.
 - A new function, price_depth, has been introduced to retrieve trading prices and volume for a list of stocks. This function can be used in conjunction with the price_board function.
@@ -45,7 +45,7 @@
 Assist in providing a Vietnamese translation for the README.md file, which will be beneficial for local users.
 
 # Updated 2023-05-20
-> The `main` branch is for major updates only, while the `beta` branch is for minor updates. Pypi package will be reflected the `main` branch from now on.
+> The `main` branch is dedicated to major updates only, while the `beta` branch is used for minor updates. Starting from now, the PyPI package will reflect the contents of the `main` branch.
 
 - The listing_companies() function can now read the company listing from either a csv file on this github repo or a live API request.
 - The stock_intraday_data () function has a new limit of 100 for the page_size parameter imposed by the TCBS.
