@@ -1,3 +1,6 @@
+# Updated 2023-07-22
+- Added a new example code to the existing [demo notebook](https://github.com/thinh-vu/vnstock/blob/main/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) that demonstrates how to export data from Google Colab to Google Sheets.
+
 # Updated 2023-07-14
 - Released version 0.17 on Pypi
 - The `beta` branch has been promoted to become the default branch, while the `main` branch will now serve as the stable version repository.
