@@ -8,6 +8,7 @@ from pandas import json_normalize
 from io import BytesIO
 import time
 from datetime import datetime, timedelta
+import json
 
 # API request config for SSI API endpoints
 ssi_headers = {
@@ -74,6 +75,26 @@ vps_headers = {
   'sec-ch-ua-platform': '"Windows"'
 }
 
+# Rong Viet - Live Dragon
+rv_cookie = 'RV08835624=080035c91e77d96a1dcd7d9668d15032dca1c5c44e92ef5bbacedcc05701ff85c9486d38fb81e83857d5672616b9e3546504ee4846; _ga_KN4YPTLVCF=GS1.1.1690211515.1.0.1690211515.0.0.0; _gid=GA1.3.1634163694.1690211515; _gat_gtag_UA_120090926_1=1; _fbp=fb.2.1690211516077.1111198076; JSESSIONID=BFEB38A8B8419EEEC39DF45490E1B22D; vdsc-liv=\u00210CIhC2srW+VXY3rGJTT3LEhTmJvzwWLF5bKAMvgEjULUV+lBtkyTYFCLv7njgHRB4TgCdXik8NDWPQ==; hideMarketChartCKName=0; allCustomGroupsCkName=ALL_DEFAULT_GROUP_ID%23%23%23%23%23%23%23%23CTD%3BDHG%3BDRC%3BFPT%3BHPG%3BHSG%3BKDC%3BMWG%3BNT2%3BPAC%3BPC1%3BPNJ%3BTAC%3BVCB%3BVDS%3BVGC%3BVJC%3BVNM%3B%23%23%23%23%23%23%23%23T%C3%B9y%20ch%E1%BB%8Dn; rv_avraaaaaaaaaaaaaaaa_session_=DPHJFAEBJMBKENBPDOLDBOKIJCPLBLGFPHHGOCJEHFLMNGOGJINNIAOOIOPCNEILMDODFNCOCEGJIMDEHDNABIPKIJNKFFJCBEHPHADOFOLCEJEFFABNAAMIOLLMAEFI; _ga=GA1.1.1224611093.1690211515; _ga_D36ML1235R=GS1.1.1690211525.1.1.1690211543.0.0.0; RV9cd20160034=08557ab163ab2000054ec4478471ef19572f6aa45f46e6023a0505610ff398cf65052602d337f301084048ab69113000c7d3b36391060024abdc7de0506ec20cf57eadcbff388725325c25c6632a4cbda9a1e282112bd2a9d7d1e1c4471b850a'
+
+rv_headers = {
+  'Accept': 'application/json, text/javascript, */*; q=0.01',
+  'Accept-Language': 'en-US,en;q=0.9',
+  'Connection': 'keep-alive',
+  'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+  'DNT': '1',
+  'Origin': 'https://livedragon.vdsc.com.vn',
+  'Sec-Fetch-Dest': 'empty',
+  'Sec-Fetch-Mode': 'cors',
+  'Sec-Fetch-Site': 'same-origin',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1788.0',
+  'X-Requested-With': 'XMLHttpRequest',
+  'sec-ch-ua': '"Edge";v="114", "Chromium";v="114", "Not=A?Brand";v="24"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"Windows"'
+}
+
 def api_request(url, headers=ssi_headers):
     r = requests.get(url, headers).json()
     return r
@@ -106,8 +127,33 @@ def company_overview (symbol):
     return df
 
 ## STOCK TRADING HISTORICAL DATA
-
 def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', type='stock', headers=entrade_headers): # DNSE source (will be published on vnstock)
+    """
+    Get historical price data from entrade.com.vn. The unit price is VND.
+    Parameters:
+        symbol (str): ticker of a stock or index. Available indices are: VNINDEX, VN30, HNX, HNX30, UPCOM, VNXALLSHARE, VN30F1M, VN30F2M, VN30F1Q, VN30F2Q
+        from_date (str): start date of the historical price data
+        to_date (str): end date of the historical price data
+        resolution (str): resolution of the historical price data. Default is '1D' (daily), other options are '1' (1 minute), 15 (15 minutes), 30 (30 minutes), '1H' (hourly)
+        type (str): stock, index, or derivative. Default is 'stock'
+        headers (dict): headers of the request
+    Returns:
+        :obj:`pandas.DataFrame`:
+        | time | open | high | low | close | volume |
+        | ----------- | ---- | ---- | --- | ----- | ------ |
+        | YYYY-mm-dd  | xxxx | xxxx | xxx | xxxxx | xxxxxx |
+    """
+    # if type is stock or index, call the function stock_ohlc
+    if type == 'stock' or type == 'index':
+        df = stock_ohlc(symbol, start_date, end_date, resolution, type, headers)
+    # if type is derivative, call the function derivatives_ohlc
+    elif type == 'derivative':
+        df = derivatives_ohlc(symbol, start_date, end_date, resolution, headers)
+    else:
+        raise ValueError('type must be stock, index or derivative')
+    return df
+
+def stock_ohlc (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', type='stock', headers=entrade_headers): # DNSE source (will be published on vnstock)
     """
     Get historical price data from entrade.com.vn. The unit price is VND.
     Parameters:
@@ -143,6 +189,36 @@ def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17
     df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']] * 1000
     # convert open, high, low, close to int
     df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']].astype(int)
+    # if resolution is 1D, then convert time to date
+    return df
+
+def derivatives_ohlc (symbol='VN30F1M', from_date='2023-04-01', to_date='2023-07-12', resolution='1D', headers=entrade_headers):
+    """
+    Get derivatives historical price from DNSE
+    Parameters:
+        symbol (str): derivative symbol
+        from_date (str): start date of the historical price data, format is 'YYYY-MM-DD'
+        to_date (str): end date of the historical price data, format is 'YYYY-MM-DD'
+        resolution (str): resolution of the historical price data. Default is '1D' (daily), other options are '1' (1 minute), 3 (3 minutes), 5 (5 minutes), 15 (15 minutes), 30 (30 minutes), 45 (45 minutes), '1H' (hourly), '2H' (2 hours), '4H' (4 hours), '1W' (weekly), '1M' (monthly)
+        headers (dict): headers of the request
+    """
+    # convert from_date, to_date to timestamp
+    from_timestamp = int(datetime.strptime(from_date, '%Y-%m-%d').timestamp())
+    to_timestamp = int(datetime.strptime(to_date, '%Y-%m-%d').timestamp())
+    # create url
+    url = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/derivative?from={from_timestamp}&to={to_timestamp}&symbol={symbol}&resolution={resolution}"
+    # send request to get response
+    response = requests.request("GET", url, headers=headers).json()
+    df = pd.DataFrame(response)
+    # convert timestamp to datetime
+    df['t'] = pd.to_datetime(df['t'], unit='s')
+    # rename columns, t for time, o for open, h for high, l for low, c for close, v for volume and drop the nextTime column
+    df = df.rename(columns={'t': 'time', 'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'}).drop(columns=['nextTime'])
+    # convert time from utc to Asia/Ho_Chi_Minh timezone
+    df['time'] = df['time'].dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
+    # if resolution is 1D, convert time to date
+    if resolution == '1D':
+        df['time'] = df['time'].dt.date
     return df
 
 ## TRADING PRICE TABLE
@@ -595,3 +671,143 @@ def get_latest_indices(headers=ssi_headers):
     response = requests.request("GET", url, headers=headers, data=payload)
     result = json_normalize(response.json()['items'])
     return result
+
+# -----------------------------------------------------------------
+# STOCK SCREENER
+
+def get_stock_screening (exchange='HOSE,HNX,UPCOM', epsGrowth1Year_min=0, epsGrowth1Year_max=1000000, lastQuarterProfitGrowth_min=0, lastQuarterProfitGrowth_max=10000000, roe_min=0, roe_max=10000, avgTradingValue20Day_min=10, avgTradingValue20Day_max=1000000000000, relativeStrength1Month_min=0, relativeStrength1Month_max=100, size=1700, headers=tcbs_headers):
+    """
+    Get stock screening insights from TCBS Stock Screener
+    Parameters:
+        exchange (str): exchange of the stock, default is 'HOSE,HNX,UPCOM'
+        epsGrowth1Year_min (int): minimum value of epsGrowth1Year, default is 0
+        epsGrowth1Year_max (int): maximum value of epsGrowth1Year, default is 1000000
+        lastQuarterProfitGrowth_min (int): minimum value of lastQuarterProfitGrowth, default is 0
+        lastQuarterProfitGrowth_max (int): maximum value of lastQuarterProfitGrowth, default is 10000000
+        roe_min (int): minimum value of roe, default is 0
+        roe_max (int): maximum value of roe, default is 10000
+        avgTradingValue20Day_min (int): minimum value of avgTradingValue20Day, default is 10
+        avgTradingValue20Day_max (int): maximum value of avgTradingValue20Day, default is 1000000000000
+        relativeStrength1Month_min (int): minimum value of relativeStrength1Month, default is 0
+        relativeStrength1Month_max (int): maximum value of relativeStrength1Month, default is 100
+        size (int): number of data points per page. Default is 30. You can increase this parameter to about 1700 to get all data in one trading day.
+        headers (dict): headers of the request. You can ignore this parameter.
+    """
+    url = "https://apipubaws.tcbs.com.vn/ligo/v1/watchlist/preview"
+    payload = json.dumps({
+        "tcbsID": None,
+        "filters": [
+            {
+                "key": "exchangeName",
+                "value": exchange,
+                "operator": "="
+            },
+            {
+                "key": "epsGrowth1Year",
+                "operator": ">=",
+                "value": epsGrowth1Year_min
+            },
+            {
+                "key": "epsGrowth1Year",
+                "operator": "<=",
+                "value": epsGrowth1Year_max
+            },
+            {
+                "key": "lastQuarterProfitGrowth",
+                "operator": ">=",
+                "value": lastQuarterProfitGrowth_min
+            },
+            {
+                "key": "lastQuarterProfitGrowth",
+                "operator": "<=",
+                "value": lastQuarterProfitGrowth_max
+            },
+            {
+                "key": "roe",
+                "operator": ">=",
+                "value": roe_min
+            },
+            {
+                "key": "roe",
+                "operator": "<=",
+                "value": roe_max
+            },
+            {
+                "key": "avgTradingValue20Day",
+                "operator": ">=",
+                "value": avgTradingValue20Day_min
+            },
+            {
+                "key": "avgTradingValue20Day",
+                "operator": "<=",
+                "value": avgTradingValue20Day_max
+            },
+            {
+                "key": "relativeStrength1Month",
+                "operator": ">=",
+                "value": relativeStrength1Month_min
+            },
+            {
+                "key": "relativeStrength1Month",
+                "operator": "<=",
+                "value": relativeStrength1Month_max
+            }
+        ],
+        "size": size
+    })
+    # send request to get response
+    response = requests.request("POST", url, headers=headers, data=payload).json()
+    df = pd.DataFrame(response['searchData']['pageContent'])
+    return df
+
+
+# -----------------------------------------------------------------
+# DERIVATIVES
+def derivatives_historical_price (symbol='VN30F1M', from_date='2023-04-01', to_date='2023-07-12', resolution='1D', headers=entrade_headers):
+    """
+    Get derivatives historical price from DNSE
+    Parameters:
+        symbol (str): derivative symbol
+        from_date (str): start date of the historical price data, format is 'YYYY-MM-DD'
+        to_date (str): end date of the historical price data, format is 'YYYY-MM-DD'
+        resolution (str): resolution of the historical price data. Default is '1D' (daily), other options are '1' (1 minute), 3 (3 minutes), 5 (5 minutes), 15 (15 minutes), 30 (30 minutes), 45 (45 minutes), '1H' (hourly), '2H' (2 hours), '4H' (4 hours), '1W' (weekly), '1M' (monthly)
+        headers (dict): headers of the request
+    """
+    # convert from_date, to_date to timestamp
+    from_timestamp = int(datetime.strptime(from_date, '%Y-%m-%d').timestamp())
+    to_timestamp = int(datetime.strptime(to_date, '%Y-%m-%d').timestamp())
+    # create url
+    url = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/derivative?from={from_timestamp}&to={to_timestamp}&symbol={symbol}&resolution={resolution}"
+    # send request to get response
+    response = requests.request("GET", url, headers=headers).json()
+    df = pd.DataFrame(response)
+    # convert timestamp to datetime
+    df['t'] = pd.to_datetime(df['t'], unit='s')
+    # rename columns, t for time, o for open, h for high, l for low, c for close, v for volume and drop the nextTime column
+    df = df.rename(columns={'t': 'time', 'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'}).drop(columns=['nextTime'])
+    # convert time from utc to Asia/Ho_Chi_Minh timezone
+    df['time'] = df['time'].dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
+    # if resolution is 1D, convert time to date
+    if resolution == '1D':
+        df['time'] = df['time'].dt.date
+    return df
+
+
+def derivatives_historical_match (symbol='VN30F2308', date='2023-07-24', cookie=rv_cookie, headers=rv_headers):
+    """
+    Get derivatives historical price data from Live Dragon website (CK Rong Viet)
+    Parameters:
+        symbol (str): ticker of the stock
+        date (str): date of the historical price data
+        cookie (str): cookie of the request. You can ignore this parameter.
+        headers (dict): headers of the request. You can ignore this parameter.
+    """
+    # add cookie to headers
+    headers['Cookie'] = cookie
+    url = "https://livedragon.vdsc.com.vn/general/intradaySearch.rv"
+    # convert date to dd/mm/yyyy format
+    date = datetime.strptime(date, '%Y-%m-%d').strftime('%d/%m/%Y')
+    payload = f"stockCode={symbol}&boardDate={date}"
+    response = requests.request("POST", url, headers=headers, data=payload).json()
+    df = pd.DataFrame(response['list'])
+    return df

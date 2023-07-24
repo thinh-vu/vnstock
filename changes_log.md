@@ -1,3 +1,10 @@
+# Updated 2023-07-24
+- Initiate the implementation of derivatives data retrieval functionality.
+- Integrate a stock screening function into the library.
+- Enhanced the stock_historical_data function with the following updates:
+  - When the resolution is set to 1D, the time column will now be displayed in the YYYY-mm-dd date format.
+  - Introduced a new value, derivative, for the type parameter, enabling the retrieval of derivatives data.
+
 # Updated 2023-07-22
 - Added a new example code to the existing [demo notebook](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) that demonstrates how to export data from Google Colab to Google Sheets.
 
