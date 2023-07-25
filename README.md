@@ -1,4 +1,8 @@
 <div id="badges" align="center">
+<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock logo.png" alt= "logo"/>
+</div>
+
+<div id="badges" align="center">
 <img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=plastic" alt= "Version"/>
 <img src="https://img.shields.io/pypi/dm/vnstock" alt="Download Badge"/>
 <img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock" alt="Commit Badge"/>
