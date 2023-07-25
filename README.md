@@ -163,7 +163,7 @@ Bạn sẽ nắm được cách sử dụng các hàm của vnstock thông qua t
 from vnstock import *
 ```
 
-## 3.1. Danh sách cổ phiếu niêm yết (Listing)
+## 3.1. ☑ Danh sách cổ phiếu niêm yết (Listing)
 
 ### 3.1.1. 📰 Danh sách các công ty niêm yết
 ```python
@@ -184,9 +184,9 @@ Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc 
 
 </details>
 
-## 3.2. Phân tích cơ bản (Fundamental Analysis)
+## 3.2. 🏳 Phân tích cơ bản (Fundamental Analysis)
 
-### 3.2.1. Thông tin tổng quan công ty
+### 3.2.1. 🏚 Thông tin tổng quan công ty
 
 ```python
 company_overview('TCB')
@@ -627,6 +627,7 @@ params = {
         }
 
 # Áp dụng bộ lọc với hàm để lấy kết quả
+
 stock_screening_insights (params)
 ```
 
