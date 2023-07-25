@@ -4,6 +4,8 @@
 - Enhanced the stock_historical_data function with the following updates:
   - When the resolution is set to 1D, the time column will now be displayed in the YYYY-mm-dd date format.
   - Introduced a new value, derivative, for the type parameter, enabling the retrieval of derivatives data.
+  - Added `ticker` column to the returned DataFrame.
+- The function references in the README file have been restructured by use cases, such as Technical Analysis, Fundamental Analysis, Stock screening, etc. This will provide a more user-friendly and organized documentation for the python package. The English version of the README file has also been updated to match the Vietnamese version.
 
 # Updated 2023-07-22
 - Added a new example code to the existing [demo notebook](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) that demonstrates how to export data from Google Colab to Google Sheets.

@@ -179,6 +179,8 @@ def stock_ohlc (symbol, start_date='2023-06-01', end_date='2023-06-17', resoluti
     df = pd.DataFrame(response)
     df['t'] = pd.to_datetime(df['t'], unit='s') # convert timestamp to datetime
     df = df.rename(columns={'t': 'time', 'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'}).drop(columns=['nextTime'])
+    # add symbol column
+    df['ticker'] = symbol
     df['time'] = df['time'].dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
     # if resolution is 1D, then convert time to date
     if resolution == '1D':
@@ -212,8 +214,12 @@ def derivatives_ohlc (symbol='VN30F1M', from_date='2023-04-01', to_date='2023-07
     df = pd.DataFrame(response)
     # convert timestamp to datetime
     df['t'] = pd.to_datetime(df['t'], unit='s')
+    # convert o, h, l, c to int
+    df[['o', 'h', 'l', 'c']] = df[['o', 'h', 'l', 'c']].astype(int)
     # rename columns, t for time, o for open, h for high, l for low, c for close, v for volume and drop the nextTime column
     df = df.rename(columns={'t': 'time', 'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'}).drop(columns=['nextTime'])
+    # add symbol column
+    df['ticker'] = symbol
     # convert time from utc to Asia/Ho_Chi_Minh timezone
     df['time'] = df['time'].dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
     # if resolution is 1D, convert time to date
@@ -763,43 +769,15 @@ def get_stock_screening (exchange='HOSE,HNX,UPCOM', epsGrowth1Year_min=0, epsGro
 
 # -----------------------------------------------------------------
 # DERIVATIVES
-def derivatives_historical_price (symbol='VN30F1M', from_date='2023-04-01', to_date='2023-07-12', resolution='1D', headers=entrade_headers):
-    """
-    Get derivatives historical price from DNSE
-    Parameters:
-        symbol (str): derivative symbol
-        from_date (str): start date of the historical price data, format is 'YYYY-MM-DD'
-        to_date (str): end date of the historical price data, format is 'YYYY-MM-DD'
-        resolution (str): resolution of the historical price data. Default is '1D' (daily), other options are '1' (1 minute), 3 (3 minutes), 5 (5 minutes), 15 (15 minutes), 30 (30 minutes), 45 (45 minutes), '1H' (hourly), '2H' (2 hours), '4H' (4 hours), '1W' (weekly), '1M' (monthly)
-        headers (dict): headers of the request
-    """
-    # convert from_date, to_date to timestamp
-    from_timestamp = int(datetime.strptime(from_date, '%Y-%m-%d').timestamp())
-    to_timestamp = int(datetime.strptime(to_date, '%Y-%m-%d').timestamp())
-    # create url
-    url = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/derivative?from={from_timestamp}&to={to_timestamp}&symbol={symbol}&resolution={resolution}"
-    # send request to get response
-    response = requests.request("GET", url, headers=headers).json()
-    df = pd.DataFrame(response)
-    # convert timestamp to datetime
-    df['t'] = pd.to_datetime(df['t'], unit='s')
-    # rename columns, t for time, o for open, h for high, l for low, c for close, v for volume and drop the nextTime column
-    df = df.rename(columns={'t': 'time', 'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'}).drop(columns=['nextTime'])
-    # convert time from utc to Asia/Ho_Chi_Minh timezone
-    df['time'] = df['time'].dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
-    # if resolution is 1D, convert time to date
-    if resolution == '1D':
-        df['time'] = df['time'].dt.date
-    return df
 
-
+# A function to get derivatives data from livedragon
 def derivatives_historical_match (symbol='VN30F2308', date='2023-07-24', cookie=rv_cookie, headers=rv_headers):
     """
     Get derivatives historical price data from Live Dragon website (CK Rong Viet)
     Parameters:
-        symbol (str): ticker of the stock
-        date (str): date of the historical price data
-        cookie (str): cookie of the request. You can ignore this parameter.
+        symbol (str, required): ticker of the stock
+        date (str, required): date of the historical price data
+        cookie (str, required): cookie of the request. Visit https://livedragon.vdsc.com.vn/all/all.rv. Open Developer Tools (F12 or Ctrl + Shift + I or Cmd + Option + I on macOS) > Navigate to Network > Choose Fetch/XHR > Select any request > Find Cookie in Header > Copy value.
         headers (dict): headers of the request. You can ignore this parameter.
     """
     # add cookie to headers
@@ -810,4 +788,46 @@ def derivatives_historical_match (symbol='VN30F2308', date='2023-07-24', cookie=
     payload = f"stockCode={symbol}&boardDate={date}"
     response = requests.request("POST", url, headers=headers, data=payload).json()
     df = pd.DataFrame(response['list'])
+    # move `Code` column to the first column
+    df = df[['Code'] + [col for col in df.columns if col != 'Code']]
     return df
+
+
+# DATA EXPORT
+
+# # Import required modules
+# from google.colab import auth
+# auth.authenticate_user()
+# import gspread
+# from google.auth import default
+# from gspread_dataframe import set_with_dataframe
+
+# # A function to export data to Google Sheets, support either with a whole sheet or a specific range
+# def export_to_sheets (dataframe, sheet_file='vnstock_data_export', sheet_name=None, target_range=None, max_rows=1000, max_cols=30):
+#     """
+#     Export dataframe to Google Sheets
+#     Parameters:
+#         dataframe (pandas.DataFrame): Dataframe to export
+#         sheet_file (str): Name of the Google Sheets file to export to
+#         sheet_name (str): Name of the sheet to export to
+#         target_range (str): Range to export to, e.g. 'A1:B2'
+#         max_rows (int): Maximum number of rows to create the Google Sheets file.
+#         max_cols (int): Maximum number of columns to create the Google Sheets file.
+#     """
+#     # If sheet_name is not specified, use the default sheet name
+#     creds, _ = default()
+#     gc = gspread.authorize(creds)
+#     sh = gc.create(sheet_file)
+#     if sheet_name is None:
+#         worksheet = gc.open(sheet_file).sheet1
+#     else:
+#         worksheet = sh.add_worksheet(title=sheet_name, rows=max_rows, cols=max_cols)
+#     # If range is not specified, export the whole dataframe, else export the dataframe to the specified range
+#     if range is None:
+#         set_with_dataframe(worksheet, dataframe, include_index=False, include_column_header=True, resize=True)
+#     else:
+#         cell_list = worksheet.range(target_range)
+#         for cell, value in zip(cell_list, df.values.flatten()):
+#             cell.value = value
+#         worksheet.update_cells(cell_list)
+#     print('Exported to Google Sheets successfully!')
