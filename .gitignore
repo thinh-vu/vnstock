@@ -24,3 +24,4 @@ dist/vnstock-0.1.7-py3-none-any.whl
 dist/vnstock-0.1.7.tar.gz
 dist/vnstock-0.1.8-py3-none-any.whl
 dist/vnstock-0.1.8.tar.gz
+vnstock/__pycache__/utils.cpython-311.pyc
