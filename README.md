@@ -160,7 +160,7 @@ Bạn sẽ nắm được cách sử dụng các hàm của vnstock thông qua t
 from vnstock import *
 ```
 
-## 3.1. Danh sách cổ phiếu niêm yết (Listing)
+## 3.1. ☑ Danh sách cổ phiếu niêm yết (Listing)
 
 ### 3.1.1. 📰 Danh sách các công ty niêm yết
 ```python
@@ -181,9 +181,9 @@ Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc 
 
 </details>
 
-## 3.2. Phân tích cơ bản (Fundamental Analysis)
+## 3.2. 🏳 Phân tích cơ bản (Fundamental Analysis)
 
-### 3.2.1. Thông tin tổng quan công ty
+### 3.2.1. 🏚 Thông tin tổng quan công ty
 
 ```python
 company_overview('TCB')
@@ -268,9 +268,9 @@ creditGrowth             0.211  0.252  0.202  0.443 -0.006
 </details>
 
 
-### 3.2.2. 💵 Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
+### 3.3.2. 💵 Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
 
-#### 3.2.2.1. 📄 Báo cáo kinh doanh
+#### 3.3.2.1. 📄 Báo cáo kinh doanh
 
 ![income_statement](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_income_statement.png)
 ```python
@@ -291,7 +291,7 @@ index                                                                           
 ```
 </details>
 
-#### 3.2.2.2. 🧾 Bảng cân đối kế toán
+#### 3.3.2.2. 🧾 Bảng cân đối kế toán
 
 ![balance_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_balancesheet.png)
 ```python
@@ -312,7 +312,7 @@ index                                                                           
 ```
 </details>
 
-#### 3.2.2.3. 💶 Báo cáo lưu chuyển tiền tệ
+#### 3.3.2.3. 💶 Báo cáo lưu chuyển tiền tệ
 
 ```python
 financial_flow(symbol="TCB", report_type='cashflow', report_range='quarterly')
@@ -968,7 +968,7 @@ get_index_series(index_code='VNINDEX', time_range='OneYear')
 
 </details>
 
-## 3.8. Thị trường Phái Sinh
+## 3.8. 🛡 Thị trường Phái Sinh
 
 ### 3.8.1. Dữ liệu giá lịch sử
 
@@ -996,7 +996,7 @@ cookie = 'GIÁ TRỊ COOKIE CẦN PASTE VÀO ĐÂY'
 derivatives_historical_match (symbol='VN30F2308', date='2023-07-24', cookie=cookie)
 ```
 
-# IV. Xuất, Lưu trữ, Chia sẻ dữ liệu
+# IV. 🚚 Xuất, Lưu trữ, Chia sẻ dữ liệu
 
 > Để xuất, lưu trữ và chia sẻ dữ liệu với vnstock, bạn có rất nhiều sự lựa chọn kể cả sử dụng cơ sở dữ liệu, bảng tính (Excel, Google Sheets) và nhiều hình thức khác. Dữ liệu tiêu chuẩn tạo ra bởi vnstock là các pandas DataFrame do đó bạn có thể biến đổi và lưu trữ/chia sẻ dữ liệu dễ dàng với cách thức tiêu chuẩn của python. Dưới đây là hướng dẫn cơ bản với cách thức xuất dữ liệu ra csv và Google Sheets.
 
@@ -1059,7 +1059,7 @@ Xin lưu ý rằng vnstock không chịu trách nhiệm và không có bất k�
 
 🐱‍👤 vnstock được thiết kế hoàn toàn cho mục đích phân tích và thực hành nghiên cứu đầu tư. Mọi hình thức sử dụng không đúng mục đích hoặc việc sử dụng trái phép thư viện với mục đích xấu như tấn công public API hay gây hại cho hệ thống thông qua từ chối truy cập hoặc các hành động tương tự, hoàn toàn nằm ngoài phạm vi sử dụng dự định và không thuộc trách nhiệm của nhóm phát triển.
 
-# VII. Bản quyền và giấy phép
+# VII. 🔑 Bản quyền và giấy phép
 
 
 ```
