@@ -615,20 +615,18 @@ Bộ lọc cổ phiếu là một hàm cho phép bạn truy vấn và lọc các
 
 Tham số
 - params (dict): một từ điển chứa các tham số và giá trị của chúng cho việc lọc cổ phiếu. Các `key` là tên của các bộ lọc, và các `value` là một giá trị đơn hoặc một tupple gồm hai giá trị (min và max) cho bộ lọc đó. Đây là ví dụ cho tham số params được thiết lập đúng:
+- drop_lang: Loại bỏ các cột dữ liệu sử dụng tên tiếng Việt (`vi`) hoặc Anh (`en`)
 
 ```python
 params = {
-            "exchangeName": "HOSE",
+            "exchangeName": "HOSE,HNX,UPCOM",
             "marketCap": (100, 1000),
-            "pe": (10, 20),
-            "dividendYield": (5, 10),
-            "tcbsRecommend": "BUY",
-            "size": 50
+            "dividendYield": (5, 10)
         }
 
 # Áp dụng bộ lọc với hàm để lấy kết quả
 
-stock_screening_insights (params)
+df = stock_screening_insights (params, size=1700, drop_lang='vi')
 ```
 
 <details>

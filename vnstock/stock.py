@@ -681,7 +681,7 @@ def get_latest_indices(headers=ssi_headers):
 # -----------------------------------------------------------------
 # STOCK SCREENER
 
-def stock_screening_insights (params, size=50, id=None, headers=tcbs_headers):
+def stock_screening_insights (params, size=50, id=None, drop_lang='vi', headers=tcbs_headers):
     """
     Get stock screening insights from TCBS Stock Screener
     Parameters:
@@ -690,7 +690,9 @@ def stock_screening_insights (params, size=50, id=None, headers=tcbs_headers):
                 "exchangeName": "HOSE,HNX,UPCOM",
                 "epsGrowth1Year": (0, 1000000)
             }
-        siz (int): number of data points per page. Default is 50. You can increase this parameter to about 1700 to get all data in one trading day.
+        size (int): number of data points per page. Default is 50. You can increase this parameter to about 1700 to get all data in one trading day.
+        id (str): ID of the stock screener. You can ignore this parameter.
+        drop_lang (str): language of the column names to drop. Default is 'vi'.
         headers (dict): headers of the request. You can ignore this parameter.
     """
     url = "https://apipubaws.tcbs.com.vn/ligo/v1/watchlist/preview"
@@ -724,7 +726,13 @@ def stock_screening_insights (params, size=50, id=None, headers=tcbs_headers):
     })
     # send request to get response
     response = requests.request("POST", url, headers=headers, data=payload).json()
-    df = pd.DataFrame(response['searchData']['pageContent'])
+    df = json_normalize(response['searchData']['pageContent'])
+    # drop all columns has column name ended with `.vi`
+    df = df[df.columns.drop(list(df.filter(regex=f'\.{drop_lang}$')))]
+    # drop companyName column
+    df = df.drop(columns=['companyName'])
+    # drop na columns
+    df = df.dropna(axis=1, how='all')
     return df
 
 
