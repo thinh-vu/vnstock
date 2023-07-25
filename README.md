@@ -1,5 +1,5 @@
 <div id="badges" align="center">
-<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock logo.png" alt= "logo"/>
+<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock-logo-white.jpg" alt= "logo"/>
 </div>
 
 <div id="badges" align="center">
