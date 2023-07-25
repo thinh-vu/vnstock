@@ -10,15 +10,14 @@
 🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/main/README-en.md)**
 
 MỤC LỤC
-
 - [I. 🎤 Giới thiệu](#i--giới-thiệu)
 - [II. 📚 Hướng dẫn sử dụng cho người mới](#ii--hướng-dẫn-sử-dụng-cho-người-mới)
 - [III. 💻 Cách sử dụng các hàm trong vnstock](#iii--cách-sử-dụng-các-hàm-trong-vnstock)
-- [IV. Xuất, Lưu trữ, Chia sẻ dữ liệu](#iv-xuất-lưu-trữ-chia-sẻ-dữ-liệu)
+- [IV. 🚚 Xuất, Lưu trữ, Chia sẻ dữ liệu](#iv-xuất-lưu-trữ-chia-sẻ-dữ-liệu)
 - [V. 🙋‍♂️ Thông tin liên hệ](#v-️-thông-tin-liên-hệ)
 - [VI. 💪 Hỗ trợ phát triển dự án vnstock](#vi--hỗ-trợ-phát-triển-dự-án-vnstock)
 - [VII. ⚖ Tuyên bố miễn trừ trách nhiệm](#vii--tuyên-bố-miễn-trừ-trách-nhiệm)
-- [VII. Bản quyền và giấy phép](#vii-bản-quyền-và-giấy-phép)
+- [VII. 🔑 Bản quyền và giấy phép](#vii-bản-quyền-và-giấy-phép)
 
 
 # I. 🎤 Giới thiệu
@@ -624,7 +623,8 @@ params = {
         }
 
 # Áp dụng bộ lọc với hàm để lấy kết quả
-get_stock_screening(params)
+
+stock_screening_insights (params)
 ```
 
 <details>

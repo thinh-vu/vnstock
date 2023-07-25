@@ -681,85 +681,46 @@ def get_latest_indices(headers=ssi_headers):
 # -----------------------------------------------------------------
 # STOCK SCREENER
 
-def get_stock_screening (exchange='HOSE,HNX,UPCOM', epsGrowth1Year_min=0, epsGrowth1Year_max=1000000, lastQuarterProfitGrowth_min=0, lastQuarterProfitGrowth_max=10000000, roe_min=0, roe_max=10000, avgTradingValue20Day_min=10, avgTradingValue20Day_max=1000000000000, relativeStrength1Month_min=0, relativeStrength1Month_max=100, size=1700, headers=tcbs_headers):
+def stock_screening_insights (params, size=50, id=None, headers=tcbs_headers):
     """
     Get stock screening insights from TCBS Stock Screener
     Parameters:
-        exchange (str): exchange of the stock, default is 'HOSE,HNX,UPCOM'
-        epsGrowth1Year_min (int): minimum value of epsGrowth1Year, default is 0
-        epsGrowth1Year_max (int): maximum value of epsGrowth1Year, default is 1000000
-        lastQuarterProfitGrowth_min (int): minimum value of lastQuarterProfitGrowth, default is 0
-        lastQuarterProfitGrowth_max (int): maximum value of lastQuarterProfitGrowth, default is 10000000
-        roe_min (int): minimum value of roe, default is 0
-        roe_max (int): maximum value of roe, default is 10000
-        avgTradingValue20Day_min (int): minimum value of avgTradingValue20Day, default is 10
-        avgTradingValue20Day_max (int): maximum value of avgTradingValue20Day, default is 1000000000000
-        relativeStrength1Month_min (int): minimum value of relativeStrength1Month, default is 0
-        relativeStrength1Month_max (int): maximum value of relativeStrength1Month, default is 100
-        size (int): number of data points per page. Default is 30. You can increase this parameter to about 1700 to get all data in one trading day.
+        params (dict): a dictionary of parameters and their values for the stock screening. The keys should be the names of the filters, and the values should be either a single value or a tuple of two values (min and max) for the filter. For example:
+            params = {
+                "exchangeName": "HOSE,HNX,UPCOM",
+                "epsGrowth1Year": (0, 1000000)
+            }
+        siz (int): number of data points per page. Default is 50. You can increase this parameter to about 1700 to get all data in one trading day.
         headers (dict): headers of the request. You can ignore this parameter.
     """
     url = "https://apipubaws.tcbs.com.vn/ligo/v1/watchlist/preview"
-    payload = json.dumps({
-        "tcbsID": None,
-        "filters": [
-            {
-                "key": "exchangeName",
-                "value": exchange,
+    # create a list of filters based on the params dictionary
+    filters = []
+    for key, value in params.items():
+        # if the value is a tuple, it means it has a min and max value
+        if isinstance(value, tuple):
+            min_value, max_value = value
+            filters.append({
+                "key": key,
+                "operator": ">=",
+                "value": min_value
+            })
+            filters.append({
+                "key": key,
+                "operator": "<=",
+                "value": max_value
+            })
+        # otherwise, it is a single value
+        else:
+            filters.append({
+                "key": key,
+                "value": value,
                 "operator": "="
-            },
-            {
-                "key": "epsGrowth1Year",
-                "operator": ">=",
-                "value": epsGrowth1Year_min
-            },
-            {
-                "key": "epsGrowth1Year",
-                "operator": "<=",
-                "value": epsGrowth1Year_max
-            },
-            {
-                "key": "lastQuarterProfitGrowth",
-                "operator": ">=",
-                "value": lastQuarterProfitGrowth_min
-            },
-            {
-                "key": "lastQuarterProfitGrowth",
-                "operator": "<=",
-                "value": lastQuarterProfitGrowth_max
-            },
-            {
-                "key": "roe",
-                "operator": ">=",
-                "value": roe_min
-            },
-            {
-                "key": "roe",
-                "operator": "<=",
-                "value": roe_max
-            },
-            {
-                "key": "avgTradingValue20Day",
-                "operator": ">=",
-                "value": avgTradingValue20Day_min
-            },
-            {
-                "key": "avgTradingValue20Day",
-                "operator": "<=",
-                "value": avgTradingValue20Day_max
-            },
-            {
-                "key": "relativeStrength1Month",
-                "operator": ">=",
-                "value": relativeStrength1Month_min
-            },
-            {
-                "key": "relativeStrength1Month",
-                "operator": "<=",
-                "value": relativeStrength1Month_max
-            }
-        ],
-        "size": size
+            })
+    payload = json.dumps({
+        "tcbsID": id,
+        "filters": filters,
+        "size": params.get("size", size) # use a default value for size if not specified
     })
     # send request to get response
     response = requests.request("POST", url, headers=headers, data=payload).json()
