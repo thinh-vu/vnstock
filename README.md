@@ -624,7 +624,7 @@ params = {
         }
 
 # Áp dụng bộ lọc với hàm để lấy kết quả
-get_stock_screening_insights(params)
+get_stock_screening(params)
 ```
 
 <details>
