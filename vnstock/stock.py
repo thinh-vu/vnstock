@@ -729,8 +729,6 @@ def stock_screening_insights (params, size=50, id=None, drop_lang='vi', headers=
     df = json_normalize(response['searchData']['pageContent'])
     # drop all columns has column name ended with `.vi`
     df = df[df.columns.drop(list(df.filter(regex=f'\.{drop_lang}$')))]
-    # drop companyName column
-    df = df.drop(columns=['companyName'])
     # drop na columns
     df = df.dropna(axis=1, how='all')
     return df
