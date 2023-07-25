@@ -10,15 +10,14 @@
 🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/main/README-en.md)**
 
 MỤC LỤC
-
 - [I. 🎤 Giới thiệu](#i--giới-thiệu)
 - [II. 📚 Hướng dẫn sử dụng cho người mới](#ii--hướng-dẫn-sử-dụng-cho-người-mới)
 - [III. 💻 Cách sử dụng các hàm trong vnstock](#iii--cách-sử-dụng-các-hàm-trong-vnstock)
-- [IV. Xuất, Lưu trữ, Chia sẻ dữ liệu](#iv-xuất-lưu-trữ-chia-sẻ-dữ-liệu)
+- [IV. 🚚 Xuất, Lưu trữ, Chia sẻ dữ liệu](#iv-xuất-lưu-trữ-chia-sẻ-dữ-liệu)
 - [V. 🙋‍♂️ Thông tin liên hệ](#v-️-thông-tin-liên-hệ)
 - [VI. 💪 Hỗ trợ phát triển dự án vnstock](#vi--hỗ-trợ-phát-triển-dự-án-vnstock)
 - [VII. ⚖ Tuyên bố miễn trừ trách nhiệm](#vii--tuyên-bố-miễn-trừ-trách-nhiệm)
-- [VII. Bản quyền và giấy phép](#vii-bản-quyền-và-giấy-phép)
+- [VII. 🔑 Bản quyền và giấy phép](#vii-bản-quyền-và-giấy-phép)
 
 
 # I. 🎤 Giới thiệu
@@ -624,7 +623,7 @@ params = {
         }
 
 # Áp dụng bộ lọc với hàm để lấy kết quả
-get_stock_screening(params)
+stock_screening_insights (params)
 ```
 
 <details>
@@ -968,7 +967,7 @@ get_index_series(index_code='VNINDEX', time_range='OneYear')
 
 </details>
 
-## 3.8. Thị trường Phái Sinh
+## 3.8. 🛡 Thị trường Phái Sinh
 
 ### 3.8.1. Dữ liệu giá lịch sử
 
@@ -996,7 +995,7 @@ cookie = 'GIÁ TRỊ COOKIE CẦN PASTE VÀO ĐÂY'
 derivatives_historical_match (symbol='VN30F2308', date='2023-07-24', cookie=cookie)
 ```
 
-# IV. Xuất, Lưu trữ, Chia sẻ dữ liệu
+# IV. 🚚 Xuất, Lưu trữ, Chia sẻ dữ liệu
 
 > Để xuất, lưu trữ và chia sẻ dữ liệu với vnstock, bạn có rất nhiều sự lựa chọn kể cả sử dụng cơ sở dữ liệu, bảng tính (Excel, Google Sheets) và nhiều hình thức khác. Dữ liệu tiêu chuẩn tạo ra bởi vnstock là các pandas DataFrame do đó bạn có thể biến đổi và lưu trữ/chia sẻ dữ liệu dễ dàng với cách thức tiêu chuẩn của python. Dưới đây là hướng dẫn cơ bản với cách thức xuất dữ liệu ra csv và Google Sheets.
 
@@ -1059,7 +1058,7 @@ Xin lưu ý rằng vnstock không chịu trách nhiệm và không có bất k�
 
 🐱‍👤 vnstock được thiết kế hoàn toàn cho mục đích phân tích và thực hành nghiên cứu đầu tư. Mọi hình thức sử dụng không đúng mục đích hoặc việc sử dụng trái phép thư viện với mục đích xấu như tấn công public API hay gây hại cho hệ thống thông qua từ chối truy cập hoặc các hành động tương tự, hoàn toàn nằm ngoài phạm vi sử dụng dự định và không thuộc trách nhiệm của nhóm phát triển.
 
-# VII. Bản quyền và giấy phép
+# VII. 🔑 Bản quyền và giấy phép
 
 
 ```

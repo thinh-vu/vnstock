@@ -4,7 +4,7 @@
 - Enhanced the stock_historical_data function with the following updates:
   - When the resolution is set to 1D, the time column will now be displayed in the YYYY-mm-dd date format.
   - Introduced a new value, derivative, for the type parameter, enabling the retrieval of derivatives data.
-  - Added `ticker` column to the returned DataFrame.
+  - ~~ Added `ticker` column to the returned DataFrame.~~
 - The function references in the README file have been restructured by use cases, such as Technical Analysis, Fundamental Analysis, Stock screening, etc. This will provide a more user-friendly and organized documentation for the python package. The English version of the README file has also been updated to match the Vietnamese version.
 
 # Updated 2023-07-22
