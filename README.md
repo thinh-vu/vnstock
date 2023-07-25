@@ -268,9 +268,9 @@ creditGrowth             0.211  0.252  0.202  0.443 -0.006
 </details>
 
 
-### 3.2.2. 💵 Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
+### 3.3.2. 💵 Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
 
-#### 3.2.2.1. 📄 Báo cáo kinh doanh
+#### 3.3.2.1. 📄 Báo cáo kinh doanh
 
 ![income_statement](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_income_statement.png)
 ```python
@@ -291,7 +291,7 @@ index                                                                           
 ```
 </details>
 
-#### 3.2.2.2. 🧾 Bảng cân đối kế toán
+#### 3.3.2.2. 🧾 Bảng cân đối kế toán
 
 ![balance_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_balancesheet.png)
 ```python
@@ -312,7 +312,7 @@ index                                                                           
 ```
 </details>
 
-#### 3.2.2.3. 💶 Báo cáo lưu chuyển tiền tệ
+#### 3.3.2.3. 💶 Báo cáo lưu chuyển tiền tệ
 
 ```python
 financial_flow(symbol="TCB", report_type='cashflow', report_range='quarterly')
