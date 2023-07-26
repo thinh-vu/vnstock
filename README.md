@@ -56,9 +56,15 @@ Thư viện python này kết nối tới các API công khai của các nguồn
 Hoàn thành bản khảo sát: [Tại đây](https://forms.gle/zaJnbgUCjjL1GoTF6)
 Để đảm bảo rằng vnstock phát triển theo hướng đáp ứng nhu cầu của bạn, tôi rất mong nhận được phản hồi từ bạn. Bạn là người dùng quan trọng của vnstock và ý kiến của bạn sẽ giúp chúng tôi xây dựng một kế hoạch phát triển vnstock một cách toàn diện.
 
-## 1.7. Dịch vụ "code dạo", gây quỹ phát triển dự án
+## 1.7. Gây quỹ phát triển dự án
 
-Ngoài ra, để gây quỹ phát triển dự án, tôi cũng cung cấp dịch vụ "code dạo" theo đặt hàng bao gồm nhưng không giới hạn với các hoạt động dưới đây:
+Nếu bạn nào quan tâm và có nhu cầu về `code` dạo hoặc học python, vui lòng [inbox](https://www.messenger.com/t/mr.thinh.ueh) để trao đổi thêm. Hoạt động này cũng giúp tôi hiểu thêm về những ứng dụng thực tế và phát triển vnstock trong tương lai.
+
+### 1.7.1. "Code" dạo theo yêu cầu
+
+> Có nhiều bạn làm trong lĩnh vực đầu tư sẽ thấy ngay lợi ích của việc sử dụng vnstock trong việc xây dựng các thuật toán giao dịch nhưng không rành về lập trình hoặc không có thời gian để tự xây dựng, tôi có thể hỗ trợ. `vnstock` cho phép bạn tự động hóa tất cả các công việc liên quan đến việc tải dữ liệu, xây dựng các bộ lọc, phân tích một cách chính xác, nhanh chóng và áp dụng cho toàn bộ cổ phiếu trên sàn. Việc này bạn không thể thực hiện được một cách dễ dàng nếu chỉ biết Excel.
+
+Thấu hiểu nhu cầu trên, tôi cung cấp dịch vụ "code dạo" theo đặt hàng cũng để gây quỹ phát triển dự án và mở rộng cộng đồng người sử dụng. Dịch vụ bao gồm nhưng không giới hạn với các hoạt động dưới đây:
 - Tải dữ liệu thị trường
 - Viết workflow quét dữ liệu, cập nhật cơ sở dữ liệu, vv
 - Thiết lập dự án phân tích chứng khoán toàn diện
@@ -66,7 +72,11 @@ Ngoài ra, để gây quỹ phát triển dự án, tôi cũng cung cấp dịch
 - Tạo robot giao dịch qua API
 - Cung cấp API dữ liệu độc quyền
 
-Nếu bạn nào quan tâm và có nhu cầu, vui lòng [inbox](https://www.messenger.com/t/mr.thinh.ueh) để trao đổi thêm. Hoạt động này cũng giúp tôi hiểu thêm về những ứng dụng thực tế và phát triển vnstock trong tương lai.
+### 1.7.2. Đào tạo về phân tích dữ liệu và tự động hóa với Python
+
+> Nếu bạn yêu thích vnstock, muốn ủng hộ tác giả đồng thời quan tâm về học lập trình Python cho việc phân tích dữ liệu nói chung và chứng khoán nói riêng, tôi có thể giúp bạn bằng các khóa học. Yên tâm, Python dễ lắm, tôi chỉ cho. AI cũng có thể hỗ trợ bạn thực hiện hầu hết công việc lập trình miễn là bạn có kiến thức căn bản và biết cách sử dụng chúng.
+
+Dự kiến khóa học mới sẽ được triển khai trong tháng 8/2023, bạn nào quan tâm hãy [inbox](https://www.messenger.com/t/mr.thinh.ueh) cho tôi để trao đổi thêm. Bạn cũng có thể tham khảo nội dung khóa học về phân tích dữ liệu tôi đã từng tổ chức [tại đây](https://learn.thinhvu.com/course/python-for-data-analysis-course/)
 
 # II. 📚 Hướng dẫn sử dụng cho người mới
 ## 2.1. Tài nguyên quan trọng
@@ -126,21 +136,30 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 ## 2.2 🛠 Cài đặt vnstock
 ### Bước 1. Chọn phiên bản phù hợp
 
+Để sử dụng phiên bản vnstock ổn định được cập nhật trên pypi.org, bạn có thể cài đặt bằng câu lệnh:
+`pip install --upgrade vnstock`
+
+<details>
+
+<summary>Ngoài ra bạn cũng có thể cài đặt trực tiếp từ source code Github như sau (click để mở rộng) </summary>
+
 > vnstock được phát triển thành hai nhánh riêng biệt. Bạn cần chọn phiên bản phù hợp và *copy câu lệnh tương ứng để thực hiện cài đặt ở bước tiếp theo*:
+
+- Bản `beta` (nhận cập nhật mới nhất) được chia sẻ tại nhánh `beta` của Github repo.
+
+  `pip install git+https://github.com/thinh-vu/vnstock.git@beta`
 
 - Bản `stable` (đã phát triển ổn định) được chia sẻ qua pypi.org và nhánh `main` tại Github repo này. Để cài đặt bản stable bạn dùng câu lệnh đơn giản sau: 
 `pip install vnstock` hoặc cài đặt trực tiếp từ Github với câu lệnh:
 
   `pip install git+https://github.com/thinh-vu/vnstock.git@main`
 
-- Bản `beta` (nhận cập nhật mới nhất) được chia sẻ tại nhánh `beta` của Github repo.
-
-  `pip install git+https://github.com/thinh-vu/vnstock.git@beta`
-
 <details>
   <summary> Chọn xem nhánh phù hợp </summary>
 
   ![select_branch](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock_select_branch.jpeg)
+
+</details>
 
 </details>
 
@@ -150,7 +169,9 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 
 **pip được sử dụng để cài đặt vnstock**. pip có sẵn trong hầu hết các bản phân phối Python được cài đặt. Phiên bản python cần thiết cho vnstock tối thiểu là 3.7. Bạn có thể paste câu lệnh đã copy ở Bước 1 và chạy nó trong môi trường Python bạn đang sử dụng.
 
+- Jupyter Notebook/Jupyter Lab/Google Colab: Mở file demo notebook để chạy các lệnh có sẵn.
 - CLI: Mở Terminal (macOS/Linux) hoặc Command Prompt (Windows Desktop) và paste dòng lệnh trên, bấm Enter để cài đặt.pad
+ 
 ---
 
 # III. 💻 Cách sử dụng các hàm trong vnstock
