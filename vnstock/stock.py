@@ -681,6 +681,7 @@ def get_latest_indices(headers=ssi_headers):
 # -----------------------------------------------------------------
 # STOCK SCREENER
 
+
 def stock_screening_insights (params, size=50, id=None, drop_lang='vi', headers=tcbs_headers):
     """
     Get stock screening insights from TCBS Stock Screener
