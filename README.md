@@ -81,6 +81,8 @@ Dự kiến khóa học mới sẽ được triển khai trong tháng 8/2023, b�
 # II. 📚 Hướng dẫn sử dụng cho người mới
 ## 2.1. Tài nguyên quan trọng
 
+Trước khi bắt đầu, bạn có thể xem Video giới thiệu chính thức cho vnstock mình mới chia sẻ trên Youtube [tại đây](https://www.youtube.com/watch?v=6kP2TTtEY9Y&ab_channel=LEarnAnything)
+
 ### 2.1.2 Blog
 
 👉 Để biết thêm thông tin và minh hoạ về cách sử dụng, bạn vui lòng truy cập bài viết trên blog của tôi, có sẵn bằng tiếng Việt/Anh [tại đây](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
