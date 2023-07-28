@@ -650,7 +650,6 @@ params = {
 # Áp dụng bộ lọc với hàm để lấy kết quả
 
 df = stock_screening_insights (params, size=1700, drop_lang='vi')
-```
 
 <details>
 
