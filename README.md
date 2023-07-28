@@ -651,6 +651,8 @@ params = {
 
 df = stock_screening_insights (params, size=1700, drop_lang='vi')
 
+```
+
 <details>
 
 <summary>Các bộ lọc gợi ý và tiêu chí hỗ trợ bao gồm</summary>
