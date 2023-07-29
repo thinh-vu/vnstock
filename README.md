@@ -1083,8 +1083,45 @@ Xin lưu ý rằng vnstock không chịu trách nhiệm và không có bất k�
 
 🐱‍👤 vnstock được thiết kế hoàn toàn cho mục đích phân tích và thực hành nghiên cứu đầu tư. Mọi hình thức sử dụng không đúng mục đích hoặc việc sử dụng trái phép thư viện với mục đích xấu như tấn công public API hay gây hại cho hệ thống thông qua từ chối truy cập hoặc các hành động tương tự, hoàn toàn nằm ngoài phạm vi sử dụng dự định và không thuộc trách nhiệm của nhóm phát triển.
 
-# VII. 🔑 Bản quyền và giấy phép
+# VII. Trích dẫn thông tin (Cite)
 
+Khi bạn sử dụng gói phần mềm `vnstock` trong dự án của mình, hãy tuân thủ các hướng dẫn về `Trích dẫn` (Cite) dưới đây:
+
+Nếu bạn sử dụng dữ liệu hoặc mã nguồn của Vnstock trong dự án/bài viết/video của mình, xin vui lòng cung cấp trích dẫn (cite) tới dự án Vnstock. Dưới đây là ví dụ trích dẫn mẫu:
+
+```
+Dữ liệu được lấy từ Vnstock - gói phần mềm Python phân tích thị trường chứng khoán Việt Nam. (thinh-vu @ Github, Copyright (c) 2022).
+```
+
+Trích dẫn cho mã nguồn:
+```
+Mã nguồn được lấy từ Vnstock - gói phần mềm Python phân tích thị trường chứng khoán Việt Nam. (thinh-vu @ Github, Copyright (c) 2022).
+```
+
+# VIII. 🔑 Giấy phép (License)
+
+Vnstock được cấp phép theo Giấy phép MIT. Nội dung của giấy phép như dưới đây, và thể hiện trong file [LICENSE](https://github.com/thinh-vu/vnstock/blob/beta/LICENSE).
+
+Khi sử dụng Vnstock trong dự án của mình, bạn phải tuân thủ và giữ nguyên giấy phép MIT của Vnstock. Đồng thời, hãy chắc chắn rằng bạn đã bao gồm tên tác giả và giấy phép trong dự án của bạn.
+Lưu ý: Vnstock là một dự án mã nguồn mở, do đó việc tuân thủ giấy phép và trích dẫn đóng vai trò quan trọng trong việc hỗ trợ và duy trì cộng đồng nguồn mở.
+Chúng tôi cảm ơn bạn đã sử dụng Vnstock và tuân thủ các hướng dẫn `Trích dẫn` và `Giấy phép` này. Nếu bạn có bất kỳ câu hỏi hoặc góp ý nào, xin vui lòng liên hệ với tôi qua mục [Thảo luận](https://github.com/thinh-vu/vnstock/discussions) của repo Github này hoặc nhắn tin trực tiếp.
+
+Xin cảm ơn và chúc bạn thành công!
+
+```
+Copyright (c) 2022 Thinh Vu | thinh-vu @ Github | MIT
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+<details>
+
+<summary> Bản dịch tiếng Việt để các bạn tiện tham khảo </summary>
 
 ```
 Bản quyền (c) 2022 Thinh Vu | thinh-vu @ Github | MIT
@@ -1093,5 +1130,7 @@ Bản quyền (c) 2022 Thinh Vu | thinh-vu @ Github | MIT
 
 Thông báo bản quyền trên và thông báo giấy phép này phải được bao gồm trong tất cả các bản sao hoặc phần quan trọng của Phần mềm.
 
-PHẦN MỀM ĐƯỢC CUNG CẤP "NHƯ NÓ LÀ", KHÔNG BẢO ĐẢM BẤT KỲ LOẠI NÀO, BAO GỒM NHƯNG KHÔNG GIỚI HẠN ĐẾN SỰ BẢO ĐẢM VỀ CHẤT LƯỢNG KINH DOANH, PHÙ HỢP VỚI MỤC ĐÍCH CỤ THỂ VÀ VI PHẠM QUYỀN SỞ HỮU. TRONG MỌI TRƯỜNG HỢP, TÁC GIẢ HOẶC CHỦ SỞ HỮU BẢN QUYỀN KHÔNG CHỊU TRÁCH NHIỆM ĐỐI VỚI BẤT KỲ YÊU CẦU BỒI THƯỜNG, THIỆT HẠI HOẶC TRÁCH NHIỆM PHÁP LÝ NÀO PHÁT SINH TỪ HOẶC LIÊN QUAN ĐẾN SỬ DỤNG HOẶC HIỆN HỮU CỦA PHẦN MỀM.
+PHẦN MỀM ĐƯỢC CUNG CẤP "NGUYÊN BẢN", KHÔNG CÓ BẤT KỲ HÌNH THỨC BẢO ĐẢM NÀO, BAO GỒM NHƯNG KHÔNG GIỚI HẠN ĐẾN SỰ BẢO ĐẢM VỀ CHẤT LƯỢNG KINH DOANH, PHÙ HỢP VỚI MỤC ĐÍCH CỤ THỂ VÀ VI PHẠM QUYỀN SỞ HỮU. TRONG MỌI TRƯỜNG HỢP, TÁC GIẢ HOẶC CHỦ SỞ HỮU BẢN QUYỀN KHÔNG CHỊU TRÁCH NHIỆM ĐỐI VỚI BẤT KỲ YÊU CẦU BỒI THƯỜNG, THIỆT HẠI HOẶC TRÁCH NHIỆM PHÁP LÝ NÀO PHÁT SINH TỪ HOẶC LIÊN QUAN ĐẾN SỬ DỤNG HOẶC HIỆN HỮU CỦA PHẦN MỀM.
 ```
+
+</details>
