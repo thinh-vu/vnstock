@@ -14,14 +14,17 @@
 🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/main/README-en.md)**
 
 MỤC LỤC
+
 - [I. 🎤 Giới thiệu](#i--giới-thiệu)
 - [II. 📚 Hướng dẫn sử dụng cho người mới](#ii--hướng-dẫn-sử-dụng-cho-người-mới)
-- [III. 💻 Cách sử dụng các hàm trong vnstock](#iii--cách-sử-dụng-các-hàm-trong-vnstock)
-- [IV. 🚚 Xuất, Lưu trữ, Chia sẻ dữ liệu](#iv-xuất-lưu-trữ-chia-sẻ-dữ-liệu)
+- [III. 💻 Cách sử dụng các hàm trong vnstock]
+- [IV. 🚚 Xuất, Lưu trữ, Chia sẻ dữ liệu](#iv--xuất-lưu-trữ-chia-sẻ-dữ-liệu)
 - [V. 🙋‍♂️ Thông tin liên hệ](#v-️-thông-tin-liên-hệ)
 - [VI. 💪 Hỗ trợ phát triển dự án vnstock](#vi--hỗ-trợ-phát-triển-dự-án-vnstock)
 - [VII. ⚖ Tuyên bố miễn trừ trách nhiệm](#vii--tuyên-bố-miễn-trừ-trách-nhiệm)
-- [VII. 🔑 Bản quyền và giấy phép](#vii-bản-quyền-và-giấy-phép)
+- [VII. 🔗 Trích dẫn thông tin (Cite)](#vii-trích-dẫn-thông-tin-cite)
+- [VIII. 🔑 Giấy phép (License)](#viii--giấy-phép-license)
+
 
 
 # I. 🎤 Giới thiệu
@@ -32,7 +35,7 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 vnstock cung cấp nhiều tính năng đa dạng như tải dữ liệu lịch sử giá, thông tin công ty niêm yết, thông tin thị trường cho tất cả các mã chứng khoán niêm yết.
 
 ## 1.3. Nguồn cấp dữ liệu
-Thư viện python này kết nối tới các API công khai của các nguồn cấp dữ liệu để tải về để làm việc dưới dạng các DataFrame trong dự án Python. Việc truy xuất dữ liệu này là hoàn toàn **MIỄN PHÍ**.
+Thư viện `vnstock` cung cấp khả năng kết nối tới các API công khai của các nguồn cấp dữ liệu đáng tin cậy để người dùng có thể truy xuất dữ liệu chứng khoán Việt Nam và tương tác với các đối tượng Pandas DataFrame trong môi trường Python. Bạn cũng có thể xuất dữ liệu sang các định dạng phổ thông như csv, Excel, Google Sheets, Database để tiến hành phân tích nếu muốn. Việc truy xuất dữ liệu này là **TỰ DO** và hoàn toàn **MIỄN PHÍ**.
 
 ## 1.4. Tips
 - Theo dõi những cập nhật về thay đổi của vnstock bằng tính năng `Watch`. Hiện tại vnstock được cập nhật thường xuyên hàng tuần qua nhánh `beta`, vì vậy theo dõi repo này giúp bạn luôn nắm bắt được kịp thời những thay đổi mới nhất.
@@ -45,22 +48,42 @@ Thư viện python này kết nối tới các API công khai của các nguồn
 
 </details>
 
-## 1.5. Đóng góp xây dựng mã nguồn vnstock
-- Bạn có thể đóng góp xây dựng vnstock thông qua nhiều hình thức khác nhau, trong đó có việc xây dựng và cải tiến mã nguồn hoặc dịch tài liệu của dự án. 
-- Để bắt đầu, bạn có thể `folk` nhánh `beta` của repo này về tài khoản của mình, sửa đổi mã nguồn và tạo `pull request` để yêu cầu cập nhật mã nguồn. Sau khi kiểm tra các thay đổi và phê duyệt, mã nguồn do bạn đóng góp sẽ được gộp vào vnstock.
-- Lưu ý: Những thay đổi do bạn đóng góp sẽ được phát hành trong phiên bản tiếp theo của `vnstock` trên Pypi.org đồng thời với những cập nhật của tác giả trên nhánh `beta`.
+## 1.5. Đóng góp xây dựng vnstock
 
-## 1.6. Hoàn thành khảo sát về vnstock
+### a. Lan toả vnstock tới nhiều người hơn
+- Cách thức đầu tiên đơn giản và dễ áp dụng nhất cho bất kỳ ai yêu thích `vnstock` là góp phần lan tỏa nó tới bạn bè, cộng đồng về trải nghiệm của mình và chia sẻ về cách `vnstock` có thể giúp đơn giản hóa workflow phân tích dữ liệu chứng khoán của những người xung quanh trong cả công việc nghiên cứu lẫn đầu tư thực tế.
+- Các hình thức lan tỏa và ủng hộ tinh thần cho `vnstock` bao gồm nhưng không giới hạn
+  - Đánh dấu yêu thích dự án trên Github với tính năng `Star` ở trên
+  - `Folk` dự án để bắt đầu tùy biến mã nguồn của dự án, đồng thời lan tỏa sự chú ý nhiều hơn cho `vnstock`.
+  - Like fanpage vnstock trên Facebook: [vnstock.official](https://www.facebook.com/vnstock.official)
+  - Theo dõi và chia sẻ cảm nghĩ của bạn qua bình luận trên Youtube channel [LEarn Anything](https://www.youtube.com/@learn_anything_az). Mình có series hướng dẫn sử dụng cụ thể về vnstock cùng nhiều kiến thức hữu ích khác.
+  - Tham gia cộng đồng [Discord vnstock](https://discord.gg/qJvxJcChJ3) để trao đổi và học hỏi lẫn nhau. 
+
+### b. Chia sẻ trải nghiệm của bạn về `vnstock` với tác giả qua bản khảo sát
 > vnstock là một dự án tôi tâm huyết, đầu tư nhiều thời gian để phát triển giúp bản thân và cộng đồng tiếp cận nguồn dữ liệu chứng khoán miễn phí và đáng tin cậy.
 
 Hoàn thành bản khảo sát: [Tại đây](https://forms.gle/zaJnbgUCjjL1GoTF6)
 Để đảm bảo rằng vnstock phát triển theo hướng đáp ứng nhu cầu của bạn, tôi rất mong nhận được phản hồi từ bạn. Bạn là người dùng quan trọng của vnstock và ý kiến của bạn sẽ giúp chúng tôi xây dựng một kế hoạch phát triển vnstock một cách toàn diện.
 
-## 1.7. Gây quỹ phát triển dự án
+### c. Góp sức phát triển mã nguồn dự án
+
+> Các bạn có thể tham khảo file [CONTRIBUTING.MD](./CONTRIBUTING.md) để nắm rõ hơn tiêu chuẩn và hướng dẫn đóng góp mã nguồn dự án.
+
+- Bạn có thể đóng góp xây dựng vnstock thông qua nhiều hình thức khác nhau, trong đó có việc xây dựng và cải tiến mã nguồn hoặc dịch tài liệu của dự án. 
+- Để bắt đầu, bạn có thể `folk` nhánh `beta` của repo này về tài khoản của mình, sửa đổi mã nguồn và tạo `pull request` để yêu cầu cập nhật mã nguồn. Sau khi kiểm tra các thay đổi và phê duyệt, mã nguồn do bạn đóng góp sẽ được gộp vào vnstock.
+- Lưu ý: Những thay đổi do bạn đóng góp sẽ được phát hành trong phiên bản tiếp theo của `vnstock` trên Pypi.org đồng thời với những cập nhật của tác giả trên nhánh `beta`.
+
+## 1.6. Ủng hộ quỹ phát triển dự án
 
 Nếu bạn nào quan tâm và có nhu cầu về `code` dạo hoặc học python, vui lòng [inbox](https://www.messenger.com/t/mr.thinh.ueh) để trao đổi thêm. Hoạt động này cũng giúp tôi hiểu thêm về những ứng dụng thực tế và phát triển vnstock trong tương lai.
 
-### 1.7.1. "Code" dạo theo yêu cầu
+<div id="badges" align="center">
+  <a href="https://www.messenger.com/t/mr.thinh.ueh">
+    <img src="https://img.shields.io/badge/Messenger-00B2FF?style=for-the-badge&logo=messenger&logoColor=white" alt="Messenger Badge"/>
+  </a>
+</div>
+
+### 1.6.1. "Code" dạo theo yêu cầu
 
 > Có nhiều bạn làm trong lĩnh vực đầu tư sẽ thấy ngay lợi ích của việc sử dụng vnstock trong việc xây dựng các thuật toán giao dịch nhưng không rành về lập trình hoặc không có thời gian để tự xây dựng, tôi có thể hỗ trợ. `vnstock` cho phép bạn tự động hóa tất cả các công việc liên quan đến việc tải dữ liệu, xây dựng các bộ lọc, phân tích một cách chính xác, nhanh chóng và áp dụng cho toàn bộ cổ phiếu trên sàn. Việc này bạn không thể thực hiện được một cách dễ dàng nếu chỉ biết Excel.
 
@@ -72,7 +95,7 @@ Thấu hiểu nhu cầu trên, tôi cung cấp dịch vụ "code dạo" theo đ�
 - Tạo robot giao dịch qua API
 - Cung cấp API dữ liệu độc quyền
 
-### 1.7.2. Đào tạo về phân tích dữ liệu và tự động hóa với Python
+### 1.6.2. Đào tạo về phân tích dữ liệu và tự động hóa với Python
 
 > Nếu bạn yêu thích vnstock, muốn ủng hộ tác giả đồng thời quan tâm về học lập trình Python cho việc phân tích dữ liệu nói chung và chứng khoán nói riêng, tôi có thể giúp bạn bằng các khóa học. Yên tâm, Python dễ lắm, tôi chỉ cho. AI cũng có thể hỗ trợ bạn thực hiện hầu hết công việc lập trình miễn là bạn có kiến thức căn bản và biết cách sử dụng chúng.
 
@@ -172,8 +195,21 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 **pip được sử dụng để cài đặt vnstock**. pip có sẵn trong hầu hết các bản phân phối Python được cài đặt. Phiên bản python cần thiết cho vnstock tối thiểu là 3.7. Bạn có thể paste câu lệnh đã copy ở Bước 1 và chạy nó trong môi trường Python bạn đang sử dụng.
 
 - Jupyter Notebook/Jupyter Lab/Google Colab: Mở file demo notebook để chạy các lệnh có sẵn.
-- CLI: Mở Terminal (macOS/Linux) hoặc Command Prompt (Windows Desktop) và paste dòng lệnh trên, bấm Enter để cài đặt.pad
+- CLI: Mở Terminal (macOS/Linux) hoặc Command Prompt (Windows Desktop) và paste dòng lệnh trên, bấm Enter để cài đặt. Lưu ý: Nếu sử dụng Windows và Python cài đặt với Anaconda thì chọn Anaconda Prompt để chạy lệnh thay vì Command Prompt mặc định.
  
+## 2.3. Cài đặt các gói thư viện bắt buộc (gỡ lỗi)
+
+Trong trường hợp bạn không sử dụng Google Colab là môi trường mặc định để chạy vnstock, bạn sẽ cần phải đảm bảo môi trường Python của mình có đầy đủ các gói phần mềm bắt buộc kèm theo (dependencies/requirements) để có thể chạy được `vnstock`. 
+- Nếu cài Python với Anaconda, bạn có thể bỏ qua bước này.
+- Nếu cài bản python thuần từ python.org hoặc Python từ Windows Store, bạn sẽ cần cài đặt thêm tối thiểu `pandas` và `requests` với công cụ `pip`.
+
+Để quá trình cài đặt diễn ra đơn giản và suôn sẻ, bạn có thể làm theo các bước sau:
+- Tải file [requirement.txt](https://github.com/thinh-vu/vnstock/blob/beta/requirements.txt) về máy
+-  Mở Command Prompt / Terminal, rỏ tới thư mục chứa file `requirements.txt`, thông thường là `Downloads` bằng lệnh `cd  ĐỊA_CHỈ_THƯ_MỤC_CỦA_BẠN`
+-  Chạy lệnh sau: `pip install -r requirements.txt`
+
+Như vậy là qúa trình chuẩn bị để sử dụng `vnstock` đã hoàn thành. Chúc bạn thành công!
+
 ---
 
 # III. 💻 Cách sử dụng các hàm trong vnstock
@@ -206,6 +242,9 @@ Hàm này đọc dữ liệu từ tệp csv đính kèm trên Github theo mặc 
 ```
 
 </details>
+
+
+Ngoài ra, bạn có thể lấy danh sách các mã cổ phiếu niêm yết thông qua bộ lọc cổ phiếu với hàm `stock_screening_insights` ở mục 3.5.2. Bộ lọc cổ phiếu. Khi đó điều kiện lọc chỉ đơn giản là chọn đủ 3 sàn `HOSE, HNX, UPCOM` để trả về toàn bộ các mã cổ phiếu hoặc chọn cô phiếu của từng sàn riêng lẻ theo ý bạn.
 
 ## 3.2. 🏳 Phân tích cơ bản (Fundamental Analysis)
 
@@ -1085,7 +1124,7 @@ Xin lưu ý rằng vnstock không chịu trách nhiệm và không có bất k�
 
 🐱‍👤 vnstock được thiết kế hoàn toàn cho mục đích phân tích và thực hành nghiên cứu đầu tư. Mọi hình thức sử dụng không đúng mục đích hoặc việc sử dụng trái phép thư viện với mục đích xấu như tấn công public API hay gây hại cho hệ thống thông qua từ chối truy cập hoặc các hành động tương tự, hoàn toàn nằm ngoài phạm vi sử dụng dự định và không thuộc trách nhiệm của nhóm phát triển.
 
-# VII. Trích dẫn thông tin (Cite)
+# VII. 🔗 Trích dẫn thông tin (Cite)
 
 Khi bạn sử dụng gói phần mềm `vnstock` trong dự án của mình, hãy tuân thủ các hướng dẫn về `Trích dẫn` (Cite) dưới đây:
 
