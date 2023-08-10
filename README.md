@@ -25,12 +25,12 @@ MỤC LỤC
 
 - [I. 🎤 Giới thiệu](#i--giới-thiệu)
 - [II. 📚 Hướng dẫn sử dụng cho người mới](#ii--hướng-dẫn-sử-dụng-cho-người-mới)
-- [III. 💻 Cách sử dụng các hàm trong vnstock]
+- [III. 💻 Cách sử dụng các hàm trong vnstock](#iii--cách-sử-dụng-các-hàm-trong-vnstock)
 - [IV. 🚚 Xuất, Lưu trữ, Chia sẻ dữ liệu](#iv--xuất-lưu-trữ-chia-sẻ-dữ-liệu)
 - [V. 🙋‍♂️ Thông tin liên hệ](#v-️-thông-tin-liên-hệ)
 - [VI. 💪 Hỗ trợ phát triển dự án vnstock](#vi--hỗ-trợ-phát-triển-dự-án-vnstock)
 - [VII. ⚖ Tuyên bố miễn trừ trách nhiệm](#vii--tuyên-bố-miễn-trừ-trách-nhiệm)
-- [VII. 🔗 Trích dẫn thông tin (Cite)](#vii-trích-dẫn-thông-tin-cite)
+- [VII. 🔗 Trích dẫn thông tin (Cite)](#vii--trích-dẫn-thông-tin-cite)
 - [VIII. 🔑 Giấy phép (License)](#viii--giấy-phép-license)
 
 
