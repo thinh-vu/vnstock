@@ -1,5 +1,7 @@
 <div align="center">
-<a href="https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3/"><img src="[image.jpg](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/python_data_analysis_course_3_thinhvu.png)" alt="python course 3"></a>
+
+[![python_course_3](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/python_data_analysis_course_3_thinhvu.png)](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3/)
+
 </div>
 
 ---
