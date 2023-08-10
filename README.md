@@ -1,3 +1,7 @@
+<div align="center">
+<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/python_data_analysis_course_3_thinhvu.png" href="https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3/" alt="python-course-3-data-analysis">
+</div>
+
 <div id="badges" align="center">
 <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock-logo-white.jpg" alt= "logo"/>
 </div>
@@ -99,7 +103,7 @@ Thấu hiểu nhu cầu trên, tôi cung cấp dịch vụ "code dạo" theo đ�
 
 > Nếu bạn yêu thích vnstock, muốn ủng hộ tác giả đồng thời quan tâm về học lập trình Python cho việc phân tích dữ liệu nói chung và chứng khoán nói riêng, tôi có thể giúp bạn bằng các khóa học. Yên tâm, Python dễ lắm, tôi chỉ cho. AI cũng có thể hỗ trợ bạn thực hiện hầu hết công việc lập trình miễn là bạn có kiến thức căn bản và biết cách sử dụng chúng.
 
-Dự kiến khóa học mới sẽ được triển khai trong tháng 8/2023, bạn nào quan tâm hãy [inbox](https://www.messenger.com/t/mr.thinh.ueh) cho tôi để trao đổi thêm. Bạn cũng có thể tham khảo nội dung khóa học về phân tích dữ liệu tôi đã từng tổ chức [tại đây](https://learn.thinhvu.com/course/python-for-data-analysis-course/)
+Khóa học Phân tích dữ liệu với Python #3 (mình tổ chức năm thứ 3 rồi) được triển khai trong tháng 8/2023, bạn nào quan tâm hãy [inbox](https://www.messenger.com/t/mr.thinh.ueh) cho tôi để trao đổi thêm. Bạn cũng có thể tham khảo bài viết giới thiệu khóa học trên blog về phân tích dữ liệu tôi đã từng tổ chức [tại đây](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3/)
 
 # II. 📚 Hướng dẫn sử dụng cho người mới
 ## 2.1. Tài nguyên quan trọng
