@@ -237,7 +237,7 @@ def calculate_moving_average(ticker, date, size):
     Examples: 
         calculate_moving_average('TCB', '2021-02-22', 5) - returns the moving average of TCB on 2021-02-22 by the last 5 days.
     """
-    start_date = (datetime.strptime(date, '%Y-%m-%d') - timedelta(days=size+10)).strftime('%Y-%m-%d') # buffer 10 days for holidays and weekends
+    start_date = (datetime.strptime(date, '%Y-%m-%d') - timedelta(days=size+int(size/7)*2+10)).strftime('%Y-%m-%d') # buffer 10 days + weekends for holidays and weekends
     df =  stock_historical_data(symbol=ticker,
                             start_date=start_date,
                             end_date=date,
