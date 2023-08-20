@@ -227,6 +227,24 @@ def derivatives_ohlc (symbol='VN30F1M', from_date='2023-04-01', to_date='2023-07
         df['time'] = df['time'].dt.date
     return df
 
+def calculate_moving_average(ticker, date, size):
+    """
+    This function returns the moving average of a stock symbol by close price.
+    Args:
+        ticker (:obj:`str`, required): 3 digits name of the desired stock.
+        date (:obj:`str`, required): date of the MA value in the format of YYYY-MM-DD.
+        size (:obj:`int`, required): number of days to calculate the moving average.
+    Examples: 
+        calculate_moving_average('TCB', '2021-02-22', 5) - returns the moving average of TCB on 2021-02-22 by the last 5 days.
+    """
+    start_date = (datetime.strptime(date, '%Y-%m-%d') - timedelta(days=size+10)).strftime('%Y-%m-%d') # buffer 10 days for holidays and weekends
+    df =  stock_historical_data(symbol=ticker,
+                            start_date=start_date,
+                            end_date=date,
+                            resolution='1D', type='stock')
+    df = df.iloc[-size:,:] # get the last 'size' days
+    return sum(df.close)/size
+
 ## TRADING PRICE TABLE
 def price_depth (stock_list='VPB,TCB', headers=vps_headers):
     """
