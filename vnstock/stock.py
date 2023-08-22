@@ -175,23 +175,28 @@ def stock_ohlc (symbol, start_date='2023-06-01', end_date='2023-06-17', resoluti
     from_timestamp = int(datetime.strptime(start_date, '%Y-%m-%d').timestamp())
     to_timestamp = int(datetime.strptime(end_date, '%Y-%m-%d').timestamp())
     url = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/{type}?from={from_timestamp}&to={to_timestamp}&symbol={symbol}&resolution={resolution}"
-    response = requests.request("GET", url, headers=headers).json()
-    df = pd.DataFrame(response)
-    df['t'] = pd.to_datetime(df['t'], unit='s') # convert timestamp to datetime
-    df = df.rename(columns={'t': 'time', 'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'}).drop(columns=['nextTime'])
-    # add symbol column
-    df['ticker'] = symbol
-    df['time'] = df['time'].dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
-    # if resolution is 1D, then convert time to date
-    if resolution == '1D':
-        df['time'] = df['time'].dt.date
+    response = requests.request("GET", url, headers=headers)
+
+    if response.status_code == 200:
+        response_data = response.json()
+        df = pd.DataFrame(response_data)
+        df['t'] = pd.to_datetime(df['t'], unit='s') # convert timestamp to datetime
+        df = df.rename(columns={'t': 'time', 'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'}).drop(columns=['nextTime'])
+        # add symbol column
+        df['ticker'] = symbol
+        df['time'] = df['time'].dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
+        # if resolution is 1D, then convert time to date
+        if resolution == '1D':
+            df['time'] = df['time'].dt.date
+        else:
+            pass
+        # convert open, high, low, close to VND
+        df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']] * 1000
+        # convert open, high, low, close to int
+        df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']].astype(int)
     else:
-        pass
-    # convert open, high, low, close to VND
-    df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']] * 1000
-    # convert open, high, low, close to int
-    df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']].astype(int)
-    # if resolution is 1D, then convert time to date
+        print(f"Error in API response", "\n")
+        
     return df
 
 def derivatives_ohlc (symbol='VN30F1M', from_date='2023-04-01', to_date='2023-07-12', resolution='1D', headers=entrade_headers):
