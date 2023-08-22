@@ -454,7 +454,7 @@ def financial_ratio (symbol, report_range, is_all=False):
     df = df.T
     return df
 
-def financial_flow(symbol='TCB', report_type='incomestatement', report_range='quarterly'): # incomestatement, balancesheet, cashflow | report_range: 0 for quarterly, 1 for yearly
+def financial_flow(symbol='TCB', report_type='incomestatement', report_range='quarterly', get_all=True): # incomestatement, balancesheet, cashflow | report_range: 0 for quarterly, 1 for yearly
     """
     This function returns the quarterly financial ratios of a stock symbol. Some of expected ratios are: priceToEarning, priceToBook, roe, roa, bookValuePerShare, etc
     Args:
@@ -463,10 +463,10 @@ def financial_flow(symbol='TCB', report_type='incomestatement', report_range='qu
         report_range (:obj:`str`, required): yearly or quarterly.
     """
     if report_range == 'yearly':
-        x = 1
+        range = 1
     elif report_range == 'quarterly':
-        x = 0
-    data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{symbol}/{report_type}', params={'yearly': x, 'isAll':'true'}).json()
+        range = 0
+    data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{symbol}/{report_type}', params={'yearly': range, 'isAll': get_all}).json()
     df = json_normalize(data)
     df[['year', 'quarter']] = df[['year', 'quarter']].astype(str)
     # if report_range == 'yearly' then set index to df['year'], else set index to df['year'] + df['quarter']

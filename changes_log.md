@@ -1,3 +1,9 @@
+# Updated 2023-08-22
+- Updated the listing_companies data file to the latest version.
+- Updated the `financial flow` function
+  - Add `get_all` parameter to get all available data or only the latest data (5 years or 10 quarters).
+- Update demo notebook to reflect the latest changes.
+
 # Updated 2023-07-24
 - Initiate the implementation of derivatives data retrieval functionality.
 - Integrate a stock screening function into the library.
