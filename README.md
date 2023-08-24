@@ -425,6 +425,7 @@ df =  stock_historical_data(symbol='GMD',
 print(df)
 ```
 - Mới: 
+  - Lưu ý: Đối với mức độ chi tiết của dữ liệu (resolution) nhỏ hơn 1 ngày (1D), API này chỉ cho phép truy ngược lại trong  khoảng thời gian 3-4 tháng. Bạn có thể gặp lỗi khi cố gắng lấy dữ liệu cũ hơn trong thời gian dài.
   - Giá trị mà tham số `resolution` có thể nhận là `1D` (mặc định, 1 ngày), '1' (1 phút), 3 (3 phút), 5 (5 phút), 15 (15 phút), 30 (30 phút), 45 (45 phút), '1H' (hàng giờ).
   - `type = 'stock'` cho phép lấy dữ liệu giá của mã cổ cổ phiếu, `type = 'index'` cho phép lấy dữ liệu giá của mã chỉ số, và `type='derivative` cho phép lấy dữ liệu phái sinh. Các mã được hỗ trợ bao gồm (nhưng không giới hạn): VNINDEX, VN30, HNX, HNX30, UPCOM, VNXALLSHARE, VN30F1M, VN30F2M, VN30F1Q, VN30F2Q
 
