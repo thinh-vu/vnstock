@@ -114,15 +114,26 @@ Khóa học Phân tích dữ liệu với Python #3 (mình tổ chức năm th�
 
 Trước khi bắt đầu, bạn có thể xem Video giới thiệu chính thức cho vnstock mình mới chia sẻ trên Youtube [tại đây](https://www.youtube.com/watch?v=6kP2TTtEY9Y&ab_channel=LEarnAnything)
 
-### 2.1.2 Blog
+### 2.1.2. Website chính thức của vnstock
+vnstock đã hoàn thiện bước đầu việc xây dựng một website chuyên biệt để cập nhật thông tin về dự án, tài liệu sử dụng, blog, khóa học, và các tài nguyên hữu ích khác. Các nội dung của website đang từng bước được cập nhật và hoàn thiện.
 
-👉 Để biết thêm thông tin và minh hoạ về cách sử dụng, bạn vui lòng truy cập bài viết trên blog của tôi, có sẵn bằng tiếng Việt/Anh [tại đây](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
+Bạn có thể truy cập [vnstock.site](https://vnstock.site?utm_source=github&utm_medium=readme-vnstock) để biết thêm chi tiết.
 
-### 2.1.2 Notebook minh hoạ
+Bạn cũng có thể truy cập vnstock Web app dưới đây được nhúng trên website của vnstock để người dùng tiện tìm và sử dụng.
 
-👉 Bạn có thể mở tệp Jupyter Notebook [vnstock_demo_index_all_functions_testing](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023_07_07.ipynb) để dùng thử tất cả các hàm của vnstock. Để sử dụng, nhấp vào nút ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) ở đầu trang của notebook để mở với Google Colab.
+### 2.1.3 vnstock Web app
 
-### 2.1.3. Docstring
+vnstock Web app đã được giới thiệu lần đầu vào 4/9/2023 nhằm giúp người dùng phổ thông có thể tiếp cận với vnstock theo cách đơn giản và thuận tiện nhất dù cho bạn không có bất cứ kỹ năng hay hiểu biết về lập trình python để sử dụng. 
+
+vnstock web app được xây dựng bằng streamlit framework, sử dụng ngôn ngữ Python hoàn toàn. Đây  cũng là một định hướng rất triển vọng trong việc xây dựng các ứng dụng web trong việc phân tích chứng khoán với giao diện người dùng thân thiện và dễ sử dụng, bảo trì.
+
+👉 Bạn có thể truy cập [vnstock Web app](https://vnstock.streamlit.app/) để trải nghiệm ngay. 
+
+### 2.1.4 Notebook minh hoạ
+
+👉 Bạn có thể mở tệp Jupyter Notebook [vnstock_demo_index_all_functions_testing](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) để dùng thử tất cả các hàm của vnstock. Để sử dụng, nhấp vào nút ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) ở đầu trang của notebook để mở với Google Colab.
+
+### 2.1.5. Docstring
 Tất cả các hàm của vnstock đều được cung cấp docstring đầy đủ trong khi file README.md này có thể không cập nhật toàn bộ mô tả về các tham số cho phép của từng hàm. Bạn có thể xem phần gợi ý khi viết câu lệnh trên các IDE như Google Colab, Visual Studio Code, hay Jupyter Notebook hoặc mở phần source code của Github để xem chi tiết. Trong thời gian tới, vnstock sẽ được bổ sung mô tả đầy đủ tại README.md khi có thể.
 
 <details>
@@ -142,7 +153,7 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 
 </details>
 
-### 2.1.4. Xây dựng cộng đồng vnstock
+### 2.1.6. Xây dựng cộng đồng vnstock
 
 🖐 Nếu bạn thấy thư viện này có giá trị và muốn hỗ trợ tác giả duy trì vnstock dưới dạng mã nguồn mở, miễn phí thì có thể tham gia ủng hộ gây quỹ phát triển dự án này. Để biết thêm chi tiết, vui lòng tham khảo bài viết trên blog sau: [Cùng nhau xây dựng cộng đồng VNStock vững mạnh](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/).
 
@@ -158,11 +169,11 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 
 </details>
 
-### 2.1.5. Lộ trình phát triển
+### 2.1.7. Lộ trình phát triển
 
 🔥 Bạn có thể tham khảo thêm [Ý tưởng cho các tính năng nâng cao cho các phiên bản sắp tới](https://github.com/users/thinh-vu/projects/1/views/4) để đồng hành cùng vnstock. 
 
-### 2.1.6. Lưu ý
+### 2.1.8. Lịch sử thay đổi
 
 👉 Từ phiên bản 0.1.3, tất cả các cập nhật về tính năng và nâng cấp cho thư viện được tổng hợp trong file [Lịch sử thay đổi](https://github.com/thinh-vu/vnstock/blob/beta/changes_log.md).
 
@@ -198,7 +209,7 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 
 ### Bước 2. Chạy câu lệnh cài đặt
 
-> Khi sử dụng file demo [vnstock_demo_index_all_functions_testing_2023_06_22.ipynb](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023_07_07.ipynb) để bắt đầu, các câu lệnh cài đặt cần thiết đã được cung cấp sẵn để bạn thực thi (run).
+> Khi sử dụng file demo [vnstock_demo_index_all_functions_testing_2023_06_22.ipynb](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) để bắt đầu, các câu lệnh cài đặt cần thiết đã được cung cấp sẵn để bạn thực thi (run).
 
 **pip được sử dụng để cài đặt vnstock**. pip có sẵn trong hầu hết các bản phân phối Python được cài đặt. Phiên bản python cần thiết cho vnstock tối thiểu là 3.7. Bạn có thể paste câu lệnh đã copy ở Bước 1 và chạy nó trong môi trường Python bạn đang sử dụng.
 
@@ -222,7 +233,7 @@ Như vậy là qúa trình chuẩn bị để sử dụng `vnstock` đã hoàn t
 
 # III. 💻 Cách sử dụng các hàm trong vnstock
 
-Bạn sẽ nắm được cách sử dụng các hàm của vnstock thông qua tài liệu hướng dẫn này, hoặc mở file demo [vnstock demo index](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023_07_07.ipynb) để chạy các dòng lệnh mẫu, làm quen và xem kết quả trực tiếp.
+Bạn sẽ nắm được cách sử dụng các hàm của vnstock thông qua tài liệu hướng dẫn này, hoặc mở file demo [vnstock demo index](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) để chạy các dòng lệnh mẫu, làm quen và xem kết quả trực tiếp.
 
 Để nạp các hàm của vnstock vào dự án Python của bạn, cần `import` chúng thông qua câu lệnh như dưới đây. Như vậy mọi thứ đã sẵn sàng để truy cập dữ liệu do vnstock cung cấp thông qua các hàm được liệt kê trong tài liệu hướng dẫn.
 
@@ -273,7 +284,231 @@ company_overview('TCB')
 
 </details>
 
-### 3.2.2. 🧧 Lịch sử chi trả cổ tức
+### 3.2.2. Thông tin công ty (Mới)
+
+```python
+company_profile ('TCB')
+```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> company_profile ('TCB')
+      id                                      companyName  ...                                    keyDevelopments                                 businessStrategies
+  0  None  Ngân hàng Thương mại Cổ phần Kỹ thương Việt Nam  ...    Huy động vốn; Tín dụng; Liên kết và đầu tư t...    Áp dụng công nghệ tiên tiến hiện đại trong c...
+
+  [1 rows x 9 columns]
+  ```
+
+</details>
+
+### 3.2.3. Danh sách cổ đông (Mới)
+
+```python
+company_large_shareholders ('TCB')
+```
+
+<details>
+  <summary>Output</summary>
+```
+  >>> company_large_shareholders ('TCB')
+    ticker                     shareHolder  shareOwnPercent
+  0    TCB  Công ty Cổ phần Tập đoàn Masan           0.1491
+  1    TCB           Nguyễn Thị Thanh Thủy           0.0495
+  2    TCB            Nguyễn Thị Thanh Tâm           0.0495
+  3    TCB                     Hồ Anh Minh           0.0392
+  4    TCB               Nguyễn Phương Hoa           0.0216
+  5    TCB               Nguyễn Hương Liên           0.0198
+  6    TCB                     HỒ HÙNG ANH           0.0112
+  7    TCB              Nguyễn Thiều Quang           0.0086
+  8    TCB                     Hồ Thủy Anh           0.0064
+  9    TCB                            Khác           0.0292
+  ```
+</details>
+
+### 3.2.4. Các chỉ số tài chính cơ bản (Mới)
+
+```python
+company_fundamental_ratio (symbol='TCB', mode='simplify', missing_pct=0.8)
+```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> company_fundamental_ratio (symbol='TCB', mode='simplify', missing_pct=0.8)
+    ticker costOfFinancing.industryAvgValue interestMargin.industryAvgValue  ... loanOnDeposit.industryAvgValue equityOnTotalAsset.industryAvgValue badDebtOnAsset.industryAvgValue
+  0    TCB                            0.055                           0.035  ...                          0.969                               0.086                           0.016
+
+  [1 rows x 14 columns]
+  ```
+
+</details>
+
+### 3.2.5. Mức biến động giá cổ phiếu (Mới)
+
+```python
+ticker_price_volatility (symbol='TCB')
+```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> ticker_price_volatility (symbol='TCB')
+    ticker  ticker_highestPrice  ticker_lowestPrice  ticker_highestPricePercent  ticker_lowestPricePercent
+  0    TCB              38950.0             20700.0                      -0.114                      0.667
+  ```
+
+</details>
+
+### 3.2.6. Thông tin giao dịch nội bộ (Mới)
+
+```python
+company_insider_deals (symbol='TCB', page_size=20, page=0)
+```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> company_insider_deals (symbol='TCB', page_size=20, page=0)
+    ticker dealAnnounceDate        dealMethod dealAction  dealQuantity  dealPrice  dealRatio
+  0     TCB       2023-08-31       Cổ đông lớn        Bán     -300000.0    34500.0      0.000
+  1     TCB       2023-08-22  Cổ đông sáng lập        Mua           0.0    33100.0      0.042
+  2     TCB       2023-07-20    Cổ đông nội bộ        Bán     -933169.0    31900.0      0.082
+  3     TCB       2023-04-18       Cổ đông lớn        Bán      -30000.0    29150.0      0.184
+  4     TCB       2022-12-28  Cổ đông sáng lập        Bán      -21496.0    26150.0      0.319
+  5     TCB       2022-11-28    Cổ đông nội bộ        Mua      200000.0    24600.0      0.402
+  13    TCB       2022-09-06    Cổ đông nội bộ        Mua      350000.0    38650.0     -0.107
+  12    TCB       2022-09-06    Cổ đông nội bộ        Mua      111404.0    38650.0     -0.107
+  11    TCB       2022-09-06    Cổ đông nội bộ        Mua      100021.0    38650.0     -0.107
+  10    TCB       2022-09-06    Cổ đông nội bộ        Mua       97770.0    38650.0     -0.107
+  9     TCB       2022-09-06    Cổ đông nội bộ        Mua       80945.0    38650.0     -0.107
+  8     TCB       2022-09-06    Cổ đông nội bộ        Mua       55764.0    38650.0     -0.107
+  7     TCB       2022-09-06    Cổ đông nội bộ        Mua       42118.0    38650.0     -0.107
+  6     TCB       2022-09-06    Cổ đông nội bộ        Mua        5318.0    38650.0     -0.107
+  14    TCB       2022-08-08    Cổ đông nội bộ        Bán     -100000.0    39200.0     -0.120
+  15    TCB       2022-05-10  Cổ đông sáng lập        Bán     -868500.0    38700.0     -0.109
+  16    TCB       2022-04-05  Cổ đông sáng lập        Bán     -150000.0    49050.0     -0.297
+  17    TCB       2022-03-23    Cổ đông nội bộ        Bán     -200000.0    49600.0     -0.304
+  18    TCB       2021-10-26    Cổ đông nội bộ        Bán      -35704.0    51000.0     -0.324
+  19    TCB       2021-10-14  Cổ đông sáng lập        Mua      300000.0    52500.0     -0.343
+
+  ```
+
+</details>
+
+### 3.2.7. Danh sách công ty con, công ty liên kết (Mới)
+
+```python
+company_subsidiaries_listing (symbol='TCB', page_size=100, page=0)
+```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+
+  >>> company_subsidiaries_listing (symbol='TCB', page_size=100, page=0)
+    ticker                                     subCompanyName  subOwnPercent
+  0    TCB  Công ty TNHH MTV Quản Lý Nợ Và Khai Thác Tài S...          1.000
+  1    TCB              Công ty Cổ phần Chứng khoán Kỹ Thương          0.942
+  2    TCB              Công ty Cổ phần Quản Lý Quỹ Kỹ Thương          0.900
+  3    TCB  Tổng Công ty Cổ phần Xuất nhập khẩu và Xây dựn...          0.004
+  4    TCB            Tổng Công ty Hàng không Việt Nam - CTCP          0.000
+  5    TCB          Công ty Tài Chính TNHH MTV Lotte Việt Nam          0.000
+
+  ```
+
+</details>
+
+### 3.2.8. Ban lãnh đạo công ty (Mới)
+
+```python
+company_officers (symbol='TCB', page_size=20, page=0)
+```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> company_officers (symbol='TCB', page_size=10, page=0)
+    ticker            officerName                 officerPosition  officerOwnPercent
+  0    TCB  Nguyễn Thị Thanh Thủy                            None             0.0495
+  1    TCB   Nguyễn Thị Thanh Tâm                            None             0.0495
+  2    TCB            Hồ Anh Minh                            None             0.0392
+  3    TCB      Nguyễn Phương Hoa                            None             0.0216
+  4    TCB      Nguyễn Hương Liên                            None             0.0198
+  5    TCB            HỒ HÙNG ANH                            None             0.0112
+  6    TCB     Nguyễn Thiều Quang  Phó Chủ tịch Hội đồng Quản trị             0.0086
+  7    TCB            Hồ Thủy Anh                            None             0.0064
+  8    TCB   Nguyễn Cảnh Sơn Tùng                            None             0.0060
+  9    TCB        Nguyễn Cảnh Sơn  Phó Chủ tịch Hội đồng Quản trị             0.0051
+
+  ```
+
+</details>
+
+### 3.2.9. Thông tin sự kiện quyền (Mới)
+
+```python
+company_events (symbol='TPB', page_size=10, page=0)
+```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> company_events (symbol='TPB', page_size=10, page=0)
+          id ticker  price  priceChange  priceChangeRatio  ...             exerDate         regFinalDate          exRigthDate                                          eventDesc eventNote
+  0  2563370    TPB  18100         -350            -0.019  ...  2023-07-07 00:00:00  1753-01-01 00:00:00  1753-01-01 00:00:00  <p>Ngân hàng Thương mại Cổ phần Tiên Phong (TP...      None
+  1  2563135    TPB  18535         -215            -0.011  ...  2023-06-09 00:00:00  2023-06-12 00:00:00  2023-06-09 00:00:00  <p>Ngân hàng Thương mại Cổ phần Tiên Phong (TP...      None
+  2  2561933    TPB  15668          -64            -0.004  ...  2023-04-26 00:00:00  2023-03-29 00:00:00  2023-03-28 00:00:00  <p>Ngân hàng Thương mại Cổ phần Tiên Phong (TP...      None
+  3  2561033    TPB  15441          -97            -0.006  ...  2023-04-03 00:00:00  2023-03-21 00:00:00  2023-03-20 00:00:00  <p>Ngân hàng Thương mại Cổ phần Tiên Phong (TP...      None
+  4  2560718    TPB  14567            0             0.000  ...  1753-01-01 00:00:00  2023-01-17 00:00:00  2023-01-16 00:00:00  <p>Ngân hàng Thương mại Cổ phần Tiên Phong (TP...      None
+  5  2517318    TPB  25832          453             0.018  ...  2022-04-26 00:00:00  2022-03-28 00:00:00  2022-03-25 00:00:00  <p>Ngân hàng Thương mại Cổ phần Tiên Phong (TP...      None
+  6  2406108    TPB  27192            0             0.000  ...  2022-01-13 00:00:00  1753-01-01 00:00:00  1753-01-01 00:00:00  <DIV style="FONT-FAMILY: Arial; FONT-SIZE: 10p...
+  7  2395935    TPB  24936          719             0.030  ...  2021-12-20 00:00:00  2021-12-21 00:00:00  2021-12-20 00:00:00  <DIV style="FONT-FAMILY: Arial; FONT-SIZE: 10p...
+  8  2235221    TPB  31480          371             0.012  ...  2022-09-15 00:00:00  1753-01-01 00:00:00  1753-01-01 00:00:00  <DIV style="FONT-FAMILY: Arial; FONT-SIZE: 10p...
+  9  2215176    TPB  30665          519             0.017  ...  1753-01-01 00:00:00  2021-10-11 00:00:00  2021-10-08 00:00:00  <DIV style="FONT-FAMILY: Arial; FONT-SIZE: 10p...
+
+  [10 rows x 15 columns]
+
+  ```
+
+</details>
+
+
+### 3.2.10. Tin tức công ty (Mới)
+
+```python
+company_news (symbol='TCB', page_size=10, page=0)
+```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> company_news (symbol='TCB', page_size=10, page=0)
+    ticker  price  priceChange  priceChangeRatio  priceChangeRatio1W  priceChangeRatio1M        id                                              title source          publishDate
+  0    TCB  34500          500             0.015               0.021               0.006  10915190  TCB:  Báo cáo kết quả giao dịch cổ phiếu của n...   HOSE  2023-08-31 11:12:00
+  1    TCB  33650         -150            -0.004               0.035               0.004  10909083  TCB:  CBTT về việc giải tỏa cổ phiếu hạn chế c...   HOSE  2023-08-25 16:35:00
+  2    TCB  33100          350             0.011              -0.028               0.020  10905062  TCB: Con gái Chủ tịch đăng ký mua trên 82 triệ...   HOSE  2023-08-22 11:19:00
+  3    TCB  32750          250             0.008              -0.031               0.014  10904072  Báo cáo kết quả phân phối chứng quyền có bảo đ...   HOSE  2023-08-21 16:21:00
+  4    TCB  34700         -600            -0.017               0.036               0.088  10900206  Thông báo phát hành chứng quyền và Bản cáo bạc...   HOSE  2023-08-17 14:48:00
+  5    TCB  34700         -600            -0.017               0.036               0.088  10899331  Giấy chứng nhận chào bán chứng quyền có bảo đả...   HOSE  2023-08-17 08:55:00
+  6    TCB  33800          150             0.004              -0.016               0.058  10895913  Thông báo hủy đợt phát hành chứng quyền có bảo...   HOSE  2023-08-14 17:36:00
+  7    TCB  33500         -500            -0.015               0.000               0.047  10892819  TCB:  CBTT Chuyển quyền sở hữu cổ phiếu từ Côn...   HOSE  2023-08-10 17:55:00
+  8    TCB  34000            0             0.000               0.003               0.063  10891020  Thông báo phát hành chứng quyền và Bản cáo bạc...   HOSE  2023-08-09 16:55:00
+  9    TCB  34000            0             0.000               0.003               0.063  10890346  Báo cáo kết quả phân phối chứng quyền có bảo đ...   HOSE  2023-08-09 10:26:00
+
+  ```
+
+</details>
+
+### 3.2.11. 🧧 Lịch sử chi trả cổ tức
 
 ```python
 dividend_history("VNM")
@@ -404,6 +639,34 @@ index
 ```
 </details>
 
+### 3.3.3. Chỉ số định giá
+
+```python
+stock_evaluation (symbol='TCB', period=1, time_window='D')
+```
+
+<details>
+  <summary>Output</summary>
+
+  ```
+  >>> stock_evaluation (symbol='TCB', period=1, time_window='D')
+      ticker   fromDate     toDate   PE   PB  industryPE  vnindexPE  industryPB  vnindexPB
+  0      TCB 2022-09-05 2022-09-05  6.4  1.2         9.8       14.0         1.7        2.0
+  1      TCB 2022-09-06 2022-09-06  6.4  1.2         9.9       14.0         1.7        2.0
+  2      TCB 2022-09-07 2022-09-07  6.2  1.2         9.6       13.7         1.7        2.0
+  3      TCB 2022-09-08 2022-09-08  6.2  1.2         9.4       13.5         1.6        1.9
+  4      TCB 2022-09-09 2022-09-09  6.2  1.2         9.5       13.7         1.6        2.0
+  ..     ...        ...        ...  ...  ...         ...        ...         ...        ...
+  245    TCB 2023-08-25 2023-08-25  6.7  1.0         9.3       14.8         1.5        1.7
+  246    TCB 2023-08-28 2023-08-28  6.7  1.0         9.3       15.0         1.6        1.7
+  247    TCB 2023-08-29 2023-08-29  6.7  1.0         9.4       15.1         1.6        1.7
+  248    TCB 2023-08-30 2023-08-30  6.7  1.0         9.5       15.2         1.6        1.7
+  249    TCB 2023-08-31 2023-08-31  6.8  1.0         9.6       15.4         1.6        1.7
+
+  [250 rows x 9 columns]
+  ```
+</details>
+
 ## 3.4. Phân tích kỹ thuật (Technical Analysis)
 
 ### 3.4.1 📈 Truy xuất dữ liệu giá lịch sử
@@ -425,6 +688,7 @@ df =  stock_historical_data(symbol='GMD',
 print(df)
 ```
 - Mới: 
+  - Lưu ý: Đối với mức độ chi tiết của dữ liệu (resolution) nhỏ hơn 1 ngày (1D), API này chỉ cho phép truy ngược lại trong  khoảng thời gian 3-4 tháng. Bạn có thể gặp lỗi khi cố gắng lấy dữ liệu cũ hơn trong thời gian dài.
   - Giá trị mà tham số `resolution` có thể nhận là `1D` (mặc định, 1 ngày), '1' (1 phút), 3 (3 phút), 5 (5 phút), 15 (15 phút), 30 (30 phút), 45 (45 phút), '1H' (hàng giờ).
   - `type = 'stock'` cho phép lấy dữ liệu giá của mã cổ cổ phiếu, `type = 'index'` cho phép lấy dữ liệu giá của mã chỉ số, và `type='derivative` cho phép lấy dữ liệu phái sinh. Các mã được hỗ trợ bao gồm (nhưng không giới hạn): VNINDEX, VN30, HNX, HNX30, UPCOM, VNXALLSHARE, VN30F1M, VN30F2M, VN30F1Q, VN30F2Q
 
