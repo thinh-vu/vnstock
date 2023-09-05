@@ -1,4 +1,4 @@
-from .stock import *
+from .config import *
 
 ## STOCK COMPARISON
 

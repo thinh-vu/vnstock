@@ -1,4 +1,4 @@
-from .stock import *
+from .config import *
 from bs4 import BeautifulSoup
 
 ## STOCK LISTING
@@ -66,7 +66,7 @@ def company_large_shareholders (symbol='TCB', headers=tcbs_headers):
     df.drop(columns=['no'], inplace=True)
     return df
 
-def ticker_fundamental_ratio (symbol='TCB', mode='simplify', missing_pct=0.8, headers=tcbs_headers):
+def company_fundamental_ratio (symbol='TCB', mode='simplify', missing_pct=0.8, headers=tcbs_headers):
     """
     Return a DataFrame of company tooltip data.
     Parameters:
@@ -188,7 +188,7 @@ def company_officers (symbol='TCB', page_size=20, page=0, headers=tcbs_headers):
     return df
 
 
-def ticker_events (symbol='TPB', page_size=15, page=0, headers=tcbs_headers):
+def company_events (symbol='TPB', page_size=15, page=0, headers=tcbs_headers):
     """
     Return a DataFrame of ticker events data.
     Parameters:
@@ -201,7 +201,7 @@ def ticker_events (symbol='TPB', page_size=15, page=0, headers=tcbs_headers):
     df = pd.DataFrame(response['listEventNews'])
     return df
 
-def ticker_news (symbol='TCB', page_size=15, page=0, headers=tcbs_headers):
+def company_news (symbol='TCB', page_size=15, page=0, headers=tcbs_headers):
     """
     Return a DataFrame of ticker news data.
     Parameters:

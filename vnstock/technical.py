@@ -1,4 +1,4 @@
-from .stock import *
+from .config import *
 
 ## STOCK TRADING HISTORICAL DATA
 def stock_historical_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', type='stock', headers=entrade_headers): # DNSE source (will be published on vnstock)

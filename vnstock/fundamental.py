@@ -1,4 +1,4 @@
-from .stock import *
+from .config import *
 
 # FINANCIAL REPORT
 def financial_report (symbol, report_type, frequency, headers=ssi_headers): # Quarterly, Yearly
@@ -174,4 +174,32 @@ def industry_financial_health (symbol):
     """
     data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/{}/financial-health?fType=INDUSTRY'.format(symbol)).json()
     df = json_normalize(data)
+    return df
+
+
+# RECENTLY ADDED -------
+
+def stock_evaluation (symbol='ACB', period=1, time_window='D', headers=tcbs_headers):
+    """
+    Return a DataFrame contains the stock evaluation data of the ticker.
+    Parameters:
+    symbol (str): ticker of the company, default is 'ACB', other tickers available can be obtained from the function `listing_companies()`.
+    period (int): period of the stock evaluation, default is 1. All available: '1' (1 year), '3' (3 years), '5' (5 years)
+    time_window (str): time window of the stock evaluation, default is 'D'. All available: 'D' (1 day), 'W' (1 week). For period = 1, time_window = 'D' or 'W', otherwise time_window = 'W'.
+    """
+    # create url to get stock evaluation data
+    url = f"https://apipubaws.tcbs.com.vn/tcanalysis/v1/evaluation/{symbol}/historical-chart?period={period}&tWindow={time_window}"
+    # get stock evaluation data
+    response = requests.get(url, headers=headers).json()
+    # convert json to dataframe
+    df = pd.DataFrame(response['data'])
+    # rename columns: pe to PE, pb to PB, industryPe to Industry PE, industryPb to Industry PB, indexPe to VNIndex PE, indexPb to VNIndex PB
+    df.rename(columns={'pe': 'PE', 'pb': 'PB', 'industryPe': 'industryPE', 'industryPb': 'industryPB', 'indexPe': 'vnindexPE', 'indexPb': 'vnindexPB', 'from': 'fromDate', 'to': 'toDate'}, inplace=True)
+    # add ticker value to the dataframe
+    df['ticker'] = symbol
+    # move ticker column to the first column
+    df = df[['ticker', 'fromDate', 'toDate', 'PE', 'PB', 'industryPE', 'vnindexPE', 'industryPB', 'vnindexPB']]
+    # convert fromDate and toDate to datetime
+    df['fromDate'] = pd.to_datetime(df['fromDate'])
+    df['toDate'] = pd.to_datetime(df['toDate'])
     return df

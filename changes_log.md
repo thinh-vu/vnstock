@@ -1,3 +1,12 @@
+# Updated 2023-09-05
+- Expanded the package with the addition of 10 new functions, which include:
+  - In the Fundamental Analysis category: company_profile, company_large_shareholders, company_fundamental_ratio, ticker_price_volatility,
+company_insider_deals, company_subsidiaries_listing, company_officers, company_events, and company_news.
+  - In the Financial Analysis category: stock_evaluation.
+- Updated the demo file to incorporate the most recent enhancements.
+- Revised and updated the README file.
+- Introduced the official website for vnstock at vnstock.site and the vnstock web app.
+
 # Updated 2023-08-22
 - Updated the listing_companies data file to the latest version.
 - Updated the `financial flow` function

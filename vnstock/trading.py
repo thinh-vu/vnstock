@@ -1,4 +1,4 @@
-from .stock import *
+from .config import *
 
 ## TRADING PRICE TABLE
 def price_depth (stock_list='VPB,TCB', headers=vps_headers):

@@ -2,7 +2,9 @@
 requires = [
     "setuptools>=42",
     "wheel",
-    "requests"
+    "requests",
+    "bs4",
+    "pandas"
 ]
 build-backend = "setuptools.build_meta"
 # dependencies = []

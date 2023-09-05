@@ -4,7 +4,7 @@
 __author__ = "Thinh Vu @thinh-vu in GitHub"
 __version__ = "0.2.0"
 
-from .stock import *
+from .config import *
 from .company import *
 from .derivative import *
 from .fundamental import *
