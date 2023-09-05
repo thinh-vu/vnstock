@@ -1,4 +1,5 @@
 # Updated 2023-09-05
+- Restructured vnstock from a single module to multiple modules, with each module responsible for a set of functions, enhancing both readability and ease of maintenance.
 - Expanded the package with the addition of 10 new functions, which include:
   - In the Fundamental Analysis category: company_profile, company_large_shareholders, company_fundamental_ratio, ticker_price_volatility,
 company_insider_deals, company_subsidiaries_listing, company_officers, company_events, and company_news.
