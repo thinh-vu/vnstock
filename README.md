@@ -17,8 +17,13 @@
 <img src="https://img.shields.io/github/license/thinh-vu/vnstock?color=red" alt="License Badge"/>
 </div>
 
+---
+
 <details>
-  <summary>📈 Thống kê lượt tải về của `vnstock` trên PyPI</summary>
+
+  <summary>📈 vnstock có +33K lượt downloads trên PyPI. Xem thống kê hàng tháng tại đây</summary>
+
+  Dữ liệu cập nhật đến 18/9/2023
 
   ![vnstock-pypi-stats](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock_download_stats.png)
 
