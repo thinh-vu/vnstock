@@ -27,3 +27,6 @@ dist/vnstock-0.1.8.tar.gz
 vnstock/__pycache__/utils.cpython-311.pyc
 dist/vnstock-0.1.9.5-py3-none-any.whl
 dist/vnstock-0.1.9.5.tar.gz
+visualize_downloads.ipynb
+vnstock_download_pypi_stats.csv
+vnstock_download_stats.png
