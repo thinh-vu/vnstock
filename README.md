@@ -17,6 +17,13 @@
 <img src="https://img.shields.io/github/license/thinh-vu/vnstock?color=red" alt="License Badge"/>
 </div>
 
+<details>
+  <summary>📈 Thống kê lượt tải về của `vnstock` trên PyPI</summary>
+
+  ![vnstock-pypi-stats](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock_download_stats.png)
+
+</details>
+
 ---
 
 🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/main/README-en.md)**
