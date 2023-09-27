@@ -19,6 +19,18 @@
 
 ---
 
+<details>
+
+  <summary>📈 vnstock có +33K lượt downloads trên PyPI. Xem thống kê hàng tháng tại đây</summary>
+
+  Dữ liệu cập nhật đến 18/9/2023
+
+  ![vnstock-pypi-stats](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock_download_stats.png)
+
+</details>
+
+---
+
 🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/main/README-en.md)**
 
 MỤC LỤC
@@ -153,7 +165,36 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 
 </details>
 
-### 2.1.6. Xây dựng cộng đồng vnstock
+### 2.1.6. vnstock cho Google Sheets
+Tôi cung cấp một hàm tùy biến làm mẫu giúp bạn hình dung và bắt đầu tùy biến các hàm python được cung cấp bởi vnstock sang ngôn ngữ Google Apps Script và sử dụng để lấy dữ liệu trên Google Sheets. Bạn có thể bắt đầu đóng góp vào source code này giúp vnstock hoàn thiện đầy đủ các tính năng cho Google Sheets và lan tỏa tới cộng đồng.
+
+- Để sử dụng thử đoạn code trên cho việc lấy dữ liệu, bạn làm như sau:
+  - Mở file [source code vnstock_gg_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/vnstock_gg_sheet/vnstock._appscript.js) và copy đoạn code.
+  - Mở hoặc tạo 1 file Google Sheets bất kỳ
+  - Từ menu của Google Sheets, tìm mục Extension (tiện ích mở rộng) > Apps Script như trong hình. ![Alt text](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/google_sheet_appscript_menu.png)
+  - Trong giao diện Apps Script Editor, xóa hết code hiện tại và ghi đè với đoạn code bạn copy từ source code ở trên 
+  
+  <details>
+    <summary>Mở rộng để xem ảnh minh họa trên Google Apps Script</summary>
+    
+    ![Alt text](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock_google_sheets_appscript_code.png)
+
+  </details>
+  
+  - Save file (Ctrl/Cmd + S) để lưu thay đổi.
+  - Chuyển qua Google Sheets, bạn đã có thể nhập các tham số cho hàm và sử dụng như bình thường. Ví dụ: `= derivativesOhlc("VN30F1M", "2023-06-01", "2023-09-26", "15")`
+  - Đây là kết quả bạn sẽ nhận được:
+
+    <details>
+    <summary>Mở rộng để xem ảnh minh họa trên Google Apps Script</summary>
+
+    ![vnstock sheets](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock_google_sheet_result.png)
+
+  </details>
+
+- Để chuyển đổi các hàm python hiện tại do vnstock cung cấp, bạn có thể sử dụng công cụ ChatGPT để thực hiện. Xem thêm [video tôi chia sẻ của tôi trên Youtube](https://youtu.be/w4GCFZUpsEY) để hiểu cách làm. Bạn sẽ cần có chút kiến thức về JavaScript để có thể tùy biến các hàm này nhanh chóng. Nếu không sẽ cần kỹ năng prompt engineering tốt để có thể yêu cầu AI hỗ trợ. Xa hơn, khi có nguồn lực, tôi sẽ cung cấp Add-in cho Google Sheets để các bạn có thể sử dụng dễ dàng hơn.
+
+### 2.1.7. Xây dựng cộng đồng vnstock
 
 🖐 Nếu bạn thấy thư viện này có giá trị và muốn hỗ trợ tác giả duy trì vnstock dưới dạng mã nguồn mở, miễn phí thì có thể tham gia ủng hộ gây quỹ phát triển dự án này. Để biết thêm chi tiết, vui lòng tham khảo bài viết trên blog sau: [Cùng nhau xây dựng cộng đồng VNStock vững mạnh](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh/).
 
@@ -169,11 +210,11 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 
 </details>
 
-### 2.1.7. Lộ trình phát triển
+### 2.1.8. Lộ trình phát triển
 
 🔥 Bạn có thể tham khảo thêm [Ý tưởng cho các tính năng nâng cao cho các phiên bản sắp tới](https://github.com/users/thinh-vu/projects/1/views/4) để đồng hành cùng vnstock. 
 
-### 2.1.8. Lịch sử thay đổi
+### 2.1.9. Lịch sử thay đổi
 
 👉 Từ phiên bản 0.1.3, tất cả các cập nhật về tính năng và nâng cấp cho thư viện được tổng hợp trong file [Lịch sử thay đổi](https://github.com/thinh-vu/vnstock/blob/beta/changes_log.md).
 
@@ -1417,7 +1458,7 @@ Vnstock được cấp phép theo Giấy phép MIT. Nội dung của giấy phé
 
 Khi sử dụng Vnstock trong dự án của mình, bạn phải tuân thủ và giữ nguyên giấy phép MIT của Vnstock. Đồng thời, hãy chắc chắn rằng bạn đã bao gồm tên tác giả và giấy phép trong dự án của bạn.
 Lưu ý: Vnstock là một dự án mã nguồn mở, do đó việc tuân thủ giấy phép và trích dẫn đóng vai trò quan trọng trong việc hỗ trợ và duy trì cộng đồng nguồn mở.
-Chúng tôi cảm ơn bạn đã sử dụng Vnstock và tuân thủ các hướng dẫn `Trích dẫn` và `Giấy phép` này. Nếu bạn có bất kỳ câu hỏi hoặc góp ý nào, xin vui lòng liên hệ với tôi qua mục [Thảo luận](https://github.com/thinh-vu/vnstock/discussions) của repo Github này hoặc nhắn tin trực tiếp.
+Cảm ơn bạn đã sử dụng Vnstock và tuân thủ các hướng dẫn `Trích dẫn` và `Giấy phép` này. Nếu bạn có bất kỳ câu hỏi hoặc góp ý nào, xin vui lòng liên hệ với tôi qua mục [Thảo luận](https://github.com/thinh-vu/vnstock/discussions) của repo Github này hoặc nhắn tin trực tiếp.
 
 Xin cảm ơn và chúc bạn thành công!
 
