@@ -19,7 +19,7 @@
 
 ---
 
-🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/main/README-en.md)**
+🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/beta/docs/README-en.md)**
 
 # I. 🎤 Giới thiệu
 
@@ -43,7 +43,7 @@ Bạn có thể kết nối với tác giả qua các hình thức sau. Trong tr
   </a>
   <a href="https://www.messenger.com/t/mr.thinh.ueh">
     <img src="https://img.shields.io/badge/Messenger-00B2FF?style=for-the-badge&logo=messenger&logoColor=white" alt="Messenger Badge"/>
-  <a href="https://www.youtube.com/channel/UCYgG-bmk92OhYsP20TS0MbQ">
+  <a href="https://www.youtube.com/@learn_anything_az?sub_confirmation=1">
     <img src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="Youtube Badge"/>
   </a>
   </a>

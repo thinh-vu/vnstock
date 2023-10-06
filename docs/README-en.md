@@ -40,7 +40,7 @@ This Python library connects to public APIs of data providers to download data a
 <details>
   <summary> Minh họa tính năng Watch và Star </summary>
 
-  ![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/src/vnstock-watch-and-star.png?raw=true)
+  ![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vnstock-watch-and-star.png?raw=true)
 
 </details>
 
@@ -65,7 +65,7 @@ All functions of vnstock are provided with complete docstrings, while this READM
   <summary>Docstring in Google Colab</summary>
   Syntax hints for functions are displayed when writing any function belonging to vnstock. In this example, it is shown in the Google Colab interface.
 
-  ![docstring_ide](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_suggestion.jpeg?raw=true)
+  ![docstring_ide](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/docstring_suggestion.jpeg?raw=true)
 
 </details>
 
@@ -74,7 +74,7 @@ All functions of vnstock are provided with complete docstrings, while this READM
   
   Open the source code file [vnstock.py](https://github.com/thinh-vu/vnstock/blob/beta/vnstock/stock.py) and find the function you want to look up the docstring for.
 
-  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_source_code.jpeg?raw=true)
+  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/docstring_source_code.jpeg?raw=true)
 
 </details>
 
@@ -351,7 +351,7 @@ industry_analysis("VNM")
 <details>
   <summary>Output</summary>
 
-![preview](https://github.com/thinh-vu/vnstock/blob/beta/src/stock_comparison_industries.png?raw=true)
+![preview](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/stock_comparison_industries.png?raw=true)
 
 ```
 >>> industry_analysis("VNM")
@@ -371,7 +371,7 @@ stock_ls_analysis("TCB, BID, CEO, GMD")
 <details>
   <summary>Output</summary>
 
-![preview](https://github.com/thinh-vu/vnstock/blob/beta/src/stock_ls_comparison.png?raw=true)
+![preview](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/stock_ls_comparison.png?raw=true)
 
 ```
   ticker  marcap  price  numberOfDays  priceToEarning  peg  priceToBook  valueBeforeEbitda  dividend  ...  debtOnEbitda  income5year  sale5year income1quarter  sale1quarter  nextIncome  nextSale   rsi    rs
@@ -609,10 +609,10 @@ industry_financial_health("VNM")
   <summary>SSI Top Stocks</summary>
 
 Top Breakout > Top Gainers > Top Losers > Top Value > Top Volume
-![top_mover](https://github.com/thinh-vu/vnstock/blob/beta/src/ssi_top_breakout_gainer_loser.png?raw=true)
+![top_mover](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/ssi_top_breakout_gainer_loser.png?raw=true)
 
 Top New High > Top Foreign Trading > Top New Low
-![top_foreigntrading_high_low](https://github.com/thinh-vu/vnstock/blob/beta/src/top_foreigntrading_newhigh_newlow.png?raw=true)
+![top_foreigntrading_high_low](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/top_foreigntrading_newhigh_newlow.png?raw=true)
 
 </details>
 
@@ -774,8 +774,8 @@ If you find value in vnstock and my open-source projects, you can support their 
 You have three options to contribute: Momo, Bank Transfer, and Paypal. Your contribution will help me cover the hosting fees for my blog and continue creating high-quality content. Thank you for your support!
 
 - [Paypal](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US)
-- ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/src/momo-qr-thinhvu.jpeg)
-- ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/src/vcb-qr-thinhvu.jpg)
+- ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/momo-qr-thinhvu.jpeg)
+- ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vcb-qr-thinhvu.jpg)
 
 # VI. ⚖ Disclaimer
 vnstock is designed solely for the purpose of analysis and practical investment research. Any misuse or unauthorized use of the library for malicious purposes, such as attacking public APIs or causing harm to systems through denial of service or similar actions, is strictly beyond the intended scope of usage and falls outside the responsibility of the development team.
