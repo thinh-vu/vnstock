@@ -125,8 +125,8 @@ stock_ls_analysis("TCB, BID, CEO, GMD", lang='vi')
 ##### Đánh giá chung
 
   <div class="general_rating">
-   <a href="assets/images/general_rating.jpeg?raw=true" data-title="Đánh giá chung" data-toggle="lightbox"><img class="img-responsive" src="assets/images/general_rating.jpeg?raw=true" alt="screenshot" /></a>
-   <a class="mask" href="assets/images/general_rating.jpeg?raw=true" data-title="Đánh giá chung" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+   <a href="assets/images/general_rating.png?raw=true" data-title="Đánh giá chung" data-toggle="lightbox"><img class="img-responsive" src="assets/images/general_rating.png?raw=true" alt="screenshot" /></a>
+   <a class="mask" href="assets/images/general_rating.png?raw=true" data-title="Đánh giá chung" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
   </div>
 
 ```python
@@ -239,7 +239,6 @@ df = stock_screening_insights (params, size=1700, drop_lang='vi')
 ```
 
 <details>
-
   <summary>Các bộ lọc gợi ý và tiêu chí hỗ trợ</summary>
 
     a. BỘ LỌC GỢI Ý (PRESET)

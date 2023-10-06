@@ -13,7 +13,7 @@ sections:
 - Minh họa bảng dữ liệu khớp lệnh Phái sinh - CK Rồng Việt
 
 <div class="livedragon_derivative_match">
-  <a href="assets/images/livedragon_derivative_history_match.png?raw=true" data-title="Minh họa bảng dữ liệu khớp lệnh Phái sinh - CK Rồng Việt" data-toggle="lightbox"><img class="img-responsive" src="assets/images/livedragon_derivative_history_match.jpeg?raw=true" alt="screenshot" /></a>
+  <a href="assets/images/livedragon_derivative_history_match.png?raw=true" data-title="Minh họa bảng dữ liệu khớp lệnh Phái sinh - CK Rồng Việt" data-toggle="lightbox"><img class="img-responsive" src="assets/images/livedragon_derivative_history_match.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/livedragon_derivative_history_match.png?raw=true" data-title="Minh họa bảng dữ liệu khớp lệnh Phái sinh - CK Rồng Việt" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
 
