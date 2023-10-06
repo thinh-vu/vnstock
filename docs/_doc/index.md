@@ -10,9 +10,9 @@ tagline: |
 
   [![vnstock.site - Ghé thăm](https://img.shields.io/badge/vnstock.site-Ghé_thăm-4CAF50?style=for-the-badge&logo=www)](https://vnstock.site/)
 
-  [![vnstock group - Tham gia](https://img.shields.io/badge/vnstock_group-Tham_gia-4CAF50?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock)
+  [![vnstock group - Tham gia](https://img.shields.io/badge/vnstock_group-Tham_gia-0866FF?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock)
 
-  [![VNSTOCK DISCORD - THAM GIA](https://img.shields.io/badge/VNSTOCK_DISCORD-THAM_GIA-5865F2?style=for-the-badge&logo=discord)](https://discord.com/invite/ruugCSWVCJ)
+  [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az?sub_confirmation=1)
 
 heading: Bắt đầu sử dụng thật dễ dàng!
 navigation:

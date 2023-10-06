@@ -88,7 +88,7 @@ Tôi cung cấp một hàm tùy biến làm mẫu giúp bạn hình dung và b�
 
 - Để chuyển đổi các hàm python hiện tại do vnstock cung cấp, bạn có thể sử dụng công cụ ChatGPT để thực hiện. Bạn sẽ cần có chút kiến thức về JavaScript để có thể tùy biến các hàm này nhanh chóng. Nếu không sẽ cần kỹ năng prompt engineering tốt để có thể yêu cầu AI hỗ trợ. Xa hơn, khi có nguồn lực, tôi sẽ cung cấp Add-in cho Google Sheets để các bạn có thể sử dụng dễ dàng hơn. Bạn có thể xem video hướng dẫn dưới đây để hiểu cách dùng ChatGPT hỗ trợ chuyển đổi hàm Python sang JavaScript.
 
-<iframe width="1068" height="600" src="https://www.youtube.com/embed/w4GCFZUpsEY?si=r77JMNc2p-SUihI5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="800" height="452" src="https://www.youtube.com/embed/w4GCFZUpsEY?si=r77JMNc2p-SUihI5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ### Lộ trình phát triển
 
