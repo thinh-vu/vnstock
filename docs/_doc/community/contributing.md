@@ -9,10 +9,15 @@ Chào mừng bạn đến với dự án Vnstock! Chúng tôi trân trọng mọ
 
 Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
 
-- Tham gia nhóm vnstock trên Facebook:
-[Nhóm Facebook  ](https://www.facebook.com/groups/vnstock)
-- Tham gia Discord channel:
-[Discord channel  ](https://discord.gg/qJvxJcChJ3)
+  [![vnstock group - Tham gia](https://img.shields.io/badge/vnstock_group-Tham_gia-4CAF50?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock)
+
+  [![vnstock - Tham gia](https://img.shields.io/badge/vnstock-Tham_gia-5865F2?style=for-the-badge&logo=Discord)](https://discord.gg/ruugCSWVCJ)
+
+  [![Vnstock - Theo dõi](https://img.shields.io/badge/Vnstock-Theo_dõi-4CAF50?style=for-the-badge&logo=facebook)](https://www.facebook.com/vnstock.official)
+
+  [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-4CAF50?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az)
+
+  [![PyPI - Download](https://img.shields.io/badge/PyPI-Download-4CAF50?style=for-the-badge&logo=pypi)](https://pypi.org/project/vnstock/)
 
 Đọc thêm bài viết dưới đây để hiểu thêm chi tiết:
 [*&nbsp;*{: .fa .fa-eye} Xây dựng cộng đồng Vnstock](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh?utm_source=vnstock-docs&utm_medium=resource){: .btn .btn-cta .btn-primary}
