@@ -15,7 +15,8 @@ Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
 
   [![Vnstock - Theo dõi](https://img.shields.io/badge/Vnstock-Theo_dõi-4CAF50?style=for-the-badge&logo=facebook)](https://www.facebook.com/vnstock.official)
 
-  [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-4CAF50?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az)
+  [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-4CAF50?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az?sub_confirmation=1)
+
 
   [![PyPI - Download](https://img.shields.io/badge/PyPI-Download-4CAF50?style=for-the-badge&logo=pypi)](https://pypi.org/project/vnstock/)
 

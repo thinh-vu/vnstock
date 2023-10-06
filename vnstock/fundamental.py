@@ -229,13 +229,15 @@ def financial_report (symbol, report_type, frequency, headers=ssi_headers): # Qu
     df = pd.read_excel(BytesIO(r.content), skiprows=7).dropna()
     return df
 
-def financial_ratio_compare (symbol_ls, industry_comparison, frequency, start_year, headers=ssi_headers): 
+def financial_ratio_compare (symbol_ls=["CTG", "TCB", "ACB"], industry_comparison=True, frequency='Yearly', start_year=2010, headers=ssi_headers): 
     """
     This function returns the balance sheet of a stock symbol by a Quarterly or Yearly range.
     Args:
         symbol (:obj:`str`, required): ["CTG", "TCB", "ACB"].
-        industry_comparison (:obj: `str`, required): "true" or "false"
+        industry_comparison (:obj: `str`, required): "True" or "False"
         report_range (:obj:`str`, required): Yearly or Quarterly.
+        frequency (:obj:`str`, required): Yearly or Quarterly.
+        start_year (:obj:`str`, required): Enter the start year of the report.
     """
     global timeline
     if frequency == 'Yearly':

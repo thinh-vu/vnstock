@@ -25,7 +25,7 @@ Bạn có thể tải xuống bảng giá của một danh sách các cổ phi�
 ```python
 price_depth('TCB,SSI,VND')
 ```
-Sử dụng hàm này cho phép thống kê các bước giá và khối lượng trên bảng giá của một hoặc một danh sách các mã cổ phiếu. Bạn có thể sử dụng kết hợp hàm này với hàm `price_board` để kết hợp các thông tin đa dạng về giá, khối lượng, chỉ số, thông tin giao dịch để chọn lọc và theo dõi cổ phiếu theo mục đích sử dụng của mình.
+Sử dụng hàm này cho phép thống kê các bước giá và khối lượng trên bảng giá của một hoặc một danh sách các mã cổ phiếu. Bạn có thể sử dụng kết hợp hàm này với hàm **price_board** để kết hợp các thông tin đa dạng về giá, khối lượng, chỉ số, thông tin giao dịch để chọn lọc và theo dõi cổ phiếu theo mục đích sử dụng của mình.
 
 - Kết quả:
 
@@ -44,7 +44,7 @@ Sử dụng hàm này cho phép thống kê các bước giá và khối lượn
 ```python
 price_board('TCB,SSI,VND')
 ```
-Hàm này cho phép tải về thông tin giá, khối lượng và các chỉ số quan trọng cho một hoặc một danh sách mã cổ phiếu. Sử dụng kết hợp với hàm `price_depth` cho hiệu quả tốt nhất.
+Hàm này cho phép tải về thông tin giá, khối lượng và các chỉ số quan trọng cho một hoặc một danh sách mã cổ phiếu. Sử dụng kết hợp với hàm **price_depth** cho hiệu quả tốt nhất.
 
 - Kết quả:
 
@@ -62,8 +62,8 @@ Mã CP  Giá Khớp Lệnh  KLBD/TB5D  T.độ GD  KLGD ròng(CM)  ...  vnid1m  
 ```python
 industry_analysis("VNM", lang='vi)
 ```
-- Trả về thông tin các mã cổ phiếu cùng ngành với mã cổ phiếu nằm trong cùng nhóm ngành với mã `VNM`.
-- Tham số `lang='vi` mặc định trả về tên các chỉ số bằng tiếng Việt, đổi thành `en` để giữ nguyên chỉ số với tên tiếng Anh.
+- Trả về thông tin các mã cổ phiếu cùng ngành với mã cổ phiếu nằm trong cùng nhóm ngành với mã **VNM**.
+- Tham số **lang='vi** mặc định trả về tên các chỉ số bằng tiếng Việt, đổi thành **en** để giữ nguyên chỉ số với tên tiếng Anh.
 
 - Trong đó các chỉ số sau được thể hiện dưới dạng thập phân sử dụng để thể hiện chỉ số dưới dạng %: 
   ```dividend (Cổ tức), ROE, ROA, ebitOnInterest (Thanh toán lãi vay), currentPayment (Thanh toán hiện hành), quickPayment (Thanh toán nhanh), grossProfitMargin (Biên LNG), postTaxMargin (Biên LNST), badDebtPercentage (Tỉ lệ nợ xấu), debtOnEquity (Nợ/Vốn CSH), debtOnEbitda (Nợ/EBITDA), income5year (LNST 5 năm),  sale5year (Doanh thu 5 năm), income1quarter (LNST quý gần nhất), sale1quarter (Doanh thu quý gần nhất), nextIncome (LNST năm tới), nextSale (Doanh thu quý tới)```
@@ -210,6 +210,11 @@ industry_financial_health("VNM")
 
 ### Bộ lọc cổ phiếu
 
+<div class="watch-star">
+  <a href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><img class="img-responsive" src="assets/images/stock_screener-tcbs.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+</div>
+
 Bộ lọc cổ phiếu là một hàm cho phép bạn truy vấn và lọc các cổ phiếu theo nhiều tiêu chí đa dạng dựa trên dữ liệu phân tích của TCBS. Hàm này sẽ trả về một DataFrame chứa các thông tin toàn diện về các cổ phiếu thỏa mãn điều kiện lọc của bạn. Bạn có thể dùng DataFrame này để tiếp tục phân tích, biểu diễn hoặc xuất ra dữ liệu dạng bảng tính. Đây là cập nhật ưu việt giúp bạn tiết kiệm thời gian và công sức đáng kể khi làm việc với dữ liệu cổ phiếu, đồng thời cho phép lập trình để lọc là cập nhật danh sách cổ phiếu hiệu quả không cần sử dụng giao diện web từ công ty chứng khoán.
 
 - Bộ lọc cổ phiếu TCBS
@@ -239,11 +244,12 @@ df = stock_screening_insights (params, size=1700, drop_lang='vi')
 ```
 
 <details>
+
   <summary>Các bộ lọc gợi ý và tiêu chí hỗ trợ</summary>
 
     a. BỘ LỌC GỢI Ý (PRESET)
 
-      > Sử dụng các tiêu chí lọc như sau để thiết lập tham số params.
+      Sử dụng các tiêu chí lọc như sau để thiết lập tham số params.
 
       - CANSLIM: epsGrowth1Year, lastQuarterProfitGrowth, roe, avgTradingValue20Day, relativeStrength1Month
       - Giá trị: roe, pe, avgTradingValue20Day
@@ -379,8 +385,7 @@ df = stock_screening_insights (params, size=1700, drop_lang='vi')
 
 ## Dữ liệu khớp lệnh trong ngày giao dịch
 
-<details>
-  <summary>Minh hoạ giao diện TCBS</summary>
+- Minh hoạ giao diện TCBS
 
   <div class="intraday_1">
    <a href="assets/images/tcbs_intraday_screen1.png?raw=true" data-title="hình chụp 1" data-toggle="lightbox"><img class="img-responsive" src="assets/images/tcbs_intraday_screen1.png?raw=true" alt="screenshot" /></a>

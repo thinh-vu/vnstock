@@ -12,7 +12,7 @@ tagline: |
 
   [![vnstock group - Tham gia](https://img.shields.io/badge/vnstock_group-Tham_gia-4CAF50?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock)
 
-  [![vnstock - Tham gia](https://img.shields.io/badge/vnstock-Tham_gia-5865F2?style=for-the-badge&logo=Discord)](https://discord.gg/ruugCSWVCJ)
+  [![VNSTOCK DISCORD - THAM GIA](https://img.shields.io/badge/VNSTOCK_DISCORD-THAM_GIA-5865F2?style=for-the-badge&logo=discord)](https://discord.com/invite/ruugCSWVCJ)
 
 heading: Bắt đầu sử dụng thật dễ dàng!
 navigation:

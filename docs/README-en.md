@@ -40,7 +40,7 @@ This Python library connects to public APIs of data providers to download data a
 <details>
   <summary> Minh họa tính năng Watch và Star </summary>
 
-  ![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/src/vnstock-watch-and-star.png?raw=true)
+  ![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vnstock-watch-and-star.png?raw=true)
 
 </details>
 
@@ -65,7 +65,7 @@ All functions of vnstock are provided with complete docstrings, while this READM
   <summary>Docstring in Google Colab</summary>
   Syntax hints for functions are displayed when writing any function belonging to vnstock. In this example, it is shown in the Google Colab interface.
 
-  ![docstring_ide](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_suggestion.jpeg?raw=true)
+  ![docstring_ide](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/docstring_suggestion.jpeg?raw=true)
 
 </details>
 
@@ -74,7 +74,7 @@ All functions of vnstock are provided with complete docstrings, while this READM
   
   Open the source code file [vnstock.py](https://github.com/thinh-vu/vnstock/blob/beta/vnstock/stock.py) and find the function you want to look up the docstring for.
 
-  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/src/docstring_source_code.jpeg?raw=true)
+  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/docstring_source_code.png?raw=true)
 
 </details>
 
@@ -86,8 +86,8 @@ All functions of vnstock are provided with complete docstrings, while this READM
   <summary>Supporting the vnstock Development Fund</summary>
   If vnstock has been helpful to you, you can contribute to the development fund of this application through either bank transfer or Momo. All contributions are greatly appreciated and serve as motivation for the author to maintain vnstock as a useful, free, and accessible resource for the community.
 
-  - ![vcb-qr](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vcb-qr-thinhvu.jpg?raw=true)
-  - ![momo-qr](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/momo-qr-thinhvu.jpeg?raw=true)
+  - ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vcb-qr-thinhvu.jpg?raw=true)
+  - ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/momo-qr-thinhvu.jpeg?raw=true)
 
 </details>
 
@@ -116,7 +116,7 @@ All functions of vnstock are provided with complete docstrings, while this READM
 <details>
   <summary> Choose the appropriate branch </summary>
 
-  ![select_branch](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock_select_branch.jpeg)
+  ![select_branch](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vnstock_select_branch.jpeg?raw=true)
 
 </details>
 
@@ -217,7 +217,7 @@ You can download the price table of a selected list of stocks to facilitate anal
 <details>
   <summary>Price Table</summary>
 
-  ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png?raw=true)
+  ![price_board](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//tcbs_trading_board_sector.png?raw=true)
 
 </details>
 
@@ -244,8 +244,8 @@ Using this function allows you to analyze price depth and volume on the price ta
 <details>
   <summary>Intraday view on TCBS</summary>
 
-  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen1.png?raw=true)
-  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen2.png?raw=true)
+  ![intraday](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//tcbs_intraday_screen1.png?raw=true)
+  ![intraday](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//tcbs_intraday_screen2.png?raw=true)
 
 </details>
 vnstock allows the user to **download intraday real-time/historical data**. In 
@@ -351,7 +351,7 @@ industry_analysis("VNM")
 <details>
   <summary>Output</summary>
 
-![preview](https://github.com/thinh-vu/vnstock/blob/beta/src/stock_comparison_industries.png?raw=true)
+![preview](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/stock_comparison_industries.png?raw=true)
 
 ```
 >>> industry_analysis("VNM")
@@ -371,7 +371,7 @@ stock_ls_analysis("TCB, BID, CEO, GMD")
 <details>
   <summary>Output</summary>
 
-![preview](https://github.com/thinh-vu/vnstock/blob/beta/src/stock_ls_comparison.png?raw=true)
+![preview](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/stock_ls_comparison.png?raw=true)
 
 ```
   ticker  marcap  price  numberOfDays  priceToEarning  peg  priceToBook  valueBeforeEbitda  dividend  ...  debtOnEbitda  income5year  sale5year income1quarter  sale1quarter  nextIncome  nextSale   rsi    rs
@@ -436,7 +436,7 @@ financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly
 
 ##### 📄 Income Statement
 
-![income_statement](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_income_statement.png?raw=true)
+![income_statement](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//financial_income_statement.png?raw=true)
 ```python
 financial_flow(symbol="TCB", report_type='incomestatement', report_range='quarterly')
 ```
@@ -457,7 +457,7 @@ index                                                                           
 
 ##### 🧾Balance Sheet
 
-![balance_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_balancesheet.png?raw=true)
+![balance_sheet](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//financial_balancesheet.png?raw=true)
 ```python
 financial_flow(symbol="TCB", report_type='balancesheet', report_range='quarterly')
 ```
@@ -609,10 +609,10 @@ industry_financial_health("VNM")
   <summary>SSI Top Stocks</summary>
 
 Top Breakout > Top Gainers > Top Losers > Top Value > Top Volume
-![top_mover](https://github.com/thinh-vu/vnstock/blob/beta/src/ssi_top_breakout_gainer_loser.png?raw=true)
+![top_mover](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/ssi_top_breakout_gainer_loser.png?raw=true)
 
 Top New High > Top Foreign Trading > Top New Low
-![top_foreigntrading_high_low](https://github.com/thinh-vu/vnstock/blob/beta/src/top_foreigntrading_newhigh_newlow.png?raw=true)
+![top_foreigntrading_high_low](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/top_foreigntrading_newhigh_newlow.png?raw=true)
 
 </details>
 
@@ -659,7 +659,7 @@ fr_trade_heatmap ('All', 'FrBuyVol')
 </details>
 
 ### 2.15.3. Market latest indices & values
-![latest_indices](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_latest_indices.png?raw=true)
+![latest_indices](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//get_latest_indices.png?raw=true)
 
 Retrieve the latest indices values & brief insights
 
@@ -702,7 +702,7 @@ get_latest_indices()
 </details>
 
 ### 2.15.4. Market latest indices in depth data
-![index_series_data](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_index_series_data.png?raw=true)
+![index_series_data](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//get_index_series_data.png?raw=true)
 
 ```python
 get_index_series(index_code='VNINDEX', time_range='OneYear')
@@ -774,8 +774,8 @@ If you find value in vnstock and my open-source projects, you can support their 
 You have three options to contribute: Momo, Bank Transfer, and Paypal. Your contribution will help me cover the hosting fees for my blog and continue creating high-quality content. Thank you for your support!
 
 - [Paypal](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US)
-- ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/src/momo-qr-thinhvu.jpeg)
-- ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/src/vcb-qr-thinhvu.jpg)
+- ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/momo-qr-thinhvu.jpeg)
+- ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vcb-qr-thinhvu.jpg)
 
 # VI. ⚖ Disclaimer
 vnstock is designed solely for the purpose of analysis and practical investment research. Any misuse or unauthorized use of the library for malicious purposes, such as attacking public APIs or causing harm to systems through denial of service or similar actions, is strictly beyond the intended scope of usage and falls outside the responsibility of the development team.

@@ -7,12 +7,21 @@ sections:
 ---
 
 ## Bộ chỉ số tài chính
+
+<div class="balance_sheet">
+  <a href="assets/images/financial_ratio.png?raw=true" data-title="Bộ chỉ số tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_ratio.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/financial_ratio.png?raw=true" data-title="Bộ chỉ số tài chính do TCBS cung cấp" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+</div>
+
+Bộ chỉ số tài chính do TCBS cung cấp có thể được trích một cách dễ dàng để có toàn bộ thông tin phân tích như bạn thấy trên giao diện website TCBS bằng câu lệnh:
+
 ```python
 financial_ratio(symbol="TCB", report_range='yearly', is_all=False)
 ```
 Trong đó:
+- **symbol** là mã chứng khoán bạn muốn phân tích
 - **report_range** nhận 1 trong 2 giá trị: **yearly** cho phép trả về chỉ số theo năm, **quarterly** trả về dữ liệu theo quý
-- **is_all** có giá trị mặc định là **True** cho phép lấy chỉ số qua tất cả các kỳ (năm hoặc quý), **False** cho phép lấy các kỳ gần nhất (5 năm hoặc 10 quý gần đây).
+- **is_all** có giá trị mặc định là **True** cho phép lấy chỉ số qua tất cả các kỳ (năm hoặc quý), **False** cho phép lấy các kỳ gần nhất (5 năm hoặc 10 quý gần đây). Đây là tham số tùy chọn, nếu bạn không chỉ rõ, nó sẽ nhận giá trị mặc định là **False** tức rút gọn báo cáo để lấy 5 năm hoặc 10 quý gần nhất.
 
 - Kết quả:
 
@@ -53,6 +62,18 @@ creditGrowth             0.211  0.252  0.202  0.443 -0.006
 
 ## Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
 
+<div class="financial_report">
+  <a href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_report_tcbs.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+</div>
+
+Ba loại báo cáo này được truy xuất từ nguồn TCBS thông qua hàm **financial_flow**. Hàm này nhận 3 tham số:
+- **symbol** là mã chứng khoán bạn muốn phân tích
+- **report_type** nhận 1 trong 3 giá trị: **incomestatement** cho phép trả về báo cáo kết quả kinh doanh, **balancesheet** trả về báo cáo cân đối kế toán, **cashflow** trả về báo cáo lưu chuyển tiền tệ
+- **report_range** nhận 1 trong 2 giá trị: **yearly** cho phép trả về báo cáo theo năm, **quarterly** trả về dữ liệu theo quý
+
+Cụ thể từng báo cáo được minh họa chi tiết thành từng phần như dưới đây.
+
 ### Báo cáo kinh doanh
 
 <div class="balance_sheet">
@@ -60,12 +81,13 @@ creditGrowth             0.211  0.252  0.202  0.443 -0.006
   <a class="mask" href="assets/images/financial_income_statement.png?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
 
+Báo cáo kết quả kinh doanh có thể được truy xuất bằng câu lệnh:
+
 ```python
-financial_flow(symbol="TCB", report_type='incomestatement', report_range='quarterly')
+income_df = financial_flow(symbol="TCB", report_type='incomestatement', report_range='quarterly')
 ```
 
-
-- Kết quả:
+- Kết quả trả về như dưới đây. 
 
 ```shell
 ticker  revenue  yearRevenueGrowth  quarterRevenueGrowth costOfGoodSold grossProfit  ...  investProfit  serviceProfit  otherProfit  provisionExpense operationIncome  ebitda
@@ -76,6 +98,12 @@ index                                                                           
 2021-Q1    TCB     6124              0.454                 0.122           None        None  ...           812           1325          671              -851            6369    None
 ```
 
+Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **income_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `income_df.T`
+
+Trong đó tên các cột được chuẩn hóa bằng tiếng Anh. Để đổi tên sang tiếng Việt, có thể sử dụng phương thức **rename** tiêu chuẩn của Pandas trong Python. Tôi đã chia sẻ một video cụ thể cách sử dụng Bard để trích xuất thông tin và ghép nối bản dịch tiếng Việt của các chỉ số. Các bạn có thể theo dõi để tự thực hiện nếu cần. Cách làm này áp dụng với tất cả các báo cáo tài chính được cung cấp ở đây.
+
+<iframe width="800" height="452" src="https://www.youtube.com/embed/D3QekSAJU2s?si=r6shqYCewp1IRl31" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 ### Bảng cân đối kế toán
 
 <div class="balance_sheet">
@@ -83,8 +111,10 @@ index                                                                           
   <a class="mask" href="assets/images/financial_balancesheet.png?raw=true" data-title="Dữ liệu bảng cân đối kế toán tại TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
 
+Để tải dữ liệu bảng cân đối kế toán, bạn sử dụng câu lệnh:
+
 ```python
-financial_flow(symbol="TCB", report_type='balancesheet', report_range='quarterly')
+balance_df = financial_flow(symbol="TCB", report_type='balancesheet', report_range='quarterly')
 ```
 
 - Kết quả:
@@ -99,11 +129,14 @@ index                                                                           
 2021-Q1    TCB       None  4273        None            None      None      None        4726  ...             2897                5664  287446     26035  6790                36213                     563   3837
 ```
 
+Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **balance_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `balance_df.T`
 
 ### Báo cáo lưu chuyển tiền tệ
 
+Để tải dữ liệu báo cáo lưu chuyển tiền tệ, bạn sử dụng câu lệnh:
+
 ```python
-financial_flow(symbol="TCB", report_type='cashflow', report_range='quarterly')
+cashflow_df = financial_flow(symbol="TCB", report_type='cashflow', report_range='quarterly')
 ```
 
 - Kết quả:
@@ -117,8 +150,21 @@ index
 2021-Q1    TCB        -143        -143              0     -6954             0
 ```
 
+Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **cashflow_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `cashflow_df.T`
 
 ## Chỉ số định giá
+
+<div class="stock_evaluation">
+  <a href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/tcbs_stock_evaluation.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+</div>
+
+Chỉ số định giá được truy xuất từ nguồn TCBS thông qua hàm **stock_evaluation**. Hàm này nhận 3 tham số:
+- **symbol** là mã chứng khoán bạn muốn phân tích
+- **period** nhận 1 trong 2 giá trị: **1** cho phép trả về chỉ số theo ngày, **2** trả về dữ liệu theo tuần
+- **time_window** nhận 1 trong 2 giá trị: **D** cho phép trả về chỉ số theo ngày, **W** trả về dữ liệu theo tuần
+
+Minh họa cho hàm này như sau:
 
 ```python
 stock_evaluation (symbol='TCB', period=1, time_window='D')
@@ -126,21 +172,21 @@ stock_evaluation (symbol='TCB', period=1, time_window='D')
 
 - Kết quả:
 
-  ```shell
-  >>> stock_evaluation (symbol='TCB', period=1, time_window='D')
-      ticker   fromDate     toDate   PE   PB  industryPE  vnindexPE  industryPB  vnindexPB
-  0      TCB 2022-09-05 2022-09-05  6.4  1.2         9.8       14.0         1.7        2.0
-  1      TCB 2022-09-06 2022-09-06  6.4  1.2         9.9       14.0         1.7        2.0
-  2      TCB 2022-09-07 2022-09-07  6.2  1.2         9.6       13.7         1.7        2.0
-  3      TCB 2022-09-08 2022-09-08  6.2  1.2         9.4       13.5         1.6        1.9
-  4      TCB 2022-09-09 2022-09-09  6.2  1.2         9.5       13.7         1.6        2.0
-  ..     ...        ...        ...  ...  ...         ...        ...         ...        ...
-  245    TCB 2023-08-25 2023-08-25  6.7  1.0         9.3       14.8         1.5        1.7
-  246    TCB 2023-08-28 2023-08-28  6.7  1.0         9.3       15.0         1.6        1.7
-  247    TCB 2023-08-29 2023-08-29  6.7  1.0         9.4       15.1         1.6        1.7
-  248    TCB 2023-08-30 2023-08-30  6.7  1.0         9.5       15.2         1.6        1.7
-  249    TCB 2023-08-31 2023-08-31  6.8  1.0         9.6       15.4         1.6        1.7
+```shell
+>>> stock_evaluation (symbol='TCB', period=1, time_window='D')
+    ticker   fromDate     toDate   PE   PB  industryPE  vnindexPE  industryPB  vnindexPB
+0      TCB 2022-09-05 2022-09-05  6.4  1.2         9.8       14.0         1.7        2.0
+1      TCB 2022-09-06 2022-09-06  6.4  1.2         9.9       14.0         1.7        2.0
+2      TCB 2022-09-07 2022-09-07  6.2  1.2         9.6       13.7         1.7        2.0
+3      TCB 2022-09-08 2022-09-08  6.2  1.2         9.4       13.5         1.6        1.9
+4      TCB 2022-09-09 2022-09-09  6.2  1.2         9.5       13.7         1.6        2.0
+..     ...        ...        ...  ...  ...         ...        ...         ...        ...
+245    TCB 2023-08-25 2023-08-25  6.7  1.0         9.3       14.8         1.5        1.7
+246    TCB 2023-08-28 2023-08-28  6.7  1.0         9.3       15.0         1.6        1.7
+247    TCB 2023-08-29 2023-08-29  6.7  1.0         9.4       15.1         1.6        1.7
+248    TCB 2023-08-30 2023-08-30  6.7  1.0         9.5       15.2         1.6        1.7
+249    TCB 2023-08-31 2023-08-31  6.8  1.0         9.6       15.4         1.6        1.7
 
-  [250 rows x 9 columns]
-  ```
+[250 rows x 9 columns]
+```
 

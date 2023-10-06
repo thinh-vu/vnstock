@@ -186,29 +186,47 @@ def stock_intraday_data (symbol='ACB', page_size=50, page=0, headers=tcbs_header
             # create url
             url = f"https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/investor/his/paging?page={i}&size=100&headIndex=-1"
             # send request to get response
-            response = requests.request("GET", url, headers=headers).json()
-            df_temp = pd.DataFrame(response['data'])
-            df_temp['ticker'] = response['ticker']
-            df = pd.concat([df, df_temp])
+            response = requests.request("GET", url, headers=headers)
+            # if response status is 200, then get data from response
+            if response.status_code == 200:
+                response = response.json()
+                df_temp = pd.DataFrame(response['data'])
+                df_temp['ticker'] = response['ticker']
+                df = pd.concat([df, df_temp])
+            # if response status is not 200, then stop the loop
+            else:
+                break
     else:
         # create url
         url = f"https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/investor/his/paging?page={page}&size={page_size}&headIndex=-1"
         # send request to get response
-        response = requests.request("GET", url, headers=headers).json()
-        df = pd.DataFrame(response['data'])
-        df['ticker'] = response['ticker']
+        response = requests.request("GET", url, headers=headers)
+        # if response status is 200, then get data from response
+        if response.status_code == 200:
+            response = response.json()
+            df = pd.DataFrame(response['data'])
+            df['ticker'] = response['ticker']
+        # if response status is not 200, then return None and print the error message
+        else:
+            print(response['message'])
+            return None
     # move ticker column to the first column
-    cols = df.columns.tolist()
-    cols = cols[-1:] + cols[:-1]
-    df = df[cols]
-    # drop columns cp, rcp, pcp
-    df.drop(columns=['cp', 'rcp', 'pcp'], inplace=True)
-    # rename columns ap to averagePrice, v to volume, a to orderType, t to time, n to orderCount, type to investorType
-    df.rename(columns={'ap': 'averagePrice', 'v': 'volume', 'a': 'orderType', 't': 'time', 'n': 'orderCount', 'type': 'investorType'}, inplace=True)
-    # arrange columns by ticker, time, orderType, investorType, volume, averagePrice, orderCount
-    df = df[['ticker', 'time', 'orderType', 'investorType', 'volume', 'averagePrice', 'orderCount']]
-    # rename values of orderType, SD to Sell Down, BU to Buy Up
-    df['orderType'] = df['orderType'].replace({'SD': 'Sell Down', 'BU': 'Buy Up'})
-    # reset index
-    df.reset_index(drop=True, inplace=True)
-    return df
+    try:
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+        # drop columns cp, rcp, pcp
+        df.drop(columns=['cp', 'rcp', 'pcp'], inplace=True)
+        # rename columns ap to averagePrice, v to volume, a to orderType, t to time, n to orderCount, type to investorType
+        df.rename(columns={'ap': 'averagePrice', 'v': 'volume', 'a': 'orderType', 't': 'time', 'n': 'orderCount', 'type': 'investorType'}, inplace=True)
+        # arrange columns by ticker, time, orderType, investorType, volume, averagePrice, orderCount
+        df = df[['ticker', 'time', 'orderType', 'investorType', 'volume', 'averagePrice', 'orderCount']]
+        # rename values of orderType, SD to Sell Down, BU to Buy Up
+        df['orderType'] = df['orderType'].replace({'SD': 'Sell Down', 'BU': 'Buy Up'})
+        # reset index
+        df.reset_index(drop=True, inplace=True)
+        return df
+    except:
+        print('No data available')
+
+
