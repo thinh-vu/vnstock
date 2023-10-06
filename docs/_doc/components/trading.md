@@ -210,6 +210,11 @@ industry_financial_health("VNM")
 
 ### Bộ lọc cổ phiếu
 
+<div class="watch-star">
+  <a href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><img class="img-responsive" src="assets/images/stock_screener-tcbs.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+</div>
+
 Bộ lọc cổ phiếu là một hàm cho phép bạn truy vấn và lọc các cổ phiếu theo nhiều tiêu chí đa dạng dựa trên dữ liệu phân tích của TCBS. Hàm này sẽ trả về một DataFrame chứa các thông tin toàn diện về các cổ phiếu thỏa mãn điều kiện lọc của bạn. Bạn có thể dùng DataFrame này để tiếp tục phân tích, biểu diễn hoặc xuất ra dữ liệu dạng bảng tính. Đây là cập nhật ưu việt giúp bạn tiết kiệm thời gian và công sức đáng kể khi làm việc với dữ liệu cổ phiếu, đồng thời cho phép lập trình để lọc là cập nhật danh sách cổ phiếu hiệu quả không cần sử dụng giao diện web từ công ty chứng khoán.
 
 - Bộ lọc cổ phiếu TCBS
@@ -239,6 +244,7 @@ df = stock_screening_insights (params, size=1700, drop_lang='vi')
 ```
 
 <details>
+
   <summary>Các bộ lọc gợi ý và tiêu chí hỗ trợ</summary>
 
     a. BỘ LỌC GỢI Ý (PRESET)
