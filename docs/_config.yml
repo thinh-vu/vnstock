@@ -3,7 +3,7 @@
 #
 remote_theme: thinh-vu/pretty-docs
 url: https://thinh-vu.github.io
-baseurl: /vnstock-docs
+baseurl: /vnstock
 title: &site_title vnstock Docs
 description: &site_description Tài liệu hướng dẫn sử dụng vnstock trong phân tích thị trường chứng khoán Việt Nam
 branding:

@@ -10,10 +10,12 @@
 
 vnstock là thư viện Python được thiết kế để tải dữ liệu chứng khoán Việt Nam một cách dễ dàng và miễn phí. vnstock sử dụng các nguồn cấp dữ liệu đáng tin cậy, bao gồm nhưng không giới hạn từ công ty chứng khoán và công ty phân tích thị trường tại Việt Nam. 
 
-## Tài liệu hướng dẫn
-Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện để bắt đầu, bạn có thể truy cập vnstock docs.
+## II. 📔 Tài liệu hướng dẫn
+Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện để bắt đầu, bạn có thể truy cập vnstock docs. 
 
-[![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-docs-home.png)](https://thinh-vu.github.io/vnstock-docs/)
+[![vnstock docs - Xem Thêm](https://img.shields.io/badge/vnstock_docs-Xem_Thêm-2ea44f?style=for-the-badge&logo=Github)](https://thinh-vu.github.io/vnstock)
+
+[![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-docs-home.png)](https://thinh-vu.github.io/vnstock)
 
 # III. 🙋‍♂️ Thông tin liên hệ
 
