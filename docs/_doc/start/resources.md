@@ -6,7 +6,6 @@ sections:
   - Notebook minh hoạ
   - Docstring
   - vnstock cho Google Sheets
-  - Xây dựng cộng đồng vnstock
   - Lộ trình phát triển
 ---
 

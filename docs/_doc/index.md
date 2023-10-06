@@ -7,6 +7,11 @@ tagline: |
   Xây dựng bằng *&nbsp;*{: .fa .fa-heart} dành cho cộng đồng.
   
   Sẵn sàng tích hợp vào dự án *&nbsp;*{: .fa .fa-line-chart} của bạn
+
+  [![vnstock.site - Ghé thăm](https://img.shields.io/badge/vnstock.site-Ghé_thăm-4CAF50?style=for-the-badge&logo=www)](https://vnstock.site/)
+
+  [![vnstock - Tham gia](https://img.shields.io/badge/vnstock-Tham_gia-5865F2?style=for-the-badge&logo=Discord)](https://discord.gg/ruugCSWVCJ)
+
 heading: Bắt đầu sử dụng thật dễ dàng!
 navigation:
   - /start
