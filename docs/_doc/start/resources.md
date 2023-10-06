@@ -11,7 +11,7 @@ sections:
 
 Trước khi bắt đầu, bạn có thể xem Video giới thiệu chính thức cho vnstock mình mới chia sẻ trên Youtube tại đây:
 
-<iframe width="1068" height="600" src="https://www.youtube.com/embed/6kP2TTtEY9Y?si=EOe0aW8cpqLyCnw5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="800" height="452" src="https://www.youtube.com/embed/6kP2TTtEY9Y?si=EOe0aW8cpqLyCnw5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ### Website chính thức của vnstock
 vnstock đã hoàn thiện bước đầu việc xây dựng một website chuyên biệt để cập nhật thông tin về dự án, tài liệu sử dụng, blog, khóa học, và các tài nguyên hữu ích khác. Các nội dung của website đang từng bước được cập nhật và hoàn thiện.
