@@ -86,8 +86,8 @@ All functions of vnstock are provided with complete docstrings, while this READM
   <summary>Supporting the vnstock Development Fund</summary>
   If vnstock has been helpful to you, you can contribute to the development fund of this application through either bank transfer or Momo. All contributions are greatly appreciated and serve as motivation for the author to maintain vnstock as a useful, free, and accessible resource for the community.
 
-  - ![vcb-qr](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vcb-qr-thinhvu.jpg?raw=true)
-  - ![momo-qr](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/momo-qr-thinhvu.jpeg?raw=true)
+  - ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vcb-qr-thinhvu.jpg?raw=true)
+  - ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/momo-qr-thinhvu.jpeg?raw=true)
 
 </details>
 
@@ -116,7 +116,7 @@ All functions of vnstock are provided with complete docstrings, while this READM
 <details>
   <summary> Choose the appropriate branch </summary>
 
-  ![select_branch](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock_select_branch.jpeg)
+  ![select_branch](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vnstock_select_branch.jpeg?raw=true)
 
 </details>
 
