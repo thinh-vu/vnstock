@@ -21,22 +21,8 @@ Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
   </a>
   <a href="https://www.youtube.com/@learn_anything_az?sub_confirmation=1">
     <img src="https://img.shields.io/badge/Learn_Anything-Theo_dõi-FF0000?style=for-the-badge&logo=youtube" alt="Learn Anything - Theo dõi"/>
-  </a>
-  <a href="https://pypi.org/project/vnstock/">
-    <img src="https://img.shields.io/badge/PyPI-Download-006DAD?style=for-the-badge&logo=pypi" alt="PyPI - Download"/>
-  </a>
 </div>
 
-
-  <!-- [![vnstock group - Tham gia](https://img.shields.io/badge/vnstock_group-Tham_gia-0866FF?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock)
-
-  [![vnstock - Tham gia](https://img.shields.io/badge/vnstock-Tham_gia-5865F2?style=for-the-badge&logo=Discord)](https://discord.gg/ruugCSWVCJ)
-
-  [![Vnstock - Theo dõi](https://img.shields.io/badge/Vnstock-Theo_dõi-0866FF?style=for-the-badge&logo=facebook)](https://www.facebook.com/vnstock.official)
-
-  [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az?sub_confirmation=1)
-
-  [![PyPI - Download](https://img.shields.io/badge/PyPI-Download-006DAD?style=for-the-badge&logo=pypi)](https://pypi.org/project/vnstock/) -->
 
 
 Đọc thêm bài viết dưới đây để hiểu thêm chi tiết:
