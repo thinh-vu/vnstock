@@ -74,7 +74,7 @@ All functions of vnstock are provided with complete docstrings, while this READM
   
   Open the source code file [vnstock.py](https://github.com/thinh-vu/vnstock/blob/beta/vnstock/stock.py) and find the function you want to look up the docstring for.
 
-  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/docstring_source_code.jpeg?raw=true)
+  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/docstring_source_code.png?raw=true)
 
 </details>
 
