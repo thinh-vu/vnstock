@@ -17,6 +17,7 @@ Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
 
   [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-4CAF50?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az?sub_confirmation=1)
 
+
   [![PyPI - Download](https://img.shields.io/badge/PyPI-Download-4CAF50?style=for-the-badge&logo=pypi)](https://pypi.org/project/vnstock/)
 
 
