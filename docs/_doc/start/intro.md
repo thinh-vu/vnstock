@@ -13,8 +13,8 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 - vnstock có +33K lượt downloads trên PyPI tính đến tháng 9/2023.
 
   <div class="vnstock-pypi-stats">
-   <a href="assets/images/vnstock_download_stats.png?raw=true" data-title="Thống kê lượt tải vnstock từ PyPI" data-toggle="lightbox"><img class="img-responsive" src="assets/images/vnstock_download_stats.png?raw=true" alt="screenshot" /></a>
-   <a class="mask" href="assets/images/vnstock_download_stats.png?raw=true" data-title="Thống kê lượt tải vnstock từ PyPI" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+   <a href="assets/images/vnstock-watch-and-star.png?raw=true" data-title="Minh họa tính năng Watch và Star" data-toggle="lightbox"><img class="img-responsive" src="assets/images/vnstock-watch-and-star.png?raw=true" alt="screenshot" /></a>
+   <a class="mask" href="assets/images/vnstock-watch-and-star.png?raw=true" data-title="Minh họa tính năng Watch và Star" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
   </div>
 
 
@@ -22,15 +22,15 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 vnstock cung cấp nhiều tính năng đa dạng như tải dữ liệu lịch sử giá, thông tin công ty niêm yết, thông tin thị trường cho tất cả các mã chứng khoán niêm yết.
 
 ## Nguồn cấp dữ liệu
-Thư viện `vnstock` cung cấp khả năng kết nối tới các API công khai của các nguồn cấp dữ liệu đáng tin cậy để người dùng có thể truy xuất dữ liệu chứng khoán Việt Nam và tương tác với các đối tượng Pandas DataFrame trong môi trường Python. Bạn cũng có thể xuất dữ liệu sang các định dạng phổ thông như csv, Excel, Google Sheets, Database để tiến hành phân tích nếu muốn. Việc truy xuất dữ liệu này là **TỰ DO** và hoàn toàn **MIỄN PHÍ**.
+Thư viện **vnstock** cung cấp khả năng kết nối tới các API công khai của các nguồn cấp dữ liệu đáng tin cậy để người dùng có thể truy xuất dữ liệu chứng khoán Việt Nam và tương tác với các đối tượng Pandas DataFrame trong môi trường Python. Bạn cũng có thể xuất dữ liệu sang các định dạng phổ thông như csv, Excel, Google Sheets, Database để tiến hành phân tích nếu muốn. Việc truy xuất dữ liệu này là **TỰ DO** và hoàn toàn **MIỄN PHÍ**.
 
 ## Tips
-- Theo dõi những cập nhật về thay đổi của vnstock bằng tính năng `Watch`. Hiện tại vnstock được cập nhật thường xuyên hàng tuần qua nhánh `beta`, vì vậy theo dõi repo này giúp bạn luôn nắm bắt được kịp thời những thay đổi mới nhất.
-- Đánh dấu yêu thích repo `vnstock` bằng tính năng `Star`. Đây cũng là cách giúp vnstock có thể tiếp cận tới nhiều người quan tâm hơn.
+- Theo dõi những cập nhật về thay đổi của vnstock bằng tính năng **Watch**. Hiện tại vnstock được cập nhật thường xuyên hàng tuần qua nhánh **beta**, vì vậy theo dõi repo này giúp bạn luôn nắm bắt được kịp thời những thay đổi mới nhất.
+- Đánh dấu yêu thích repo **vnstock** bằng tính năng **Star**. Đây cũng là cách giúp vnstock có thể tiếp cận tới nhiều người quan tâm hơn.
 
-<details>
-  <summary> Minh họa tính năng Watch và Star </summary>
-  
-![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/resources/images/vnstock-watch-and-star.png?raw=true)
+- Minh họa tính năng Watch và Star
 
-</details>
+  <div class="watch-star">
+   <a href="assets/images/vnstock-watch-and-star.png?raw=true" data-title="Minh họa tính năng Watch và Star" data-toggle="lightbox"><img class="img-responsive" src="assets/images/vnstock-watch-and-star.png?raw=true" alt="screenshot" /></a>
+   <a class="mask" href="assets/images/vnstock-watch-and-star.png?raw=true" data-title="Minh họa tính năng Watch và Star" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+  </div>
