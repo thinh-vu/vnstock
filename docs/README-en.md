@@ -217,7 +217,7 @@ You can download the price table of a selected list of stocks to facilitate anal
 <details>
   <summary>Price Table</summary>
 
-  ![price_board](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_trading_board_sector.png?raw=true)
+  ![price_board](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//tcbs_trading_board_sector.png?raw=true)
 
 </details>
 
@@ -244,8 +244,8 @@ Using this function allows you to analyze price depth and volume on the price ta
 <details>
   <summary>Intraday view on TCBS</summary>
 
-  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen1.png?raw=true)
-  ![intraday](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/tcbs_intraday_screen2.png?raw=true)
+  ![intraday](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//tcbs_intraday_screen1.png?raw=true)
+  ![intraday](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//tcbs_intraday_screen2.png?raw=true)
 
 </details>
 vnstock allows the user to **download intraday real-time/historical data**. In 
@@ -436,7 +436,7 @@ financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly
 
 ##### 📄 Income Statement
 
-![income_statement](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_income_statement.png?raw=true)
+![income_statement](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//financial_income_statement.png?raw=true)
 ```python
 financial_flow(symbol="TCB", report_type='incomestatement', report_range='quarterly')
 ```
@@ -457,7 +457,7 @@ index                                                                           
 
 ##### 🧾Balance Sheet
 
-![balance_sheet](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/financial_balancesheet.png?raw=true)
+![balance_sheet](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//financial_balancesheet.png?raw=true)
 ```python
 financial_flow(symbol="TCB", report_type='balancesheet', report_range='quarterly')
 ```
@@ -659,7 +659,7 @@ fr_trade_heatmap ('All', 'FrBuyVol')
 </details>
 
 ### 2.15.3. Market latest indices & values
-![latest_indices](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_latest_indices.png?raw=true)
+![latest_indices](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//get_latest_indices.png?raw=true)
 
 Retrieve the latest indices values & brief insights
 
@@ -702,7 +702,7 @@ get_latest_indices()
 </details>
 
 ### 2.15.4. Market latest indices in depth data
-![index_series_data](https://raw.githubusercontent.com/thinh-vu/vnstock/main/src/get_index_series_data.png?raw=true)
+![index_series_data](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//get_index_series_data.png?raw=true)
 
 ```python
 get_index_series(index_code='VNINDEX', time_range='OneYear')
