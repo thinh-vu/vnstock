@@ -10,7 +10,7 @@ sections:
 ---
 
 <div id="badges" align="center">
-<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/docs/assets/images/vnstock-logo-white.jpg" alt= "logo"/>
+<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-logo-white.jpg" alt= "logo"/>
 </div>
 
 <div id="badges" align="center">
@@ -28,7 +28,6 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 - vnstock có +33K lượt downloads trên PyPI tính đến tháng 9/2023.
 
 - [*&nbsp;*{: .fa .fa-play-circle}        Xem thêm](assets/images/vnstock_download_stats.png?raw=true){: .btn .btn-blue .btn-cta}
-
 
 ## Tính năng chính
 vnstock cung cấp nhiều tính năng đa dạng như tải dữ liệu lịch sử giá, thông tin công ty niêm yết, thông tin thị trường cho tất cả các mã chứng khoán niêm yết.
