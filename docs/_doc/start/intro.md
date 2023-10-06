@@ -10,7 +10,7 @@ sections:
 ---
 
 <div id="badges" align="center">
-<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/src/vnstock-logo-white.jpg" alt= "logo"/>
+<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/docs/assets/images/vnstock-logo-white.jpg" alt= "logo"/>
 </div>
 
 <div id="badges" align="center">
