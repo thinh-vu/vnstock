@@ -56,8 +56,8 @@ creditGrowth             0.211  0.252  0.202  0.443 -0.006
 ### Báo cáo kinh doanh
 
 <div class="balance_sheet">
-  <a href="assets/images/financial_income_statement.jpeg?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_income_statement.jpeg?raw=true" alt="screenshot" /></a>
-  <a class="mask" href="assets/images/financial_income_statement.jpeg?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+  <a href="assets/images/financial_income_statement.png?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_income_statement.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/financial_income_statement.png?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
 
 ```python
@@ -79,8 +79,8 @@ index                                                                           
 ### Bảng cân đối kế toán
 
 <div class="balance_sheet">
-  <a href="assets/images/financial_balancesheet.jpeg?raw=true" data-title="Dữ liệu bảng cân đối kế toán tại TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_balancesheet.jpeg?raw=true" alt="screenshot" /></a>
-  <a class="mask" href="assets/images/financial_balancesheet.jpeg?raw=true" data-title="Dữ liệu bảng cân đối kế toán tại TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+  <a href="assets/images/financial_balancesheet.png?raw=true" data-title="Dữ liệu bảng cân đối kế toán tại TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_balancesheet.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/financial_balancesheet.png?raw=true" data-title="Dữ liệu bảng cân đối kế toán tại TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
 
 ```python
