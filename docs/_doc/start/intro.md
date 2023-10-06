@@ -27,7 +27,7 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 
 - vnstock có +33K lượt downloads trên PyPI tính đến tháng 9/2023.
 
-- [*&nbsp;*{: .fa .fa-play-circle}        Xem thêm](assets/images/vnstock_download_stats.png?raw=true){: .btn .btn-blue .btn-cta}
+[*&nbsp;*{: .fa .fa-play-circle}        Xem thêm](assets/images/vnstock_download_stats.png?raw=true){: .btn .btn-blue .btn-cta}
 
 
 ## Tính năng chính

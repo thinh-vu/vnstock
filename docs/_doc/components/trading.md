@@ -379,8 +379,7 @@ df = stock_screening_insights (params, size=1700, drop_lang='vi')
 
 ## Dữ liệu khớp lệnh trong ngày giao dịch
 
-<details>
-  <summary>Minh hoạ giao diện TCBS</summary>
+- Minh hoạ giao diện TCBS
 
   <div class="intraday_1">
    <a href="assets/images/tcbs_intraday_screen1.png?raw=true" data-title="hình chụp 1" data-toggle="lightbox"><img class="img-responsive" src="assets/images/tcbs_intraday_screen1.png?raw=true" alt="screenshot" /></a>
