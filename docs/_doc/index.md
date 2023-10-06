@@ -8,11 +8,23 @@ tagline: |
   
   Sẵn sàng tích hợp vào dự án *&nbsp;*{: .fa .fa-line-chart} của bạn
 
-  [![vnstock.site - Ghé thăm](https://img.shields.io/badge/vnstock.site-Ghé_thăm-4CAF50?style=for-the-badge&logo=www)](https://vnstock.site/)
-
-  [![vnstock group - Tham gia](https://img.shields.io/badge/vnstock_group-Tham_gia-0866FF?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock)
-
-  [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az?sub_confirmation=1)
+  <div id="badges" align="center">
+  <a href="https://www.facebook.com/groups/vnstock">
+    <img src="https://img.shields.io/badge/vnstock_group-Tham_gia-0866FF?style=for-the-badge&logo=facebook" alt="vnstock group - Tham gia"/>
+  </a>
+  <a href="https://discord.gg/ruugCSWVCJ">
+    <img src="https://img.shields.io/badge/vnstock-Tham_gia-5865F2?style=for-the-badge&logo=Discord" alt="vnstock - Tham gia"/>
+  </a>
+  <a href="https://www.facebook.com/vnstock.official">
+    <img src="https://img.shields.io/badge/Vnstock-Theo_dõi-0866FF?style=for-the-badge&logo=facebook" alt="Vnstock - Theo dõi"/>
+  </a>
+  <a href="https://www.youtube.com/@learn_anything_az?sub_confirmation=1">
+    <img src="https://img.shields.io/badge/Learn_Anything-Theo_dõi-FF0000?style=for-the-badge&logo=youtube" alt="Learn Anything - Theo dõi"/>
+  </a>
+  <a href="https://pypi.org/project/vnstock/">
+    <img src="https://img.shields.io/badge/PyPI-Download-006DAD?style=for-the-badge&logo=pypi" alt="PyPI - Download"/>
+  </a>
+</div>
 
 heading: Bắt đầu sử dụng thật dễ dàng!
 navigation:
