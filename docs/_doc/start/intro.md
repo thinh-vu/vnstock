@@ -29,6 +29,7 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 
 [*&nbsp;*{: .fa .fa-play-circle}        Xem thêm](assets/images/vnstock_download_stats.png?raw=true){: .btn .btn-blue .btn-cta}
 
+
 ## Tính năng chính
 vnstock cung cấp nhiều tính năng đa dạng như tải dữ liệu lịch sử giá, thông tin công ty niêm yết, thông tin thị trường cho tất cả các mã chứng khoán niêm yết.
 
