@@ -50,8 +50,8 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 - **Docstring trong mã nguồn**: Mở mã nguồn Github tại thư mục vnstock, tìm hàm bạn cần tra cứu docstring.
 
   <div class="docstring_source">
-   <a href="assets/images/docstring_source_code.jpeg?raw=true" data-title="Docstring trong mã nguồn" data-toggle="lightbox"><img class="img-responsive" src="assets/images/docstring_source_code.jpeg?raw=true" alt="screenshot" /></a>
-   <a class="mask" href="assets/images/docstring_source_code.jpeg?raw=true" data-title="Docstring trong mã nguồn" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+   <a href="assets/images/docstring_source_code.png?raw=true" data-title="Docstring trong mã nguồn" data-toggle="lightbox"><img class="img-responsive" src="assets/images/docstring_source_code.png?raw=true" alt="screenshot" /></a>
+   <a class="mask" href="assets/images/docstring_source_code.png?raw=true" data-title="Docstring trong mã nguồn" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
   </div>
 
 ### vnstock cho Google Sheets
