@@ -91,31 +91,6 @@ Tôi cung cấp một hàm tùy biến làm mẫu giúp bạn hình dung và b�
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/w4GCFZUpsEY?si=r77JMNc2p-SUihI5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-### Xây dựng cộng đồng vnstock
-
-🖐 Nếu bạn thấy thư viện này có giá trị và muốn hỗ trợ tác giả duy trì vnstock dưới dạng mã nguồn mở, miễn phí thì có thể tham gia ủng hộ gây quỹ phát triển dự án này. Để biết thêm chi tiết, vui lòng tham khảo bài viết trên blog sau: 
-
-[*&nbsp;*{: .fa .fa-eye} Xây dựng cộng đồng Vnstock](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh?utm_source=vnstock-docs&utm_medium=resource){: .btn .btn-cta .btn-primary}
-
-- Tham gia nhóm vnstock trên Facebook:
-[*&nbsp;*{: .fa .fa-facebook}        Nhóm Facebook  ](https://www.facebook.com/groups/vnstock){: .btn .btn-blue .btn-cta}
-- Tham gia Discord channel:
-[*&nbsp;*{: .fa .fa-simplybuilt}        Discord channel  ](https://discord.gg/qJvxJcChJ3){: .btn .btn-blue .btn-cta}
-
-- **Ủng hộ quỹ phát triển vnstock**: Nếu vnstock giúp ích cho bạn, hãy đóng góp quỹ phát triển ứng dụng này theo một trong hai hình thức sau gồm chuyển khoản ngân hàng hoặc Momo. Mọi khoản đóng góp đều đáng trân quý và là động lực giúp tác giả duy trì vnstock luôn hữu ích, miễn phí, và dễ tiếp cận cho cộng đồng.
-
-<div class="row">
-  <div class="col-md-6 col-sm-6 col-xs-12">
-   <a href="assets/images/vcb-qr-thinhvu.jpg?raw=true" data-title="Vietcombank QR" data-toggle="lightbox"><img class="img-responsive" src="assets/images/vcb-qr-thinhvu.jpg?raw=true" alt="Vietcombank QR Code" /></a>
-   <a class="mask" href="assets/images/vcb-qr-thinhvu.jpg?raw=true" data-title="Mã QR Vietcombank" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
-  </div>
-
-  <div class="col-md-6 col-sm-6 col-xs-12">
-   <a href="assets/images/momo-qr-thinhvu.jpeg?raw=true" data-title="Momo QR" data-toggle="lightbox"><img class="img-responsive" src="assets/images/momo-qr-thinhvu.jpeg?raw=true" alt="Momo QR Code" /></a>
-   <a class="mask" href="assets/images/momo-qr-thinhvu.jpeg?raw=true" data-title="Mã QR Momo" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
-  </div>
- </div>
-
 ### Lộ trình phát triển
 
 🔥 Bạn có thể tham khảo thêm [Ý tưởng cho các tính năng nâng cao cho các phiên bản sắp tới](https://github.com/users/thinh-vu/projects/1/views/4) để đồng hành cùng vnstock.
