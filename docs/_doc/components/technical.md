@@ -6,7 +6,14 @@ sections:
 
 ## Truy xuất dữ liệu giá lịch sử
 
-> Phiên bản API hiện tại cho phép truy cập giá lịch sử tối đa đến ngày 2012-03-20 đối với tất cả mã cổ phiếu. Nếu bạn có nhu cầu lấy lịch sử giá từ thời điểm thị trường chứng khoán bắt đầu hoạt động (REE là mã cổ phiếu có giao dịch sớm nhất thị trường vào 2000-07-31), hãy là một thành viên của [vnstock membership](https://www.facebook.com/groups/vnstock) để được hỗ trợ.
+<div class="ohlc_dataset">
+  <a href="assets/images/stock_ohlc_data.png?raw=true" data-title="Dữ liệu giá lịch sử được trích xuất từ DNSE EntradeX" data-toggle="lightbox"><img class="img-responsive" src="assets/images/stock_ohlc_data.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/stock_ohlc_data.png?raw=true" data-title="Dữ liệu giá lịch sử được trích xuất từ DNSE EntradeX" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+</div>
+
+* *{: .fa .fa-thumbs-up}
+{: .callout-title} Useful Tip:
+Phiên bản API hiện tại cho phép truy cập giá lịch sử tối đa đến ngày 2012-03-20 đối với tất cả mã cổ phiếu. Nếu bạn có nhu cầu lấy lịch sử giá từ thời điểm thị trường chứng khoán bắt đầu hoạt động (REE là mã cổ phiếu có giao dịch sớm nhất thị trường vào 2000-07-31), hãy là một thành viên [vnstock membership](https://www.facebook.com/groups/vnstock) để được hỗ trợ.
 
 vnstock cho phép người dùng tải xuống dữ liệu lịch sử giao dịch của **mã cổ phiếu, chỉ số, hợp đồng phái sinh**.
 - Dữ liệu **cổ phiếu** và **chỉ số** hỗ trợ 5 mức độ chi tiết theo khoảng thời gian bao gồm: 1 phút, 15 phút, 30 phút, 1 giờ, 1 ngày. 
