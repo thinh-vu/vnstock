@@ -4,13 +4,29 @@
 
 </div>
 
+---
+
+<div id="badges" align="center">
+<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-logo-white.jpg" alt= "logo"/>
+</div>
+
+<div id="badges" align="center">
+<img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=plastic" alt= "Version"/>
+<img src="https://img.shields.io/pypi/dm/vnstock" alt="Download Badge"/>
+<img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock" alt="Commit Badge"/>
+<img src="https://img.shields.io/github/license/thinh-vu/vnstock?color=red" alt="License Badge"/>
+</div>
+
+---
+
 🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/main/README-en.md)**
 
 # I. 🎤 Giới thiệu
 
 vnstock là thư viện Python được thiết kế để tải dữ liệu chứng khoán Việt Nam một cách dễ dàng và miễn phí. vnstock sử dụng các nguồn cấp dữ liệu đáng tin cậy, bao gồm nhưng không giới hạn từ công ty chứng khoán và công ty phân tích thị trường tại Việt Nam. 
 
-## II. 📔 Tài liệu hướng dẫn
+# II. 📔 Tài liệu hướng dẫn
+
 Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện để bắt đầu, bạn có thể truy cập vnstock docs. 
 
 [![vnstock docs - Xem Thêm](https://img.shields.io/badge/vnstock_docs-Xem_Thêm-2ea44f?style=for-the-badge&logo=Github)](https://thinh-vu.github.io/vnstock)

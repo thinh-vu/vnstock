@@ -8,10 +8,10 @@ icon:
 color: green
 sections:
   - /start/intro
-  - /start/disclaimer
-  - /start/resources
   - /start/installation
   - /start/requirements
+  - /start/resources
+  - /start/disclaimer
 promo:
   title: "*&nbsp;*{: .fa .fa-heart} [Khóa học Phân tích dữ liệu với Python #4](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3?utm_source=vnstock-docs&utm_medium=start)"
   link: https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3?utm_source=vnstock-docs&utm_medium=start

@@ -14,12 +14,6 @@ tagline: |
 
   [![vnstock - Tham gia](https://img.shields.io/badge/vnstock-Tham_gia-5865F2?style=for-the-badge&logo=Discord)](https://discord.gg/ruugCSWVCJ)
 
-  # [![Vnstock - Theo dõi](https://img.shields.io/badge/Vnstock-Theo_dõi-4CAF50?style=for-the-badge&logo=facebook)](https://www.facebook.com/vnstock.official)
-
-  # [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-4CAF50?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az)
-
-  # [![PyPI - Download](https://img.shields.io/badge/PyPI-Download-4CAF50?style=for-the-badge&logo=pypi)](https://pypi.org/project/vnstock/)
-
 heading: Bắt đầu sử dụng thật dễ dàng!
 navigation:
   - /start
