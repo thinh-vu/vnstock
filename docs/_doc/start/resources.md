@@ -61,7 +61,13 @@ Tôi cung cấp một hàm tùy biến làm mẫu giúp bạn hình dung và b�
 - Để sử dụng thử đoạn code trên cho việc lấy dữ liệu, bạn làm như sau:
   - Mở file [source code vnstock_gg_sheet](https://githubusercontent.com/thinh-vu/vnstock/beta/vnstock_gg_sheet/vnstock._appscript.js) và copy đoạn code.
   - Mở hoặc tạo 1 file Google Sheets bất kỳ
-  - Từ menu của Google Sheets, tìm mục Extension (tiện ích mở rộng) > Apps Script như trong hình. ![Alt text](https://github.com/thinh-vu/pretty-docs/blob/main/assets/images/google_sheet_appscript_menu.png)
+  - Từ menu của Google Sheets, tìm mục Extension (tiện ích mở rộng) > Apps Script như trong hình. 
+  
+  <div class="google_apps_script_menu">
+   <a href="assets/images/google_sheet_appscript_menu.png?raw=true" data-title="Mở Google Apps Script từ Menu" data-toggle="lightbox"><img class="img-responsive" src="assets/images/google_sheet_appscript_menu.png?raw=true" alt="screenshot" /></a>
+   <a class="mask" href="assets/images/google_sheet_appscript_menu.png?raw=true" data-title="Mở Google Apps Script từ Menu" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+  </div>
+
   - Trong giao diện Apps Script Editor, xóa hết code hiện tại và ghi đè với đoạn code bạn copy từ source code ở trên 
   
 
@@ -92,9 +98,9 @@ Tôi cung cấp một hàm tùy biến làm mẫu giúp bạn hình dung và b�
 [*&nbsp;*{: .fa .fa-eye} Xây dựng cộng đồng Vnstock](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh?utm_source=vnstock-docs&utm_medium=resource){: .btn .btn-cta .btn-primary}
 
 - Tham gia nhóm vnstock trên Facebook:
-[*&nbsp;*{: .fa-brands .fa-facebook}        Nhóm Facebook  ](https://www.facebook.com/groups/vnstock){: .btn .btn-blue .btn-cta}
+[*&nbsp;*{: .fa .fa-facebook}        Nhóm Facebook  ](https://www.facebook.com/groups/vnstock){: .btn .btn-blue .btn-cta}
 - Tham gia Discord channel:
-[*&nbsp;*{: .fa-brands .fa-discord}        Discord channel  ](https://discord.gg/qJvxJcChJ3){: .btn .btn-blue .btn-cta}
+[*&nbsp;*{: .fa .fa-simplybuilt}        Discord channel  ](https://discord.gg/qJvxJcChJ3){: .btn .btn-blue .btn-cta}
 
 - **Ủng hộ quỹ phát triển vnstock**: Nếu vnstock giúp ích cho bạn, hãy đóng góp quỹ phát triển ứng dụng này theo một trong hai hình thức sau gồm chuyển khoản ngân hàng hoặc Momo. Mọi khoản đóng góp đều đáng trân quý và là động lực giúp tác giả duy trì vnstock luôn hữu ích, miễn phí, và dễ tiếp cận cho cộng đồng.
 
