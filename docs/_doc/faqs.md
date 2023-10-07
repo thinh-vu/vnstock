@@ -7,7 +7,6 @@ icon:
 color: purple
 sections:
   - /faqs/general
-  - /faqs/features
   - /faqs/pricing
   - /faqs/support
 promo:
