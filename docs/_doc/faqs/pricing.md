@@ -14,6 +14,8 @@ Vnstock được cung cấp dưới dạng phần mềm mã nguồn mở, miễn
 - **Kênh Discord** là cộng đồng dành cho tất cả người dùng vnstock bất kể trả phí hay miễn phí. Bạn có thể tham gia để trao đổi, nhờ trợ giúp và học hỏi lẫn nhau ở nhóm này.
 - **Nhóm Facebook** dành riêng cho thành viên thân thiết, yêu cầu ủng hộ dự án 100K cho một lần duy nhất để gia nhập. Đây cũng là cách các bạn có thể gửi lời cám ơn tác giả thông qua hỗ trợ tài chính dưới dạng tặng một ly cafe. Nhóm này có ít thành viên tham gia hơn tuy nhiên hầu hết các thành viên hoạt động sôi nổi, là những người có kinh nghiệm về đầu tư hoặc hoạt động trong lĩnh vực chứng khoán. Đây là một cộng đồng chất lượng và gắn kết bởi đơn giản nhóm người dùng này hiểu được giá trị của vnstock, ủng hộ dự án và có khả năng tài chính để sẵn sàng sử dụng các sản phẩm chất lượng.
 
+Nếu bạn chưa sẵn sàng ủng hộ dự án 100K để tham gia nhóm cũng không sao. Bạn vẫn có thể tham gia nhóm Discord để nhận hỗ trợ chung từ cộng đồng. Chúc bạn thành công!
+
 {: .question}
 ### *&nbsp;*{: .fa .fa-question-circle} Làm thế nào để tham gia cộng đồng vnstock trả phí? **New**{: .label .label-success}
 
