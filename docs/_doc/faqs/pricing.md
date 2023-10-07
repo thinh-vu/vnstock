@@ -11,15 +11,17 @@ Vnstock được cung cấp dưới dạng phần mềm mã nguồn mở, miễn
 
 {: .question}
 ### *&nbsp;*{: .fa .fa-question-circle} Nhóm cộng đồng nào tôi nên tham gia để được hỗ trợ? **New**{: .label .label-success}
-- Kênh Discord là cộng đồng dành cho tất cả người dùng vnstock bất kể trả phí hay miễn phí. Bạn có thể tham gia để trao đổi, nhờ trợ giúp và học hỏi lẫn nhau ở nhóm này.
-- Nhóm Facebook dành riêng cho thành viên thân thiết, yêu cầu ủng hộ dự án 100K cho một lần duy nhất để gia nhập. Đây cũng là cách các bạn có thể gửi lời cám ơn tác giả thông qua hỗ trợ tài chính dưới dạng tặng một ly cafe. Nhóm này có ít thành viên tham gia hơn tuy nhiên hầu hết các thành viên hoạt động sôi nổi, là những người có kinh nghiệm về đầu tư hoặc hoạt động trong lĩnh vực chứng khoán. Đây là một cộng đồng chất lượng và gắn kết bởi đơn giản nhóm người dùng này hiểu được giá trị của vnstock, ủng hộ dự án và có khả năng tài chính để sẵn sàng sử dụng các sản phẩm chất lượng.
+- **Kênh Discord** là cộng đồng dành cho tất cả người dùng vnstock bất kể trả phí hay miễn phí. Bạn có thể tham gia để trao đổi, nhờ trợ giúp và học hỏi lẫn nhau ở nhóm này.
+- **Nhóm Facebook** dành riêng cho thành viên thân thiết, yêu cầu ủng hộ dự án 100K cho một lần duy nhất để gia nhập. Đây cũng là cách các bạn có thể gửi lời cám ơn tác giả thông qua hỗ trợ tài chính dưới dạng tặng một ly cafe. Nhóm này có ít thành viên tham gia hơn tuy nhiên hầu hết các thành viên hoạt động sôi nổi, là những người có kinh nghiệm về đầu tư hoặc hoạt động trong lĩnh vực chứng khoán. Đây là một cộng đồng chất lượng và gắn kết bởi đơn giản nhóm người dùng này hiểu được giá trị của vnstock, ủng hộ dự án và có khả năng tài chính để sẵn sàng sử dụng các sản phẩm chất lượng.
 
 {: .question}
 ### *&nbsp;*{: .fa .fa-question-circle} Làm thế nào để tham gia cộng đồng vnstock trả phí? **New**{: .label .label-success}
 
 {: .answer}
 Để có thể tham gia cộng đồng trả phí của vnstock được tổ chức trên nền tảng Facebook, bạn vui lòng ủng hộ dự án tối thiểu 100K theo hình thức chuyển tiền Momo hoặc chuyển khoản ngân hàng như thông tin bên dưới. Sau đó bạn gửi yêu cầu tham gia nhóm và trả lời 3 câu hỏi đơn giản để được duyệt tham gia nhóm. Ngay khi nhận được báo có, admin sẽ duyệt yêu cầu của bạn ngay lập tức.
+
 [![vnstock group - Tham gia](https://img.shields.io/badge/vnstock_group-Tham_gia-0866FF?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock)
+
 Cám ơn bạn đã tin tưởng, đồng hành và ủng hộ dự án.
 
 
