@@ -4,8 +4,6 @@ sections:
     - Dữ liệu khớp lệnh lịch sử
 ---
 
-## Dữ liệu giá lịch sử
-
 > Xem chi tiết mục [3.4.1 📈 Truy xuất dữ liệu giá lịch sử](#341--truy-xuất-dữ-liệu-giá-lịch-sử) cùng với thông tin giá chứng khoán cơ sở.
 
 ### Dữ liệu khớp lệnh lịch sử
