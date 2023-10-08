@@ -1,6 +1,6 @@
 ---
 title: Thư viện ví dụ
-excerpt: Cảm hứng sử dụng Vnstock từ các ví dụ thực tế
+excerpt: Cảm hứng sử dụng Vnstock từ các ví dụ xây dựng sẵn
 date: 2023-10-05
 icon:
   name: icon_datareport_alt
