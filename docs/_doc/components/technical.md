@@ -4,7 +4,7 @@ sections:
   - Truy xuất dữ liệu giá lịch sử
 ---
 
-## Truy xuất dữ liệu giá lịch sử
+### Truy xuất dữ liệu giá lịch sử
 
 <div class="ohlc_dataset">
   <a href="assets/images/stock_ohlc_data.png?raw=true" data-title="Dữ liệu giá lịch sử được trích xuất từ DNSE EntradeX" data-toggle="lightbox"><img class="img-responsive" src="assets/images/stock_ohlc_data.png?raw=true" alt="screenshot" /></a>

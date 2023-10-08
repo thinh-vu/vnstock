@@ -1,10 +1,10 @@
 ---
 title: Giới thiệu
 sections:
-    - Giới thiệu chung
-    - Tính năng chính
-    - Nguồn cấp dữ liệu
-    - Tips
+  - Giới thiệu chung
+  - Tính năng chính
+  - Nguồn cấp dữ liệu
+  - Tips
 ---
 
 ---

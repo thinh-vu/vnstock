@@ -60,7 +60,7 @@ bookValuePerShareChange  0.219  0.247    0.2  0.199  0.923
 creditGrowth             0.211  0.252  0.202  0.443 -0.006
   ```
 
-## Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
+## Báo cáo KQKD, CĐKT và LCTT
 
 <div class="financial_report">
   <a href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_report_tcbs.png?raw=true" alt="screenshot" /></a>

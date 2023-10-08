@@ -1,11 +1,10 @@
 ---
 title: Giao dịch thông minh
 sections:
-  - Lựa chọn cổ phiếu
+  - So sánh các cổ phiếu tiềm năng
+  - Bộ lọc cổ phiếu
   - Dữ liệu khớp lệnh
 ---
-
-## Lựa chọn cổ phiếu (Stock Screening)
 
 ### So sánh các cổ phiếu tiềm năng
 
@@ -210,7 +209,7 @@ industry_financial_health("VNM")
 
 ### Bộ lọc cổ phiếu
 
-<div class="watch-star">
+<div class="stock-screener">
   <a href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><img class="img-responsive" src="assets/images/stock_screener-tcbs.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
@@ -237,7 +236,7 @@ params = {
         }
 ```
 
-# Áp dụng bộ lọc với hàm để lấy kết quả
+Áp dụng bộ lọc với hàm để lấy kết quả
 
 ```
 df = stock_screening_insights (params, size=1700, drop_lang='vi')
@@ -383,7 +382,7 @@ df = stock_screening_insights (params, size=1700, drop_lang='vi')
 
 </details>
 
-## Dữ liệu khớp lệnh trong ngày giao dịch
+### Dữ liệu khớp lệnh trong ngày giao dịch
 
 - Minh hoạ giao diện TCBS
 
@@ -418,7 +417,8 @@ print(df)
 4    TCB  14:29:36  Sell Down         WOLF   23800       32700.0          10
   ```
 
-### Giải thích ý nghĩa chỉ số
+Giải thích ý nghĩa chỉ số
+
 • Khi 1 lệnh lớn (từ Cá mập, tay to, tổ chức....) mua chủ động (hoặc bán chủ động) được đưa vào Sàn, thường thì nó sẽ được khớp với nhiều lệnh nhỏ đang chờ bán (hoặc chờ mua). Nếu chỉ nhìn realtime theo từng lệnh khớp riêng lẻ, thì sẽ không thể phát hiện được các lệnh to (của Cá mập, tay to...) vừa được đẩy vào Sàn. Vì vậy, chúng tôi "cộng dồn" các lệnh khớp này lại (phát sinh bởi 1 lệnh lớn chủ động vào sàn trong 1 khoảng thời gian rất nhanh) để giúp NĐT phát hiện các lệnh lớn (của Cá mập, tay to....) chính xác hơn. Lệnh Cá mập sẽ được tô xanh (cho Mua chủ động) và đỏ (cho Bán chủ động). 
 
 • Cá mập: (CM - SHARK) nhà đầu tư tay to, tổ chức, đầu tư lớn, dẫn dắt thị trường. Giá trị 1 lệnh đặt > 1 tỷ đồng/lệnh đặt. Đồ thị 1N dùng số liệu 1 phút cho 60’ gần nhất; 1W là tổng mỗi 15’ cho 1 tuần; 1M là tổng hàng ngày cho 1 tháng
