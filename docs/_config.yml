@@ -46,13 +46,13 @@ open_graph:
   site_name: *site_title
   description: *site_description
   locale: en_US
-  image: /assets/images/thumb.png
-# twitter_cards:
-#   title: *site_title
-#   description: *site_description
-#   creator: *site_owner_twitter
-#   card: summary_large_image
-#   image: /assets/images/thumb.png
+  image: /assets/images/vnstock-thumb.png
+twitter_cards:
+  title: *site_title
+  description: *site_description
+  creator: *site_owner_twitter
+  card: summary_large_image
+  image: /assets/images/vnstock-thumb.png
 # share:
 #   facebook:
 #     class: fb-like
