@@ -20,10 +20,10 @@ navigation:
   - /components
   - /charts
   - /faqs
-  - /showcase
-  - /credits
   - /news
+  - /showcase
   - /community
+  - /credits
   - /legal
 ---
 
