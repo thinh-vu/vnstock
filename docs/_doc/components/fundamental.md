@@ -6,7 +6,7 @@ sections:
   - Chỉ số định giá
 ---
 
-## Bộ chỉ số tài chính
+### Bộ chỉ số tài chính
 
 <div class="balance_sheet">
   <a href="assets/images/financial_ratio.png?raw=true" data-title="Bộ chỉ số tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_ratio.png?raw=true" alt="screenshot" /></a>
@@ -60,7 +60,7 @@ bookValuePerShareChange  0.219  0.247    0.2  0.199  0.923
 creditGrowth             0.211  0.252  0.202  0.443 -0.006
   ```
 
-## Báo cáo KQKD, CĐKT và LCTT
+### Báo cáo KQKD, CĐKT và LCTT
 
 <div class="financial_report">
   <a href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_report_tcbs.png?raw=true" alt="screenshot" /></a>
@@ -74,7 +74,7 @@ Ba loại báo cáo này được truy xuất từ nguồn TCBS thông qua hàm 
 
 Cụ thể từng báo cáo được minh họa chi tiết thành từng phần như dưới đây.
 
-### Báo cáo kinh doanh
+#### Báo cáo kinh doanh
 
 <div class="balance_sheet">
   <a href="assets/images/financial_income_statement.png?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_income_statement.png?raw=true" alt="screenshot" /></a>
@@ -104,7 +104,7 @@ Trong đó tên các cột được chuẩn hóa bằng tiếng Anh. Để đổ
 
 <iframe width="800" height="452" src="https://www.youtube.com/embed/D3QekSAJU2s?si=r6shqYCewp1IRl31" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-### Bảng cân đối kế toán
+#### Bảng cân đối kế toán
 
 <div class="balance_sheet">
   <a href="assets/images/financial_balancesheet.png?raw=true" data-title="Dữ liệu bảng cân đối kế toán tại TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_balancesheet.png?raw=true" alt="screenshot" /></a>
@@ -131,7 +131,7 @@ index                                                                           
 
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **balance_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `balance_df.T`
 
-### Báo cáo lưu chuyển tiền tệ
+#### Báo cáo lưu chuyển tiền tệ
 
 Để tải dữ liệu báo cáo lưu chuyển tiền tệ, bạn sử dụng câu lệnh:
 
@@ -152,7 +152,7 @@ index
 
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **cashflow_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `cashflow_df.T`
 
-## Chỉ số định giá
+### Chỉ số định giá
 
 <div class="stock_evaluation">
   <a href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/tcbs_stock_evaluation.png?raw=true" alt="screenshot" /></a>
