@@ -7,9 +7,7 @@ sections:
 ---
 
 ### So sánh các cổ phiếu tiềm năng
-
 #### Bảng giá (Price board)
-
 Bạn có thể tải xuống bảng giá của một danh sách các cổ phiếu được chọn để phân tích, thiết lập thuật toán dễ dàng hơn (khi xuất ra Google Sheets/Excel) so với việc xem trực tiếp trên bảng giá của các công ty chứng khoán.
 
 - Minh họa Bảng giá TCBS
@@ -20,7 +18,6 @@ Bạn có thể tải xuống bảng giá của một danh sách các cổ phi�
   </div>
 
 ##### a. Thông tin bước giá, khối lượng và khớp lệnh
-
 ```python
 price_depth('TCB,SSI,VND')
 ```
@@ -39,7 +36,6 @@ Sử dụng hàm này cho phép thống kê các bước giá và khối lượn
 ```
 
 ##### b. Thông tin giao dịch bổ sung và các chỉ số
-
 ```python
 price_board('TCB,SSI,VND')
 ```
@@ -57,7 +53,6 @@ Mã CP  Giá Khớp Lệnh  KLBD/TB5D  T.độ GD  KLGD ròng(CM)  ...  vnid1m  
 ```
 
 #### Phân tích chỉ số các cổ phiếu cùng ngành (Industry Analysis)
-
 ```python
 industry_analysis("VNM", lang='vi)
 ```
@@ -100,7 +95,6 @@ RSI                            NaN    50.7   43.1   71.8   24.0    28.5   59.2  
 ```
 
 #### So sánh các chỉ số của danh sách các cổ phiếu tùy chọn
-
 ```python
 stock_ls_analysis("TCB, BID, CEO, GMD", lang='vi')
 ```
@@ -122,7 +116,6 @@ stock_ls_analysis("TCB, BID, CEO, GMD", lang='vi')
 
 #### Đánh giá xếp hạng 
 ##### Đánh giá chung
-
   <div class="general_rating">
    <a href="assets/images/general_rating.png?raw=true" data-title="Đánh giá chung" data-toggle="lightbox"><img class="img-responsive" src="assets/images/general_rating.png?raw=true" alt="screenshot" /></a>
    <a class="mask" href="assets/images/general_rating.png?raw=true" data-title="Đánh giá chung" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
@@ -141,7 +134,6 @@ general_rating("VNM")
 
 
 ##### Đánh giá mô hình kinh doanh
-
 ```python
 biz_model_rating("VNM")
 ```
@@ -155,7 +147,6 @@ biz_model_rating("VNM")
 
 
 ##### Đánh giá hiệu quả hoạt động
-
 ```python
 biz_operation_rating("VNM")
 ```
@@ -168,7 +159,6 @@ biz_operation_rating("VNM")
 ```
 
 ##### Đánh giá sức khỏe tài chính
-
 ```python
 financial_health_rating("VNM")
 ```
@@ -182,7 +172,6 @@ financial_health_rating("VNM")
 
 
 ##### Đánh giá về Định giá
-
 ```python
 valuation_rating("VNM")
 ```
@@ -195,7 +184,6 @@ valuation_rating("VNM")
 ```
 
 ##### Sức khỏe tài chính theo ngành
-
 ```python
 industry_financial_health("VNM")
 ```
@@ -208,7 +196,6 @@ industry_financial_health("VNM")
 ```
 
 ### Bộ lọc cổ phiếu
-
 <div class="stock-screener">
   <a href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><img class="img-responsive" src="assets/images/stock_screener-tcbs.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
@@ -383,7 +370,6 @@ df = stock_screening_insights (params, size=1700, drop_lang='vi')
 </details>
 
 ### Dữ liệu khớp lệnh trong ngày giao dịch
-
 - Minh hoạ giao diện TCBS
 
   <div class="intraday_1">

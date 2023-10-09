@@ -21,7 +21,6 @@ Bạn có thể truy cập [vnstock.site](https://vnstock.site?utm_source=vnstoc
 Bạn cũng có thể truy cập vnstock Web app dưới đây được nhúng trên website của vnstock để người dùng tiện tìm và sử dụng.
 
 ### vnstock Web app
-
 vnstock Web app đã được giới thiệu lần đầu vào 4/9/2023 nhằm giúp người dùng phổ thông có thể tiếp cận với vnstock theo cách đơn giản và thuận tiện nhất dù cho bạn không có bất cứ kỹ năng hay hiểu biết về lập trình python để sử dụng. 
 
 vnstock web app được xây dựng bằng streamlit framework, sử dụng ngôn ngữ Python hoàn toàn. Đây  cũng là một định hướng rất triển vọng trong việc xây dựng các ứng dụng web trong việc phân tích chứng khoán với giao diện người dùng thân thiện và dễ sử dụng, bảo trì.
@@ -31,7 +30,6 @@ vnstock web app được xây dựng bằng streamlit framework, sử dụng ng�
 [*&nbsp;*{: .fa .fa-eye} Vnstock Web App](https://vnstock.site/vnstock-app?utm_source=vnstock-docs&utm_medium=resource){: .btn .btn-cta .btn-primary}
 
 ### Notebook minh hoạ
-
 [*&nbsp;*{: .fa .fa-eye} Demo Notebook](https://github.com/thinh-vu/vnstock/blob/beta/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb){: .btn .btn-cta .btn-primary}
 
 👉 Bạn có thể mở tệp Jupyter Notebook để dùng thử tất cả các hàm của vnstock. Để sử dụng, nhấp vào nút ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) ở đầu trang của notebook để mở với Google Colab.
@@ -54,7 +52,6 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
   </div>
 
 ### vnstock cho Google Sheets
-
 Tôi cung cấp một hàm tùy biến làm mẫu giúp bạn hình dung và bắt đầu tùy biến các hàm python được cung cấp bởi vnstock sang ngôn ngữ Google Apps Script và sử dụng để lấy dữ liệu trên Google Sheets. Bạn có thể bắt đầu đóng góp vào source code này giúp vnstock hoàn thiện đầy đủ các tính năng cho Google Sheets và lan tỏa tới cộng đồng.
 
 - Để sử dụng thử đoạn code trên cho việc lấy dữ liệu, bạn làm như sau:
@@ -91,5 +88,4 @@ Tôi cung cấp một hàm tùy biến làm mẫu giúp bạn hình dung và b�
 <iframe width="800" height="452" src="https://www.youtube.com/embed/w4GCFZUpsEY?si=r77JMNc2p-SUihI5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ### Lộ trình phát triển
-
 🔥 Bạn có thể tham khảo thêm [Ý tưởng cho các tính năng nâng cao cho các phiên bản sắp tới](https://github.com/users/thinh-vu/projects/1/views/4) để đồng hành cùng vnstock.
