@@ -1,12 +1,12 @@
 ---
 title: Giao dịch thông minh
 sections:
-  - So sánh các cổ phiếu tiềm năng
-  - Bộ lọc cổ phiếu
-  - Dữ liệu khớp lệnh
+  - So sánh các cổ phiếu tiềm năng {#compare}
+  - Bộ lọc cổ phiếu {#screener}
+  - Dữ liệu khớp lệnh trong ngày giao dịch {#intraday}
 ---
 
-### So sánh các cổ phiếu tiềm năng
+### So sánh các cổ phiếu tiềm năng {#compare}
 #### Bảng giá (Price board)
 Bạn có thể tải xuống bảng giá của một danh sách các cổ phiếu được chọn để phân tích, thiết lập thuật toán dễ dàng hơn (khi xuất ra Google Sheets/Excel) so với việc xem trực tiếp trên bảng giá của các công ty chứng khoán.
 
@@ -195,7 +195,7 @@ industry_financial_health("VNM")
 0       None        None             None         None             None    VNM              3.4              4             4           3                 3              3
 ```
 
-### Bộ lọc cổ phiếu
+### Bộ lọc cổ phiếu {#screener}
 <div class="stock-screener">
   <a href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><img class="img-responsive" src="assets/images/stock_screener-tcbs.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/stock_screener-tcbs.png?raw=true" data-title="Bộ lọc cổ phiếu do TCBS cung cấp miễn phí" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
@@ -369,7 +369,7 @@ df = stock_screening_insights (params, size=1700, drop_lang='vi')
 
 </details>
 
-### Dữ liệu khớp lệnh trong ngày giao dịch
+### Dữ liệu khớp lệnh trong ngày giao dịch {#intraday}
 - Minh hoạ giao diện TCBS
 
   <div class="intraday_1">
