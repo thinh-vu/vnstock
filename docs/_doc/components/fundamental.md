@@ -2,7 +2,7 @@
 title: Phân tích tài chính
 sections:
   - Bộ chỉ số tài chính
-  - Báo cáo KQKD, CĐKT và LCTT
+  - financial-report
   - Chỉ số định giá
 ---
 
@@ -59,8 +59,7 @@ bookValuePerShareChange  0.219  0.247    0.2  0.199  0.923
 creditGrowth             0.211  0.252  0.202  0.443 -0.006
   ```
 
-### Báo cáo KQKD, CĐKT và LCTT
-<div class="financial_report">
+### Báo cáo KQKD, CĐKT và LCTT {#financial-report}
   <a href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_report_tcbs.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
