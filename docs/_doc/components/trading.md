@@ -1,9 +1,9 @@
 ---
 title: Giao dịch thông minh
 sections:
-  - So sánh các cổ phiếu tiềm năng {#compare}
-  - Bộ lọc cổ phiếu {#screener}
-  - Dữ liệu khớp lệnh trong ngày giao dịch {#intraday}
+  - So sánh các cổ phiếu tiềm năng
+  - Bộ lọc cổ phiếu
+  - Dữ liệu khớp lệnh trong ngày giao dịch
 ---
 
 ### So sánh các cổ phiếu tiềm năng {#compare}

@@ -1,9 +1,9 @@
 ---
 title: Phân tích tài chính
 sections:
-  - Bộ chỉ số tài chính {#ratio}
-  - Báo cáo KQKD, CĐKT và LCTT {#report}
-  - Chỉ số định giá {#valuation}
+  - Bộ chỉ số tài chính
+  - Báo cáo KQKD, CĐKT và LCTT
+  - Chỉ số định giá
 ---
 
 ### Bộ chỉ số tài chính {#ratio}

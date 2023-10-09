@@ -1,7 +1,7 @@
 ---
 title: Phân tích kỹ thuật
 sections:
-  - Truy xuất dữ liệu giá lịch sử {#price}
+  - Truy xuất dữ liệu giá lịch sử
 ---
 
 ### Truy xuất dữ liệu giá lịch sử {#price}
