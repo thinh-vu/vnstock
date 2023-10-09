@@ -1,10 +1,10 @@
 ---
 title: Phân tích kỹ thuật
 sections:
-  - Truy xuất dữ liệu giá lịch sử
+  - Truy xuất dữ liệu giá lịch sử {#price}
 ---
 
-### Truy xuất dữ liệu giá lịch sử
+### Truy xuất dữ liệu giá lịch sử {#price}
 <div class="ohlc_dataset">
   <a href="assets/images/stock_ohlc_data.png?raw=true" data-title="Dữ liệu giá lịch sử được trích xuất từ DNSE EntradeX" data-toggle="lightbox"><img class="img-responsive" src="assets/images/stock_ohlc_data.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/stock_ohlc_data.png?raw=true" data-title="Dữ liệu giá lịch sử được trích xuất từ DNSE EntradeX" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
