@@ -1,5 +1,5 @@
 ---
-title: Các tính năng của vnstock
+title: Tính năng
 ---
 
 {: .question}
