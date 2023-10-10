@@ -1,0 +1,7 @@
+---
+title: Bổ sung khả năng truy cập danh sách mã cổ phiếu cập nhật realtime qua API
+---
+
+- Hàm **listing_company** được điều chỉnh để hỗ trợ truy xuất danh sách mã cổ phiếu cập nhật realtime qua API.
+    - Bổ sung tham số **live** nhận giá trị True hoặc False, mặc định là False cho phép truy xuất danh sách cổ phiếu từ tệp csv lưu trữ trên Github. Cấu trúc của file dữ liệu cục bộ chứa thông tin đầy đủ hơn so với chế độ realtime.
+    - Loại bỏ tham số **path**

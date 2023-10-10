@@ -1,10 +1,22 @@
 from .config import *
 from bs4 import BeautifulSoup
 
+
 ## STOCK LISTING
-def listing_companies (path='https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023.csv'):
+def live_stock_list ():
     """
-    This function returns the list of all available stock symbols from a csv file or a live api request.
+    Return a DataFrame of all available stock symbols. Live data is retrieved from the API.
+    """
+    url = "https://wifeed.vn/api/thong-tin-co-phieu/danh-sach-ma-chung-khoan"
+    response = requests.request("GET", url).json()
+    df = pd.DataFrame(response['data'])
+    # rename columns fullname_vi to companyName, code to ticker, loaidn to companyType, san to exchange
+    df = df.rename(columns={'fullname_vi': 'organName', 'code': 'ticker', 'loaidn': 'organTypeCode', 'san': 'comGroupCode'})
+    return df
+
+def offline_stock_list (path='https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023.csv'):
+    """
+    This function returns the list of all available stock symbols from a csv file, which is stored on Github.
     Parameters: 
         path (str): The path of the csv file to read from. Default is the path of the file 'listing_companies_enhanced-2023.csv'. You can find the latest updated file at `https://github.com/thinh-vu/vnstock/tree/main/src`
     Returns: df (DataFrame): A pandas dataframe containing the stock symbols and other information. 
@@ -12,6 +24,19 @@ def listing_companies (path='https://raw.githubusercontent.com/thinh-vu/vnstock/
     df = pd.read_csv(path)
     return df
 
+def listing_companies (live=False):
+    """
+    This function returns the list of all available stock symbols from a csv file or a live api request.
+    Parameters: 
+        live (bool): If True, return the list of all available stock symbols from a live api request. If False, return the list of all available stock symbols from the Github csv file (monthly update). Default is False.
+    Returns: df (DataFrame): A pandas dataframe containing the stock symbols and other information. 
+    """
+    # if live = True, return live_stock_list(), else return offline_stock_list()
+    if live == True:
+        df = live_stock_list()
+    elif live == False:
+        df = offline_stock_list()
+    return df
 
 # COMPANY OVERVIEW
 def company_overview (symbol):
