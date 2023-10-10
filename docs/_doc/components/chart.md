@@ -84,5 +84,9 @@ Bạn có thể chạy lệnh cài đặt toàn bộ thư viện phụ thuộc t
 Hãy đảm bảo bạn đã **cd** đến đúng thư mục chứa file requirements.txt trước khi chạy lệnh.
 
 ```shell
+cd THƯ_MỤC_CHỪA_FILE
+```
+
+```shell
 pip install -r requirements.txt
 ```
