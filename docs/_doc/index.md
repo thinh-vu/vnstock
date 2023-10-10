@@ -19,10 +19,10 @@ navigation:
   - /start
   - /components
   - /charts
+  - /community
   - /faqs
   - /news
   - /showcase
-  - /community
   - /credits
   - /legal
 ---
