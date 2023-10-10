@@ -9,5 +9,5 @@ from .derivative import *
 from .fundamental import *
 from .technical import *
 from .trading import *
-from .chart import *
+# from .chart import *
 from .utils import *
