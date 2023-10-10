@@ -13,6 +13,12 @@ vnstock sử dụng thư viện [plotly](https://plotly.com/python/candlestick-c
 
 Plotly là thư việc biểu diễn dữ liệu mạnh mẽ trong Python, cung cấp đa dạng các loại biểu đồ được hỗ trợ và tất cả đồ thị đều hỗ trợ tương tác trực quan (interactive). Hàm **candlestick_chart** dưới đây được xây dựng trên nền **Plotly graph object**, hỗ trợ đầy đủ tính năng của Plotly.
 
+Do tính năng vẽ biểu đồ không phải ai cũng cần thiết dùng, do đó để tối ưu thời gian cài đặt thư viện vnstock và cài đặt gói phụ thuộc, **plotly** được tách khỏi tiến trình cài đặt tự động. Bạn cần sử dụng câu lệnh cài đặt plotly thủ công như sau: 
+
+```shell
+pip install plotly
+```
+
 Cú pháp câu lệnh vẽ biểu đồ đầy đủ như sau:
 
 ```python
@@ -61,7 +67,7 @@ Các tham số của hàm bao gồm:
   <a class="mask" href="assets/images/VNINDEX_candlestick.png?raw=true" data-title="Minh họa đồ thị nến cho mã chỉ số VNINDEX" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
 
-Để lưu đồ thị với câu lệnh, bạn cần cài đặt gói phụ thuộc `kaleido` sau đó thực hiện lưu file như dưới đây. Nếu không có nhu cầu lưu file từ câu lệnh, bạn có thể thực hiện từ giao diện đồ họa của đồ thị, chọn biểu tượng cái máy ảnh, click vào và chọn thư mục để lưu file.
+Để lưu đồ thị với câu lệnh, bạn cần cài đặt gói phụ thuộc **kaleido** sau đó thực hiện lưu file như dưới đây. Sau khi cài đặt thì cần phải khởi động lại runtime của Jupyter Notebook. Trên Google Colab chọn Menu **Runtime** -> **Restart runtime**. Sau đó bạn cần chạy lại các lệnh để vẽ đồ thị rồi mới có thể lưu. Việc này khá bất tiện, do đó nếu không có nhu cầu lưu file bằng câu lệnh, bạn có thể thực hiện từ giao diện đồ họa của đồ thị, chọn biểu tượng cái máy ảnh (thanh công cụ phía trên bên phải), click vào và chọn thư mục để lưu file.
 
 ```python
 !pip install -U kaleido
@@ -74,13 +80,7 @@ fig.write_image("THƯ_MỤC_CỦA_BẠN/VNINDEX_candlestick.png")
 
 ### Gỡ lỗi thư viện phụ thuộc
 
-Trong trường hợp câu lệnh cài đặt vnstock không cài đặt thành công plotly tự động. Bạn có thể sử dụng câu lệnh cài đặt plotly như sau: 
-
-```shell
-pip install plotly
-```
-
-Hoặc chạy lệnh cài đặt toàn bộ thư viện phụ thuộc. Tải file [requirements.txt](https://github.com/thinh-vu/vnstock/blob/beta/requirements.txt) về máy của bạn. 
+Bạn có thể chạy lệnh cài đặt toàn bộ thư viện phụ thuộc từ file **requirements.txt**. Tải file [requirements.txt](https://github.com/thinh-vu/vnstock/blob/beta/requirements.txt) về máy của bạn. 
 Hãy đảm bảo bạn đã **cd** đến đúng thư mục chứa file requirements.txt trước khi chạy lệnh.
 
 ```shell

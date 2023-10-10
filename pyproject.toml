@@ -4,8 +4,7 @@ requires = [
     "wheel",
     "requests",
     "bs4",
-    "pandas",
-    "plotly"
+    "pandas"
 ]
 build-backend = "setuptools.build_meta"
 # dependencies = []
