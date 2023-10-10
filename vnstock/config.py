@@ -9,6 +9,7 @@ from io import BytesIO
 import time
 from datetime import datetime, timedelta
 import json
+import plotly.graph_objs as go
 
 # API request config for SSI API endpoints
 ssi_headers = {
