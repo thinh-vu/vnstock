@@ -7,6 +7,7 @@ sections:
 
 ### Sử dụng tính năng vẽ biểu đồ
 
+
 Hiện tại, vnstock cung cấp tính năng vẽ biểu đồ trong mã nguồn nhánh beta trước khi phân phối chính thức qua PyPI, sau thời gian ngắn thử nghiệm và nhận phản hồi từ người dùng, mã nguồn nguồn sẽ được cập nhật vào nhánh ổn định. Để sử dụng tính năng này, bạn cần cài đặt vnstock từ nhánh beta.
 
 vnstock sử dụng thư viện [plotly](https://plotly.com/python/candlestick-charts/) làm thư viện biểu diễn dữ liệu trực quan. Để có thể sử dụng được tính năng vẽ đồ thị, bạn cần đảm bảo plotly đã được cài đặt thành công.
@@ -18,6 +19,8 @@ Do tính năng vẽ biểu đồ không phải ai cũng cần thiết dùng, do 
 ```shell
 pip install plotly
 ```
+
+#### Vẽ đồ thị nến
 
 Cú pháp câu lệnh vẽ biểu đồ đầy đủ như sau:
 
@@ -67,6 +70,48 @@ Các tham số của hàm bao gồm:
   <a class="mask" href="assets/images/VNINDEX_candlestick.png?raw=true" data-title="Minh họa đồ thị nến cho mã chỉ số VNINDEX" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
 
+#### Vẽ đồ thị với dải Bollinger Bands
+
+Cú pháp câu lệnh vẽ biểu đồ đầy đủ như sau:
+
+```python
+from vnstock import * #import all functions
+df = stock_historical_data(symbol='VNINDEX', start_date='2022-01-01', end_date='2023-10-10', resolution='1D', type='index')
+bollinger_df = bollinger_bands(df, window=20, num_std_dev=2)
+fig = bollinger_bands_chart(bollinger_df, use_candlestick=True, show_volume=True, 
+                            fig_size=(15, 8), chart_title='Bollinger Bands Chart', xaxis_title='Date', yaxis_title='Price', 
+                            bollinger_band_colors=('gray', 'orange', 'gray'), volume_colors=('#00F4B0', '#FF3747'))
+fig.show()
+```
+
+Kết quả như sau:
+
+<div class="bollinger_bands">
+  <a href="assets/images/bollinger_bands_chart.png?raw=true" data-title="Minh họa đồ thị Bollinger Bands" data-toggle="lightbox"><img class="img-responsive" src="assets/images/bollinger_bands_chart.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/bollinger_bands_chart.png?raw=true" data-title="Minh họa đồ thị Bollinger Bands" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+</div>
+
+Trong đó, DataFrame **df** có thể không phải tính toán lại nếu đã khai báo trước đó trong dự án.
+
+Hàm bollinger_bands cho phép tùy chỉnh các tham số tính toán giá trị để sử dụng trong biểu diễn dữ liệu, các tham số bao gồm:
+- df: DataFrame chứa dữ liệu giá định dạng OHLC, sử dụng hàm stock_historical_data.
+- window: Khung thời gian để tính toán giá trị trung bình động đơn giản (SMA), mặc định là 20 ngày.
+- num_std_dev: Số kỳ tính độ lệch chuẩn. Mặc định là 2.
+
+Hàm vẽ đồ thị Bollinger Bands bao gồm các tham số:
+
+- df: DataFrame chứa dữ liệu Bollinger Bands ('time', 'open', 'high', 'low', 'close', 'volume', 'ticker', 'upper_band', 'middle_band', 'lower_band'). Dữ liệu này có được sau khi xử lý dữ liệu giá định dạng OHLC (hàm stock_historical_data) với hàm bollinger_bands.
+- use_candlestick: Chọn sử dụng đồ thị nến (giá trị True) hay chỉ biểu diễn giá đóng cửa dạng đồ thị đường (giá trị False). Mặc định dùng đồ thị nến.
+- show_volume: Chọn hiển thị thông tin khối lượng giao dịch (True) hoặc ẩn đi (False). Mặc định hiển thị.
+- fig_size: Tupple chứa giá trị kích thước đồ thị (width, height). Ví dụ (15, 8) thể hiện 1500 x 800px.
+- chart_title: Tên của đồ thị. Nếu không chỉ rõ, sẽ dùng tên mặc định
+- xaxis_title: Tên của trục x (hoành)
+- yaxis_title: Tên của trục y (tung)
+- bollinger_band_colors: Tupple chứa bộ mã màu cho dải Bollinger Bands (upper, middle, lower).
+- volume_colors: Tuple chứa mã màu cho thông tin khối lượng giao dịch trong những ngày giá tăng, giảm. Ví dụ ('green', 'red').
+
+### Lưu đò thị thành file ảnh
+
 Để lưu đồ thị với câu lệnh, bạn cần cài đặt gói phụ thuộc **kaleido** sau đó thực hiện lưu file như dưới đây. Sau khi cài đặt thì cần phải khởi động lại runtime của Jupyter Notebook. Trên Google Colab chọn Menu **Runtime** -> **Restart runtime**. Sau đó bạn cần chạy lại các lệnh để vẽ đồ thị rồi mới có thể lưu. Việc này khá bất tiện, do đó nếu không có nhu cầu lưu file bằng câu lệnh, bạn có thể thực hiện từ giao diện đồ họa của đồ thị, chọn biểu tượng cái máy ảnh (thanh công cụ phía trên bên phải), click vào và chọn thư mục để lưu file.
 
 ```python
@@ -84,7 +129,7 @@ Bạn có thể chạy lệnh cài đặt toàn bộ thư viện phụ thuộc t
 Hãy đảm bảo bạn đã **cd** đến đúng thư mục chứa file requirements.txt trước khi chạy lệnh.
 
 ```shell
-cd THƯ_MỤC_CHỪA_FILE
+cd THƯ_MỤC_CHỨA_FILE
 ```
 
 ```shell
