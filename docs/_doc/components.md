@@ -1,5 +1,5 @@
 ---
-title: Tham chiếu các hàm dữ liệu liệu vnstock
+title: Tham chiếu các hàm dữ liệu vnstock
 excerpt: Mô tả chi tiết cách sử dụng và thông tin mà các hàm của vnstock cung cấp.
 date: 2023-10-05
 icon:
