@@ -52,18 +52,18 @@ Bạn có thể điều chỉnh lại các thông số của hàm cho phù hợp
 
 Các tham số của hàm bao gồm:
 
-- symbol: Mã cổ phiếu
-- start_date: Ngày bắt đầu, sử dụng định dạng YYYY-mm-dd, ví dụ '2022-01-01'.
-- end_date: Ngày kết thúc, sử dụng định dạng YYYY-mm-dd, ví dụ '2023-10-10'
-- resolution: Khung thời gian lấy dữ liệu ví dụ '1D' cho dữ liệu ngày. Các giá trị khác là: 1, 15, 30, 60 . Tham khảo hàm lấy giá lịch sử để biết thêm chi tiết.
-- type: Loại dữ liệu. Mặc định là cổ phiếu (stock). Có thể sử dụng để lấy dữ liệu phái sinh, mã chỉ số. Tham khảo hàm lấy giá lịch sử để biết thêm chi tiết.
-- title: Tên của đồ thị.
-- x_label: Nhãn trục x (hoành)
-- y_label: Nhãn trục y (tung)
-- ma_periods: Các dải MA cần tính toán, nhập vào dưới dạng một danh sách. Ví dụ [10, 50, 200] sẽ cho phép tính MA10, MA50, MA200. Bạn có thể nhập bao nhiêu dải MA tùy thích.
-- show_volume: True để hiển thị thông tin khối lượng giao dịch, False để ẩn.
-- figure_size: Kích thước đồ thị, nhập dưới dạng tupple (width, height).
-- reference_period: Số ngày để tính toán đường tham chiếu đỉnh/đáy của giá Ví dụ 90.
+- **symbol**: Mã cổ phiếu
+- **start_date**: Ngày bắt đầu, sử dụng định dạng YYYY-mm-dd, ví dụ 2022-01-01.
+- **end_date**: Ngày kết thúc, sử dụng định dạng YYYY-mm-dd, ví dụ 2023-10-10
+- **resolution**: Khung thời gian lấy dữ liệu ví dụ '1D' cho dữ liệu ngày. Các giá trị khác là: 1, 15, 30, 60 . Tham khảo hàm lấy giá lịch sử để biết thêm chi tiết.
+- **type**: Loại dữ liệu. Mặc định là cổ phiếu (stock). Có thể sử dụng để lấy dữ liệu phái sinh, mã chỉ số. Tham khảo hàm lấy giá lịch sử để biết thêm chi tiết.
+- **title**: Tên của đồ thị.
+- **x_label**: Nhãn trục x (hoành)
+- **y_label**: Nhãn trục y (tung)
+- **ma_periods**: Các dải MA cần tính toán, nhập vào dưới dạng một danh sách. Ví dụ [10, 50, 200] sẽ cho phép tính MA10, MA50, MA200. Bạn có thể nhập bao nhiêu dải MA tùy thích.
+- **show_volume**: True để hiển thị thông tin khối lượng giao dịch, False để ẩn.
+- **figure_size**: Kích thước đồ thị, nhập dưới dạng tupple (width, height).
+- **reference_period**: Số ngày để tính toán đường tham chiếu đỉnh/đáy của giá Ví dụ 90.
 
 <div class="vin_candlestick">
   <a href="assets/images/VNINDEX_candlestick.png?raw=true" data-title="Minh họa đồ thị nến cho mã chỉ số VNINDEX" data-toggle="lightbox"><img class="img-responsive" src="assets/images/VNINDEX_candlestick.png?raw=true" alt="screenshot" /></a>
@@ -94,23 +94,23 @@ Kết quả như sau:
 Trong đó, DataFrame **df** có thể không phải tính toán lại nếu đã khai báo trước đó trong dự án.
 
 Hàm bollinger_bands cho phép tùy chỉnh các tham số tính toán giá trị để sử dụng trong biểu diễn dữ liệu, các tham số bao gồm:
-- df: DataFrame chứa dữ liệu giá định dạng OHLC, sử dụng hàm stock_historical_data.
-- window: Khung thời gian để tính toán giá trị trung bình động đơn giản (SMA), mặc định là 20 ngày.
-- num_std_dev: Số kỳ tính độ lệch chuẩn. Mặc định là 2.
+- **df**: DataFrame chứa dữ liệu giá định dạng OHLC, sử dụng hàm stock_historical_data.
+- **window**: Khung thời gian để tính toán giá trị trung bình động đơn giản (SMA), mặc định là 20 ngày.
+- **num_std_dev**: Số kỳ tính độ lệch chuẩn. Mặc định là 2.
 
 Hàm vẽ đồ thị Bollinger Bands bao gồm các tham số:
 
-- df: DataFrame chứa dữ liệu Bollinger Bands ('time', 'open', 'high', 'low', 'close', 'volume', 'ticker', 'upper_band', 'middle_band', 'lower_band'). Dữ liệu này có được sau khi xử lý dữ liệu giá định dạng OHLC (hàm stock_historical_data) với hàm bollinger_bands.
-- use_candlestick: Chọn sử dụng đồ thị nến (giá trị True) hay chỉ biểu diễn giá đóng cửa dạng đồ thị đường (giá trị False). Mặc định dùng đồ thị nến.
-- show_volume: Chọn hiển thị thông tin khối lượng giao dịch (True) hoặc ẩn đi (False). Mặc định hiển thị.
-- fig_size: Tupple chứa giá trị kích thước đồ thị (width, height). Ví dụ (15, 8) thể hiện 1500 x 800px.
-- chart_title: Tên của đồ thị. Nếu không chỉ rõ, sẽ dùng tên mặc định
-- xaxis_title: Tên của trục x (hoành)
-- yaxis_title: Tên của trục y (tung)
-- bollinger_band_colors: Tupple chứa bộ mã màu cho dải Bollinger Bands (upper, middle, lower).
-- volume_colors: Tuple chứa mã màu cho thông tin khối lượng giao dịch trong những ngày giá tăng, giảm. Ví dụ ('green', 'red').
+- **df**: DataFrame chứa dữ liệu Bollinger Bands: time, open, high, low, close, volume, ticker, upper_band, middle_band, lower_band. Dữ liệu này có được sau khi xử lý dữ liệu giá định dạng OHLC (hàm stock_historical_data) với hàm **bollinger_bands**.
+- **use_candlestick**: Chọn sử dụng đồ thị nến (giá trị True) hay chỉ biểu diễn giá đóng cửa dạng đồ thị đường (giá trị False). Mặc định dùng đồ thị nến.
+- **show_volume**: Chọn hiển thị thông tin khối lượng giao dịch (True) hoặc ẩn đi (False). Mặc định hiển thị.
+- **fig_size**: Tupple chứa giá trị kích thước đồ thị (width, height). Ví dụ (15, 8) thể hiện 1500 x 800px.
+- **chart_title**: Tên của đồ thị. Nếu không chỉ rõ, sẽ dùng tên mặc định
+- **xaxis_title**: Tên của trục x (hoành)
+- **yaxis_title**: Tên của trục y (tung)
+- **bollinger_band_colors**: Tupple chứa bộ mã màu cho dải Bollinger Bands (upper, middle, lower).
+- **volume_colors**: Tuple chứa mã màu cho thông tin khối lượng giao dịch trong những ngày giá tăng, giảm. Ví dụ ('green', 'red').
 
-### Lưu đò thị thành file ảnh
+### Lưu đồ thị thành file ảnh
 
 Để lưu đồ thị với câu lệnh, bạn cần cài đặt gói phụ thuộc **kaleido** sau đó thực hiện lưu file như dưới đây. Sau khi cài đặt thì cần phải khởi động lại runtime của Jupyter Notebook. Trên Google Colab chọn Menu **Runtime** -> **Restart runtime**. Sau đó bạn cần chạy lại các lệnh để vẽ đồ thị rồi mới có thể lưu. Việc này khá bất tiện, do đó nếu không có nhu cầu lưu file bằng câu lệnh, bạn có thể thực hiện từ giao diện đồ họa của đồ thị, chọn biểu tượng cái máy ảnh (thanh công cụ phía trên bên phải), click vào và chọn thư mục để lưu file.
 
