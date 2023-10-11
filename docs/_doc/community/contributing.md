@@ -30,16 +30,16 @@ Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
 
 ## Đóng góp gì?
 Bạn có thể đóng góp vào dự án Vnstock bằng cách:
-- Ủng hộ quỹ phát triển vnstock
+- **Ủng hộ quỹ phát triển vnstock**
     - Chuyển khoản ủng hộ (donate) quỹ phát triển dự án tới tác giả.
     - Sử dụng dịch vụ do tác giả cung cấp: Đào tạo, Code dạo
-- Lan tỏa vnstock tới nhiều người hơn.
-- Chia sẻ trải nghiệm của bạn về vnstock thông qua bản khảo sát.
-- Báo lỗi (Bug report) hoặc đề xuất tính năng mới (Feature request).
-- Đóng góp mã nguồn:
+- **Lan tỏa vnstock tới nhiều người hơn.**
+- **Chia sẻ trải nghiệm của bạn về vnstock thông qua bản khảo sát.**
+- **Báo lỗi (Bug report) hoặc đề xuất tính năng mới (Feature request).**
+- **Đóng góp mã nguồn:**
     - Gửi Pull Request với cải tiến hoặc sửa lỗi.
     - Viết hàm mới, bổ sung tính năng hữu ích cho vnstock.
-- Cải thiện tài liệu sử dụng:
+- **Cải thiện tài liệu sử dụng:**
     - Cải thiện tài liệu hướng dẫn và demo.
     - Dịch tài liệu từ tiếng Việt sang tiếng Anh.
 
