@@ -1,12 +1,11 @@
 ---
 title: Biểu diễn dữ liệu
 sections:
-    - Sử dụng tính năng vẽ biểu đồ
+    - Vẽ đồ thị nến
+    - Vẽ đồ thị với dải Bollinger Bands
+    - Lưu đồ thị thành file ảnh
     - Gỡ lỗi thư viện phụ thuộc
 ---
-
-### Sử dụng tính năng vẽ biểu đồ
-
 
 Hiện tại, vnstock cung cấp tính năng vẽ biểu đồ trong mã nguồn nhánh beta trước khi phân phối chính thức qua PyPI, sau thời gian ngắn thử nghiệm và nhận phản hồi từ người dùng, mã nguồn nguồn sẽ được cập nhật vào nhánh ổn định. Để sử dụng tính năng này, bạn cần cài đặt vnstock từ nhánh beta.
 
@@ -20,7 +19,7 @@ Do tính năng vẽ biểu đồ không phải ai cũng cần thiết dùng, do 
 pip install plotly
 ```
 
-#### Vẽ đồ thị nến
+### Vẽ đồ thị nến
 
 Cú pháp câu lệnh vẽ biểu đồ đầy đủ như sau:
 
@@ -70,7 +69,7 @@ Các tham số của hàm bao gồm:
   <a class="mask" href="assets/images/VNINDEX_candlestick.png?raw=true" data-title="Minh họa đồ thị nến cho mã chỉ số VNINDEX" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
 
-#### Vẽ đồ thị với dải Bollinger Bands
+### Vẽ đồ thị với dải Bollinger Bands
 
 Cú pháp câu lệnh vẽ biểu đồ đầy đủ như sau:
 
