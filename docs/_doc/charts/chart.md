@@ -134,3 +134,14 @@ cd THƯ_MỤC_CHỨA_FILE
 ```shell
 pip install -r requirements.txt
 ```
+
+### Xây dựng dashboard trực quan với Streamlit
+Để tối ưu sức mạnh của vnstock và xây dựng những sản phẩm thực sự  trong phân tích đầu tư chứng khoán thì Streamlit là lựa chọn hàng đầu. 
+[Streamlit](https://streamlit.io/) là một thư viện mã nguồn mở, cho phép bạn xây dựng các ứng dụng web trực quan với Python một cách nhanh chóng và dễ dàng. 
+[Vnstock Web App](https://vnstock.site/web-app?utm_source=vnstock-docs&utm_medium=chart) chính là một ví dụ sinh động cho việc sử dụng dữ liệu từ chính vnstock để tạo ra ứng dụng với giao diện đồ họa trực quan và thân thiện. Web App này hoạt động hoàn toàn trên môi trường đám mây, không cần thiết lập bất cứ cơ sở dữ liệu nào, dữ liệu đầu vào của Web App chính là các APIs do vnstock cung cấp.
+
+<iframe width="800" height="452" src="https://www.youtube.com/embed/0tVOnyCNagA?si=ATZ4ov3dxJetukaA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+Để có thể làm chủ Streamlit nhanh chóng với lộ trình đào tạo thực tế, ứng dụng cho chính thị trường chứng khoán Việt Nam và sử dụng vnstock. Bạn có thể trao đổi thêm với Thịnh về khóa học ngắn hạn sắp triển khai.
+
+[![Thinh Vu - Nhắn tin](https://img.shields.io/badge/Thinh_Vu-Nhắn_tin-F74F8A?style=for-the-badge&logo=messenger&logoColor=F74F8A)](https://www.messenger.com/t/mr.thinh.ueh)
