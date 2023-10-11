@@ -74,8 +74,9 @@ Bạn có thể đóng góp vào dự án Vnstock bằng cách:
 
 >vnstock là một dự án tôi tâm huyết, đầu tư nhiều thời gian để phát triển giúp bản thân và cộng đồng tiếp cận nguồn dữ liệu chứng khoán miễn phí và đáng tin cậy.
 
-Hoàn thành bản khảo sát: [Tại đây](https://forms.gle/zaJnbgUCjjL1GoTF6)
-Để đảm bảo rằng vnstock phát triển theo hướng đáp ứng nhu cầu của bạn, tôi rất mong nhận được phản hồi từ bạn. Bạn là người dùng quan trọng của vnstock và ý kiến của bạn sẽ giúp chúng tôi xây dựng một kế hoạch phát triển vnstock một cách toàn diện.
+Để đảm bảo rằng vnstock phát triển theo hướng đáp ứng nhu cầu của bạn, tôi rất mong nhận được phản hồi từ bạn. Bạn là người dùng quan trọng của vnstock và ý kiến của bạn sẽ giúp chúng tôi xây dựng một kế hoạch phát triển vnstock một cách toàn diện. Bạn hãy dành ra 5 phút để hoàn thành bản khảo sát này. Cảm ơn bạn rất nhiều!
+
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSej7ZR8Q2S15yHWmgWWE8eXvyyhUo2sD3aicoeC_c6SJQSV2A/viewform?embedded=true" width="800" height="600" frameborder="0" marginheight="0" marginwidth="0">Đang tải…</iframe>
 
 ## Báo lỗi (Bug report) hoặc đề xuất tính năng mới (Feature request)
 Đảm bảo rằng bạn đã kiểm tra trên trang [Issues](https://github.com/thinh-vu/vnstock/issues) xem vấn đề của bạn đã được đề cập trước đó chưa. Nếu chưa, hãy tạo một issue mới để báo cáo lỗi hoặc yêu cầu tính năng. Vui lòng cung cấp một mô tả chi tiết về vấn đề của bạn, bao gồm các bước để tái tạo vấn đề (nếu có thể) và ảnh chụp mành hình lỗi. Các báo lỗi mơ hồ sẽ không được xem xét.
