@@ -30,9 +30,9 @@ vnstock web app được xây dựng bằng streamlit framework, sử dụng ng�
 [*&nbsp;*{: .fa .fa-eye} Vnstock Web App](https://vnstock.site/vnstock-app?utm_source=vnstock-docs&utm_medium=resource){: .btn .btn-cta .btn-primary}
 
 ### Notebook minh hoạ
-[*&nbsp;*{: .fa .fa-eye} Demo Notebook](https://github.com/thinh-vu/vnstock/blob/beta/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb){: .btn .btn-cta .btn-primary}
+👉 Bạn có thể mở tệp Jupyter Notebook và dùng thử tất cả các hàm của vnstock từ giao diện Google Colab. Nếu muốn sử dụng Notebook trong Visual Studio Code hoặc IDE khác, bạn có thể tìm menu **File** > **Download** và chọn **Download.ipynb** để lưu file về máy.
 
-👉 Bạn có thể mở tệp Jupyter Notebook để dùng thử tất cả các hàm của vnstock. Để sử dụng, nhấp vào nút ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) ở đầu trang của notebook để mở với Google Colab.
+[*&nbsp;*{: .fa .fa-eye} Demo Notebook](https://colab.research.google.com/github/thinh-vu/vnstock/blob/beta/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb){: .btn .btn-cta .btn-primary}
 
 ### Docstring
 Tất cả các hàm của vnstock đều được cung cấp docstring đầy đủ trong khi file README.md này có thể không cập nhật toàn bộ mô tả về các tham số cho phép của từng hàm. Bạn có thể xem phần gợi ý khi viết câu lệnh trên các IDE như Google Colab, Visual Studio Code, hay Jupyter Notebook hoặc mở phần source code của Github để xem chi tiết. Trong thời gian tới, vnstock sẽ được bổ sung mô tả đầy đủ tại README.md khi có thể.
@@ -55,7 +55,7 @@ Tất cả các hàm của vnstock đều được cung cấp docstring đầy �
 Tôi cung cấp một hàm tùy biến làm mẫu giúp bạn hình dung và bắt đầu tùy biến các hàm python được cung cấp bởi vnstock sang ngôn ngữ Google Apps Script và sử dụng để lấy dữ liệu trên Google Sheets. Bạn có thể bắt đầu đóng góp vào source code này giúp vnstock hoàn thiện đầy đủ các tính năng cho Google Sheets và lan tỏa tới cộng đồng.
 
 - Để sử dụng thử đoạn code trên cho việc lấy dữ liệu, bạn làm như sau:
-  - Mở file [source code vnstock_gg_sheet](https://githubusercontent.com/thinh-vu/vnstock/beta/vnstock_gg_sheet/vnstock._appscript.js) và copy đoạn code.
+  - Mở file [source code vnstock_gg_sheet](https://github.com/thinh-vu/vnstock/blob/main/vnstock_gg_sheet/vnstock._appscript.js) và copy đoạn code.
   - Mở hoặc tạo 1 file Google Sheets bất kỳ
   - Từ menu của Google Sheets, tìm mục Extension (tiện ích mở rộng) > Apps Script như trong hình. 
   
