@@ -24,11 +24,12 @@ pip install plotly
 Cú pháp câu lệnh vẽ biểu đồ đầy đủ như sau:
 
 ```python
-from vnstock import * #import all functions
-
-fig = candlestick_chart(symbol='TCB', start_date='2022-01-01', end_date='2023-10-10', resolution='1D', type='stock', 
-                  title='Candlestick Chart with MA and Volume', x_label='Date', y_label='Price', ma_periods=[50,200], 
-                  show_volume=True, figure_size=(12, 8), reference_period=300, up_color='#00F4B0', down_color='#FF3747')
+from vnstock import * #import all functions, including functions that provide OHLC data for charting
+from vnstock.chart import * # import chart functions
+df = stock_historical_data("VIC", "2022-01-01", "2023-10-10", "1D", "stock")
+fig = candlestick_chart(df, ma_periods=[50,200], show_volume=False, reference_period=300, figure_size=(15, 8), 
+                        title='VIC - Candlestick Chart with MA and Volume', x_label='Date', y_label='Price', 
+                        colors=('lightgray', 'gray'), reference_colors=('black', 'blue'))
 fig.show()
 ```
 
@@ -41,28 +42,29 @@ Bạn có thể tùy chọn bỏ qua bước gán đồ thị với biến fig n
 
 ```python
 from vnstock import * #import all functions
-fig = candlestick_chart(symbol='VNINDEX', start_date='2022-01-01', end_date='2023-10-10', resolution='1D', type='index', 
-                  title='Candlestick Chart with MA and Volume', x_label='Date', y_label='Price', ma_periods=[50,200], 
-                  show_volume=False, figure_size=(15, 8), reference_period=300, up_color='#00F4B0', down_color='#FF3747')
+
+df = stock_historical_data(symbol='VNINDEX', start_date='2022-01-01', end_date='2023-10-10', resolution='1D', type='index')
+fig = candlestick_chart(df, 
+                  title='VNINDEX Candlestick Chart with MA and Volume', x_label='Date', y_label='Price', ma_periods=[50,200], 
+                  show_volume=True, figure_size=(15, 8), reference_period=300, 
+                  colors=('lightgray', 'gray'), reference_colors=('black', 'blue'))
 fig.show()
 ```
 
-Bạn có thể điều chỉnh lại các thông số của hàm cho phù hợp, loại bỏ các thông số không cần thiết khi gọi hàm sẽ cho phép hàm sử dụng giá trị cài đặt mặc định, hoặc bạn điều chỉnh bằng cách cung cấp tham số mới vào.
+Bạn có thể điều chỉnh lại các thông số của hàm cho phù hợp, loại bỏ các thông số không cần thiết khi gọi hàm sẽ cho phép hàm sử dụng giá trị cài đặt mặc định, hoặc bạn điều chỉnh bằng cách cung cấp tham số mới vào. Ngoài ra bạn có thể tương tác trực tiếp với đồ thị, ví dụ click vào thông tin chú thích tương tứng từng loại dữ liệu để bật/tắt chúng mà không cần can thiệp vào dòng lệnh.
 
 Các tham số của hàm bao gồm:
 
-- **symbol**: Mã cổ phiếu
-- **start_date**: Ngày bắt đầu, sử dụng định dạng YYYY-mm-dd, ví dụ 2022-01-01.
-- **end_date**: Ngày kết thúc, sử dụng định dạng YYYY-mm-dd, ví dụ 2023-10-10
-- **resolution**: Khung thời gian lấy dữ liệu ví dụ '1D' cho dữ liệu ngày. Các giá trị khác là: 1, 15, 30, 60 . Tham khảo hàm lấy giá lịch sử để biết thêm chi tiết.
-- **type**: Loại dữ liệu. Mặc định là cổ phiếu (stock). Có thể sử dụng để lấy dữ liệu phái sinh, mã chỉ số. Tham khảo hàm lấy giá lịch sử để biết thêm chi tiết.
+- **df**: DataFrame chứa dữ liệu giá định dạng OHLC
+- **ma_periods**: Các dải MA cần tính toán, nhập vào dưới dạng một danh sách. Ví dụ [10, 50, 200] sẽ cho phép tính MA10, MA50, MA200. Bạn có thể nhập bao nhiêu dải MA tùy thích.
+- **show_volume**: True để hiển thị thông tin khối lượng giao dịch, False để ẩn.
+- **reference_period**: Số ngày để tính toán đường tham chiếu đỉnh/đáy của giá Ví dụ 90.
+- **figure_size**: Kích thước đồ thị, nhập dưới dạng tupple ví dụ (15, 8) thể hiện 1500 x 800px.
 - **title**: Tên của đồ thị.
 - **x_label**: Nhãn trục x (hoành)
 - **y_label**: Nhãn trục y (tung)
-- **ma_periods**: Các dải MA cần tính toán, nhập vào dưới dạng một danh sách. Ví dụ [10, 50, 200] sẽ cho phép tính MA10, MA50, MA200. Bạn có thể nhập bao nhiêu dải MA tùy thích.
-- **show_volume**: True để hiển thị thông tin khối lượng giao dịch, False để ẩn.
-- **figure_size**: Kích thước đồ thị, nhập dưới dạng tupple (width, height).
-- **reference_period**: Số ngày để tính toán đường tham chiếu đỉnh/đáy của giá Ví dụ 90.
+- **colors**: Mã màu thể hiện cho khối lượng giao dịch trong những ngày giá cổ phiếu tăng/giảm, được nhập dưới dạng tupple. Ví dụ ('#00F4B0', '#FF3747').
+- **reference_color**: Cặp mã màu cho đường hỗ trợ (lowest low), kháng cự (highest high) được nhập vào dưới dạng tupple. Ví dụ ('black', 'blue')
 
 <div class="vin_candlestick">
   <a href="assets/images/VNINDEX_candlestick.png?raw=true" data-title="Minh họa đồ thị nến cho mã chỉ số VNINDEX" data-toggle="lightbox"><img class="img-responsive" src="assets/images/VNINDEX_candlestick.png?raw=true" alt="screenshot" /></a>
