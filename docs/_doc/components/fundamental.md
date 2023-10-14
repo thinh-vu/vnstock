@@ -168,6 +168,8 @@ index                                                                           
 #### Báo cáo lưu chuyển tiền tệ
 Để tải dữ liệu báo cáo lưu chuyển tiền tệ, bạn sử dụng câu lệnh:
 
+Để tải dữ liệu báo cáo lưu chuyển tiền tệ, bạn sử dụng câu lệnh:
+
 ```python
 cashflow_df = financial_flow(symbol="TCB", report_type='cashflow', report_range='quarterly')
 ```
@@ -186,6 +188,18 @@ index
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **cashflow_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `cashflow_df.T`
 
 ### Chỉ số định giá {#valuation}
+<div class="stock_evaluation">
+  <a href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/tcbs_stock_evaluation.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+</div>
+
+Chỉ số định giá được truy xuất từ nguồn TCBS thông qua hàm **stock_evaluation**. Hàm này nhận 3 tham số:
+- **symbol** là mã chứng khoán bạn muốn phân tích
+- **period** nhận 1 trong 2 giá trị: **1** cho phép trả về chỉ số theo ngày, **2** trả về dữ liệu theo tuần
+- **time_window** nhận 1 trong 2 giá trị: **D** cho phép trả về chỉ số theo ngày, **W** trả về dữ liệu theo tuần
+
+Minh họa cho hàm này như sau:
+
 <div class="stock_evaluation">
   <a href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/tcbs_stock_evaluation.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>

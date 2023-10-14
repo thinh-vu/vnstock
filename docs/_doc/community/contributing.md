@@ -24,7 +24,6 @@ Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
 </div>
 
 
-
 Đọc thêm bài viết dưới đây để hiểu thêm chi tiết:
 [*&nbsp;*{: .fa .fa-eye} Xây dựng cộng đồng Vnstock](https://thinhvu.com/2023/04/15/xay-dung-cong-dong-vnstock-vung-manh?utm_source=vnstock-docs&utm_medium=resource){: .btn .btn-cta .btn-primary}
 
