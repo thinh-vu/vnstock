@@ -16,28 +16,28 @@ sections:
 {: .callout-title}
 Lưu ý:
 
-Phiên bản API hiện tại cho phép truy cập giá lịch sử tối đa đến ngày 2012-03-20 đối với tất cả mã cổ phiếu. Nếu bạn có nhu cầu lấy lịch sử giá từ thời điểm thị trường chứng khoán bắt đầu hoạt động (REE là mã cổ phiếu có giao dịch sớm nhất thị trường vào 2000-07-31), hãy tham gia nhóm thành viên vnstock trên Facebook để được hỗ trợ.
+Phiên bản API hiện tại cho phép truy cập giá lịch sử tối đa đến ngày 2012-03-20 đối với tất cả mã cổ phiếu. Nếu bạn có nhu cầu lấy lịch sử giá từ thời điểm thị trường chứng khoán bắt đầu hoạt động (REE là mã cổ phiếu có giao dịch sớm nhất thị trường vào 2000-07-31), hãy tham gia nhóm thành viên vnstock trên Facebook để được hỗ trợ. Xem thêm chi tiết tại [FAQ](https://docs.vnstock.site/faqs.html).
 
 </div></div>
 
 vnstock cho phép người dùng tải xuống dữ liệu lịch sử giao dịch của **mã cổ phiếu, chỉ số, hợp đồng phái sinh**.
-- Dữ liệu **cổ phiếu** và **chỉ số** hỗ trợ 5 mức độ chi tiết theo khoảng thời gian bao gồm: 1 phút, 15 phút, 30 phút, 1 giờ, 1 ngày. 
-- Dữ liệu **phái sinh** hỗ trợ 8 mức độ chi tiết theo khoảng thời gian bao gồm: 1 phút, 3 phút, 5 phút, 15 phút, 30 phút, 45 phút, 1 giờ, 1 ngày
+- Dữ liệu hỗ trợ 8 mức độ chi tiết theo khoảng thời gian bao gồm: 1 phút, 3 phút, 5 phút, 15 phút, 30 phút, 1 giờ, 1 ngày
 - Trường dữ liệu **time** sẽ là giá trị ngày tháng **YYYY-mm-dd** nếu **resolution** nhập vào là **1D**, trong khi **resolution** là cấp độ phút và giờ sẽ cho thêm thông tin thời gian giờ/phút.
-- Đơn vị giá OHLC được làm tròn, chỉ lấy phần nguyên. Đơn vị tính là VND.
+- Đơn vị giá OHLC cho mã cổ phiếu được làm tròn theo mặc định, chỉ lấy phần nguyên. Đơn vị tính là VND. Bạn có thể tắt tính năng làm tròn bằng tham số **beautify=False**.
 
 Trong ví dụ dưới đây, dữ liệu giá được truy xuất theo cấp độ ngày.
 
 ```python
 df =  stock_historical_data(symbol='GMD', 
                             start_date="2021-01-01", 
-                            end_date='2022-02-25', resolution='1D', type='stock')
+                            end_date='2022-02-25', resolution='1D', type='stock', beautify=True)
 print(df)
 ```
 
 - Lưu ý: Đối với khung thời gian (resolution) nhỏ hơn 1 ngày (1D), API này (do DNSE cung cấp) chỉ cho phép truy ngược lại trong  khoảng thời gian 90 ngày. Bạn có thể gặp lỗi khi cố gắng lấy dữ liệu cũ hơn trong thời gian dài hơn.
-- Giá trị mà tham số **resolution** có thể nhận là **1D** (mặc định, 1 ngày), '1' (1 phút), 3 (3 phút), 5 (5 phút), 15 (15 phút), 30 (30 phút), 45 (45 phút), '1H' (hàng giờ).
+- Giá trị mà tham số **resolution** có thể nhận là **1D** (mặc định, 1 ngày), '1' (1 phút), 3 (3 phút), 5 (5 phút), 15 (15 phút), 30 (30 phút), '1H' (hàng giờ).
 - **type = 'stock'** cho phép lấy dữ liệu giá của mã cổ cổ phiếu, **type = 'index'** cho phép lấy dữ liệu giá của mã chỉ số, và **type='derivative** cho phép lấy dữ liệu phái sinh. Các mã được hỗ trợ bao gồm (nhưng không giới hạn): VNINDEX, VN30, HNX, HNX30, UPCOM, VNXALLSHARE, VN30F1M, VN30F2M, VN30F1Q, VN30F2Q
+- **beautify=True** cho phép làm tròn giá trị OHLC theo mặc định (nhân với 1000, ví dụ giá 32.05 thành 32500). Đặt **beautify=False** để tắt chế độ làm tròn cho cổ phiếu. Với mã chỉ số, giá trị trả về luôn là số thập phân nguyên bản.
 
 Bạn cũng có thể viết hàm theo dạng rút gọn như dưới đây, điều này đúng với tất cả các hàm, miễn là thông số được nhập vào đúng thứ tự:
 

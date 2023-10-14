@@ -7,8 +7,6 @@ sections:
     - Gỡ lỗi thư viện phụ thuộc
 ---
 
-Hiện tại, vnstock cung cấp tính năng vẽ biểu đồ trong mã nguồn nhánh beta trước khi phân phối chính thức qua PyPI, sau thời gian ngắn thử nghiệm và nhận phản hồi từ người dùng, mã nguồn nguồn sẽ được cập nhật vào nhánh ổn định. Để sử dụng tính năng này, bạn cần cài đặt vnstock từ nhánh beta.
-
 vnstock sử dụng thư viện [plotly](https://plotly.com/python/candlestick-charts/) làm thư viện biểu diễn dữ liệu trực quan. Để có thể sử dụng được tính năng vẽ đồ thị, bạn cần đảm bảo plotly đã được cài đặt thành công.
 
 Plotly là thư việc biểu diễn dữ liệu mạnh mẽ trong Python, cung cấp đa dạng các loại biểu đồ được hỗ trợ và tất cả đồ thị đều hỗ trợ tương tác trực quan (interactive). Hàm **candlestick_chart** dưới đây được xây dựng trên nền **Plotly graph object**, hỗ trợ đầy đủ tính năng của Plotly.
