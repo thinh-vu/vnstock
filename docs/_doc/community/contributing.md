@@ -9,16 +9,19 @@ Chào mừng bạn đến với dự án Vnstock! Chúng tôi trân trọng mọ
 
 Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
 
-  [![vnstock group - Tham gia](https://img.shields.io/badge/vnstock_group-Tham_gia-4CAF50?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock)
-
-  [![vnstock - Tham gia](https://img.shields.io/badge/vnstock-Tham_gia-5865F2?style=for-the-badge&logo=Discord)](https://discord.gg/ruugCSWVCJ)
-
-  [![Vnstock - Theo dõi](https://img.shields.io/badge/Vnstock-Theo_dõi-4CAF50?style=for-the-badge&logo=facebook)](https://www.facebook.com/vnstock.official)
-
-  [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-4CAF50?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az?sub_confirmation=1)
-
-
-  [![PyPI - Download](https://img.shields.io/badge/PyPI-Download-4CAF50?style=for-the-badge&logo=pypi)](https://pypi.org/project/vnstock/)
+<div id="badges" align="center">
+  <a href="https://www.facebook.com/groups/vnstock">
+    <img src="https://img.shields.io/badge/vnstock_group-Tham_gia-0866FF?style=for-the-badge&logo=facebook" alt="vnstock group - Tham gia"/>
+  </a>
+  <a href="https://discord.gg/ruugCSWVCJ">
+    <img src="https://img.shields.io/badge/vnstock-Tham_gia-5865F2?style=for-the-badge&logo=Discord" alt="vnstock - Tham gia"/>
+  </a>
+  <a href="https://www.facebook.com/vnstock.official">
+    <img src="https://img.shields.io/badge/Vnstock-Theo_dõi-0866FF?style=for-the-badge&logo=facebook" alt="Vnstock - Theo dõi"/>
+  </a>
+  <a href="https://www.youtube.com/@learn_anything_az?sub_confirmation=1">
+    <img src="https://img.shields.io/badge/Learn_Anything-Theo_dõi-FF0000?style=for-the-badge&logo=youtube" alt="Learn Anything - Theo dõi"/>
+</div>
 
 
 Đọc thêm bài viết dưới đây để hiểu thêm chi tiết:
@@ -26,16 +29,16 @@ Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
 
 ## Đóng góp gì?
 Bạn có thể đóng góp vào dự án Vnstock bằng cách:
-- Ủng hộ quỹ phát triển vnstock
+- **Ủng hộ quỹ phát triển vnstock**
     - Chuyển khoản ủng hộ (donate) quỹ phát triển dự án tới tác giả.
     - Sử dụng dịch vụ do tác giả cung cấp: Đào tạo, Code dạo
-- Lan tỏa vnstock tới nhiều người hơn.
-- Chia sẻ trải nghiệm của bạn về vnstock thông qua bản khảo sát.
-- Báo lỗi (Bug report) hoặc đề xuất tính năng mới (Feature request).
-- Đóng góp mã nguồn:
+- **Lan tỏa vnstock tới nhiều người hơn.**
+- **Chia sẻ trải nghiệm của bạn về vnstock thông qua bản khảo sát.**
+- **Báo lỗi (Bug report) hoặc đề xuất tính năng mới (Feature request).**
+- **Đóng góp mã nguồn:**
     - Gửi Pull Request với cải tiến hoặc sửa lỗi.
     - Viết hàm mới, bổ sung tính năng hữu ích cho vnstock.
-- Cải thiện tài liệu sử dụng:
+- **Cải thiện tài liệu sử dụng:**
     - Cải thiện tài liệu hướng dẫn và demo.
     - Dịch tài liệu từ tiếng Việt sang tiếng Anh.
 
@@ -70,8 +73,9 @@ Bạn có thể đóng góp vào dự án Vnstock bằng cách:
 
 >vnstock là một dự án tôi tâm huyết, đầu tư nhiều thời gian để phát triển giúp bản thân và cộng đồng tiếp cận nguồn dữ liệu chứng khoán miễn phí và đáng tin cậy.
 
-Hoàn thành bản khảo sát: [Tại đây](https://forms.gle/zaJnbgUCjjL1GoTF6)
-Để đảm bảo rằng vnstock phát triển theo hướng đáp ứng nhu cầu của bạn, tôi rất mong nhận được phản hồi từ bạn. Bạn là người dùng quan trọng của vnstock và ý kiến của bạn sẽ giúp chúng tôi xây dựng một kế hoạch phát triển vnstock một cách toàn diện.
+Để đảm bảo rằng vnstock phát triển theo hướng đáp ứng nhu cầu của bạn, tôi rất mong nhận được phản hồi từ bạn. Bạn là người dùng quan trọng của vnstock và ý kiến của bạn sẽ giúp chúng tôi xây dựng một kế hoạch phát triển vnstock một cách toàn diện. Bạn hãy dành ra 5 phút để hoàn thành bản khảo sát này. Cảm ơn bạn rất nhiều!
+
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSej7ZR8Q2S15yHWmgWWE8eXvyyhUo2sD3aicoeC_c6SJQSV2A/viewform?embedded=true" width="900" height="600" frameborder="0" marginheight="0" marginwidth="0">Đang tải…</iframe>
 
 ## Báo lỗi (Bug report) hoặc đề xuất tính năng mới (Feature request)
 Đảm bảo rằng bạn đã kiểm tra trên trang [Issues](https://github.com/thinh-vu/vnstock/issues) xem vấn đề của bạn đã được đề cập trước đó chưa. Nếu chưa, hãy tạo một issue mới để báo cáo lỗi hoặc yêu cầu tính năng. Vui lòng cung cấp một mô tả chi tiết về vấn đề của bạn, bao gồm các bước để tái tạo vấn đề (nếu có thể) và ảnh chụp mành hình lỗi. Các báo lỗi mơ hồ sẽ không được xem xét.

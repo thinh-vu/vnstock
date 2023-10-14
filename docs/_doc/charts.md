@@ -1,15 +1,12 @@
 ---
-title: Thư viện ví dụ
-excerpt: Cảm hứng sử dụng Vnstock từ các ví dụ thực tế
+title: Biểu diễn dữ liệu với vnstock
+excerpt: Cảm hứng sử dụng Vnstock từ các ví dụ biểu diẽn đồ thị mẫu.
 date: 2023-10-05
 icon:
   name: icon_datareport_alt
 color: blue
 sections:
-  - /charts/chart_js
-  - /charts/flot_charts
-  - /charts/morris_js
-  - /charts/inline_charts
+  - /charts/chart
 promo:
   title: "*&nbsp;*{: .fa .fa-heart} [Khóa học Phân tích dữ liệu với Python #4](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3?utm_source=vnstock-docs&utm_medium=start)"
   link: https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3?utm_source=vnstock-docs&utm_medium=start

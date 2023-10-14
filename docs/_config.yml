@@ -2,10 +2,12 @@
 # Site settings
 #
 remote_theme: thinh-vu/pretty-docs
-url: https://thinh-vu.github.io
-baseurl: /vnstock
+url: https://docs.vnstock.site
+baseurl: /
 title: &site_title vnstock Docs
 description: &site_description Tài liệu hướng dẫn sử dụng vnstock trong phân tích thị trường chứng khoán Việt Nam
+plugins:
+  - jekyll-sitemap
 branding:
   icon:
     name: icon_documents_alt
@@ -44,13 +46,13 @@ open_graph:
   site_name: *site_title
   description: *site_description
   locale: en_US
-  image: /assets/images/thumb.png
-# twitter_cards:
-#   title: *site_title
-#   description: *site_description
-#   creator: *site_owner_twitter
-#   card: summary_large_image
-#   image: /assets/images/thumb.png
+  image: /assets/images/vnstock-thumb.png
+twitter_cards:
+  title: *site_title
+  description: *site_description
+  creator: *site_owner_twitter
+  card: summary_large_image
+  image: /assets/images/vnstock-thumb.png
 # share:
 #   facebook:
 #     class: fb-like
@@ -69,7 +71,9 @@ open_graph:
 
 
 # Google Analytics
-google_analytics: G-5RWXJ4J4N7
+google_analytics: #G-2QY0V088CW
+google_tag_manager: GTM-TJTR29Q3
+microsoft_clarity: j1xytt20dm
 
 
 #

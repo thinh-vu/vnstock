@@ -1,8 +1,9 @@
 ---
-title: Tham chiếu các hàm vnstock
+title: Tham chiếu các hàm dữ liệu vnstock
 excerpt: Mô tả chi tiết cách sử dụng và thông tin mà các hàm của vnstock cung cấp.
 date: 2023-10-05
 icon:
+  type: fa
   name: icon_puzzle_alt
 color: pink
 sections:

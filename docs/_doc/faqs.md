@@ -7,8 +7,8 @@ icon:
 color: purple
 sections:
   - /faqs/general
-  - /faqs/features
   - /faqs/pricing
+  - /faqs/features
   - /faqs/support
 promo:
   title: "*&nbsp;*{: .fa .fa-heart} [Khóa học Phân tích dữ liệu với Python #4](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3?utm_source=vnstock-docs&utm_medium=start)"

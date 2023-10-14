@@ -1,13 +1,51 @@
 ---
 title: Phân tích tài chính
 sections:
+  - Danh sách công ty niêm yết
   - Bộ chỉ số tài chính
   - Báo cáo KQKD, CĐKT và LCTT
   - Chỉ số định giá
 ---
 
-## Bộ chỉ số tài chính
+### Danh sách công ty niêm yết
+```python
+listing_companies(live=True)
+```
 
+Hàm có một tham số duy nhất **live** nhận một trong hai giá trị.
+- **live=False**: Cho phép đọc dữ liệu cục bộ từ tệp csv [listing_companies](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023.csv) đính kèm trên Github theo mặc định. File này được cập nhật hàng tháng. Chứa thông tin rất chi tiết. Bởi danh sách các công ty niêm yết thường không thay đổi liên tục nên việc này không gây trở ngại nhiều.
+- **live=True**: Cho phép đọc dữ liệu danh sách công ty niêm yết được cập nhật realtime từ API miễn phí do Wifeed cung cấp. Dữ liệu được trả về trong trường hợp này chỉ gồm 4 thông tin cơ bản: mã CK, tên công ty, mã phân loại công ty, sàn niêm yết.
+
+- Kết quả trả về như sau cho chế độ realtime:
+
+```shell
+ listing_companies(True)
+     ticker                                       organName  organTypeCode comGroupCode
+0       A32                                         CTCP 32              1        UPCOM
+1       AAA                          CTCP Nhựa An Phát Xanh              1         HOSE
+2       AAM                            CTCP Thủy sản MeKong              1         HOSE
+3       AAS                    CTCP Chứng khoán SmartInvest              4        UPCOM
+4       AAT                CTCP Tập Đoàn Tiên Sơn Thanh Hóa              1         HOSE
+...     ...                                             ...            ...          ...
+1579    XPH                            CTCP Xà phòng Hà Nội              1        UPCOM
+1580    YBC              CTCP Xi măng và Khoáng sản Yên Bái              1        UPCOM
+1581    YBM             CTCP Khoáng sản Công nghiệp Yên Bái              1         HOSE
+1582    YEG                             CTCP Tập đoàn Yeah1              1         HOSE
+1583    YTC  CTCP Xuất nhập khẩu Y tế Thành phố Hồ Chí Minh              1        UPCOM
+```
+
+- Kết quả trả về cho chế độ offline:
+```shell
+listing_companies()
+  ticker comGroupCode                                          organName   organShortName  ...   VNIT  VNMAT VNREAL  VNUTI
+0    SSI         HOSE                    Công ty Cổ phần Chứng khoán SSI  Chứng khoán SSI  ...  False  False  False  False
+1    BCM         HOSE  Tổng Công ty Đầu tư và Phát triển Công nghiệp ...      Becamex IDC  ...  False  False   True  False
+2    VHM         HOSE                           Công ty Cổ phần Vinhomes         Vinhomes  ...  False  False   True  False
+
+[3 rows x 35 columns]
+```
+
+### Bộ chỉ số tài chính {#ratio}
 <div class="balance_sheet">
   <a href="assets/images/financial_ratio.png?raw=true" data-title="Bộ chỉ số tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_ratio.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/financial_ratio.png?raw=true" data-title="Bộ chỉ số tài chính do TCBS cung cấp" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
@@ -60,9 +98,7 @@ bookValuePerShareChange  0.219  0.247    0.2  0.199  0.923
 creditGrowth             0.211  0.252  0.202  0.443 -0.006
   ```
 
-## Báo cáo kết quả kinh doanh, cân đối kế toán và lưu chuyển tiền tệ
-
-<div class="financial_report">
+### Báo cáo KQKD, CĐKT và LCTT {#report}
   <a href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_report_tcbs.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
@@ -74,8 +110,7 @@ Ba loại báo cáo này được truy xuất từ nguồn TCBS thông qua hàm 
 
 Cụ thể từng báo cáo được minh họa chi tiết thành từng phần như dưới đây.
 
-### Báo cáo kinh doanh
-
+#### Báo cáo kinh doanh
 <div class="balance_sheet">
   <a href="assets/images/financial_income_statement.png?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_income_statement.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/financial_income_statement.png?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
@@ -104,8 +139,7 @@ Trong đó tên các cột được chuẩn hóa bằng tiếng Anh. Để đổ
 
 <iframe width="800" height="452" src="https://www.youtube.com/embed/D3QekSAJU2s?si=r6shqYCewp1IRl31" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-### Bảng cân đối kế toán
-
+#### Bảng cân đối kế toán
 <div class="balance_sheet">
   <a href="assets/images/financial_balancesheet.png?raw=true" data-title="Dữ liệu bảng cân đối kế toán tại TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_balancesheet.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/financial_balancesheet.png?raw=true" data-title="Dữ liệu bảng cân đối kế toán tại TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
@@ -131,7 +165,8 @@ index                                                                           
 
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **balance_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `balance_df.T`
 
-### Báo cáo lưu chuyển tiền tệ
+#### Báo cáo lưu chuyển tiền tệ
+Để tải dữ liệu báo cáo lưu chuyển tiền tệ, bạn sử dụng câu lệnh:
 
 Để tải dữ liệu báo cáo lưu chuyển tiền tệ, bạn sử dụng câu lệnh:
 
@@ -152,7 +187,18 @@ index
 
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **cashflow_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `cashflow_df.T`
 
-## Chỉ số định giá
+### Chỉ số định giá {#valuation}
+<div class="stock_evaluation">
+  <a href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/tcbs_stock_evaluation.png?raw=true" alt="screenshot" /></a>
+  <a class="mask" href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
+</div>
+
+Chỉ số định giá được truy xuất từ nguồn TCBS thông qua hàm **stock_evaluation**. Hàm này nhận 3 tham số:
+- **symbol** là mã chứng khoán bạn muốn phân tích
+- **period** nhận 1 trong 2 giá trị: **1** cho phép trả về chỉ số theo ngày, **2** trả về dữ liệu theo tuần
+- **time_window** nhận 1 trong 2 giá trị: **D** cho phép trả về chỉ số theo ngày, **W** trả về dữ liệu theo tuần
+
+Minh họa cho hàm này như sau:
 
 <div class="stock_evaluation">
   <a href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/tcbs_stock_evaluation.png?raw=true" alt="screenshot" /></a>

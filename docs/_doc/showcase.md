@@ -1,5 +1,5 @@
 ---
-title: Show Case
+title: Ứng dụng thực tế
 excerpt: Nơi chia sẻ các ứng dụng thực tế sử dụng Vnstock.
 date: 2023-10-05
 icon:
