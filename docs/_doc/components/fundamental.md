@@ -35,6 +35,7 @@ Hàm có một tham số duy nhất **live** nhận một trong hai giá trị.
 ```
 
 - Kết quả trả về cho chế độ offline:
+
 ```shell
 listing_companies()
   ticker comGroupCode                                          organName   organShortName  ...   VNIT  VNMAT VNREAL  VNUTI
@@ -46,6 +47,7 @@ listing_companies()
 ```
 
 ### Bộ chỉ số tài chính {#ratio}
+
 <div class="balance_sheet">
   <a href="assets/images/financial_ratio.png?raw=true" data-title="Bộ chỉ số tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_ratio.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/financial_ratio.png?raw=true" data-title="Bộ chỉ số tài chính do TCBS cung cấp" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
@@ -56,6 +58,7 @@ Bộ chỉ số tài chính do TCBS cung cấp có thể được trích một c
 ```python
 financial_ratio(symbol="TCB", report_range='yearly', is_all=False)
 ```
+
 Trong đó:
 - **symbol** là mã chứng khoán bạn muốn phân tích
 - **report_range** nhận 1 trong 2 giá trị: **yearly** cho phép trả về chỉ số theo năm, **quarterly** trả về dữ liệu theo quý
@@ -96,7 +99,7 @@ payableOnEquity            5.2    5.1    4.9    5.2    5.2
 cancelDebt               0.002  0.004  0.013  0.002  0.008
 bookValuePerShareChange  0.219  0.247    0.2  0.199  0.923
 creditGrowth             0.211  0.252  0.202  0.443 -0.006
-  ```
+```
 
 ### Báo cáo KQKD, CĐKT và LCTT {#report}
   <a href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_report_tcbs.png?raw=true" alt="screenshot" /></a>
