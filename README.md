@@ -5,9 +5,10 @@
 </div>
 
 ---
-
-<div id="badges" align="center">
-<img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-logo-white.jpg" alt= "logo"/>
+<div id="logo" align="center">
+    <a href="http://vnstock.site?utm_source=github&utm_medium=vnstock&utm_content=readme">
+        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-logo-white.jpg" alt="vnstock_logo"/>
+    </a>
 </div>
 
 <div id="badges" align="center">

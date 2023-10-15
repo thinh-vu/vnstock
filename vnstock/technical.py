@@ -18,7 +18,7 @@ def stock_historical_data (symbol='TCB', start_date='2023-06-01', end_date='2023
         | ----------- | ---- | ---- | --- | ----- | ------ |
         | YYYY-mm-dd  | xxxx | xxxx | xxx | xxxxx | xxxxxx |
     """
-    df = stock_ohlc(symbol, start_date, end_date, resolution, type, beautify, headers)
+    df = ohlc_data(symbol, start_date, end_date, resolution, type, beautify, headers)
     return df
 
 def ohlc_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', type='stock', beautify=True, headers=entrade_headers): # DNSE source (will be published on vnstock)
