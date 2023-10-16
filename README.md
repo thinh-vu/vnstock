@@ -47,6 +47,8 @@ pip install -U vnstock
 
 # IV. Lịch sử lượt yêu thích
 
+Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Dưới đây là lịch sử lượt yêu thích của dự án.
+
 [![Star History Chart](https://api.star-history.com/svg?repos=thinh-vu/vnstock&type=Date)](https://star-history.com/#thinh-vu/vnstock&Date)
 
 # IV. 🙋‍♂️ Thông tin liên hệ
