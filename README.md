@@ -29,7 +29,7 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 
 # II. 📔 Tài liệu hướng dẫn
 
-Trước khi bắt đầu, đảm bảo bạn đã đánh dấu yêu thích để dự án có thể tiếp cận tới nhiều người hơn.
+Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
 ![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/github_star_guide.png)
 
