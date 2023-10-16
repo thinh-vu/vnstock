@@ -45,13 +45,7 @@ pip install -U vnstock
 
 [![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-docs-home.png)](https://thinh-vu.github.io/vnstock)
 
-# IV. Lịch sử lượt yêu thích
-
-Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Dưới đây là lịch sử lượt yêu thích của dự án.
-
-[![Star History Chart](https://api.star-history.com/svg?repos=thinh-vu/vnstock&type=Date)](https://star-history.com/#thinh-vu/vnstock&Date)
-
-# IV. 🙋‍♂️ Thông tin liên hệ
+# III. 🙋‍♂️ Thông tin liên hệ
 
 Bạn có thể kết nối với tác giả qua các hình thức sau. Trong trường hợp cần hỗ trợ nhanh, bạn có thể chọn nhắn tin qua Messenger hoặc Linkedin, tôi sẽ phản hồi ngay lập tức nếu có thể trong hầu hết các trường hợp.
 
@@ -70,7 +64,7 @@ Bạn có thể kết nối với tác giả qua các hình thức sau. Trong tr
   </a>
 </div>
 
-# V. 🔑 Giấy phép (License)
+# IV. 🔑 Giấy phép (License)
 
 Vnstock được cấp phép theo Giấy phép MIT. Nội dung của giấy phép như dưới đây, và thể hiện trong file [LICENSE](https://github.com/thinh-vu/vnstock/blob/beta/LICENSE).
 
@@ -107,3 +101,9 @@ PHẦN MỀM ĐƯỢC CUNG CẤP "NGUYÊN BẢN", KHÔNG CÓ BẤT KỲ HÌNH TH
 ```
 
 </details>
+
+# V. Lịch sử lượt yêu thích
+
+Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Dưới đây là lịch sử lượt yêu thích của dự án.
+
+[![Star History Chart](https://api.star-history.com/svg?repos=thinh-vu/vnstock&type=Date)](https://star-history.com/#thinh-vu/vnstock&Date)
