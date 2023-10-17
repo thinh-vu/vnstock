@@ -29,7 +29,17 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 
 # II. 📔 Tài liệu hướng dẫn
 
-Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện để bắt đầu, bạn có thể truy cập vnstock docs. 
+Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
+
+![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/github_star_guide.png)
+
+Cài đặt thư viện với câu lệnh sau:
+
+```
+pip install -U vnstock
+```
+
+Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập vnstock docs. 
 
 [![vnstock docs - Xem Thêm](https://img.shields.io/badge/vnstock_docs-Xem_Thêm-2ea44f?style=for-the-badge&logo=Github)](https://thinh-vu.github.io/vnstock)
 
@@ -91,3 +101,9 @@ PHẦN MỀM ĐƯỢC CUNG CẤP "NGUYÊN BẢN", KHÔNG CÓ BẤT KỲ HÌNH TH
 ```
 
 </details>
+
+# V. Lịch sử lượt yêu thích
+
+Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Dưới đây là lịch sử lượt yêu thích của dự án.
+
+[![Star History Chart](https://api.star-history.com/svg?repos=thinh-vu/vnstock&type=Date)](https://star-history.com/#thinh-vu/vnstock&Date)
