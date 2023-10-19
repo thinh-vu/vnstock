@@ -1,5 +1,5 @@
 site_name: Vnstokc Docs
-site_url: https://thinh-vu.github.io/vnstock_mkdocs/
+site_url: https://docs.vnstock.site
 site_description: >-
   Vnstock Docs
 theme:
@@ -140,8 +140,8 @@ extra:
   # - name: Việt Nam
   #   link: /vi/
   #   lang: vi
-repo_name: vnstock_mkdocs
-repo_url: https://github.com/thinh-vu/vnstock_mkdocs
+repo_name: vnstock
+repo_url: https://github.com/thinh-vu/vnstock
 
 # Page tree
 nav:
