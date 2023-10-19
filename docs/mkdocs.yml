@@ -122,8 +122,10 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 extra:
   analytics:
-    provider: google
-    property: G-DJT4KFYTW8
+    # provider: google
+    # property: G-DJT4KFYTW8
+    provider: custom
+    property: Google Tag Manager
   social:
     - icon: fontawesome/brands/github 
       link: https://github.com/thinh-vu
