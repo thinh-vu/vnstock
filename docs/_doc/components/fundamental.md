@@ -46,7 +46,7 @@ listing_companies()
 [3 rows x 35 columns]
 ```
 
-### Bộ chỉ số tài chính {#ratio}
+### Bộ chỉ số tài chính
 
 Hàm có một tham số duy nhất **live** nhận một trong hai giá trị.
 - **live=False**: Cho phép đọc dữ liệu cục bộ từ tệp csv [listing_companies](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023.csv) đính kèm trên Github theo mặc định. File này được cập nhật hàng tháng. Chứa thông tin rất chi tiết. Bởi danh sách các công ty niêm yết thường không thay đổi liên tục nên việc này không gây trở ngại nhiều.
@@ -71,6 +71,7 @@ Hàm có một tham số duy nhất **live** nhận một trong hai giá trị.
 ```
 
 - Kết quả trả về cho chế độ offline:
+
 ```shell
 listing_companies()
   ticker comGroupCode                                          organName   organShortName  ...   VNIT  VNMAT VNREAL  VNUTI
@@ -81,7 +82,8 @@ listing_companies()
 [3 rows x 35 columns]
 ```
 
-### Bộ chỉ số tài chính {#ratio}
+### Bộ chỉ số tài chính
+
 <div class="balance_sheet">
   <a href="assets/images/financial_ratio.png?raw=true" data-title="Bộ chỉ số tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_ratio.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/financial_ratio.png?raw=true" data-title="Bộ chỉ số tài chính do TCBS cung cấp" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
@@ -135,7 +137,8 @@ bookValuePerShareChange  0.219  0.247    0.2  0.199  0.923
 creditGrowth             0.211  0.252  0.202  0.443 -0.006
 ```
 
-### Báo cáo KQKD, CĐKT và LCTT {#report}
+### Báo cáo KQKD, CĐKT và LCTT
+
   <a href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_report_tcbs.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/financial_report_tcbs.png?raw=true" data-title="Báo cáo tài chính do TCBS cung cấp" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
 </div>
@@ -148,6 +151,7 @@ Ba loại báo cáo này được truy xuất từ nguồn TCBS thông qua hàm 
 Cụ thể từng báo cáo được minh họa chi tiết thành từng phần như dưới đây.
 
 #### Báo cáo kinh doanh
+
 <div class="balance_sheet">
   <a href="assets/images/financial_income_statement.png?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/financial_income_statement.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/financial_income_statement.png?raw=true" data-title="Dữ liệu báo cáo doanh thu tại TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
@@ -203,6 +207,7 @@ index                                                                           
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **balance_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `balance_df.T`
 
 #### Báo cáo lưu chuyển tiền tệ
+
 Để tải dữ liệu báo cáo lưu chuyển tiền tệ, bạn sử dụng câu lệnh:
 
 Để tải dữ liệu báo cáo lưu chuyển tiền tệ, bạn sử dụng câu lệnh:
@@ -224,7 +229,8 @@ index
 
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến **cashflow_df** như trên, bạn có thể sử dụng phương thức **transpose** để xoay DataFrame như sau: `cashflow_df.T`
 
-### Chỉ số định giá {#valuation}
+### Chỉ số định giá 
+
 <div class="stock_evaluation">
   <a href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><img class="img-responsive" src="assets/images/tcbs_stock_evaluation.png?raw=true" alt="screenshot" /></a>
   <a class="mask" href="assets/images/tcbs_stock_evaluation.png?raw=true" data-title="Dữ liệu định giá cổ phiếu từ TCBS" data-toggle="lightbox"><i class="icon fa fa-search-plus"></i></a>
