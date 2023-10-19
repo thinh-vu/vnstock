@@ -4,6 +4,9 @@ sidebar_position: 7
 
 # Lịch sử cập nhật
 
+## 20-10-2023
+Chuyển đổi nền tảng tài liệu từ Pretty-Docs sang [MkDocs Matterial](https://squidfunk.github.io/mkdocs-material/) thân thiện và nhiều tính năng hữu ích hơn.
+
 ## 14-10-2023
 
 > Phiên bản: 0.2.2: Đưa tính năng vẽ đồ thị chính thức vào phiên bản ổn định, cập nhật hàm truy xuất giá lịch sử
