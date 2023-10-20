@@ -66,6 +66,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://docs.vnstock.site/functions/fundamental/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://docs.vnstock.site/functions/listing/</loc>
          <lastmod>2023-10-20</lastmod>
          <changefreq>daily</changefreq>
