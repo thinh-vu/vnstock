@@ -21,17 +21,17 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.vnstock.site/faqs/</loc>
-         <lastmod>2023-10-20</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://docs.vnstock.site/showcase/</loc>
          <lastmod>2023-10-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/blog/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/blog/2023/10/20/xin-chao/</loc>
          <lastmod>2023-10-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -132,6 +132,16 @@
     </url>
     <url>
          <loc>https://docs.vnstock.site/start/start/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/blog/archive/2023/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/blog/category/blog/</loc>
          <lastmod>2023-10-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
