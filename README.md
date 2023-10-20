@@ -1,6 +1,6 @@
 <div align="center">
 
-[![python_course_4](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/python_data_analysis_course_4_thinhvu.png)](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3/)
+[![python_course_4](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/python_data_analysis_course_4_thinhvu.png)](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3/)
 
 </div>
 
