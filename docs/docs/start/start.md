@@ -4,8 +4,10 @@ title: Cài đặt
 
 # Hướng dẫn nhanh
 
-<div id="badges" align="center">
-<img src="../assets/images/vnstock_logo_color.png" alt= "logo"/>
+<div id="logo" align="center">
+    <a href="http://vnstock.site?utm_source=vnstock_docs&utm_medium=start&utm_content=logo">
+        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_logo_color.png" alt="vnstock_logo"/>
+    </a>
 </div>
 
 <div id="badges" align="center">

@@ -12,8 +12,8 @@ Bạn có thể chọn cách đơn giản là gửi tặng một ly cafe như vi
 
 Để đóng góp cho dự án, bạn có thể chọn chuyển khoản ngân hàng hoặc chuyển tiền qua ví điện tử Momo.
 
-![vcb qr](assets/images/vcb-qr-thinhvu.jpg?raw=true)
-![momo qr](assets/images/momo-qr-thinhvu.jpeg?raw=true)
+![vcb qr](../assets/images/vcb-qr-thinhvu.jpg?raw=true)
+![momo qr](../assets/images/momo-qr-thinhvu.jpeg?raw=true)
 
 ## Quỹ Vnstock được sử dụng như thế nào?
 

@@ -135,7 +135,7 @@ ticker_highestPricePercent   -0.143
 ticker_lowestPricePercent     0.481
 ```
 
-## Thông tin giao dịch nội bộ (Mới)
+## Thông tin giao dịch nội bộ
 
 ```python
 company_insider_deals (symbol='TCB', page_size=20, page=0)
@@ -167,7 +167,7 @@ ticker dealAnnounceDate        dealMethod dealAction  dealQuantity  dealPrice  d
 
 ```
 
-## Danh sách công ty con, công ty liên kết (Mới)
+## Danh sách công ty con, công ty liên kết
 
 ```python
 company_subsidiaries_listing (symbol='TCB', page_size=100, page=0)
