@@ -8,7 +8,7 @@ Minh họa Bảng giá TCBS
 
 ![](../assets/images/tcbs_trading_board_sector.png)
 
-### Thông tin bước giá, khối lượng và khớp lệnh
+### Khớp lệnh, Bước giá & khối lượng
 ```python
 price_depth('TCB,SSI,VND')
 ```
@@ -106,7 +106,7 @@ vnid3m                   -7.3        -7.3        -7.3
 vnid1y                    2.3         2.3         2.3
 ```
 
-## Phân tích chỉ số các cổ phiếu cùng ngành
+## So sánh cổ phiếu cùng ngành
 
 ```python
 industry_analysis("VNM", lang='vi')
@@ -149,12 +149,16 @@ Doanh thu năm tới              NaN     0.2    0.3  0.162  0.283     0.1    0.
 RSI                            NaN    50.7   43.1   71.8   24.0    28.5   59.2   33.7   68.2   53.5   46.6   44.1   51.1   32.3   55.5   55.3    33.3   54.8   61.1
 ```
 
-## So sánh chỉ số của danh sách cổ phiếu tùy chọn
+## So sánh các cổ phiếu tùy ý
+
+!!! bug "Ghi nhận lỗi"
+    20/10/2023: Hiện tại hàm ghi nhận lỗi không trả về kết quả như mong muốn từ chính nguồn cấp dữ liệu là TCBS.
+
 ```python
 stock_ls_analysis("TCB, BID, CEO, GMD", lang='vi')
 ```
 
-- Kết quả:
+Kết quả:
 
 ```shell
 >>> stock_ls_analysis("TCB, BID, CEO, GMD", lang='vi')

@@ -60,6 +60,8 @@ plugins:
   - tags
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - social: # display a preview on social for links
+      cards_layout: default 
 
 markdown_extensions:
   - toc:
@@ -129,9 +131,12 @@ extra:
     - icon: fontawesome/brands/github 
       link: https://github.com/thinh-vu
     - icon: fontawesome/brands/linkedin
-      link: https://www.linkedin.com/in/thinh-vu/
+      link: https://www.linkedin.com/company/vnstock
     - icon: fontawesome/brands/facebook
-      link: https://www.facebook.com/mr.thinh.ueh
+      link: https://www.facebook.com/vnstock.official/
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/ruugCSWVCJ
+  generator: false
   # alternate:
   # - name: English
   #   link: /en/ 
@@ -141,6 +146,7 @@ extra:
   #   lang: vi
 repo_name: vnstock
 repo_url: https://github.com/thinh-vu/vnstock
+copyright: Copyright &copy; 2023 | vnstock.site
 
 # Page tree
 nav:
@@ -173,6 +179,7 @@ nav:
   - Giấy phép: cite.md
   - Phiên bản: changes_log.md
   - Miễn trừ: disclaimer.md
+  # - Blog: blog/index.md
 
 
 
