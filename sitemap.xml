@@ -11,12 +11,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.vnstock.site/chart/</loc>
+         <loc>https://docs.vnstock.site/cite/</loc>
          <lastmod>2023-10-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.vnstock.site/cite/</loc>
+         <loc>https://docs.vnstock.site/disclaimer/</loc>
          <lastmod>2023-10-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -47,6 +47,31 @@
     </url>
     <url>
          <loc>https://docs.vnstock.site/community/support/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/faq/community/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/faq/feature/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/faq/pricing/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/faq/support/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/functions/chart/</loc>
          <lastmod>2023-10-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -96,17 +121,17 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.vnstock.site/start/</loc>
-         <lastmod>2023-10-20</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://docs.vnstock.site/start/installation/</loc>
          <lastmod>2023-10-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/start/resources/</loc>
+         <lastmod>2023-10-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/start/start/</loc>
          <lastmod>2023-10-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
