@@ -1,5 +1,8 @@
 # Báo cáo tài chính
 
+!!! tip "Lưu ý"
+    Để tiện theo dõi và tra cứu, trong một số trường hợp chúng tôi sẽ xoay DataFrame trả về từ hàm với với phép `transpose` để thấy đầy đủ thông tin dễ hơn. Với các câu lệnh có phần kết thúc với `.T` tức là đang áp dụng phép `transpose` này.
+
 ![](../assets/images/financial_report_tcbs.png)
 
 Ba loại báo cáo này được truy xuất từ nguồn TCBS thông qua hàm `financial_flow`. Hàm này nhận 3 tham số:
@@ -22,13 +25,32 @@ income_df = financial_flow(symbol="TCB", report_type='incomestatement', report_r
 
 Kết quả trả về như dưới đây. 
 
-```
-ticker  revenue  yearRevenueGrowth  quarterRevenueGrowth costOfGoodSold grossProfit  ...  investProfit  serviceProfit  otherProfit  provisionExpense operationIncome  ebitda
-index                                                                                        ...
-2021-Q4    TCB     7245              0.328                 0.074           None        None  ...           279           2103          532              -627            6767    None
-2021-Q3    TCB     6742              0.310                 0.023           None        None  ...           384           1497          156              -589            6151    None
-2021-Q2    TCB     6588              0.674                 0.076           None        None  ...           717           1457          444              -598            6615    None
-2021-Q1    TCB     6124              0.454                 0.122           None        None  ...           812           1325          671              -851            6369    None
+```shell
+>>> financial_flow(symbol="TCB", report_type='incomestatement', report_range='quarterly').T
+
+index                          2023-Q2 2023-Q1 2022-Q4 2022-Q3 2022-Q2  ... 2012-Q4 2012-Q3 2012-Q2 2012-Q1 2010-Q2
+ticker                             TCB     TCB     TCB     TCB     TCB  ...     TCB     TCB     TCB     TCB     TCB
+revenue                           6295    6527    6819    7565    7794  ...     951    1414    1432    1318     814
+yearRevenueGrowth               -0.192  -0.195  -0.059   0.122   0.183  ...     NaN     NaN     NaN     NaN     NaN
+quarterRevenueGrowth            -0.036  -0.043  -0.099  -0.029  -0.039  ...  -0.327  -0.013   0.086     NaN     NaN
+costOfGoodSold                    None    None    None    None    None  ...    None    None    None    None    None
+grossProfit                       None    None    None    None    None  ...    None    None    None    None    None
+operationExpense                 -2869   -3142   -3990   -3014   -3196  ...   -1263    -615    -574    -826    -446
+operationProfit                   9325    9300    9427   10338   10934  ...    1175    1373    1347    1851     972
+yearOperationProfitGrowth       -0.147  -0.071  -0.072   0.178   0.188  ...     NaN     NaN     NaN     NaN     NaN
+quarterOperationProfitGrowth     0.003  -0.014  -0.088  -0.055   0.093  ...  -0.144   0.019  -0.272     NaN     NaN
+interestExpense                   None    None    None    None    None  ...    None    None    None    None    None
+preTaxProfit                      5649    5623    4746    6715    7321  ...   -1216     603     602    1028     384
+postTaxProfit                     4503    4537    3572    5368    5882  ...   -1216     603     602    1028     384
+shareHolderIncome                 4455    4497    3544    5298    5804  ...   -1216     603     602    1028     384
+yearShareHolderIncomeGrowth     -0.232  -0.183  -0.228   0.221   0.232  ...     NaN     NaN     NaN     NaN     NaN
+quarterShareHolderIncomeGrowth  -0.009   0.269  -0.331  -0.087   0.054  ...     NaN   0.002  -0.414     NaN     NaN
+investProfit                        72    -228    -422     209     411  ...     -81    -201    -119     120      26
+serviceProfit                     2019    1944    2535    2123    1987  ...      39     151     228     147     104
+otherProfit                        939    1057     495     441     743  ...     266       9    -194     266      28
+provisionExpense                  -807    -535    -691    -609    -417  ...   -1128    -155    -170       3    -142
+operationIncome                   6456    6158    5437    7324    7739  ...     -88     758     773    1025     526
+ebitda                            None    None    None    None    None  ...    None    None    None    None    None
 ```
 
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến `income_df` như trên, bạn có thể sử dụng phương thức `transpose` để xoay DataFrame như sau: `income_df.T`
@@ -49,14 +71,44 @@ balance_df = financial_flow(symbol="TCB", report_type='balancesheet', report_ran
 
 Kết quả:
 
-```
-ticker shortAsset  cash shortInvest shortReceivable inventory longAsset  fixedAsset  ...  payableInterest  receivableInterest deposit otherDebt  fund  unDistributedIncome  minorShareHolderProfit  payable
-index                                                                                        ...
-
-2021-Q4    TCB       None  3579        None            None      None      None        7224  ...             3098                5808  314753     33680  9156                47469                     845   475756
-2021-Q3    TCB       None  3303        None            None      None      None        7106  ...             3074                6224  316376     34003  6784                45261                     753   453251
-2021-Q2    TCB       None  3554        None            None      None      None        6739  ...             2643                5736  289335     27678  6790                40924                     659   420403
-2021-Q1    TCB       None  4273        None            None      None      None        4726  ...             2897                5664  287446     26035  6790                36213                     563   3837
+```shell
+>>> financial_flow(symbol="TCB", report_type='balancesheet', report_range='quarterly').T
+index                  2023-Q2 2023-Q1 2022-Q4 2022-Q3 2022-Q2
+ticker                     TCB     TCB     TCB     TCB     TCB
+shortAsset                None    None    None    None    None
+cash                      3113    2852    4216    3026    3204
+shortInvest               None    None    None    None    None
+shortReceivable           None    None    None    None    None
+inventory                 None    None    None    None    None
+longAsset                 None    None    None    None    None
+fixedAsset                8742    8275    8411    7282    7220
+asset                   732470  723518  699033  671354  623739
+debt                    610005  605552  585608  561454  519263
+shortDebt                 None    None    None    None    None
+longDebt                  None    None    None    None    None
+equity                  122465  117965  113425  109899  104475
+capital                  35172   35172   35172   35172   35109
+centralBankDeposit        7860   15834   11476    4709    4814
+otherBankDeposit         63215   56675   69925   65183   57270
+otherBankLoan             8079   10265   13050    7215   14962
+stockInvest             112613   99162  104626  104673   98072
+customerLoan            466546  465425  420524  410546  391824
+badLoan                 5012.0  3946.0  3818.0  2665.0  2359.0
+provision                -5793   -5280   -4771   -4397   -4049
+netCustomerLoan         460753  460145  415752  406148  387775
+otherAsset               67879   70304   70517   71795   49269
+otherBankCredit          49594   47940   61294   68284   57307
+oweOtherBank            104031  103254  106269  110868   83894
+oweCentralBank             136     122       8       6       2
+valuablePaper            54958   46729   34007   42858   37122
+payableInterest           8118    8303    6144    4750    3375
+receivableInterest        8875    8365    8029    8681    8072
+deposit                 381947  387298  358404  318919  321634
+otherDebt                54958   46729   34007   42858   37122
+fund                     43387   11607   11609    9151    9152
+unDistributedIncome      41654   68979   64483   64059   58761
+minorShareHolderProfit    1218    1170    1129    1032     963
+payable                 610005  605552  585608  561454  519263
 ```
 
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến `balance_df` như trên, bạn có thể sử dụng phương thức `transpose` để xoay DataFrame như sau: `balance_df.T`
@@ -73,13 +125,15 @@ cashflow_df = financial_flow(symbol="TCB", report_type='cashflow', report_range=
 
 Kết quả:
 
-```
-        ticker  investCost  fromInvest  fromFinancial  fromSale  freeCashFlow
-index
-2021-Q4    TCB        -280        -276              0     -9328             0
-2021-Q3    TCB        -180        -179             60     17974             0
-2021-Q2    TCB        -337        -282              0     11205             0
-2021-Q1    TCB        -143        -143              0     -6954             0
+```shell
+>>> financial_flow(symbol="TCB", report_type='cashflow', report_range='quarterly').T
+index         2023-Q2 2023-Q1 2022-Q4 2022-Q3 2022-Q2
+ticker            TCB     TCB     TCB     TCB     TCB
+investCost       -395     -73    -720    -212     -65
+fromInvest      -3042     260    -679    -205     -62
+fromFinancial       0       1    -700      63       0
+fromSale        -2480  -21875   19130   15950   -4020
+freeCashFlow        0       0       0       0       0
 ```
 
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến `cashflow_df` như trên, bạn có thể sử dụng phương thức `transpose` để xoay DataFrame như sau: `cashflow_df.T`

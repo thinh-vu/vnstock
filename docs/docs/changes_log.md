@@ -5,7 +5,11 @@ sidebar_position: 7
 # Lịch sử cập nhật
 
 ## 20-10-2023
-Chuyển đổi nền tảng tài liệu từ Pretty-Docs sang [MkDocs Matterial](https://squidfunk.github.io/mkdocs-material/) thân thiện và nhiều tính năng hữu ích hơn.
+- Chuyển đổi nền tảng tài liệu từ Pretty-Docs sang [MkDocs Matterial](https://squidfunk.github.io/mkdocs-material/) thân thiện và nhiều tính năng hữu ích hơn.
+
+- Cập  nhật mô tả các hàm để tiện theo dõi bao gồm:
+    - Xoay DataFrame kết quả trả về để có thể hiển thị đầy đủ tên các cột dữ liệu
+    - Bổ sung mô tả tham số đầu vào của hàm
 
 ## 14-10-2023
 

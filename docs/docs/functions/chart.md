@@ -1,14 +1,11 @@
----
-sidebar_position: 4
----
-
 # Biểu diễn dữ liệu
 
-vnstock sử dụng thư viện [plotly](https://plotly.com/python/candlestick-charts/) làm thư viện biểu diễn dữ liệu trực quan. Để có thể sử dụng được tính năng vẽ đồ thị, bạn cần đảm bảo plotly đã được cài đặt thành công.
+!!! tip "Lưu ý"
+    vnstock sử dụng thư viện [plotly](https://plotly.com/python/candlestick-charts/) làm thư viện biểu diễn dữ liệu trực quan. Để có thể sử dụng được tính năng vẽ đồ thị, bạn cần đảm bảo plotly đã được cài đặt thành công.
 
-Plotly là thư việc biểu diễn dữ liệu mạnh mẽ trong Python, cung cấp đa dạng các loại biểu đồ được hỗ trợ và tất cả đồ thị đều hỗ trợ tương tác trực quan (interactive). Hàm `candlestick_chart` dưới đây được xây dựng trên nền `Plotly graph object`, hỗ trợ đầy đủ tính năng của Plotly.
+Plotly là thư viện biểu diễn dữ liệu mạnh mẽ trong Python, cung cấp đa dạng các loại biểu đồ được hỗ trợ và tất cả đồ thị đều hỗ trợ tương tác trực quan (interactive). Hàm `candlestick_chart` dưới đây được xây dựng trên nền `Plotly graph object`, hỗ trợ đầy đủ tính năng của Plotly.
 
-Do tính năng vẽ biểu đồ không phải ai cũng cần thiết dùng, do đó để tối ưu thời gian cài đặt thư viện vnstock và cài đặt gói phụ thuộc, `plotly` được tách khỏi tiến trình cài đặt tự động. Bạn cần sử dụng câu lệnh cài đặt plotly thủ công như sau: 
+Tính năng vẽ biểu đồ không phải ai cũng cần thiết dùng, do đó để tối ưu thời gian cài đặt thư viện vnstock và cài đặt gói phụ thuộc, `plotly` được tách khỏi tiến trình cài đặt tự động. Bạn cần sử dụng câu lệnh cài đặt plotly thủ công như sau: 
 
 ```shell
 pip install plotly
@@ -27,7 +24,7 @@ fig = candlestick_chart(df, ma_periods=[50,200], show_volume=False, reference_pe
                         colors=('lightgray', 'gray'), reference_colors=('black', 'blue'))
 fig.show()
 ```
-![candlestick](assets/images/VIC_candlestick.png?raw=true)
+![candlestick](../assets/images/VIC_candlestick.png?raw=true)
 
 Bạn có thể tùy chọn bỏ qua bước gán đồ thị với biến fig nếu chỉ muốn xem đồ thị trực tiếp trên Jupyter Notebook mà không thao tác tiếp theo như lưu file.
 Để vẽ biểu đồ cho mã chỉ số (index) hoặc mã phái sinh (derivative), bạn cần thay đổi tham số `type` thành `index` hoặc `derivative`. 
@@ -58,7 +55,7 @@ Các tham số của hàm bao gồm:
 - `colors`: Mã màu thể hiện cho khối lượng giao dịch trong những ngày giá cổ phiếu tăng/giảm, được nhập dưới dạng tupple. Ví dụ ('#00F4B0', '#FF3747').
 - `reference_color`: Cặp mã màu cho đường hỗ trợ (lowest low), kháng cự (highest high) được nhập vào dưới dạng tupple. Ví dụ ('black', 'blue')
 
-![vnindex candlestick](assets/images/VNINDEX_candlestick.png?raw=true)
+![vnindex candlestick](../assets/images/VNINDEX_candlestick.png?raw=true)
 
 ## Đồ thị Bollinger Bands
 
@@ -76,7 +73,7 @@ fig.show()
 
 Kết quả như sau:
 
-![bollinger bands](assets/images/bollinger_bands_chart.png?raw=true)
+![bollinger bands](../assets/images/bollinger_bands_chart.png?raw=true)
 
 Trong đó, DataFrame `df` có thể không phải tính toán lại nếu đã khai báo trước đó trong dự án.
 

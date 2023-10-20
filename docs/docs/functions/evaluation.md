@@ -1,5 +1,8 @@
 # Chỉ số định giá 
 
+!!! tip "Lưu ý"
+    Để tiện theo dõi và tra cứu, trong một số trường hợp chúng tôi sẽ xoay DataFrame trả về từ hàm với với phép `transpose` để thấy đầy đủ thông tin dễ hơn. Với các câu lệnh có phần kết thúc với `.T` tức là đang áp dụng phép `transpose` này.
+
 ![](../assets/images/tcbs_stock_evaluation.png)
 
 Chỉ số định giá được truy xuất từ nguồn TCBS thông qua hàm `stock_evaluation`. Hàm này nhận 3 tham số:

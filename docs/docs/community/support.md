@@ -3,10 +3,12 @@
 ## Gửi tặng một ly cafe
 
 !!! success ""
-    🖐 Nếu vnstock giúp ích cho bạn, hãy đóng góp quỹ phát triển ứng dụng này theo một trong hai hình thức sau gồm chuyển khoản ngân hàng hoặc Momo. Mọi khoản đóng góp đều đáng trân quý và là động lực giúp tác giả duy trì vnstock luôn hữu ích, miễn phí, và dễ tiếp cận cho cộng đồng. Để biết thêm chi tiết, vui lòng tham khảo bài viết trên blog sau: 
+    🖐 Nếu vnstock giúp ích cho bạn, hãy đóng góp quỹ phát triển dự án theo hình thức chuyển khoản ngân hàng hoặc Momo. Mọi khoản đóng góp đều đáng trân quý và là nguồn tài chính giúp duy trì vnstock luôn được nâng cấp, mã nguồn mở, và dễ tiếp cận cho cộng đồng.
 
-![vcb qr](../assets/images/vcb-qr-thinhvu.jpg?raw=true)
-![momo qr](../assets/images/momo-qr-thinhvu.jpeg?raw=true)
+<div id="QR" align="center">
+  <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vcb-qr-thinhvu.jpg"/>
+  <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/momo-qr-thinhvu.jpeg"/>
+</div>
 
 ## Sử dụng dịch vụ
 

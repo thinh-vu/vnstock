@@ -1,17 +1,63 @@
 # Phân tích cơ bản
+!!! tip "Lưu ý"
+    Để tiện theo dõi và tra cứu, trong một số trường hợp chúng tôi sẽ xoay DataFrame trả về từ hàm với với phép `transpose` để thấy đầy đủ thông tin dễ hơn. Với các câu lệnh có phần kết thúc với `.T` tức là đang áp dụng phép `transpose` này.
 
-## Thông tin công ty
+## Thông tin tổng quan
+
+```python
+company_overview('TCB')
+```
+
+??? info "Nhấp để xem vị trí hiển thị trên giao diện TCBS"
+    ![](../assets/images/tong_quan_cty.png)
+
+```shell
+>>> company_overview('TCB').T
+                                              0
+ticker                                      TCB
+exchange                                   HOSE
+industry                              Ngân hàng
+companyType                                  NH
+noShareholders                             1901
+foreignPercent                            0.225
+outstandingShare                         3517.2
+issueShare                               3517.2
+establishedYear                            1993
+noEmployees                                9757
+stockRating                                 4.2
+deltaInWeek                              -0.002
+deltaInMonth                              0.001
+deltaInYear                               0.189
+shortName                           Techcombank
+industryEn                                Banks
+industryID                                  289
+industryIDv2                               8355
+website           http://www.techcombank.com.vn
+```
+
+## Hồ sơ công ty
 
 ```python
 company_profile ('TCB')
 ```
 
-```shell
->>> company_profile ('TCB')
-    id                                      companyName  ...                                    keyDevelopments                                 businessStrategies
-0  None  Ngân hàng Thương mại Cổ phần Kỹ thương Việt Nam  ...    Huy động vốn; Tín dụng; Liên kết và đầu tư t...    Áp dụng công nghệ tiên tiến hiện đại trong c...
+Đây là phần mô tả về công ty bằng văn bản, bao gồm mục Tổng quan và Thông tin khác trong mục Hồ sơ doanh nghiệp trên TCBS.
 
-[1 rows x 9 columns]
+??? info "Nhấp để xem vị trí hiển thị trên giao diện TCBS"
+    ![](../assets/images/ho_so_cty.png)
+
+```shell
+>>> company_profile ('TCB').T
+                                                                    0
+id                                                               None
+companyName           Ngân hàng Thương mại Cổ phần Kỹ thương Việt Nam
+ticker                                                            TCB
+companyProfile      Ngân hàng Thương mại Cổ phần Kỹ thương Việt Na...
+historyDev            Ngày 27/09/1993: Ngân hàng Thương mại Cổ phầ...
+companyPromise                                                   None
+businessRisk          Thông tư 36/2014/TT-NHNN cũng gây ra một số ...
+keyDevelopments       Huy động vốn; Tín dụng; Liên kết và đầu tư t...
+businessStrategies   Mở rộng tập khách hàng cả về quy mô và tốc độ...
 ```
 
 ## Danh sách cổ đông
@@ -42,13 +88,34 @@ company_large_shareholders ('TCB')
 company_fundamental_ratio (symbol='TCB', mode='simplify', missing_pct=0.8)
 ```
 
+Trong đó:
+
+  - Tham số `mode` nhận 2 giá trị:
+
+    - `simplify` cho phép trả về chỉ các giá trị số có ý nghĩa. Mặc định nhận giá trị `simplify`.
+
+    - `''` trả về toàn bộ các cột có trong DataFrame
+    
+  - Tham số `missing_pct`: nhận giá trị từ 0 đến 1, quy định tỉ lệ % sẽ cho phép hàm loại bỏ dữ liệu bị thiếu. Ví dụ 0.8 thể hiện rằng hàm này sẽ loại bỏ cột tương ứng khi 80% số dòng trong cột là dữ liệu rỗng.
+
 
 ```shell
->>> company_fundamental_ratio (symbol='TCB', mode='simplify', missing_pct=0.8)
-ticker costOfFinancing.industryAvgValue interestMargin.industryAvgValue  ... loanOnDeposit.industryAvgValue equityOnTotalAsset.industryAvgValue badDebtOnAsset.industryAvgValue
-0    TCB                            0.055                           0.035  ...                          0.969                               0.086                           0.016
-
-[1 rows x 14 columns]
+>>> company_fundamental_ratio (symbol='TCB', mode='simplify', missing_pct=0.8).T
+                                         0
+ticker                                 TCB
+costOfFinancing.industryAvgValue     0.056
+interestMargin.industryAvgValue      0.034
+nonInterestOnToi.industryAvgValue    0.215
+costToIncome.industryAvgValue        0.437
+preProvisionOnToi.industryAvgValue   0.449
+postTaxOnToi.industryAvgValue        0.322
+depositOnEarnAsset.industryAvgValue  0.725
+cancelDebt.industryAvgValue          0.007
+badDebtPercentage.industryAvgValue   0.024
+provisionOnBadDebt.industryAvgValue  0.609
+loanOnDeposit.industryAvgValue        0.96
+equityOnTotalAsset.industryAvgValue  0.086
+badDebtOnAsset.industryAvgValue      0.015
 ```
 
 ## Mức biến động giá cổ phiếu
@@ -58,10 +125,14 @@ ticker_price_volatility (symbol='TCB')
 ```
 
 
-```
->>> ticker_price_volatility (symbol='TCB')
-ticker  ticker_highestPrice  ticker_lowestPrice  ticker_highestPricePercent  ticker_lowestPricePercent
-0    TCB              38950.0             20700.0                      -0.114                      0.667
+```shell
+>>> ticker_price_volatility (symbol='TCB').T
+                                  0
+ticker                          TCB
+ticker_highestPrice         35750.0
+ticker_lowestPrice          20700.0
+ticker_highestPricePercent   -0.143
+ticker_lowestPricePercent     0.481
 ```
 
 ## Thông tin giao dịch nội bộ (Mới)

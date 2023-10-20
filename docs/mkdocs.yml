@@ -27,8 +27,8 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
-    - content.action.edit
-    - content.action.view
+    # - content.action.edit
+    # - content.action.view
     - content.code.copy
     - content.code.annotate
     - content.tooltips
@@ -41,7 +41,6 @@ theme:
     - navigation.tracking
     - navigation.sections
     - navigation.tabs
-    - navigation.sections
     - navigation.tabs.sticky
     - navigation.expand
     - navigation.path
@@ -147,7 +146,7 @@ repo_url: https://github.com/thinh-vu/vnstock
 nav:
   - Trang chủ: index.md
   - Hướng dẫn nhanh: 
-    - Bắt đầu: start/index.md
+    - Bắt đầu: start/start.md
     - Chọn phiên bản: start/installation.md
     - Tài nguyên: start/resources.md
   - Tính năng:
@@ -160,15 +159,20 @@ nav:
     - So sánh cổ phiếu: functions/comparison.md
     - Xếp hạng cổ phiếu: functions/rating.md
     - Định giá cổ phiếu: functions/evaluation.md
-  - Biểu diễn dữ liệu: chart.md
-  - Cộng đồng vnstock: 
+    - Biểu diễn dữ liệu: functions/chart.md
+  - Ứng dụng: showcase.md
+  - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
     - Ủng hộ quỹ: community/support.md
     - Góp sức: community/contribute.md
-  - Câu hỏi thường gặp: faqs.md
-  - Lịch sử thay đổi: changes_log.md
-  - Ứng dụng thực tế: showcase.md
-  - Trích dẫn & giấy phép: cite.md
+  - FAQs: 
+    - Sản phẩm: faq/feature.md
+    - Cộng đồng: faq/community.md
+    - Ủng hộ dự án: faq/pricing.md
+    - Hỗ trợ người dùng: faq/support.md
+  - Giấy phép: cite.md
+  - Phiên bản: changes_log.md
+  - Miễn trừ: disclaimer.md
 
 
 
