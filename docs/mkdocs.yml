@@ -152,6 +152,7 @@ nav:
     - Tài nguyên: start/resources.md
   - Tính năng:
     - Danh sách niêm yết: functions/listing.md
+    - Thông tin cơ bản: functions/fundamental.md
     - Giá cổ phiếu: functions/technical.md 
     - Báo cáo tài chính: functions/financial.md
     - Chỉ số tài chính: functions/ratio.md
