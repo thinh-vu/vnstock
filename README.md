@@ -1,13 +1,13 @@
 <div align="center">
 
-[![python_course_4](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/python_data_analysis_course_4_thinhvu.png)](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3/)
+[![python_course_4](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/python_data_analysis_course_4_thinhvu.png)](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3/)
 
 </div>
 
 ---
 <div id="logo" align="center">
     <a href="http://vnstock.site?utm_source=github&utm_medium=vnstock&utm_content=readme">
-        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-logo-white.jpg" alt="vnstock_logo"/>
+        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_logo_color.png" alt="vnstock_logo"/>
     </a>
 </div>
 
@@ -31,7 +31,7 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
-![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/github_star_guide.png)
+![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
 
 Cài đặt thư viện với câu lệnh sau:
 
@@ -43,7 +43,7 @@ pip install -U vnstock
 
 [![vnstock docs - Xem Thêm](https://img.shields.io/badge/vnstock_docs-Xem_Thêm-2ea44f?style=for-the-badge&logo=Github)](https://thinh-vu.github.io/vnstock)
 
-[![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-docs-home.png)](https://thinh-vu.github.io/vnstock)
+[![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_docs_home.png)](https://thinh-vu.github.io/vnstock)
 
 # III. 🙋‍♂️ Thông tin liên hệ
 
