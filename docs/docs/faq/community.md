@@ -19,6 +19,8 @@ Hiện tại Vnstock cung cấp các sản phẩm/kênh thông tin sau:
 
     - [![Learn Anything - Theo dõi](https://img.shields.io/badge/Learn_Anything-Theo_dõi-FF0000?style=for-the-badge&logo=youtube)](https://www.youtube.com/@learn_anything_az)
 
+    - [![Linkedin Profile - Follow](https://img.shields.io/badge/Linkedin_Profile-Follow-0A66C2?style=for-the-badge)](https://www.linkedin.com/company/vnstock)
+
     - [![PyPI - Download](https://img.shields.io/badge/PyPI-Download-4CAF50?style=for-the-badge&logo=pypi)](https://pypi.org/project/vnstock/)
 
 ## Nhóm cộng đồng nào tôi nên tham gia để được hỗ trợ?
