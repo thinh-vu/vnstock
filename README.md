@@ -7,7 +7,7 @@
 ---
 <div id="logo" align="center">
     <a href="http://vnstock.site?utm_source=github&utm_medium=vnstock&utm_content=readme">
-        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-logo-white.jpg" alt="vnstock_logo"/>
+        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_logo_color.png" alt="vnstock_logo"/>
     </a>
 </div>
 
@@ -43,7 +43,7 @@ pip install -U vnstock
 
 [![vnstock docs - Xem Thêm](https://img.shields.io/badge/vnstock_docs-Xem_Thêm-2ea44f?style=for-the-badge&logo=Github)](https://thinh-vu.github.io/vnstock)
 
-[![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/assets/images/vnstock-docs-home.png)](https://thinh-vu.github.io/vnstock)
+[![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_docs_home.png)](https://thinh-vu.github.io/vnstock)
 
 # III. 🙋‍♂️ Thông tin liên hệ
 
