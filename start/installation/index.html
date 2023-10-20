@@ -1279,49 +1279,65 @@
 
 <h1 id="cai-at-vnstock">Cài đặt vnstock<a class="headerlink" href="#cai-at-vnstock" title="Anchor link to this section for reference">&para;</a></h1>
 <h2 id="xac-inh-phien-ban-phu-hop">Xác định phiên bản phù hợp<a class="headerlink" href="#xac-inh-phien-ban-phu-hop" title="Anchor link to this section for reference">&para;</a></h2>
-<blockquote>
-<p>vnstock được phát triển thành hai nhánh riêng biệt. Bạn cần chọn phiên bản phù hợp và <em>copy câu lệnh tương ứng để thực hiện cài đặt ở bước tiếp theo</em>:</p>
-</blockquote>
-<ul>
-<li>Để sử dụng phiên bản vnstock ổn định được cập nhật trên pypi.org, bạn có thể cài đặt bằng câu lệnh:</li>
-</ul>
+<div class="admonition tip">
+<p class="admonition-title">Phiên bản</p>
+<p>vnstock được phát triển thành hai nhánh riêng biệt. Trong hầu hết trường hợp bạn có thể sử dụng lệnh cài đặt nhanh từ PyPI. Nếu bạn có nhu cầu cài đặt vnstock từ mã nguồn, bạn cần chọn phiên bản phù hợp và <em>copy câu lệnh tương ứng để thực hiện cài đặt ở bước tiếp theo</em>:</p>
+</div>
+<ol>
+<li>Cài đặt nhanh, sử dụng bản vnstock ổn định được chia sẻ qua pypi.org, sử dụng câu lệnh sau:</li>
+</ol>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>vnstock
 </span></code></pre></div>
 <ul>
-<li>Ngoài ra bạn cũng có thể cài đặt trực tiếp từ source code Github như sau:</li>
-<li>Bản <strong>beta</strong> (nhận cập nhật mới nhất) được chia sẻ tại nhánh <strong>beta</strong> của Github repo.</li>
+<li>Cài đặt trực tiếp từ mã nguồn có trên Github:</li>
+<li>Bản <code>beta</code> (nhận cập nhật mới nhất) được chia sẻ tại nhánh <code>beta</code> của Github repo.</li>
 </ul>
 <p><div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/thinh-vu/vnstock.git@beta
 </span></code></pre></div>
-  - Bản <strong>stable</strong> (đã phát triển ổn định) được chia sẻ qua pypi.org và nhánh <strong>main</strong> tại Github repo này.</p>
+  - Bản <code>stable</code> (đã phát triển ổn định) được chia sẻ qua pypi.org và nhánh <code>main</code> tại Github repo.</p>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/thinh-vu/vnstock.git@main
 </span></code></pre></div>
-<ul>
-<li>Chọn xem nhánh phù hợp</li>
-</ul>
+<details class="info">
+<summary>Chọn xem nhánh phù hợp</summary>
 <p><a class="glightbox" href="../../assets/images/choose_a_branch.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="choose a branch" src="../../assets/images/choose_a_branch.png" /></a></p>
+</details>
 <h2 id="chay-cau-lenh-cai-at">Chạy câu lệnh cài đặt<a class="headerlink" href="#chay-cau-lenh-cai-at" title="Anchor link to this section for reference">&para;</a></h2>
 <blockquote>
 <p>Khi sử dụng file <a href="https://github.com/thinh-vu/vnstock/blob/beta/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb">Demo Notebook</a> để bắt đầu, các câu lệnh cài đặt cần thiết đã được cung cấp sẵn để bạn thực thi (run).</p>
 </blockquote>
-<p><strong>pip được sử dụng để cài đặt vnstock</strong>. pip có sẵn trong hầu hết các bản phân phối Python được cài đặt. Phiên bản python cần thiết cho vnstock tối thiểu là 3.7. Bạn có thể paste câu lệnh đã copy ở Bước 1 và chạy nó trong môi trường Python bạn đang sử dụng.</p>
+<p><code>pip được sử dụng để cài đặt vnstock</code>. pip có sẵn trong hầu hết các bản phân phối Python được cài đặt. Phiên bản python cần thiết cho vnstock tối thiểu là 3.7. Bạn có thể paste câu lệnh đã copy ở Bước 1 và chạy nó trong môi trường Python bạn đang sử dụng.</p>
 <ul>
 <li>Jupyter Notebook/Jupyter Lab/Google Colab: Mở file demo notebook để chạy các lệnh có sẵn.</li>
 <li>CLI: Mở Terminal (macOS/Linux) hoặc Command Prompt (Windows Desktop) và paste dòng lệnh trên, bấm Enter để cài đặt. Lưu ý: Nếu sử dụng Windows và Python cài đặt với Anaconda thì chọn Anaconda Prompt để chạy lệnh thay vì Command Prompt mặc định.</li>
 </ul>
 <h2 id="cai-at-cac-goi-thu-vien-bat-buoc-go-loi">Cài đặt các gói thư viện bắt buộc (gỡ lỗi)<a class="headerlink" href="#cai-at-cac-goi-thu-vien-bat-buoc-go-loi" title="Anchor link to this section for reference">&para;</a></h2>
-<p>Trong trường hợp bạn không sử dụng Google Colab là môi trường mặc định để chạy vnstock, bạn sẽ cần phải đảm bảo môi trường Python của mình có đầy đủ các gói phần mềm bắt buộc kèm theo (dependencies/requirements) để có thể chạy được <strong>vnstock</strong>. 
-- Nếu cài Python với Anaconda, bạn có thể bỏ qua bước này.
-- Nếu cài bản python thuần từ python.org hoặc Python từ Windows Store, bạn sẽ cần cài đặt thêm tối thiểu <strong>pandas</strong> và <strong>requests</strong> với công cụ <strong>pip</strong>.</p>
-<p>Để quá trình cài đặt diễn ra đơn giản và suôn sẻ, bạn có thể làm theo các bước sau:
-- Tải file <a href="https://github.com/thinh-vu/vnstock/blob/beta/requirements.txt">requirement.txt</a> về máy
--  Mở Command Prompt / Terminal, rỏ tới thư mục chứa file <strong>requirements.txt</strong>, thông thường là <strong>Downloads</strong> bằng lệnh:</p>
+<div class="admonition tip">
+<p class="admonition-title">Lưu ý</p>
+<p>Trong trường hợp bạn không sử dụng Google Colab là môi trường mặc định để chạy vnstock, bạn sẽ cần phải đảm bảo môi trường Python của mình có đầy đủ các gói phần mềm bắt buộc kèm theo (dependencies/requirements) để có thể chạy được <code>vnstock</code>. </p>
+</div>
+<ul>
+<li>
+<p>Nếu cài Python với Anaconda, bạn có thể bỏ qua bước này.</p>
+</li>
+<li>
+<p>Nếu cài bản python thuần từ python.org hoặc Python từ Windows Store, bạn sẽ cần cài đặt thêm tối thiểu <code>pandas</code> và <code>requests</code> với công cụ <code>pip</code>.</p>
+</li>
+</ul>
+<p>Để quá trình cài đặt diễn ra đơn giản và suôn sẻ, bạn có thể làm theo các bước sau:</p>
+<ul>
+<li>
+<p>Tải file <a href="https://github.com/thinh-vu/vnstock/blob/beta/requirements.txt">requirement.txt</a> về máy</p>
+</li>
+<li>
+<p>Mở Command Prompt / Terminal, trỏ tới thư mục chứa file <code>requirements.txt</code>, thông thường là <code>Downloads</code> bằng lệnh:</p>
+</li>
+</ul>
 <p><code>cd  ĐỊA_CHỈ_THƯ_MỤC_CỦA_BẠN</code></p>
 <ul>
 <li>Chạy lệnh sau: </li>
 </ul>
 <p><code>pip install -r requirements.txt</code></p>
-<p>Như vậy là qúa trình chuẩn bị để sử dụng <strong>vnstock</strong> đã hoàn thành. Chúc bạn thành công!</p>
+<p>Như vậy là qúa trình chuẩn bị để sử dụng <code>vnstock</code> đã hoàn thành. Chúc bạn thành công!</p>
 
 
   
