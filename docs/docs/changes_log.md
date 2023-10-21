@@ -4,6 +4,10 @@ sidebar_position: 7
 
 # Lịch sử cập nhật
 
+## 21-10-2023
+- Giới thiệu cách sử dụng vnstock trong Google Sheets với Neptyne for Google Sheets.
+- Di chuyển mục nội dung vnstock cho Google Sheets sang tab `Ứng dụng & Tích hợp`
+
 ## 20-10-2023
 - Chuyển đổi nền tảng tài liệu từ Pretty-Docs sang [MkDocs Matterial](https://squidfunk.github.io/mkdocs-material/) thân thiện và nhiều tính năng hữu ích hơn.
 

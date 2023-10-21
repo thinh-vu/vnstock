@@ -166,7 +166,9 @@ nav:
     - Xếp hạng cổ phiếu: functions/rating.md
     - Định giá cổ phiếu: functions/evaluation.md
     - Biểu diễn dữ liệu: functions/chart.md
-  - Ứng dụng: showcase.md
+  - Ứng dụng & Tích hợp: 
+    - Web app: integrate/web_app.md
+    - Google Sheets: integrate/google_sheets.md
   - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
     - Ủng hộ quỹ: community/support.md
