@@ -7,7 +7,7 @@ theme:
   name: material
   icon:
     repo: fontawesome/brands/github
-  # logo: assets/vnstock_logo_bw.png
+  logo: assets/images/vnstock_logo_bw.png
   font:
     text: Roboto
     code: Roboto Mono
