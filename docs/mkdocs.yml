@@ -1,4 +1,4 @@
-site_name: Vnstokc Docs
+site_name: Vnstock Docs
 site_url: https://docs.vnstock.site
 site_description: >-
   Vnstock Docs
@@ -181,6 +181,7 @@ nav:
   - Giấy phép: cite.md
   - Phiên bản: changes_log.md
   - Miễn trừ: disclaimer.md
+  - Khóa học Python: course.md
   # - Blog: blog/index.md
 
 
