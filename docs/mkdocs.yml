@@ -212,6 +212,7 @@ nav:
     - Google Sheets: integrate/google_sheets.md
     - Amibroker: integrate/amibroker.md
     - Streamlit: integrate/streamlit.md
+    - SSI Fast Connect API: integrate/ssi_fast_connect_api.md
   - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
     - Ủng hộ quỹ: community/support.md
