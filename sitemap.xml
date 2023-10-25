@@ -2,157 +2,172 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://docs.vnstock.site/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/changes_log/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/cite/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/course/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/disclaimer/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/blog/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.vnstock.site/blog/2023/10/20/xin-chao/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <loc>https://docs.vnstock.site/blog/category/how-to/</loc>
+         <lastmod>2023-10-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/blog/category/knowledge/</loc>
+         <lastmod>2023-10-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/blog/2023/10/25/hello_there/</loc>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/community/contribute/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/community/join/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/community/support/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/faq/community/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/faq/feature/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/faq/pricing/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/faq/support/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/chart/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/comparison/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/evaluation/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.vnstock.site/functions/export/</loc>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/financial/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/fundamental/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/listing/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/rating/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/ratio/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/screener/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/functions/technical/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/integrate/google_sheets/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/integrate/web_app/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/start/installation/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/start/resources/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/start/start/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://docs.vnstock.site/blog/archive/2023/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.vnstock.site/blog/category/blog/</loc>
-         <lastmod>2023-10-24</lastmod>
+         <loc>https://docs.vnstock.site/blog/category/huong-dan/</loc>
+         <lastmod>2023-10-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
