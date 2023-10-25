@@ -4,6 +4,10 @@ sidebar_position: 7
 
 # Lịch sử cập nhật
 
+## 25-10-2023
+- Bổ sung hướng dẫn xuất dữ liệu sang các định dạng phổ biến bao gồm CSV, Excel, và dữ liệu cho Amibroker.
+- Thử nghiệm tính năng Blog của Mkdocs Matterial cho chuyên mục Kiến thức.
+
 ## 21-10-2023
 - Giới thiệu cách sử dụng vnstock trong Google Sheets với Neptyne for Google Sheets.
 - Di chuyển mục nội dung vnstock cho Google Sheets sang tab `Ứng dụng & Tích hợp`
@@ -61,64 +65,63 @@ Thử nghiệm thành công và ra mắt phiên bản thử nghiệm 1.0 cho tra
 - Cập nhật Demo Notebook để minh họa các thay đổi mới nhất.
 
 ## 24-07-2023
-- Bắt đầu triển khai chức năng truy xuất dữ liệu chứng khoán phái sinh.
-- Kết hợp một chức năng sàng lọc cổ phiếu từ TCBS vào thư viện.
+- Bắt đầu triển khai hàm truy xuất dữ liệu chứng khoán phái sinh.
+- Kết hợp một hàm sàng lọc cổ phiếu từ TCBS vào thư viện.
 - Cải thiện hàm stock_historical_data với các cập nhật sau:
   - Khi độ khung thời gian (resolution) được đặt thành **1D**, cột thời gian sẽ hiển thị theo định dạng ngày **YYYY-mm-dd**.
   - Thêm một giá trị mới **derivative** cho tham số **type**, cho phép truy xuất dữ liệu phái sinh.
 - Các tham chiếu hàm trong tệp README đã được cấu trúc theo các tình huống sử dụng thực tế, như Phân tích Kỹ thuật, Phân tích Cơ bản, Sàng lọc Cổ phiếu, vv. Điều này giúp cho tài liệu thân thiện và có tổ chức hơn với người dùng. Phiên bản tiếng Anh của tệp README cũng đã được cập nhật để phù hợp với phiên bản tiếng Việt.
 
-## 22-07-2023
-- Added a new example code to the existing [demo notebook](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) that demonstrates how to export data from Google Colab to Google Sheets.
+### 22-07-2023
+- Bổ sung hướng dẫn vào [Demo Notebook](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) giúp người dùng xuất dữ liệu từ Google Colab ra Google Sheets.
 
-## 14-07-2023
-- Released version 0.17 on Pypi
-- The **beta** branch has been promoted to become the default branch, while the **main** branch will now serve as the stable version repository.
-- The changes made in the **beta** branch will be merged into the **main** branch and released on PyPI on a monthly basis, starting from now onwards
-- The README.md file has been updated to synchronize the English and Vietnamese versions.
-- The database file listing_companies_enhanced-2023.csv in the data folder of this repository has been updated for the listing_companies function.
-- A new function, price_depth, has been introduced to retrieve trading prices and volume for a list of stocks. This function can be used in conjunction with the price_board function.
+### 14-07-2023
+- Phát hành phiên bản 0.17 trên PyPI.
+- Những thay đổi trên nhánh **beta** sẽ được cập nhật vào nhánh **main** và phát hành qua PyPI hàng tháng từ bây giờ.
+- File README.md đã được cập nhật để đồng bộ hóa phiên bản tiếng Anh và tiếng Việt.
+- Dữ liệu file listing_companies_enhanced-2023.csv trong thư mục data của repo này được sử dụng để cung cấp dữ liệu công ty niêm yết cho hàm listing_companies.
+- Hàm mới, price_depth, đã được giới thiệu để lấy giá và khối lượng giao dịch cho danh sách các cổ phiếu. Hàm này có thể được sử dụng song song với hàm price_board.
 
-## 13-07-2023
-- Classified vnstock functions in the demo Jupyter Notebook based on 5 main pillars:
-  1. Market Watch
-  2. Fundamental Analysis
-  3. Technical Analysis
-  4. Stock Pick
-  5. Trading Center
-- Revised function demos to include recently updated functions.
-- Restore the unit price of stock_historical_data from 1000 VND to VND by multiplying it by 1000.
-- The **price_board** function has been updated.
-- Implemented additional functions in the **utils.py** module to extract date values in the format of YYYY-mm-dd.
+### 13-07-2023
+- Phân loại các tính năng của vnstock trong file Demo Jupyter Notebook theo 5 nhóm chính:
+  1. Thị trường (Market Watch)
+  2. Phân tích cơ bản (Fundamental Analysis)
+  3. Phân tích kỹ thuật (Technical Analysis)
+  4. Lựa chọn cổ phiếu (Stock Screening)
+  5. Trung tâm giao dịch (Trading Center)
 
-## 05-07-2023
-- The README.md file has been revised (applied to the Vietnamese language first).
-- Functions related to SSI data source that were unavailable have been removed.
-- The **financial_ratio** function has been enhanced with the following updates:
-  - The resulting DataFrame now has a transposed structure, with the year/quarter serving as the index, facilitating usability.
-  - The **is_all** parameter has been made optional.
-- The **industry_analysis** and stock_ls_analysis functions have been improved:
-  - The resulting DataFrame now has a transposed structure, with the stock ticker names as column headers, making it more user-friendly.
-  - An additional **lang** parameter has been introduced, allowing the display of DataFrame columns in Vietnamese/English labels.
+- Đã sửa lại file demo notebook để cập nhật các hàm mới.
+- Khôi phục giá đơn vị của stock_historical_data từ 1000 VND thành VND bằng cách nhân với 1000.
+- Hàm **price_board** đã được cập nhật.
+- Bổ sung hàm mới trong mô đun **utils.py** để trích xuất giá trị ngày tháng theo định dạng YYYY-mm-dd.
 
-## 29-06-2023
-- Updated the stock_intraday_data function to elaborate more insights the data returned by the function and make it usable.
-- Updated the stock_historical_data to support getting indices historical data.
+### 05-07-2023
+- Cập nhật file README.md (áp dụng cho tiếng Việt trước).
+- Các hàm liên quan đến nguồn dữ liệu SSI không hoạt động đã bị loại bỏ.
+- Hàm **financial_ratio** đã được cải tiến với các cập nhật sau đây:
+  - DataFrame kết quả bây giờ có cấu trúc được chuyển vị (transpose), với năm/quý đóng vai trò là chỉ mục, giúp sử dụng thuận tiện hơn.
+  - Tham số **is_all** đã trở thành tham số phụ tùy chọn.
+- Hàm **industry_analysis** và stock_ls_analysis đã được cải thiện:
+  - DataFrame kết quả bây giờ có cấu trúc được chuyển vị, với tên mã cổ phiếu làm tiêu đề cột, giúp dễ sử dụng.
+  - Thêm tham số **lang**, cho phép hiển thị cột DataFrame bằng nhãn tiếng Việt hoặc tiếng Anh.
 
-## 22-06-2023
-- Referred to as version 0.15 (coming soon on Pypi)
-- Introduce a new feature to the stock_historical_data function, enabling retrieval of data with multiple time resolutions. The corresponding API endpoint supporting this function has been upgraded.
-  - Include a resolution parameter to allow users to obtain price data at intervals of 1 minute, 15 minutes, 30 minutes, 1 hour, or 1 day.
-  - Modify the column name in the returned dataframe from tradingDate to time.
-- Clearly mark functions that are not available for SSI API endpoints.
-- The **mode='live'** option in the function listing_companies() has been removed. The function will now only read the company listing from a csv file on this github repo.
-- Update the repo folder tree, added data folder data files, demo folder to store demo files.
+### 29-06-2023
+- Đã cập nhật hàm stock_intraday_data để cung cấp thêm dữ liệu chi tiết trả về bởi hàm và dễ sử dụng hơn
+- Cập nhật hàm stock_historical_data để hỗ trợ lấy dữ liệu lịch sử về các chỉ số.
 
-## 07-06-2023
-Assist in providing a Vietnamese translation for the README.md file, which will be beneficial for local users.
+### 22-06-2023
+- Phát hành phiên bản 0.15 rên Pypi.
+- Giới thiệu một tính năng mới cho hàm stock_historical_data, cho phép lấy dữ liệu với nhiều độ phân giải thời gian khác nhau. Đã nâng cấp API tương ứng hỗ trợ hàm này.
+  - Bao gồm tham số độ phân giải để cho phép người dùng lấy dữ liệu giá tại các khoảng thời gian 1 phút, 3 phút, 5 phút, 15 phút, 30 phút, 1 giờ hoặc 1 ngày.
+  - Sửa tên cột trong bảng dữ liệu trả về từ tradingDate thành time.
+- Đã đánh dấu rõ các hàm không khả dụng cho các API liên quan tới SSI.
+- Tùy chọn **mode='live'** trong hàm listing_companies() đã được loại bỏ. Hàm này bây giờ chỉ đọc danh sách công ty từ tệp csv trên repo github này.
+- Cập nhật cây thư mục cho github repo, thêm thư mục dữ liệu và thêm tệp dữ liệu, thư mục demo để lưu trữ các tệp demo.
 
-## 20-05-2023
-> The **main** branch is dedicated to major updates only, while the **beta** branch is used for minor updates. Starting from now, the PyPI package will reflect the contents of the **main** branch.
+### 07-06-2023
+Chính thức hỗ trợ hướng dẫn sử dụng bằng tiếng Việt cho tệp thư viện thông qua file README.md, giúp thúc đẩy khả năng tiếp cận với vnstock cho người dùng Việt Nam.
 
-- The listing_companies() function can now read the company listing from either a csv file on this github repo or a live API request.
-- The stock_intraday_data () function has a new limit of 100 for the page_size parameter imposed by the TCBS.
+### 20-05-2023
+- Nhánh **main** dành riêng cho các cập nhật quan trọng, trong khi nhánh **beta** được sử dụng cho các cập nhật nhỏ. Từ bây giờ, gói PyPI sẽ phản ánh nội dung của nhánh **main**.
+- Hàm listing_companies() bây giờ có thể đọc danh sách công ty từ tệp csv trên repo github này hoặc từ một yêu cầu API trực tiếp.
+- Hàm stock_intraday_data() bây giờ có một giới hạn mới là 100 cho tham số page_size do TCBS thiết lập.
