@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://docs.vnstock.site/functions/ratio/">
+        <link rel="canonical" href="https://docs.vnstock.site/functions/market/">
       
       
-        <link rel="prev" href="../financial/">
+        <link rel="prev" href="../evaluation/">
       
       
-        <link rel="next" href="../screener/">
+        <link rel="next" href="../export/">
       
       
         <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
@@ -27,7 +27,7 @@
     
     
       
-        <title>Chỉ số tài chính - Vnstock Docs</title>
+        <title>Thị trường - Vnstock Docs</title>
       
     
     
@@ -77,11 +77,11 @@
       
         <meta  property="og:type"  content="website" >
       
-        <meta  property="og:title"  content="Chỉ số tài chính - Vnstock Docs" >
+        <meta  property="og:title"  content="Thị trường - Vnstock Docs" >
       
         <meta  property="og:description"  content="Vnstock Docs" >
       
-        <meta  property="og:image"  content="https://docs.vnstock.site/assets/images/social/functions/ratio.png" >
+        <meta  property="og:image"  content="https://docs.vnstock.site/assets/images/social/functions/market.png" >
       
         <meta  property="og:image:type"  content="image/png" >
       
@@ -89,15 +89,15 @@
       
         <meta  property="og:image:height"  content="630" >
       
-        <meta  property="og:url"  content="https://docs.vnstock.site/functions/ratio/" >
+        <meta  property="og:url"  content="https://docs.vnstock.site/functions/market/" >
       
         <meta  name="twitter:card"  content="summary_large_image" >
       
-        <meta  name="twitter:title"  content="Chỉ số tài chính - Vnstock Docs" >
+        <meta  name="twitter:title"  content="Thị trường - Vnstock Docs" >
       
         <meta  name="twitter:description"  content="Vnstock Docs" >
       
-        <meta  name="twitter:image"  content="https://docs.vnstock.site/assets/images/social/functions/ratio.png" >
+        <meta  name="twitter:image"  content="https://docs.vnstock.site/assets/images/social/functions/market.png" >
       
     
     
@@ -134,7 +134,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bo-chi-so-tai-chinh" class="md-skip">
+        <a href="#chuyen-ong-thi-truong" class="md-skip">
           Skip to content
         </a>
       
@@ -169,7 +169,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Chỉ số tài chính
+              Thị trường
             
           </span>
         </div>
@@ -794,18 +794,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../ratio/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -814,7 +805,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -904,9 +894,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../market/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Thị trường
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -915,6 +925,42 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Mục lục">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Mục lục
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ban-o-nhiet-gia" class="md-nav__link">
+    Bản đồ nhiệt giá
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#top-co-phieu" class="md-nav__link">
+    Top cổ phiếu
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1475,52 +1521,144 @@
   
 
 
-<h1 id="bo-chi-so-tai-chinh">Bộ chỉ số tài chính<a class="headerlink" href="#bo-chi-so-tai-chinh" title="Anchor link to this section for reference">&para;</a></h1>
-<div class="admonition tip">
-<p class="admonition-title">Lưu ý</p>
-<p>Để tiện theo dõi và tra cứu, trong một số trường hợp chúng tôi sẽ xoay DataFrame trả về từ hàm với với phép <code>transpose</code> để thấy đầy đủ thông tin dễ hơn. Với các câu lệnh có phần kết thúc với <code>.T</code> tức là đang áp dụng phép <code>transpose</code> này.</p>
+<h1 id="chuyen-ong-thi-truong">Chuyển động thị trường<a class="headerlink" href="#chuyen-ong-thi-truong" title="Anchor link to this section for reference">&para;</a></h1>
+<div class="admonition abstract">
+<p class="admonition-title">SSI - Chuyển động thị trường</p>
+<p>Thông tin chuyển động thị trường của vnstock được cung cấp từ nguồn SSI. Bạn có thể truy xuất các thông tin được hiển thị trên giao diện người dùng của SSI vào môi trường Python bằng các hàm dưới đây. Điểm khác biệt căn bản giữa việc lấy dữ liệu thị trường bằng hàm vnstock so với tải file excel trực tiếp từ SSI là dữ liệu của vnstock có độ chi tiết cao hơn, đồng thời có thể được lấy trực tiếp vào môi trường Python mà không cần phải lưu file excel về máy để phân tích.</p>
 </div>
-<p><a class="glightbox" href="../../assets/images/financial_ratio.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/financial_ratio.png" /></a></p>
-<p>Bộ chỉ số tài chính do TCBS cung cấp có thể được trích một cách dễ dàng để có toàn bộ thông tin phân tích như bạn thấy trên giao diện website TCBS bằng câu lệnh:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">financial_ratio</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;TCB&quot;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;yearly&#39;</span><span class="p">,</span> <span class="n">is_all</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<h2 id="ban-o-nhiet-gia">Bản đồ nhiệt giá<a class="headerlink" href="#ban-o-nhiet-gia" title="Anchor link to this section for reference">&para;</a></h2>
+<p><a class="glightbox" href="../../assets/images/ssi_heatmap.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/ssi_heatmap.png" /></a></p>
+<p>Sử dụng hàm:</p>
+<p><div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">fr_trade_heatmap</span> <span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;HOSE&#39;</span><span class="p">,</span> <span class="n">report_type</span><span class="o">=</span><span class="s1">&#39;FrBuyVal&#39;</span><span class="p">)</span>
 </span></code></pre></div>
-<p>Trong đó:
-- <code>symbol</code> là mã chứng khoán bạn muốn phân tích
-- <code>report_range</code> nhận 1 trong 2 giá trị: <code>yearly</code> cho phép trả về chỉ số theo năm, <code>quarterly</code> trả về dữ liệu theo quý
-- <code>is_all</code> có giá trị mặc định là <code>True</code> cho phép lấy chỉ số qua tất cả các kỳ (năm hoặc quý), <code>False</code> cho phép lấy các kỳ gần nhất (5 năm hoặc 10 quý gần đây). Đây là tham số tùy chọn, nếu bạn không chỉ rõ, nó sẽ nhận giá trị mặc định là <code>False</code> tức rút gọn báo cáo để lấy 5 năm hoặc 10 quý gần nhất.</p>
+Trong đó:</p>
+<ul>
+<li>
+<p><code>symbol</code>: Mã sàn chứng khoán hoặc mã Chỉ số.</p>
+<ul>
+<li>Mã sàn: <code>HOSE</code>, <code>HNX</code> hoặc <code>UPCOM</code></li>
+<li>Mã Chỉ số: <code>VN30</code>, <code>VN100</code>, hoặc bất kỳ mã chỉ số nào có trong hình bên trên, được khoanh vùng màu xanh.</li>
+</ul>
+</li>
+<li>
+<p><code>report_type</code>: Loại bản đồ nhiệt giá.</p>
+<ul>
+<li><code>FrBuyVal</code>: Giá trị NĐTNN mua ròng</li>
+<li><code>FrSellVal</code>: Giá trị NĐTNN bán ròng</li>
+<li><code>FrBuyVol</code>: Khối lượng NĐTNN mua ròng</li>
+<li><code>FrSellVol</code>: Khối lượng NĐTNN bán ròng</li>
+<li><code>Volume</code>: Khối lượng giao dịch</li>
+<li><code>Value</code>: Giá trị giao dịch</li>
+<li><code>MarketCap</code>: Vốn hóa thị trường</li>
+</ul>
+</li>
+</ul>
 <p>Kết quả:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&gt;&gt;&gt;<span class="w"> </span>financial_ratio<span class="o">(</span><span class="s1">&#39;TCB&#39;</span>,<span class="w"> </span><span class="s1">&#39;yearly&#39;</span><span class="o">)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>year<span class="w">                      </span><span class="m">2022</span><span class="w">   </span><span class="m">2021</span><span class="w">   </span><span class="m">2020</span><span class="w">   </span><span class="m">2019</span><span class="w">   </span><span class="m">2018</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>ticker<span class="w">                     </span>TCB<span class="w">    </span>TCB<span class="w">    </span>TCB<span class="w">    </span>TCB<span class="w">    </span>TCB
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>priceToEarning<span class="w">             </span><span class="m">4</span>.5<span class="w">    </span><span class="m">9</span>.7<span class="w">    </span><span class="m">9</span>.0<span class="w">    </span><span class="m">8</span>.2<span class="w">   </span><span class="m">10</span>.7
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>priceToBook<span class="w">                </span><span class="m">0</span>.8<span class="w">    </span><span class="m">1</span>.9<span class="w">    </span><span class="m">1</span>.5<span class="w">    </span><span class="m">1</span>.3<span class="w">    </span><span class="m">1</span>.8
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>roe<span class="w">                      </span><span class="m">0</span>.197<span class="w">  </span><span class="m">0</span>.217<span class="w">  </span><span class="m">0</span>.181<span class="w">  </span><span class="m">0</span>.178<span class="w">  </span><span class="m">0</span>.215
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>roa<span class="w">                      </span><span class="m">0</span>.032<span class="w">  </span><span class="m">0</span>.036<span class="w">   </span><span class="m">0</span>.03<span class="w">  </span><span class="m">0</span>.029<span class="w">  </span><span class="m">0</span>.029
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>earningPerShare<span class="w">           </span><span class="m">5729</span><span class="w">   </span><span class="m">5132</span><span class="w">   </span><span class="m">3504</span><span class="w">   </span><span class="m">2869</span><span class="w">   </span><span class="m">2410</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>bookValuePerShare<span class="w">        </span><span class="m">32248</span><span class="w">  </span><span class="m">26452</span><span class="w">  </span><span class="m">21214</span><span class="w">  </span><span class="m">17679</span><span class="w">  </span><span class="m">14749</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>interestMargin<span class="w">           </span><span class="m">0</span>.053<span class="w">  </span><span class="m">0</span>.057<span class="w">  </span><span class="m">0</span>.049<span class="w">  </span><span class="m">0</span>.043<span class="w">  </span><span class="m">0</span>.041
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>nonInterestOnToi<span class="w">         </span><span class="m">0</span>.259<span class="w">   </span><span class="m">0</span>.28<span class="w">  </span><span class="m">0</span>.307<span class="w">  </span><span class="m">0</span>.323<span class="w">  </span><span class="m">0</span>.379
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>badDebtPercentage<span class="w">        </span><span class="m">0</span>.007<span class="w">  </span><span class="m">0</span>.007<span class="w">  </span><span class="m">0</span>.005<span class="w">  </span><span class="m">0</span>.013<span class="w">  </span><span class="m">0</span>.018
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>provisionOnBadDebt<span class="w">       </span><span class="m">1</span>.573<span class="w">  </span><span class="m">1</span>.629<span class="w">   </span><span class="m">1</span>.71<span class="w">  </span><span class="m">0</span>.948<span class="w">  </span><span class="m">0</span>.851
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>costOfFinancing<span class="w">          </span><span class="m">0</span>.028<span class="w">  </span><span class="m">0</span>.022<span class="w">  </span><span class="m">0</span>.031<span class="w">  </span><span class="m">0</span>.038<span class="w">  </span><span class="m">0</span>.041
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>equityOnTotalAsset<span class="w">       </span><span class="m">0</span>.162<span class="w">  </span><span class="m">0</span>.164<span class="w">   </span><span class="m">0</span>.17<span class="w">  </span><span class="m">0</span>.162<span class="w">  </span><span class="m">0</span>.161
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>equityOnLoan<span class="w">              </span><span class="m">0</span>.27<span class="w">  </span><span class="m">0</span>.268<span class="w">  </span><span class="m">0</span>.269<span class="w">  </span><span class="m">0</span>.269<span class="w">  </span><span class="m">0</span>.324
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>costToIncome<span class="w">             </span><span class="m">0</span>.328<span class="w">  </span><span class="m">0</span>.301<span class="w">  </span><span class="m">0</span>.319<span class="w">  </span><span class="m">0</span>.347<span class="w">  </span><span class="m">0</span>.318
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>equityOnLiability<span class="w">          </span><span class="m">0</span>.2<span class="w">    </span><span class="m">0</span>.2<span class="w">    </span><span class="m">0</span>.2<span class="w">    </span><span class="m">0</span>.2<span class="w">    </span><span class="m">0</span>.2
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>epsChange<span class="w">                </span><span class="m">0</span>.116<span class="w">  </span><span class="m">0</span>.465<span class="w">  </span><span class="m">0</span>.221<span class="w">  </span><span class="m">0</span>.191<span class="w">  </span><span class="m">0</span>.313
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>assetOnEquity<span class="w">              </span><span class="m">6</span>.2<span class="w">    </span><span class="m">6</span>.1<span class="w">    </span><span class="m">5</span>.9<span class="w">    </span><span class="m">6</span>.2<span class="w">    </span><span class="m">6</span>.2
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>preProvisionOnToi<span class="w">        </span><span class="m">0</span>.537<span class="w">  </span><span class="m">0</span>.554<span class="w">  </span><span class="m">0</span>.542<span class="w">   </span><span class="m">0</span>.52<span class="w">  </span><span class="m">0</span>.542
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>postTaxOnToi<span class="w">               </span><span class="m">0</span>.5<span class="w">  </span><span class="m">0</span>.497<span class="w">  </span><span class="m">0</span>.465<span class="w">  </span><span class="m">0</span>.485<span class="w">  </span><span class="m">0</span>.462
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>loanOnEarnAsset<span class="w">          </span><span class="m">0</span>.684<span class="w">  </span><span class="m">0</span>.665<span class="w">  </span><span class="m">0</span>.681<span class="w">  </span><span class="m">0</span>.649<span class="w">  </span><span class="m">0</span>.537
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>loanOnAsset<span class="w">              </span><span class="m">0</span>.602<span class="w">  </span><span class="m">0</span>.611<span class="w">  </span><span class="m">0</span>.631<span class="w">  </span><span class="m">0</span>.602<span class="w">  </span><span class="m">0</span>.498
-</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>loanOnDeposit<span class="w">            </span><span class="m">1</span>.173<span class="w">  </span><span class="m">1</span>.104<span class="w">    </span><span class="m">1</span>.0<span class="w">  </span><span class="m">0</span>.998<span class="w">  </span><span class="m">0</span>.794
-</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>depositOnEarnAsset<span class="w">       </span><span class="m">0</span>.583<span class="w">  </span><span class="m">0</span>.603<span class="w">   </span><span class="m">0</span>.68<span class="w">  </span><span class="m">0</span>.651<span class="w">  </span><span class="m">0</span>.676
-</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>badDebtOnAsset<span class="w">           </span><span class="m">0</span>.004<span class="w">  </span><span class="m">0</span>.004<span class="w">  </span><span class="m">0</span>.003<span class="w">  </span><span class="m">0</span>.008<span class="w">  </span><span class="m">0</span>.009
-</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>liquidityOnLiability<span class="w">     </span><span class="m">0</span>.347<span class="w">  </span><span class="m">0</span>.382<span class="w">  </span><span class="m">0</span>.372<span class="w">  </span><span class="m">0</span>.411<span class="w">  </span><span class="m">0</span>.531
-</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>payableOnEquity<span class="w">            </span><span class="m">5</span>.2<span class="w">    </span><span class="m">5</span>.1<span class="w">    </span><span class="m">4</span>.9<span class="w">    </span><span class="m">5</span>.2<span class="w">    </span><span class="m">5</span>.2
-</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>cancelDebt<span class="w">               </span><span class="m">0</span>.002<span class="w">  </span><span class="m">0</span>.004<span class="w">  </span><span class="m">0</span>.013<span class="w">  </span><span class="m">0</span>.002<span class="w">  </span><span class="m">0</span>.008
-</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>bookValuePerShareChange<span class="w">  </span><span class="m">0</span>.219<span class="w">  </span><span class="m">0</span>.247<span class="w">    </span><span class="m">0</span>.2<span class="w">  </span><span class="m">0</span>.199<span class="w">  </span><span class="m">0</span>.923
-</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>creditGrowth<span class="w">             </span><span class="m">0</span>.211<span class="w">  </span><span class="m">0</span>.252<span class="w">  </span><span class="m">0</span>.202<span class="w">  </span><span class="m">0</span>.443<span class="w"> </span>-0.006
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&gt;&gt;&gt;<span class="w"> </span>fr_trade_heatmap<span class="w"> </span><span class="o">(</span><span class="nv">symbol</span><span class="o">=</span><span class="s1">&#39;VN30&#39;</span>,<span class="w"> </span><span class="nv">report_type</span><span class="o">=</span><span class="s1">&#39;FrBuyVal&#39;</span><span class="o">)</span>.T
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">                                                         </span><span class="m">0</span><span class="w">   </span>...<span class="w">                                 </span><span class="m">29</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>avgPrice<span class="w">                                           </span><span class="m">21583</span>.35<span class="w">  </span>...<span class="w">                           </span><span class="m">24757</span>.58
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>best1Bid<span class="w">                                            </span><span class="m">21550</span>.0<span class="w">  </span>...<span class="w">                                </span>NaN
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>best1BidVol<span class="w">                                        </span><span class="m">205900</span>.0<span class="w">  </span>...<span class="w">                                </span>NaN
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>best1Offer<span class="w">                                            </span><span class="m">21600</span><span class="w">  </span>...<span class="w">                              </span><span class="m">24600</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>best1OfferVol<span class="w">                                         </span><span class="m">39500</span><span class="w">  </span>...<span class="w">                             </span><span class="m">690100</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>best2Bid<span class="w">                                            </span><span class="m">21500</span>.0<span class="w">  </span>...<span class="w">                                </span>NaN
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>best2BidVol<span class="w">                                        </span><span class="m">620300</span>.0<span class="w">  </span>...<span class="w">                                </span>NaN
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>best2Offer<span class="w">                                            </span><span class="m">21650</span><span class="w">  </span>...<span class="w">                              </span><span class="m">24650</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>best2OfferVol<span class="w">                                         </span><span class="m">65700</span><span class="w">  </span>...<span class="w">                              </span><span class="m">86200</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>best3Bid<span class="w">                                            </span><span class="m">21450</span>.0<span class="w">  </span>...<span class="w">                                </span>NaN
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>best3BidVol<span class="w">                                        </span><span class="m">483100</span>.0<span class="w">  </span>...<span class="w">                                </span>NaN
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>best3Offer<span class="w">                                            </span><span class="m">21700</span><span class="w">  </span>...<span class="w">                              </span><span class="m">24700</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>best3OfferVol<span class="w">                                         </span><span class="m">29700</span><span class="w">  </span>...<span class="w">                              </span><span class="m">20500</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>caStatus<span class="w">                                                     </span>...
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>ceiling<span class="w">                                               </span><span class="m">23400</span><span class="w">  </span>...<span class="w">                              </span><span class="m">28300</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>corporateEvents<span class="w">                                          </span><span class="o">[]</span><span class="w">  </span>...<span class="w">                                 </span><span class="o">[]</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>coveredWarrantType<span class="w">                                           </span>...
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>exchange<span class="w">                                               </span>hose<span class="w">  </span>...<span class="w">                               </span>hose
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>exercisePrice<span class="w">                                             </span><span class="m">0</span><span class="w">  </span>...<span class="w">                                  </span><span class="m">0</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>exerciseRatio<span class="w">                                                </span>...
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>floor<span class="w">                                                 </span><span class="m">20400</span><span class="w">  </span>...<span class="w">                              </span><span class="m">24600</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>highest<span class="w">                                               </span><span class="m">21750</span><span class="w">  </span>...<span class="w">                              </span><span class="m">25900</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>issuerName<span class="w">                                                   </span>...
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>lastTradingDate<span class="w">                                              </span>...
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>lastVol<span class="w">                                               </span><span class="m">38999</span><span class="w">  </span>...<span class="w">                              </span><span class="m">54716</span>
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>lowest<span class="w">                                                </span><span class="m">21450</span><span class="w">  </span>...<span class="w">                              </span><span class="m">24600</span>
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>matchedPrice<span class="w">                                          </span><span class="m">21550</span><span class="w">  </span>...<span class="w">                              </span><span class="m">24600</span>
+</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>maturityDate<span class="w">                                                 </span>...
+</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>nmTotalTradedValue<span class="w">                              </span><span class="m">84172900000</span><span class="w">  </span>...<span class="w">                       </span><span class="m">135463580000</span>
+</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>openPrice<span class="w">                                             </span><span class="m">21750</span><span class="w">  </span>...<span class="w">                              </span><span class="m">25900</span>
+</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a>priorClosePrice<span class="w">                                       </span><span class="m">21900</span><span class="w">  </span>...<span class="w">                              </span><span class="m">26450</span>
+</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>refPrice<span class="w">                                              </span><span class="m">21900</span><span class="w">  </span>...<span class="w">                              </span><span class="m">26450</span>
+</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>securityName<span class="w">                          </span>NGAN<span class="w"> </span>HANG<span class="w"> </span>TMCP<span class="w"> </span>A<span class="w"> </span>CHAU<span class="w">  </span>...<span class="w">                 </span>CTCP<span class="w"> </span>VINCOM<span class="w"> </span>RETAIL
+</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>stockSymbol<span class="w">                                             </span>ACB<span class="w">  </span>...<span class="w">                                </span>VRE
+</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a>stockType<span class="w">                                                 </span>s<span class="w">  </span>...<span class="w">                                  </span>s
+</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>totalShare<span class="w">                                            </span><span class="m">38999</span><span class="w">  </span>...<span class="w">                              </span><span class="m">54716</span>
+</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>tradingStatus<span class="w">                                                </span>...
+</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a>tradingUnit<span class="w">                                             </span><span class="m">100</span><span class="w">  </span>...<span class="w">                                </span><span class="m">100</span>
+</span><span id="__span-1-41"><a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a>underlyingSymbol<span class="w">                                             </span>...
+</span><span id="__span-1-42"><a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a>companyNameEn<span class="w">              </span>Asia<span class="w"> </span>Commercial<span class="w"> </span>Joint<span class="w"> </span>Stock<span class="w"> </span>Bank<span class="w">  </span>...<span class="w">  </span>Vincom<span class="w"> </span>Retail<span class="w"> </span>Joint<span class="w"> </span>Stock<span class="w"> </span>Company
+</span><span id="__span-1-43"><a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a>companyNameVi<span class="w">           </span>Ngân<span class="w"> </span>hàng<span class="w"> </span>Thương<span class="w"> </span>mại<span class="w"> </span>Cổ<span class="w"> </span>phần<span class="w"> </span>Á<span class="w"> </span>Châu<span class="w">  </span>...<span class="w">      </span>Công<span class="w"> </span>ty<span class="w"> </span>Cổ<span class="w"> </span>phần<span class="w"> </span>Vincom<span class="w"> </span>Retail
+</span><span id="__span-1-44"><a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a>oddSession<span class="w">                                               </span>LO<span class="w">  </span>...<span class="w">                                 </span>LO
+</span><span id="__span-1-45"><a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a>session<span class="w">                                                  </span>LO<span class="w">  </span>...<span class="w">                                 </span>LO
+</span><span id="__span-1-46"><a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a>buyForeignQtty<span class="w">                                       </span><span class="m">120300</span><span class="w">  </span>...<span class="w">                             </span><span class="m">748207</span>
+</span><span id="__span-1-47"><a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a>remainForeignQtty<span class="w">                                         </span><span class="m">0</span><span class="w">  </span>...<span class="w">                          </span><span class="m">382909157</span>
+</span><span id="__span-1-48"><a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a>sellForeignQtty<span class="w">                                      </span><span class="m">120365</span><span class="w">  </span>...<span class="w">                             </span><span class="m">695725</span>
+</span><span id="__span-1-49"><a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a>matchedVolume<span class="w">                                            </span><span class="m">30</span><span class="w">  </span>...<span class="w">                                 </span><span class="m">50</span>
+</span><span id="__span-1-50"><a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a>priceChange<span class="w">                                            </span>-350<span class="w">  </span>...<span class="w">                              </span>-1850
+</span><span id="__span-1-51"><a id="__codelineno-1-51" name="__codelineno-1-51" href="#__codelineno-1-51"></a>priceChangePercent<span class="w">                                     </span>-1.6<span class="w">  </span>...<span class="w">                              </span>-6.99
+</span><span id="__span-1-52"><a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a>lastMatchedPrice<span class="w">                                      </span><span class="m">21550</span><span class="w">  </span>...<span class="w">                              </span><span class="m">24600</span>
+</span><span id="__span-1-53"><a id="__codelineno-1-53" name="__codelineno-1-53" href="#__codelineno-1-53"></a>lastMatchedVolume<span class="w">                                        </span><span class="m">30</span><span class="w">  </span>...<span class="w">                                 </span><span class="m">50</span>
+</span><span id="__span-1-54"><a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a>lastPriceChange<span class="w">                                        </span>-350<span class="w">  </span>...<span class="w">                              </span>-1850
+</span><span id="__span-1-55"><a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a>lastPriceChangePercent<span class="w">                                 </span>-1.6<span class="w">  </span>...<span class="w">                              </span>-6.99
+</span><span id="__span-1-56"><a id="__codelineno-1-56" name="__codelineno-1-56" href="#__codelineno-1-56"></a>nmTotalTradedQty<span class="w">                                    </span><span class="m">3899900</span><span class="w">  </span>...<span class="w">                            </span><span class="m">5471600</span>
+</span><span id="__span-1-57"><a id="__codelineno-1-57" name="__codelineno-1-57" href="#__codelineno-1-57"></a>
+</span><span id="__span-1-58"><a id="__codelineno-1-58" name="__codelineno-1-58" href="#__codelineno-1-58"></a><span class="o">[</span><span class="m">54</span><span class="w"> </span>rows<span class="w"> </span>x<span class="w"> </span><span class="m">30</span><span class="w"> </span>columns<span class="o">]</span>
+</span></code></pre></div>
+<h2 id="top-co-phieu">Top cổ phiếu<a class="headerlink" href="#top-co-phieu" title="Anchor link to this section for reference">&para;</a></h2>
+<p><a class="glightbox" href="../../assets/images/ssi_top_move.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/ssi_top_move.png" /></a></p>
+<p>Sử dụng hàm:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">market_top_mover</span> <span class="p">(</span><span class="n">report_name</span><span class="o">=</span><span class="s1">&#39;Value&#39;</span><span class="p">,</span> <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span> <span class="s1">&#39;NetBuyVol&#39;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;ThreeMonths&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;OnePointFive&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vi&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Trong đó <code>report_name</code> là tên loại báo cáo cần truy xuất, nhận một trong các giá trị sau:</p>
+<ul>
+<li>report_name: Tên của loại báo cáo<ul>
+<li><code>Breakout</code>: Top đột phá</li>
+<li><code>Value</code>: Top giá trị</li>
+<li><code>Losers</code>: Top giảm giá</li>
+<li><code>Gainers</code>: Top tăng giá</li>
+<li><code>Volume</code>: Top khối lượng</li>
+<li><code>ForeignTrading</code>: Top NĐTNN</li>
+<li><code>NewHigh</code>: Top vượt đỉnh</li>
+<li><code>NewLow</code>: Top thủng đáy</li>
+</ul>
+</li>
+<li><code>exchange</code>: Chọn sàn giao dịch để truy xuất báo cáo. <code>All</code> cho tất cả, hoặc riêng lẻ từng sàn <code>HOSE</code>, <code>HNX</code>, <code>UPCOM</code></li>
+<li><code>filter</code>: Lọc loại báo cáo, áp dụng cho loại báo cáo Top NĐTNN, hàm sẽ tự động áp dụng với loại báo cáo phù hợp.<ul>
+<li><code>NetBuyVol</code>: Top khối lượng mua ròng</li>
+<li><code>NetBuyVal</code>: Top giá trị mua ròng</li>
+<li><code>NetSellVol</code>: Top khối lượng bán ròng</li>
+<li><code>NetSellVal</code>: Top giá trị bán ròng</li>
+</ul>
+</li>
+<li><code>report_range</code>: Chọn khung thời gian báo cáo <code>OneWeek</code> cho 5 ngày, <code>TwoWeek</code> cho 10 ngày, <code>OneMonth</code> cho 1 tháng, <code>ThreeMonths</code> cho 3 tháng, <code>SixMonths</code> cho 6 tháng, <code>OneYear</code> cho 1 năm</li>
+<li><code>rate</code>: Tỉ lệ Khối lượng giao dịch so với Khối lượng giao dịch trung bình trong số phiên xác định (ví dụ 10 ngày, 1 tháng). Nhận một trong các giá trị <code>OnePointTwo</code> cho 1.2, <code>OnePointFive</code> cho 1.5, <code>Two</code> cho 2, <code>Five</code> cho 5, <code>Ten</code> cho 10
+lang: chọn ngôn ngữ của dữ liệu trả về là tiếng Việt <code>vi</code>, hoặc Anh <code>en</code></li>
+</ul>
+<p>Dưới đây là các mẫu lệnh để tải từng loại báo cáo nêu trên. Xem thêm chi tiết Demo Notebook để tham chiếu kết quả từng hàm cụ thể.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">market_top_mover</span> <span class="p">(</span><span class="n">report_name</span><span class="o">=</span><span class="s1">&#39;Value&#39;</span><span class="p">,</span> <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span> <span class="s1">&#39;NetBuyVol&#39;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;ThreeMonths&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;OnePointFive&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vi&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">market_top_mover</span> <span class="p">(</span><span class="n">report_name</span><span class="o">=</span><span class="s1">&#39;Losers&#39;</span><span class="p">,</span> <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span> <span class="s1">&#39;NetBuyVol&#39;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;ThreeMonths&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;OnePointFive&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vi&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">market_top_mover</span> <span class="p">(</span><span class="n">report_name</span><span class="o">=</span><span class="s1">&#39;Gainers&#39;</span><span class="p">,</span> <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span> <span class="s1">&#39;NetBuyVol&#39;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;ThreeMonths&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;OnePointFive&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vi&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">market_top_mover</span> <span class="p">(</span><span class="n">report_name</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">,</span> <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span> <span class="s1">&#39;NetBuyVol&#39;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;ThreeMonths&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;OnePointFive&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vi&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">market_top_mover</span> <span class="p">(</span><span class="n">report_name</span><span class="o">=</span><span class="s1">&#39;ForeignTrading&#39;</span><span class="p">,</span> <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span> <span class="s1">&#39;NetBuyVol&#39;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;ThreeMonths&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;OnePointFive&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vi&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">market_top_mover</span> <span class="p">(</span><span class="n">report_name</span><span class="o">=</span><span class="s1">&#39;NewLow&#39;</span><span class="p">,</span> <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span> <span class="s1">&#39;NetBuyVol&#39;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;ThreeMonths&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;OnePointFive&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vi&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">market_top_mover</span> <span class="p">(</span><span class="n">report_name</span><span class="o">=</span><span class="s1">&#39;NewHigh&#39;</span><span class="p">,</span> <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span> <span class="s1">&#39;NetBuyVol&#39;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;ThreeMonths&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;OnePointFive&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vi&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">market_top_mover</span> <span class="p">(</span><span class="n">report_name</span><span class="o">=</span><span class="s1">&#39;Breakout&#39;</span><span class="p">,</span> <span class="n">exchange</span><span class="o">=</span><span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span> <span class="s1">&#39;NetBuyVol&#39;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;TwoWeeks&#39;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;OnePointFive&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vi&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 
 
@@ -1551,7 +1689,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../financial/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Báo cáo tài chính">
+          <a href="../evaluation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Định giá cổ phiếu">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1561,20 +1699,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Báo cáo tài chính
+                Định giá cổ phiếu
               </div>
             </div>
           </a>
         
         
           
-          <a href="../screener/" class="md-footer__link md-footer__link--next" aria-label="Next: Bộ lọc cổ phiếu">
+          <a href="../export/" class="md-footer__link md-footer__link--next" aria-label="Next: Xuất dữ liệu">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Bộ lọc cổ phiếu
+                Xuất dữ liệu
               </div>
             </div>
             <div class="md-footer__button md-icon">
