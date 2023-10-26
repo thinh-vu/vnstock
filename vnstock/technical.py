@@ -43,6 +43,13 @@ def ohlc_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolutio
     # convert from_date, to_date to timestamp
     from_timestamp = int(datetime.strptime(start_date, '%Y-%m-%d').timestamp())
     to_timestamp = int(datetime.strptime(end_date, '%Y-%m-%d').timestamp())
+    # if resolution is not 1D, then calculate the start date is last 90 days from end_date
+    if resolution != '1D':
+        new_from_timestamp = to_timestamp - 90 * 24 * 60 * 60
+        # if new_from_timestamp > from_timestamp, then print a notice to user that data is limit to 90 days
+        if new_from_timestamp > from_timestamp:
+            from_timestamp = new_from_timestamp
+            print("Data is limited to the last 90 days for all resolution in minutes", "\n")
     url = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/{type}?from={from_timestamp}&to={to_timestamp}&symbol={symbol}&resolution={resolution}"
     response = requests.request("GET", url, headers=headers)
 

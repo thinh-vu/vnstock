@@ -1,2 +1,2 @@
-# Blog
+# Kiến thức chung
 

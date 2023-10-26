@@ -241,26 +241,55 @@ def company_news (symbol='TCB', page_size=15, page=0, headers=tcbs_headers):
     return df
 
 # FINANCIAL REPORT
-def financial_report (symbol, report_type, frequency, headers=ssi_headers): # Quarterly, Yearly
+## Financial report from SSI
+def financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly', headers=ssi_headers): # Quarterly, Yearly
     """
-    This function returns the balance sheet of a stock symbol by a Quarterly or Yearly range.
+    Return financial reports of a stock symbol by type and period.
     Args:
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
         report_type (:obj:`str`, required): BalanceSheet, IncomeStatement, CashFlow
         report_range (:obj:`str`, required): Yearly or Quarterly.
     """
     url = 'https://fiin-fundamental.ssi.com.vn/FinancialStatement/Download{}?language=vi&OrganCode={}&Skip=0&Frequency={}'.format(report_type, symbol, frequency)
-    r = requests.get(url, headers=headers)
-    df = pd.read_excel(BytesIO(r.content), skiprows=7).dropna()
+    response = requests.get(url, headers=headers)
+    status = response.status_code
+    if status == 200:
+        df = pd.read_excel(BytesIO(response.content), skiprows=7).dropna()
+        return df
+    else:
+        print(f'Error {status} when getting data from SSI. Details:\n {response.text}')
+        return None
+
+## report from TCBS
+def financial_flow(symbol='TCB', report_type='incomestatement', report_range='quarterly', get_all=True): # incomestatement, balancesheet, cashflow | report_range: 0 for quarterly, 1 for yearly
+    """
+    This function returns the quarterly financial ratios of a stock symbol. Some of expected ratios are: priceToEarning, priceToBook, roe, roa, bookValuePerShare, etc
+    Args:
+        symbol (:obj:`str`, required): 3 digits name of the desired stock.
+        report_type (:obj:`str`, required): select one of 3 reports: incomestatement, balancesheet, cashflow.
+        report_range (:obj:`str`, required): yearly or quarterly.
+    """
+    if report_range == 'yearly':
+        range = 1
+    elif report_range == 'quarterly':
+        range = 0
+    data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{symbol}/{report_type}', params={'yearly': range, 'isAll': get_all}).json()
+    df = json_normalize(data)
+    df[['year', 'quarter']] = df[['year', 'quarter']].astype(str)
+    # if report_range == 'yearly' then set index to df['year'], else set index to df['year'] + df['quarter']
+    if report_range == 'yearly':
+        df['index'] = df['year']
+    elif report_range == 'quarterly':
+        df['index'] = df['year'].str.cat('-Q' + df['quarter'])
+    df = df.set_index('index').drop(columns={'year', 'quarter'})
     return df
 
 def financial_ratio_compare (symbol_ls=["CTG", "TCB", "ACB"], industry_comparison=True, frequency='Yearly', start_year=2010, headers=ssi_headers): 
     """
-    This function returns the balance sheet of a stock symbol by a Quarterly or Yearly range.
+    This function returns financial report of a stock symbol by type and period.
     Args:
         symbol (:obj:`str`, required): ["CTG", "TCB", "ACB"].
         industry_comparison (:obj: `str`, required): "True" or "False"
-        report_range (:obj:`str`, required): Yearly or Quarterly.
         frequency (:obj:`str`, required): Yearly or Quarterly.
         start_year (:obj:`str`, required): Enter the start year of the report.
     """
@@ -321,28 +350,6 @@ def financial_ratio (symbol, report_range, is_all=False):
     df = df.T
     return df
 
-def financial_flow(symbol='TCB', report_type='incomestatement', report_range='quarterly', get_all=True): # incomestatement, balancesheet, cashflow | report_range: 0 for quarterly, 1 for yearly
-    """
-    This function returns the quarterly financial ratios of a stock symbol. Some of expected ratios are: priceToEarning, priceToBook, roe, roa, bookValuePerShare, etc
-    Args:
-        symbol (:obj:`str`, required): 3 digits name of the desired stock.
-        report_type (:obj:`str`, required): select one of 3 reports: incomestatement, balancesheet, cashflow.
-        report_range (:obj:`str`, required): yearly or quarterly.
-    """
-    if report_range == 'yearly':
-        range = 1
-    elif report_range == 'quarterly':
-        range = 0
-    data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{symbol}/{report_type}', params={'yearly': range, 'isAll': get_all}).json()
-    df = json_normalize(data)
-    df[['year', 'quarter']] = df[['year', 'quarter']].astype(str)
-    # if report_range == 'yearly' then set index to df['year'], else set index to df['year'] + df['quarter']
-    if report_range == 'yearly':
-        df['index'] = df['year']
-    elif report_range == 'quarterly':
-        df['index'] = df['year'].str.cat('-Q' + df['quarter'])
-    df = df.set_index('index').drop(columns={'year', 'quarter'})
-    return df
 
 def dividend_history (symbol):
     """

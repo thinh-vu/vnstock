@@ -36,7 +36,7 @@ def stock_ls_analysis (symbol_ls, lang='vi'):
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
         lang (:obj:`str`, optional): Set to 'vi' to retrieve the column labels in Vietnamese, 'en' to retrieve the data in English. Default is 'vi'.
     """
-    data = requests.get('https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/council?tickers={}&fType=TICKERS'.format(symbol_ls)).json()
+    data = requests.get(f'https://apipubaws.tcbs.com.vn/tcanalysis/v1/rating/detail/council?tickers={symbol_ls}&fType=TICKERS').json()
     df = json_normalize(data).dropna(axis=1)
     # if label=vi, then rename all columns: ticker to Mã CP, marcap to Vốn hóa (tỷ), price to Giá, numberOfDays to Số phiên tăng/giảm liên tiếp, priceToEarning to P/E, peg to PEG, priceToBook to P/B, dividend to Cổ tức, roe to ROE, roa to ROA, ebitOnInterest to Thanh toán lãi vay, currentPayment to Thanh toán hiện hành, quickPayment to Thanh toán nhanh, grossProfitMargin to Biên LNG, postTaxMargin to Biên LNST, debtOnEquity to Nợ/Vốn CSH, debtOnEbitda to Nợ/EBITDA, income5year to LNST 5 năm,  sale5year to Doanh thu 5 năm, income1quarter to LNST quý gần nhất, sale1quarter to Doanh thu quý gần nhất, nextIncome to LNST năm tới, nextSale to Doanh thu quý tới, rsi to RSI
     # drop na columns

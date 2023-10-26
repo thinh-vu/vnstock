@@ -3,7 +3,7 @@
 ![](../assets/images/stock_ohlc_data.png)
 
 !!! info "Lưu ý"
-    Phiên bản API hiện tại cho phép truy cập giá lịch sử tối đa đến ngày 2012-03-20 đối với tất cả mã cổ phiếu. Nếu bạn có nhu cầu lấy lịch sử giá từ thời điểm thị trường chứng khoán bắt đầu hoạt động (REE là mã cổ phiếu có giao dịch sớm nhất thị trường vào 2000-07-31), hãy tham gia nhóm thành viên vnstock trên Facebook để được hỗ trợ. Xem thêm chi tiết tại [FAQ](../faqs.md).
+    Phiên bản API hiện tại cho phép truy cập giá lịch sử tối đa đến ngày 2012-03-20 đối với tất cả mã cổ phiếu. Nếu bạn có nhu cầu lấy lịch sử giá từ thời điểm thị trường chứng khoán bắt đầu hoạt động (REE là mã cổ phiếu có giao dịch sớm nhất thị trường vào 2000-07-31), hãy tham gia nhóm thành viên vnstock trên Facebook để được hỗ trợ. Xem thêm chi tiết tại [FAQ](../faq/community.md).
 
 vnstock cho phép người dùng tải xuống dữ liệu lịch sử giao dịch của `mã cổ phiếu, chỉ số, hợp đồng phái sinh`.
 

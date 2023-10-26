@@ -1,4 +1,4 @@
-site_name: Vnstokc Docs
+site_name: Vnstock Docs
 site_url: https://docs.vnstock.site
 site_description: >-
   Vnstock Docs
@@ -7,7 +7,8 @@ theme:
   name: material
   icon:
     repo: fontawesome/brands/github
-  # logo: assets/vnstock_logo_bw.png
+  logo: assets/images/vnstock_logo_bw.png
+  favicon: assets/images/vnstock_logo_bw.png
   font:
     text: Roboto
     code: Roboto Mono
@@ -27,8 +28,8 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
-    - content.action.edit
-    - content.action.view
+    # - content.action.edit
+    # - content.action.view
     - content.code.copy
     - content.code.annotate
     - content.tooltips
@@ -41,7 +42,6 @@ theme:
     - navigation.tracking
     - navigation.sections
     - navigation.tabs
-    - navigation.sections
     - navigation.tabs.sticky
     - navigation.expand
     - navigation.path
@@ -56,11 +56,52 @@ extra_css:
 edit_uri: edit/main/docs/docs                 
 plugins:
   - glightbox
-  - blog
   # - search
   - tags
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - social: # display a preview on social for links
+      # cards_layout: default 
+  # - meta # blog metadata
+  - blog:
+      enabled: true
+      blog_toc: true
+      post_dir: "{blog}/posts"
+      post_date_format: full
+      post_url_date_format: yyyy/MM/dd
+      post_url_format: "{date}/{slug}"
+      post_url_max_categories: 2
+      post_slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+      post_slugify_separator: _
+      post_excerpt: optional
+      post_excerpt_max_categories: 2
+      post_excerpt_separator: <!-- more -->
+      post_readtime: true
+      post_readtime_words_per_minute: 300
+      categories: true
+      categories_name: Danh mục
+      categories_url_format: "category/{slug}"
+      categories_toc: true
+      archive: true
+      archive_name: Dòng thời gian
+      archive_date_format: yyyy
+      archive_url_date_format: yyyy
+      archive_url_format: "archive/{date}"
+      archive_toc: true
+      # categories_allowed:
+      #   - hướng dẫn
+      #   - kiến thức
+      #   - How to
+  - rss:
+      match_path: blog/posts/.* 
+      date_from_meta:
+        as_creation: date
+      categories:
+        - categories
+        - tags 
+
 
 markdown_extensions:
   - toc:
@@ -130,9 +171,12 @@ extra:
     - icon: fontawesome/brands/github 
       link: https://github.com/thinh-vu
     - icon: fontawesome/brands/linkedin
-      link: https://www.linkedin.com/in/thinh-vu/
+      link: https://www.linkedin.com/company/vnstock
     - icon: fontawesome/brands/facebook
-      link: https://www.facebook.com/mr.thinh.ueh
+      link: https://www.facebook.com/vnstock.official/
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/ruugCSWVCJ
+  generator: false
   # alternate:
   # - name: English
   #   link: /en/ 
@@ -142,16 +186,18 @@ extra:
   #   lang: vi
 repo_name: vnstock
 repo_url: https://github.com/thinh-vu/vnstock
+copyright: Copyright &copy; 2023 | vnstock.site
 
 # Page tree
 nav:
   - Trang chủ: index.md
   - Hướng dẫn nhanh: 
-    - Bắt đầu: start/index.md
+    - Bắt đầu: start/start.md
     - Chọn phiên bản: start/installation.md
     - Tài nguyên: start/resources.md
   - Tính năng:
     - Danh sách niêm yết: functions/listing.md
+    - Thông tin cơ bản: functions/fundamental.md
     - Giá cổ phiếu: functions/technical.md 
     - Báo cáo tài chính: functions/financial.md
     - Chỉ số tài chính: functions/ratio.md
@@ -159,15 +205,30 @@ nav:
     - So sánh cổ phiếu: functions/comparison.md
     - Xếp hạng cổ phiếu: functions/rating.md
     - Định giá cổ phiếu: functions/evaluation.md
-  - Biểu diễn dữ liệu: chart.md
-  - Cộng đồng vnstock: 
+    - Thị trường: functions/market.md
+    - Xuất dữ liệu: functions/export.md
+    - Biểu diễn dữ liệu: functions/chart.md
+  - Ứng dụng & Tích hợp: 
+    - Web app: integrate/web_app.md
+    - Google Sheets: integrate/google_sheets.md
+    - Amibroker: integrate/amibroker.md
+    - Streamlit: integrate/streamlit.md
+    - SSI Fast Connect API: integrate/ssi_fast_connect_api.md
+  - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
     - Ủng hộ quỹ: community/support.md
     - Góp sức: community/contribute.md
-  - Câu hỏi thường gặp: faqs.md
-  - Lịch sử thay đổi: changes_log.md
-  - Ứng dụng thực tế: showcase.md
-  - Trích dẫn & giấy phép: cite.md
+  - FAQs: 
+    - Sản phẩm: faq/feature.md
+    - Cộng đồng: faq/community.md
+    - Ủng hộ dự án: faq/pricing.md
+    - Hỗ trợ người dùng: faq/support.md
+  - Giấy phép: cite.md
+  - Phiên bản: changes_log.md
+  - Miễn trừ: disclaimer.md
+  - Khóa học Python: course.md
+  # - Kiến thức: 
+  #   - Blog Home: blog/index.md
 
 
 

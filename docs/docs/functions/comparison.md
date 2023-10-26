@@ -1,14 +1,14 @@
 # So sánh cổ phiếu tiềm năng
-## Bảng giá
-
 !!! tip  "Gợi ý"
     Bạn có thể tải xuống bảng giá của một danh sách các cổ phiếu được chọn để phân tích, thiết lập thuật toán dễ dàng hơn (khi xuất ra Google Sheets/Excel) so với việc xem trực tiếp trên bảng giá của các công ty chứng khoán.
+
+## Bảng giá
 
 Minh họa Bảng giá TCBS
 
 ![](../assets/images/tcbs_trading_board_sector.png)
 
-### Thông tin bước giá, khối lượng và khớp lệnh
+### Khớp lệnh, Bước giá & khối lượng
 ```python
 price_depth('TCB,SSI,VND')
 ```
@@ -17,13 +17,30 @@ Sử dụng hàm này cho phép thống kê các bước giá và khối lượn
 - Kết quả:
 
 ```shell
-  >>> price_depth('TCB,SSI,VND')
-  Mã CP  Giá tham chiếu  Giá Trần  Giá Sàn  Giá mua 3 KL mua 3  Giá mua 2 KL mua 2  Giá mua 1  ... KL bán 1  Giá bán 2  KL bán 2  Giá bán 3 KL bán 3  Tổng Khối Lượng ĐTNN Mua  ĐTNN Bán  ĐTNN Room
-0   TCB           31950     34150    29750      31900       10      31850      130      31800  ...     9240      32000     19940      32049     7750           447200        0         0          0     
-1   SSI           28400     30350    26450      28450      100      28400     9850      28350  ...    30640      28550     22730      28600    48410          1610280   142759     17353  803963854     
-2   VND           17950     19200    16700      18450    11620      18400    38790      18350  ...    73180      18550     87830      18600   223700          4360710   152966      8355  932083910     
-
-[3 rows x 22 columns]
+>>> price_depth('TCB,SSI,VND').T
+                      0          1          2
+Mã CP               TCB        SSI        VND
+Giá tham chiếu    30650      30100      19150
+Giá Trần          32750      32200      20450
+Giá Sàn           28550      28000      17850
+Giá mua 3         31100      29850      18900
+KL mua 3           1630       3240       8310
+Giá mua 2         31050      29800      18850
+KL mua 2           1320      10690      13480
+Giá mua 1         31000      29750      18800
+KL mua 1           2260       3220      12160
+Giá khớp lệnh     31100      29900      18900
+KL Khớp lệnh         90        140        100
+Giá bán 1         31200      29900      18950
+KL bán 1           2140       2980       6720
+Giá bán 2         31250      29950      19000
+KL bán 2           5410       4340      16200
+Giá bán 3         31300      30000      19050
+KL bán 3            810      17840      11000
+Tổng Khối Lượng  164810    1783250    1812410
+ĐTNN Mua              0      45896      20285
+ĐTNN Bán              0      77526      38110
+ĐTNN Room             0  837230225  936537977
 ```
 
 ### Thông tin giao dịch
@@ -36,15 +53,60 @@ Hàm này cho phép tải về thông tin giá, khối lượng và các chỉ s
 - Kết quả:
 
 ```shell
->>> price_board('TCB,SSI,VND')
-
-Mã CP  Giá Khớp Lệnh  KLBD/TB5D  T.độ GD  KLGD ròng(CM)  ...  vnid1m  vnid3m  vnid1y  vnipe    vnipb
-0   TCB        48600.0        0.6     0.49         -23200  ...    -3.7    -2.0    22.4  17.99  2.46159
-1   SSI        43300.0        0.5     0.50        -112200  ...    -3.7    -2.0    22.4  17.99  2.46159
-2   VND        32600.0        0.7     0.68          37300  ...    -3.7    -2.0    22.4  17.99  2.46159
+>>> price_board('TCB,SSI,VND').T
+                            0           1           2
+Mã CP                     TCB         SSI         VND
+Giá                   31100.0     29900.0     18850.0
+KLBD/TB5D                0.95        1.33        1.28
+T.độ GD                  0.82        0.68        0.83
+KLGD ròng(CM)               0     -219100      198000
+%KLGD ròng (CM)           0.0       -19.6        14.2
+RSI                 35.168889    38.43115   35.726964
+MACD Hist               -0.13       -0.34       -0.23
+MACD Signal           Neutral        Sell        Sell
+Tín hiệu KT           Neutral     Neutral     Neutral
+Tín hiệu TB động   Strong Buy  Strong Buy  Strong Buy
+MA20                  32265.0     31957.5     20772.5
+MA50                  33446.0     32258.0     21899.0
+MA100                 33034.5     29527.0     20479.0
+Phiên +/-                  -6          -1          -1
+% thay đổi giá 3D        -3.5        -4.3        -4.3
+% thay đổi giá 1M       -10.1       -15.7       -22.0
+% thay đổi giá 3M        -5.1         5.4         4.1
+% thay đổi giá 1Y        21.1        75.8        31.2
+RS 3D                    50.0        34.0        22.0
+RS 1M                    38.0        23.0        11.0
+RS 3M                    45.0        76.0        73.0
+RS 1Y                    69.0        95.0        77.0
+RS TB                    50.0        57.0        46.0
+Đỉnh 1M                 34350       36450       25250
+Đỉnh 3M                 35750       36450       25250
+Đỉnh 1Y                 35750       36450       25250
+Đáy 1M                  30650       30100       19150
+Đáy 3M                  30650       28000       18100
+Đáy 1Y                  20700       13373        9720
+%Đỉnh 1Y                -14.3       -17.4       -24.2
+%Đáy 1Y                  48.1       125.1        97.0
+P/E                       6.1        22.4        41.0
+P/B                       0.9         2.0         1.5
+ROE                   0.15834    0.090235    0.038377
+TCRating                  4.2         3.8         3.8
+Khối lượng Dư bán       84500      251400      292000
+Khối lượng Dư mua       51000      168800      503100
+TCBS định giá           48627       17496       12096
+Khớp nhiều nhất         30650       29500       18800
+Đ.góp VNINDEX             0.4       -0.08       -0.09
+%Giá - %VNI (1M)          0.1        -5.5       -11.8
+%Giá - %VNI (1Y)         18.9        73.5        28.9
+VNINDEX P/E           13.9448     13.9448     13.9448
+VNINDEX P/B           1.58262     1.58262     1.58262
+vnid3d                   -3.0        -3.0        -3.0
+vnid1m                  -10.2       -10.2       -10.2
+vnid3m                   -7.3        -7.3        -7.3
+vnid1y                    2.3         2.3         2.3
 ```
 
-## Phân tích chỉ số các cổ phiếu cùng ngành
+## So sánh cổ phiếu cùng ngành
 
 ```python
 industry_analysis("VNM", lang='vi')
@@ -87,17 +149,36 @@ Doanh thu năm tới              NaN     0.2    0.3  0.162  0.283     0.1    0.
 RSI                            NaN    50.7   43.1   71.8   24.0    28.5   59.2   33.7   68.2   53.5   46.6   44.1   51.1   32.3   55.5   55.3    33.3   54.8   61.1
 ```
 
-## So sánh chỉ số của danh sách cổ phiếu tùy chọn
+## So sánh các cổ phiếu tùy ý
+
+!!! bug "Ghi nhận lỗi"
+    20/10/2023: Hiện tại hàm ghi nhận lỗi không trả về kết quả như mong muốn từ chính nguồn cấp dữ liệu là TCBS.
+
 ```python
 stock_ls_analysis("TCB, BID, CEO, GMD", lang='vi')
 ```
 
-- Kết quả:
+Kết quả:
 
 ```shell
-  ticker  marcap  price  numberOfDays  priceToEarning  peg  priceToBook  valueBeforeEbitda  dividend  ...  debtOnEbitda  income5year  sale5year income1quarter  sale1quarter  nextIncome  nextSale   rsi    rs
-0    GMD   15220  50500            -3            25.2  0.4          2.4               16.2       0.0  ...           1.8        0.092     -0.030          0.500         0.425         NaN       NaN  60.3  50.0
-1    CEO   17062  66300             1           183.2 -0.8          5.7               81.8       0.0  ...           7.8       -0.099     -0.086            NaN         3.002      -1.469      -0.2  51.9  82.0
-2    BID  225357  44550            -3            21.3  0.4          2.6                NaN       0.0  ...           NaN        0.115      0.154          0.083         0.000         NaN       NaN  49.1  34.0
-3    TCB  178003  50700             1             9.9  0.2          1.9                NaN       0.0  ...           NaN        0.418      0.255          0.059         0.157         NaN       NaN  45.2  28.0
+>>> stock_ls_analysis("TCB, BID, CEO, GMD", lang='vi')
+Mã CP                            BID    CEO    GMD     TCB
+Vốn hóa (tỷ)                  203353   9367  19853  107803
+Giá                            40200  18200  64900   30650
+Số phiên tăng/giảm liên tiếp       1      0      2      -6
+P/E                             10.0   32.8    8.7     6.1
+PEG                              0.2    2.3    0.1    -0.5
+P/B                              1.8    2.8    2.3     0.9
+Cổ tức                           0.0    0.0  0.045     0.0
+ROE                            0.203   0.09  0.294   0.158
+ROA                             0.01   0.04   0.18   0.026
+Nợ/Vốn CSH                      17.6    0.2    0.2     5.0
+LNST 5 năm                     0.218  0.094  0.144   0.256
+Doanh thu 5 năm                0.123  0.068 -0.004     0.2
+LNST quý gần nhất             -0.008  0.412  7.163  -0.009
+Doanh thu quý gần nhất        -0.001 -0.073  0.011   0.003
+LNST năm tới                  -0.023 -0.012  1.288  -0.084
+Doanh thu năm tới              0.124   -0.1    0.0   0.084
+RSI                             29.2   34.9   54.9    29.0
+RS                              44.0   48.0   85.0    50.0
 ```
