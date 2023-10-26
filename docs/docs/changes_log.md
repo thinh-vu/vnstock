@@ -4,6 +4,11 @@ sidebar_position: 7
 
 # Lịch sử cập nhật
 
+## 26-10-2023
+- Khôi phục các hàm lấy dữ liệu từ nguồn SSI gồm `financial_report`, `fr_trade_heatmap`, `market_top_mover` do SSI hiện tại đã gỡ bỏ mọi hạn chế về kỹ thuật áp dụng cho bot thực hiện web scraping.
+- Cập nhật tài liệu sử dụng kèm theo
+- Cập nhật Demo Notebook
+
 ## 25-10-2023
 - Bổ sung hướng dẫn xuất dữ liệu sang các định dạng phổ biến bao gồm CSV, Excel, và dữ liệu cho Amibroker.
 - Thử nghiệm tính năng Blog của Mkdocs Matterial cho chuyên mục Kiến thức.

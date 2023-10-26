@@ -3,6 +3,102 @@
 !!! tip "Lưu ý"
     Để tiện theo dõi và tra cứu, trong một số trường hợp chúng tôi sẽ xoay DataFrame trả về từ hàm với với phép `transpose` để thấy đầy đủ thông tin dễ hơn. Với các câu lệnh có phần kết thúc với `.T` tức là đang áp dụng phép `transpose` này.
 
+## Dữ liệu từ SSI
+
+!!! success "Cập nhật"
+    26/10/2023, Hiện tại SSI đã gỡ bỏ mọi biện pháp ngăn chặn truy cập dữ liệu qua Web Scraping đã triển khai trong khoảng 6 tháng trước. Đây là tin vui cho cộng đồng vnstock vì các bạn có thêm lựa chọn chất lượng tiếp cận nguồn dữ liệu từ SSI được cung cấp bởi FiinTrade.
+
+![](../assets/images/ssi_financial_report.png)
+
+Để truy cập báo cáo tài chính sử dụng nguồn SSI, có độ chi tiết hơn so với bản rút gọn của TCBS, bạn sử dụng hàm `financial_report` với các tham số như sau:
+
+- `symbol` là mã chứng khoán bạn muốn phân tích
+- `report_type` nhận 1 trong 3 giá trị: `IncomeStatement` cho phép trả về báo cáo kết quả kinh doanh, `BalanceSheet` trả về báo cáo cân đối kế toán, `CashFlow` trả về báo cáo lưu chuyển tiền tệ
+- `frequency` nhận 1 trong 2 giá trị: `Quarterly` cho phép trả về báo cáo theo quý, `Yearly` trả về dữ liệu theo năm
+
+Lưu ý: Dữ liệu  trả về có đơn vị Tỷ VND
+
+### Báo cáo kinh doanh
+
+```python
+financial_report (symbol='SSI', report_type='IncomeStatement', frequency='Quarterly')
+```
+
+Kết quả trả về nha sau:
+    
+```shell
+>>> financial_report (symbol='SSI', report_type='IncomeStatement', frequency='Quarterly')
+                                             CHỈ TIÊU       Q2 2021  ...       Q2 2023       Q3 2023
+0                                 Doanh thu hoạt động  1.766190e+12  ...  1.679982e+12  1.941239e+12
+1   Lãi từ các tài sản tài chính ghi nhận thông qu...  5.945796e+11  ...  7.074174e+11  7.646041e+11
+2                       Lãi bán các tài sản tài chính  3.597305e+11  ...  2.414507e+11  2.494068e+11
+3   Chêch lệch tăng đánh giá lại các tài sản tài c...  9.998599e+10  ...  3.001238e+10  7.229216e+10
+4   Cổ tức, tiền lãi phát sinh từ tài sản tài chín...  1.348630e+11  ...  4.359542e+11  4.429051e+11
+..                                                ...           ...  ...           ...           ...
+78          Thu nhập toàn diện phân bổ cho chủ sở hữu  5.908075e+11  ...  5.690949e+11  7.021931e+11
+79  Thu nhập toàn diện phân bổ cho cổ đông không k...  0.000000e+00  ...  0.000000e+00  0.000000e+00
+80             Thu nhập thuần trên cổ phiếu phổ thông  0.000000e+00  ...  0.000000e+00  0.000000e+00
+81                          Lãi cơ bản trên cổ phiếu   0.000000e+00  ...  0.000000e+00  0.000000e+00
+82                   Thu nhập pha loãng trên cổ phiếu  0.000000e+00  ...  0.000000e+00  0.000000e+00
+
+[83 rows x 11 columns]
+```
+
+### Bảng cân đối kế toán
+
+```python
+financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly')
+```
+
+Kết quả trả về như sau:
+
+```shell
+>>> financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly')
+                                      CHỈ TIÊU       Q2 2021       Q3 2021  ...       Q1 2023       Q2 2023       Q3 2023
+0                            TỔNG CỘNG TÀI SẢN  4.190985e+13  4.760360e+13  ...  5.270890e+13  5.013608e+13  5.528245e+13
+1                             TÀI SẢN NGẮN HẠN  3.767755e+13  4.131681e+13  ...  4.918462e+13  4.662242e+13  5.184164e+13
+2                   Tài sản tài chính ngắn hạn  3.761463e+13  4.123722e+13  ...  4.904718e+13  4.648384e+13  5.171536e+13
+3                    Tiền và tương đương tiền   2.433256e+11  2.898345e+11  ...  1.425135e+11  1.553829e+11  4.109663e+11
+4                                         Tiền  1.942694e+11  2.678036e+11  ...  1.386841e+11  1.472953e+11  1.820621e+11
+..                                         ...           ...           ...  ...           ...           ...           ...
+155                   Vốn ngân sách nhà nước    0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
+156          Nguồn kinh phí đã hình thành TSCĐ  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
+157  LỢI ÍCH CỦA CỔ ĐÔNG THIỂU SỐ (trước 2015)  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
+158                        TỔNG CỘNG NGUỒN VỐN  4.190985e+13  4.760360e+13  ...  5.270890e+13  5.013608e+13  5.528245e+13
+159      LỢI NHUẬN ĐÃ PHÂN PHỐI CHO NHÀ ĐẦU TƯ  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
+
+[160 rows x 11 columns]
+```
+
+### Báo cáo lưu chuyển tiền tệ
+
+```python
+financial_report (symbol='SSI', report_type='CashFlow', frequency='Quarterly')
+```
+
+Kết quả trả về như sau:
+
+```shell
+>>> financial_report (symbol='SSI', report_type='CashFlow', frequency='Quarterly')
+                                             CHỈ TIÊU       Q2 2021  ...       Q2 2023       Q3 2023
+0   Lưu chuyển thuần từ hoạt động kinh doanh chứng... -4.371889e+12  ...  3.570369e+12 -4.136934e+12
+1   Lợi nhuận từ hoạt động kinh doanh trước thay đ...  3.506681e+11  ...  2.855112e+11  3.169111e+11
+2                                Lợi nhuận trước thuế  7.334780e+11  ...  7.065172e+11  8.803150e+11
+3                            Điều chỉnh cho các khoản -3.688521e+11  ... -4.205791e+11 -5.597634e+11
+4                            Khấu hao tài sản cố định  1.454978e+10  ...  2.566442e+10  2.346254e+10
+..                                                ...           ...  ...           ...           ...
+93          Tiền và các khoản tương đương tiền đầu kỳ  2.792879e+11  ...  1.425135e+11  1.553829e+11
+94                Tiền mặt, tiền gửi ngân hàng đầu kỳ  2.253831e+11  ...  1.389411e+11  1.471383e+11
+95                         Các khoản tương đương tiền  5.416740e+10  ...  3.829481e+09  8.087528e+09
+96  Ảnh hưởng của thay đổi tỷ giá hối đoán quy đổi... -2.626010e+08  ... -2.570934e+08  1.570900e+08
+97        Tiền và các khoảng tương đương tiền cuối kỳ  2.433256e+11  ...  1.553829e+11  4.109663e+11
+
+[98 rows x 11 columns]
+```
+
+
+## Dữ liệu từ TCBS
+
 ![](../assets/images/financial_report_tcbs.png)
 
 Ba loại báo cáo này được truy xuất từ nguồn TCBS thông qua hàm `financial_flow`. Hàm này nhận 3 tham số:
@@ -13,7 +109,7 @@ Ba loại báo cáo này được truy xuất từ nguồn TCBS thông qua hàm 
 
 Cụ thể từng báo cáo được minh họa chi tiết thành từng phần như dưới đây.
 
-## Báo cáo kinh doanh
+### Báo cáo kinh doanh
 
 ![](../assets/images/financial_income_statement.png)
 
@@ -59,7 +155,7 @@ Trong đó tên các cột được chuẩn hóa bằng tiếng Anh. Để đổ
 
 <iframe width="800" height="452" src="https://www.youtube.com/embed/D3QekSAJU2s?si=r6shqYCewp1IRl31" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-## Bảng cân đối kế toán
+### Bảng cân đối kế toán
 
 ![](../assets/images/financial_balancesheet.png)
 
@@ -113,7 +209,7 @@ payable                 610005  605552  585608  561454  519263
 
 Để hiển thị báo cáo như cách trình bày trên website TCBS, bạn cần xoay (transpose) DataFrame trả về. Giả sử bạn lưu kết quả trả về vào biến `balance_df` như trên, bạn có thể sử dụng phương thức `transpose` để xoay DataFrame như sau: `balance_df.T`
 
-## Báo cáo lưu chuyển tiền tệ
+### Báo cáo lưu chuyển tiền tệ
 
 Để tải dữ liệu báo cáo lưu chuyển tiền tệ, bạn sử dụng câu lệnh:
 
