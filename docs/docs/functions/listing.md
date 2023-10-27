@@ -1,5 +1,6 @@
-# Danh sách công ty niêm yết
+# Danh sách niêm yết
 
+## Công ty niêm yết
 ```python
 listing_companies(live=True)
 ```
@@ -13,7 +14,7 @@ Hàm có một tham số duy nhất `live` nhận một trong hai giá trị.
 - Kết quả trả về như sau cho chế độ realtime:
 
 ```shell
- listing_companies(True)
+>>> listing_companies(True)
      ticker                                       organName  organTypeCode comGroupCode
 0       A32                                         CTCP 32              1        UPCOM
 1       AAA                          CTCP Nhựa An Phát Xanh              1         HOSE
@@ -32,11 +33,50 @@ Hàm có một tham số duy nhất `live` nhận một trong hai giá trị.
 - Kết quả trả về cho chế độ offline:
 
 ```shell
-listing_companies()
+>>> listing_companies()
   ticker comGroupCode                                          organName   organShortName  ...   VNIT  VNMAT VNREAL  VNUTI
 0    SSI         HOSE                    Công ty Cổ phần Chứng khoán SSI  Chứng khoán SSI  ...  False  False  False  False
 1    BCM         HOSE  Tổng Công ty Đầu tư và Phát triển Công nghiệp ...      Becamex IDC  ...  False  False   True  False
 2    VHM         HOSE                           Công ty Cổ phần Vinhomes         Vinhomes  ...  False  False   True  False
 
 [3 rows x 35 columns]
+```
+
+## Các mã chỉ số
+
+```python
+indices_listing (lang='vi')
+```
+Trong đó, tham số `lang` cho phép nhận một trong hai giá trị là `vi` cho Tiếng Việt, `en` cho Tiếng Anh.
+
+Kết quả trả về là tất cả các mã chỉ số hiện có, dữ liệu được cung cấp bởi FiinTrade/SSI. Khi sử dụng, có những trường hợp cần đổi tên các mã HNXIndex thành HNX, UpcomIndex thành UPCOM nếu cần thiết.
+
+```shell
+>>> indices_listing (lang='vi')
+   comGroupCode parentComGroupCode  comGroupOrder
+0       VNINDEX            VNINDEX              1
+1      HNXIndex           HNXIndex              2
+2          VN30            VNINDEX              2
+3        VNCOND            VNINDEX              2
+4         HNX30           HNXIndex              3
+5    UpcomIndex         UpcomIndex              3
+6         VN100            VNINDEX              3
+7        VNCONS            VNINDEX              3
+8         VNENE            VNINDEX              4
+9         VNX50            VNINDEX              4
+10        VNFIN            VNINDEX              5
+11       VNHEAL            VNINDEX              6
+12       VNXALL            VNINDEX              6
+13        VNIND            VNINDEX              7
+14         VNIT            VNINDEX              8
+15        VNMAT            VNINDEX              9
+16        VNSML            VNINDEX              9
+17        VNMID            VNINDEX             10
+18       VNREAL            VNINDEX             10
+19        VNALL            VNINDEX             11
+20        VNUTI            VNINDEX             11
+21    VNDIAMOND            VNINDEX             12
+22    VNFINLEAD            VNINDEX             13
+23  VNFINSELECT            VNINDEX             14
+24         VNSI            VNINDEX             17
 ```

@@ -1,5 +1,7 @@
 # Bộ chỉ số tài chính
 
+## Chỉ số cơ bản
+
 !!! tip "Lưu ý"
     Để tiện theo dõi và tra cứu, trong một số trường hợp chúng tôi sẽ xoay DataFrame trả về từ hàm với với phép `transpose` để thấy đầy đủ thông tin dễ hơn. Với các câu lệnh có phần kết thúc với `.T` tức là đang áp dụng phép `transpose` này.
 
@@ -12,6 +14,7 @@ financial_ratio(symbol="TCB", report_range='yearly', is_all=False)
 ```
 
 Trong đó:
+
 - `symbol` là mã chứng khoán bạn muốn phân tích
 - `report_range` nhận 1 trong 2 giá trị: `yearly` cho phép trả về chỉ số theo năm, `quarterly` trả về dữ liệu theo quý
 - `is_all` có giá trị mặc định là `True` cho phép lấy chỉ số qua tất cả các kỳ (năm hoặc quý), `False` cho phép lấy các kỳ gần nhất (5 năm hoặc 10 quý gần đây). Đây là tham số tùy chọn, nếu bạn không chỉ rõ, nó sẽ nhận giá trị mặc định là `False` tức rút gọn báo cáo để lấy 5 năm hoặc 10 quý gần nhất.
@@ -51,4 +54,35 @@ payableOnEquity            5.2    5.1    4.9    5.2    5.2
 cancelDebt               0.002  0.004  0.013  0.002  0.008
 bookValuePerShareChange  0.219  0.247    0.2  0.199  0.923
 creditGrowth             0.211  0.252  0.202  0.443 -0.006
+```
+
+## So sánh chỉ số giữa các mã cổ phiếu
+
+```python
+financial_ratio_compare (symbol_ls=["CTG", "TCB", "ACB"], industry_comparison=True, frequency='Yearly', start_year=2010)
+```
+
+Trong đó:
+
+- `symbol_ls` là danh sách các mã chỉ số cần so sánh dạng danh sách trong Python. Mã cổ phiếu đầu tiên là mã dùng để tham chiếu khi so sánh với các mã khác và ngành.
+- `industry_comparison`: mặc định là `True`, cho phép so sánh với chỉ số của toàn ngành.
+- `frequency`: nhận giá trị `Yearly` cho hàng năm, `Quarterly` cho hàng quý
+- `start_year`: năm bắt đầu lấy báo cáo cho đến hiện tại.
+
+Kết quả trả về như sau:
+
+```shell
+>>> financial_ratio_compare (symbol_ls=["CTG", "TCB", "ACB"], industry_comparison=True, frequency='Yearly', start_year=2020)
+                              Chỉ số      2020      2021      2022
+0                         Tỉ lệ CASA       NaN       NaN       NaN
+1                                CTG  0.188273  0.194308  0.194949
+2                                ACB  0.209698  0.248287  0.217765
+3                                TCB  0.443210  0.469770  0.343410
+4                         Toàn ngành       NaN       NaN       NaN
+..                               ...       ...       ...       ...
+138  Trích lập dự phòng/ Cho vay (%)       NaN       NaN       NaN
+139                              CTG -0.012455 -0.017131 -0.020090
+140                              ACB -0.003244 -0.009908 -0.000183
+141                              TCB -0.010273 -0.008529 -0.005043
+142                       Toàn ngành -0.015620 -0.018418 -0.015272
 ```
