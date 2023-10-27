@@ -805,6 +805,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Chỉ số tài chính
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -814,6 +825,41 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Mục lục">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Mục lục
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#chi-so-co-ban" class="md-nav__link">
+    Chỉ số cơ bản
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#so-sanh-chi-so-giua-cac-ma-co-phieu" class="md-nav__link">
+    So sánh chỉ số giữa các mã cổ phiếu
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1476,6 +1522,7 @@
 
 
 <h1 id="bo-chi-so-tai-chinh">Bộ chỉ số tài chính<a class="headerlink" href="#bo-chi-so-tai-chinh" title="Anchor link to this section for reference">&para;</a></h1>
+<h2 id="chi-so-co-ban">Chỉ số cơ bản<a class="headerlink" href="#chi-so-co-ban" title="Anchor link to this section for reference">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">Lưu ý</p>
 <p>Để tiện theo dõi và tra cứu, trong một số trường hợp chúng tôi sẽ xoay DataFrame trả về từ hàm với với phép <code>transpose</code> để thấy đầy đủ thông tin dễ hơn. Với các câu lệnh có phần kết thúc với <code>.T</code> tức là đang áp dụng phép <code>transpose</code> này.</p>
@@ -1484,10 +1531,12 @@
 <p>Bộ chỉ số tài chính do TCBS cung cấp có thể được trích một cách dễ dàng để có toàn bộ thông tin phân tích như bạn thấy trên giao diện website TCBS bằng câu lệnh:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">financial_ratio</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;TCB&quot;</span><span class="p">,</span> <span class="n">report_range</span><span class="o">=</span><span class="s1">&#39;yearly&#39;</span><span class="p">,</span> <span class="n">is_all</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span></code></pre></div>
-<p>Trong đó:
-- <code>symbol</code> là mã chứng khoán bạn muốn phân tích
-- <code>report_range</code> nhận 1 trong 2 giá trị: <code>yearly</code> cho phép trả về chỉ số theo năm, <code>quarterly</code> trả về dữ liệu theo quý
-- <code>is_all</code> có giá trị mặc định là <code>True</code> cho phép lấy chỉ số qua tất cả các kỳ (năm hoặc quý), <code>False</code> cho phép lấy các kỳ gần nhất (5 năm hoặc 10 quý gần đây). Đây là tham số tùy chọn, nếu bạn không chỉ rõ, nó sẽ nhận giá trị mặc định là <code>False</code> tức rút gọn báo cáo để lấy 5 năm hoặc 10 quý gần nhất.</p>
+<p>Trong đó:</p>
+<ul>
+<li><code>symbol</code> là mã chứng khoán bạn muốn phân tích</li>
+<li><code>report_range</code> nhận 1 trong 2 giá trị: <code>yearly</code> cho phép trả về chỉ số theo năm, <code>quarterly</code> trả về dữ liệu theo quý</li>
+<li><code>is_all</code> có giá trị mặc định là <code>True</code> cho phép lấy chỉ số qua tất cả các kỳ (năm hoặc quý), <code>False</code> cho phép lấy các kỳ gần nhất (5 năm hoặc 10 quý gần đây). Đây là tham số tùy chọn, nếu bạn không chỉ rõ, nó sẽ nhận giá trị mặc định là <code>False</code> tức rút gọn báo cáo để lấy 5 năm hoặc 10 quý gần nhất.</li>
+</ul>
 <p>Kết quả:</p>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&gt;&gt;&gt;<span class="w"> </span>financial_ratio<span class="o">(</span><span class="s1">&#39;TCB&#39;</span>,<span class="w"> </span><span class="s1">&#39;yearly&#39;</span><span class="o">)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>year<span class="w">                      </span><span class="m">2022</span><span class="w">   </span><span class="m">2021</span><span class="w">   </span><span class="m">2020</span><span class="w">   </span><span class="m">2019</span><span class="w">   </span><span class="m">2018</span>
@@ -1521,6 +1570,31 @@
 </span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>cancelDebt<span class="w">               </span><span class="m">0</span>.002<span class="w">  </span><span class="m">0</span>.004<span class="w">  </span><span class="m">0</span>.013<span class="w">  </span><span class="m">0</span>.002<span class="w">  </span><span class="m">0</span>.008
 </span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>bookValuePerShareChange<span class="w">  </span><span class="m">0</span>.219<span class="w">  </span><span class="m">0</span>.247<span class="w">    </span><span class="m">0</span>.2<span class="w">  </span><span class="m">0</span>.199<span class="w">  </span><span class="m">0</span>.923
 </span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>creditGrowth<span class="w">             </span><span class="m">0</span>.211<span class="w">  </span><span class="m">0</span>.252<span class="w">  </span><span class="m">0</span>.202<span class="w">  </span><span class="m">0</span>.443<span class="w"> </span>-0.006
+</span></code></pre></div>
+<h2 id="so-sanh-chi-so-giua-cac-ma-co-phieu">So sánh chỉ số giữa các mã cổ phiếu<a class="headerlink" href="#so-sanh-chi-so-giua-cac-ma-co-phieu" title="Anchor link to this section for reference">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">financial_ratio_compare</span> <span class="p">(</span><span class="n">symbol_ls</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CTG&quot;</span><span class="p">,</span> <span class="s2">&quot;TCB&quot;</span><span class="p">,</span> <span class="s2">&quot;ACB&quot;</span><span class="p">],</span> <span class="n">industry_comparison</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="s1">&#39;Yearly&#39;</span><span class="p">,</span> <span class="n">start_year</span><span class="o">=</span><span class="mi">2010</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Trong đó:</p>
+<ul>
+<li><code>symbol_ls</code> là danh sách các mã chỉ số cần so sánh dạng danh sách trong Python. Mã cổ phiếu đầu tiên là mã dùng để tham chiếu khi so sánh với các mã khác và ngành.</li>
+<li><code>industry_comparison</code>: mặc định là <code>True</code>, cho phép so sánh với chỉ số của toàn ngành.</li>
+<li><code>frequency</code>: nhận giá trị <code>Yearly</code> cho hàng năm, <code>Quarterly</code> cho hàng quý</li>
+<li><code>start_year</code>: năm bắt đầu lấy báo cáo cho đến hiện tại.</li>
+</ul>
+<p>Kết quả trả về như sau:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>&gt;&gt;&gt;<span class="w"> </span>financial_ratio_compare<span class="w"> </span><span class="o">(</span><span class="nv">symbol_ls</span><span class="o">=[</span><span class="s2">&quot;CTG&quot;</span>,<span class="w"> </span><span class="s2">&quot;TCB&quot;</span>,<span class="w"> </span><span class="s2">&quot;ACB&quot;</span><span class="o">]</span>,<span class="w"> </span><span class="nv">industry_comparison</span><span class="o">=</span>True,<span class="w"> </span><span class="nv">frequency</span><span class="o">=</span><span class="s1">&#39;Yearly&#39;</span>,<span class="w"> </span><span class="nv">start_year</span><span class="o">=</span><span class="m">2020</span><span class="o">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">                              </span>Chỉ<span class="w"> </span>số<span class="w">      </span><span class="m">2020</span><span class="w">      </span><span class="m">2021</span><span class="w">      </span><span class="m">2022</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="m">0</span><span class="w">                         </span>Tỉ<span class="w"> </span>lệ<span class="w"> </span>CASA<span class="w">       </span>NaN<span class="w">       </span>NaN<span class="w">       </span>NaN
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="m">1</span><span class="w">                                </span>CTG<span class="w">  </span><span class="m">0</span>.188273<span class="w">  </span><span class="m">0</span>.194308<span class="w">  </span><span class="m">0</span>.194949
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="m">2</span><span class="w">                                </span>ACB<span class="w">  </span><span class="m">0</span>.209698<span class="w">  </span><span class="m">0</span>.248287<span class="w">  </span><span class="m">0</span>.217765
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="m">3</span><span class="w">                                </span>TCB<span class="w">  </span><span class="m">0</span>.443210<span class="w">  </span><span class="m">0</span>.469770<span class="w">  </span><span class="m">0</span>.343410
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="m">4</span><span class="w">                         </span>Toàn<span class="w"> </span>ngành<span class="w">       </span>NaN<span class="w">       </span>NaN<span class="w">       </span>NaN
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>..<span class="w">                               </span>...<span class="w">       </span>...<span class="w">       </span>...<span class="w">       </span>...
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="m">138</span><span class="w">  </span>Trích<span class="w"> </span>lập<span class="w"> </span>dự<span class="w"> </span>phòng/<span class="w"> </span>Cho<span class="w"> </span>vay<span class="w"> </span><span class="o">(</span>%<span class="o">)</span><span class="w">       </span>NaN<span class="w">       </span>NaN<span class="w">       </span>NaN
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="m">139</span><span class="w">                              </span>CTG<span class="w"> </span>-0.012455<span class="w"> </span>-0.017131<span class="w"> </span>-0.020090
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="m">140</span><span class="w">                              </span>ACB<span class="w"> </span>-0.003244<span class="w"> </span>-0.009908<span class="w"> </span>-0.000183
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="m">141</span><span class="w">                              </span>TCB<span class="w"> </span>-0.010273<span class="w"> </span>-0.008529<span class="w"> </span>-0.005043
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="m">142</span><span class="w">                       </span>Toàn<span class="w"> </span>ngành<span class="w"> </span>-0.015620<span class="w"> </span>-0.018418<span class="w"> </span>-0.015272
 </span></code></pre></div>
 
 
