@@ -14,6 +14,43 @@ def live_stock_list ():
     df = df.rename(columns={'fullname_vi': 'organName', 'code': 'ticker', 'loaidn': 'organTypeCode', 'san': 'comGroupCode'})
     return df
 
+def organ_listing (lang='vi', headers=ssi_headers):
+    """
+    Return a DataFrame of all available stock symbols. Live data is retrieved from the SSI API.
+    Parameters:
+        lang (str): language of the data. Default is 'vi', other options are 'en'
+        headers (dict): headers of the request
+    """
+    url = f"https://fiin-core.ssi.com.vn/Master/GetListOrganization?language={lang}"
+    response = requests.request("GET", url, headers=headers)
+    status = response.status_code
+    if status == 200:
+        data = response.json()
+        print('Total number of companies: ', data['totalCount'])
+        df = pd.DataFrame(data['items'])
+        return df
+    else:
+        print('Error in API response', response.text)
+
+def indices_listing (lang='vi', headers=ssi_headers):
+    """
+    Return a DataFrame of all available indices. Live data is retrieved from the SSI API.
+    Parameters:
+        lang (str): language of the data. Default is 'vi', other options are 'en'
+        headers (dict): headers of the request
+    """
+    url = f"https://fiin-core.ssi.com.vn/Master/GetAllCompanyGroup?language={lang}"
+    response = requests.request("GET", url, headers=headers)
+    status = response.status_code
+    if status == 200:
+        data = response.json()
+        df = pd.DataFrame(data['items'])
+        df = df.sort_values(by='comGroupOrder').reset_index(drop=True)
+        df = df[['comGroupCode', 'parentComGroupCode', 'comGroupOrder']]
+        return df
+    else:
+        print('Error in API response', response.text)
+
 def offline_stock_list (path='https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023.csv'):
     """
     This function returns the list of all available stock symbols from a csv file, which is stored on Github.
@@ -24,7 +61,7 @@ def offline_stock_list (path='https://raw.githubusercontent.com/thinh-vu/vnstock
     df = pd.read_csv(path)
     return df
 
-def listing_companies (live=False):
+def listing_companies (live=False, source='Wifeed'):
     """
     This function returns the list of all available stock symbols from a csv file or a live api request.
     Parameters: 
@@ -33,7 +70,10 @@ def listing_companies (live=False):
     """
     # if live = True, return live_stock_list(), else return offline_stock_list()
     if live == True:
-        df = live_stock_list()
+        if source == 'Wifeed':
+            df = live_stock_list()
+        elif source == 'SSI':
+            df = organ_listing()
     elif live == False:
         df = offline_stock_list()
     return df
@@ -295,19 +335,24 @@ def financial_ratio_compare (symbol_ls=["CTG", "TCB", "ACB"], industry_compariso
     """
     global timeline
     if frequency == 'Yearly':
-      timeline = str(start_year) + '_5'
+        timeline = str(start_year) + '_5'
     elif frequency == 'Quarterly':
-      timeline = str(start_year) + '_4'
+        timeline = str(start_year) + '_4'
 
-    for i in range(len(symbol_ls)):
-      if i == 0:
-        company_join = '&CompareToCompanies={}'.format(symbol_ls[i])
-        url = 'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/DownloadFinancialRatio2?language=vi&OrganCode={}&CompareToIndustry={}{}&Frequency={}&Ratios=ryd21&Ratios=ryd25&Ratios=ryd14&Ratios=ryd7&Ratios=rev&Ratios=isa22&Ratios=ryq44&Ratios=ryq14&Ratios=ryq12&Ratios=rtq51&Ratios=rtq50&Ratios=ryq48&Ratios=ryq47&Ratios=ryq45&Ratios=ryq46&Ratios=ryq54&Ratios=ryq55&Ratios=ryq56&Ratios=ryq57&Ratios=nob151&Ratios=casa&Ratios=ryq58&Ratios=ryq59&Ratios=ryq60&Ratios=ryq61&Ratios=ryd11&Ratios=ryd3&TimeLineFrom={}'.format(symbol_ls[i], industry_comparison, '', frequency, timeline)
-      elif i > 0:
-        company_join = '&'.join([company_join, 'CompareToCompanies={}'.format(symbol_ls[i])])
-        url = 'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/DownloadFinancialRatio2?language=vi&OrganCode={}&CompareToIndustry={}{}&Frequency={}&Ratios=ryd21&Ratios=ryd25&Ratios=ryd14&Ratios=ryd7&Ratios=rev&Ratios=isa22&Ratios=ryq44&Ratios=ryq14&Ratios=ryq12&Ratios=rtq51&Ratios=rtq50&Ratios=ryq48&Ratios=ryq47&Ratios=ryq45&Ratios=ryq46&Ratios=ryq54&Ratios=ryq55&Ratios=ryq56&Ratios=ryq57&Ratios=nob151&Ratios=casa&Ratios=ryq58&Ratios=ryq59&Ratios=ryq60&Ratios=ryq61&Ratios=ryd11&Ratios=ryd3&TimeLineFrom=2017_5'.format(symbol_ls[i], industry_comparison, company_join, frequency, timeline)
+    list_len = len(symbol_ls)
+    if list_len == 1:
+        url = f'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/DownloadFinancialRatio2?language=vi&OrganCode={symbol_ls[0]}&CompareToIndustry={industry_comparison}&Frequency={frequency}&Ratios=ryd21&Ratios=ryd25&Ratios=ryd14&Ratios=ryd7&Ratios=rev&Ratios=isa22&Ratios=ryq44&Ratios=ryq14&Ratios=ryq12&Ratios=rtq51&Ratios=rtq50&Ratios=ryq48&Ratios=ryq47&Ratios=ryq45&Ratios=ryq46&Ratios=ryq54&Ratios=ryq55&Ratios=ryq56&Ratios=ryq57&Ratios=nob151&Ratios=casa&Ratios=ryq58&Ratios=ryq59&Ratios=ryq60&Ratios=ryq61&Ratios=ryd11&Ratios=ryd3&TimeLineFrom={timeline}'.format(symbol_ls[i], industry_comparison, '', frequency, timeline)
+    elif  list_len > 1:
+        main_symbol = symbol_ls[0]
+        company_join = '&CompareToCompanies=' + '&CompareToCompanies='.join(symbol_ls[1:])
+        url = f'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/DownloadFinancialRatio2?language=vi&OrganCode={main_symbol}&CompareToIndustry={industry_comparison}{company_join}&Frequency={frequency}&Ratios=ryd21&Ratios=ryd25&Ratios=ryd14&Ratios=ryd7&Ratios=rev&Ratios=isa22&Ratios=ryq44&Ratios=ryq14&Ratios=ryq12&Ratios=rtq51&Ratios=rtq50&Ratios=ryq48&Ratios=ryq47&Ratios=ryq45&Ratios=ryq46&Ratios=ryq54&Ratios=ryq55&Ratios=ryq56&Ratios=ryq57&Ratios=nob151&Ratios=casa&Ratios=ryq58&Ratios=ryq59&Ratios=ryq60&Ratios=ryq61&Ratios=ryd11&Ratios=ryd3&TimeLineFrom={timeline}'
     r = requests.get(url, headers=headers)
     df = pd.read_excel(BytesIO(r.content), skiprows=7)
+    # drop rows with all NaN values
+    df = df.dropna(how='all')
+    # drop all rows with Chỉ số columns contain Dữ liệu được cung cấp bởi FiinTrade or https://fiintrade.vn/
+    df = df[~df['Chỉ số'].str.contains('Dữ liệu được cung cấp bởi FiinTrade')]
+    df = df[~df['Chỉ số'].str.contains('https://fiintrade.vn/')]
     return df
 
 

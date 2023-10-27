@@ -4,6 +4,12 @@ sidebar_position: 7
 
 # Lịch sử cập nhật
 
+## 27-10-2023
+- Bổ sung và hoàn thiện một số hàm cho vnstock
+  - Hàm `listing_companies` nay được cung cấp thêm khả năng lấy danh sách công ty niêm yết từ SSI/FiinTrade. Việc này giúp người dùng có thể tham chiếu mã công ty từ mã cổ phiếu để lấy thông tin trong một số trường hợp đặc biệt FiinTrade sử dụng mã này thay cho mã cổ phiếu. Ví dụ, thay vì dùng mã cổ phiếu `BCM` gây ra lỗi cho hàm, bạn cần sử dụng mã công ty tương ứng là `BIDC`
+  - Hàm `indices_listing` cho phép liệt kê tất cả mã chỉ số hiện có trên sàn.
+  - Hàm `financial_ratio_compare` cho phép so sánh chỉ số tài chính của một danh sách các mã cổ phiếu.
+
 ## 26-10-2023
 - Khôi phục các hàm lấy dữ liệu từ nguồn SSI gồm `financial_report`, `fr_trade_heatmap`, `market_top_mover` do SSI hiện tại đã gỡ bỏ mọi hạn chế về kỹ thuật áp dụng cho bot thực hiện web scraping.
 - Cập nhật tài liệu sử dụng kèm theo

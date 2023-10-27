@@ -10,7 +10,7 @@ Bạn có thể chọn cách đơn giản là gửi tặng một ly cafe như vi
 
 ## Tôi có thể đóng góp quỹ Vnstock như thế nào?
 
-Để đóng góp cho dự án, bạn có thể chọn chuyển khoản ngân hàng hoặc chuyển tiền qua ví điện tử Momo.
+Để đóng góp cho dự án, bạn có thể chọn chuyển khoản ngân hàng hoặc chuyển tiền qua ví điện tử Momo. Nếu bạn đang ở nước ngoài, bạn có thể chọn ủng hộ qua [Paypal](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US)
 
 ![vcb qr](../assets/images/vcb-qr-thinhvu.jpg?raw=true)
 ![momo qr](../assets/images/momo-qr-thinhvu.jpeg?raw=true)
