@@ -14,7 +14,9 @@ Trong đó:
 
 - Tham số `source` nhận một trong hai giá trị là `Wifeed` (mặc định) hoặc `SSI`. Bỏ qua tham số này nếu sử dụng `live=True`. Việc bổ sung thêm nguòn dữ liệu SSI cho phép người dùng dễ dàng tìm ra mã công ty để tham chiếu một số hàm của SSI khi sử dụng mã cổ phiếu không cho kết quả.
 
-- Kết quả trả về như sau cho chế độ realtime:
+---
+
+- Kết quả trả về như sau cho chế độ realtime, nguồn Wifeed:
 
 ```shell
 >>> listing_companies(True)
@@ -32,6 +34,26 @@ Trong đó:
 1583    YTC  CTCP Xuất nhập khẩu Y tế Thành phố Hồ Chí Minh              1        UPCOM
 ```
 
+- Kết quả trả về cho chế độ realtime, nguồn SSI:
+
+```shell
+>>> listing_companies(True, source='SSI')
+       organCode ticker  ...                                          organName                  organShortName
+0     0104498100    VVS  ...     Công ty Cổ phần Đầu tư Phát triển Máy Việt Nam  Đầu tư Phát triển Máy Việt Nam
+1     0109204756    HIO  ...                       Công ty Cổ Phần Helio Energy                    Helio Energy
+2     0304941312    XDC  ...       Công ty Cổ phần Xây dựng Công trình Tân Cảng    Xây dựng Công trình Tân Cảng
+3     0700519785    THM  ...                      Công ty Cổ phần Tứ Hải Hà Nam                   Tứ Hải Hà Nam
+4          10659    HSV  ...              Công ty Cổ phần Tập đoàn HSV Việt Nam                Gang Thép Hà Nội
+...          ...    ...  ...                                                ...                             ...
+1599  XUANMINHHP    XMP  ...                Công ty Cổ phần Thủy điện Xuân Minh             Thủy điện Xuân Minh
+1600         YBC    YBC  ...      Công ty Cổ phần Xi măng và Khoáng sản Yên Bái   Xi măng và Khoáng sản Yên Bái
+1601        YBMC    YBM  ...     Công ty Cổ phần Khoáng sản Công nghiệp Yên Bái           Khoáng sản CN Yên Bái
+1602     YEGCORP    YEG  ...                     Công ty Cổ phần Tập đoàn Yeah1                  Tập đoàn Yeah1
+1603       YTECO    YTC  ...  Công ty Cổ phần Xuất nhập khẩu Y tế Thành phố ...                 XNK Y tế TP.HCM
+
+[1604 rows x 8 columns]
+
+```
 
 - Kết quả trả về cho chế độ offline:
 
