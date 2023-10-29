@@ -12,3 +12,4 @@ from .trading import *
 from .market import *
 # from .chart import *
 from .utils import *
+from .integration import *

@@ -4,6 +4,12 @@ sidebar_position: 7
 
 # Lịch sử cập nhật
 
+## 29-10-2023
+- Tích hợp API endpoints cơ bản của DNSE vào vnstock
+  - Demo cho các nhà đầu tư cách tạo 1 request và kết nối hệ thống DNSE để lấy JWT token
+  - Demo xuất thông tin tài khoản
+- Cập nhật tài liệu sử dụng
+
 ## 27-10-2023
 - Bổ sung và hoàn thiện một số hàm cho vnstock
   - Hàm `listing_companies` nay được cung cấp thêm khả năng lấy danh sách công ty niêm yết từ SSI/FiinTrade. Việc này giúp người dùng có thể tham chiếu mã công ty từ mã cổ phiếu để lấy thông tin trong một số trường hợp đặc biệt FiinTrade sử dụng mã này thay cho mã cổ phiếu. Ví dụ, thay vì dùng mã cổ phiếu `BCM` gây ra lỗi cho hàm, bạn cần sử dụng mã công ty tương ứng là `BIDC`
