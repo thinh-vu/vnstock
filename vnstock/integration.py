@@ -1,9 +1,7 @@
 # DNSE API: https://www.dnse.vn
+from .config import *
 
-import requests
-import json
-
-def dnse_login(user_name=USER, password=PWD):
+def dnse_login(user_name, password):
     """
     Get JWT token from DNSE to authenticate other API requests. Return a JWT token as a string.
     Parameters:
