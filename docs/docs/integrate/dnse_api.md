@@ -4,7 +4,7 @@
     DNSE là một trong 3 công ty chứng khoán có cung cấp API giao dịch cho khách hàng phổ thông bên cạnh SSI và BSC (đang kiểm duyệt kỹ, không duyệt thêm khách hàng mới).
     API giao dịch của DNSE cho phép thực hiện đọc thông tin liên quan đến tài khoản và đặt lệnh đối với cả giao dịch cơ sở lẫn phái sinh. Tài liệu API thường được chia sẻ qua các nhóm hỗ trợ,  thông tin này không tìm thấy qua tìm kiếm kiếm Google hay trên website. Bạn có thể tham khảo thông tin API giao dịch chi tiết [tại đây](https://drive.google.com/file/d/1nRQzJxb4E-SxhE-6Znt0IZLvAVoaPCiB/view)
 
-Dưới đây, vnstock cung cấp demo về cách kết nối với hệ thống DNSE, trước tiên bạn sẽ cần cài đặt gói thư viện vnstock để sử dụng tất cả các hàm kèm theo một cách dễ dàng.
+Dưới đây, vnstock cung cấp demo về cách kết nối với hệ thống DNSE, trước tiên bạn sẽ cần cài đặt gói thư viện vnstock để sử dụng tất cả các hàm kèm theo một cách dễ dàng. Xem thêm [mã nguồn](https://github.com/thinh-vu/vnstock/blob/beta/vnstock/integration.py) để lấy cảm hứng.
 
 [Xem hướng dẫn :material-rocket-launch:](../start/start.md){ .md-button }
 
