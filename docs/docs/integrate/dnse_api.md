@@ -8,6 +8,8 @@ Dưới đây, vnstock cung cấp demo về cách kết nối với hệ thống
 
 [Xem hướng dẫn :material-rocket-launch:](../start/start.md){ .md-button }
 
+Nếu thấy hướng dẫn này có ích, bạn luôn có thể [donate để ủng hộ dự án](https://docs.vnstock.site/community/support/) thay lời cám ơn.
+
 ## Lấy mã JWT Token
 
 !!! info "JWT token"
