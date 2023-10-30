@@ -14,7 +14,7 @@ theme:
     code: Roboto Mono
   palette: 
     - scheme: default
-      primary: green
+      primary: vnstock
       accent: indigo
       toggle:
         icon: material/brightness-7 
