@@ -17,4 +17,9 @@ Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
   <a href="https://www.youtube.com/@learn_anything_az?sub_confirmation=1">
     <img src="https://img.shields.io/badge/Learn_Anything-Theo_dõi-FF0000?style=for-the-badge&logo=youtube" alt="Learn Anything - Theo dõi"/>
   </a>
+  <a href="https://www.reddit.com/r/vnstock_">
+    <img src="https://img.shields.io/badge/vnstock-THAM_GIA-FF4500?style=for-the-badge&logo=reddit&logoColor=%23ffffff" alt="Vnstock - Tham gia"/>
+  </a>
 </div>
+
+[![vnstock - THAM GIA](https://img.shields.io/badge/vnstock-THAM_GIA-FF4500?style=for-the-badge&logo=reddit&logoColor=%23ffffff)](https://www.reddit.com/r/vnstock_)

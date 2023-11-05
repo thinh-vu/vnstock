@@ -215,7 +215,7 @@ nav:
     - Streamlit: integrate/streamlit.md
     - Huggingface: integrate/huggingface.md
     - SSI Fast Connect API: integrate/ssi_fast_connect_api.md
-    - DNSE API: integrate/dnse_api.md
+    - DNSE Lightspeed API: integrate/dnse_api.md
   - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
     - Ủng hộ quỹ: community/support.md
