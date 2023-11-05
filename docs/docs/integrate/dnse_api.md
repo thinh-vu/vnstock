@@ -62,9 +62,13 @@ Sau khi nhận mã OTP qua email, bạn sử dụng cho bước tiếp theo. B�
 Tại bước này, bạn có thể nhập mã OTP để `tạo trading token` bằng mã SmartOTP hoặc email OTP.
 
 ```python
-otp = input("Enter OTP: ") # Hiển thị prompt để yêu cầu nhập mã OTP, bạn cũng có thể bỏ qua bước sử dụng input() này và gán trực tiếp giá trị OTP cho biến otp.
-trading_token = client.trading_token(otp)
+trading_token = client.get_trading_token(otp = 'MÃ_OTP_CỦA_BẠN', smart_otp=True)
 ```
+
+Trong đó:
+
+- `otp` là mã xác thực cấp 2 lấy từ app EntradeX dưới dạng SmartOTP hoặc mã được gửi qua email. Mã này phải được nhập dưới dạng string `'12345'`.
+- `smart_otp`: nhận giá trị `True` nếu bạn lấy mã từ app, `False` nếu lấy mã từ email
 
 ## Tra cứu thông tin
 
@@ -121,6 +125,14 @@ isEmailVerified                                                        False
 
 ```python
 client.sub_accounts()
+```
+
+### Thông tin số dư tài khoản
+
+Cho phép tra cứu thông tin tiền số dư tiền theo mã tiểu khoản của bạn.
+
+```python
+client.account_balance (sub_account='MÃ_TIỂU_KHOẢN_CỦA_BẠN')
 ```
 
 ### Danh sách gói vay

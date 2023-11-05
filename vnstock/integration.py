@@ -114,22 +114,30 @@ class DNSEClient:
             print("Error:", response.text)
             return None
 
-    def trading_token(self, otp):
+    def get_trading_token(self, otp, smart_otp=True):
         """
         Authenticate using OTP and get the trading token.
 
         Args:
-            otp (str): OTP code for authentication.
+            otp (str): OTP code for authentication. Input as a string.
 
         Returns:
             str: Trading token if authentication is successful, None otherwise.
         """
-        url = "https://services.entrade.com.vn/dnse-order-service/trading-token"
-        headers = {
-            "Authorization": f"Bearer {self.token}",
-            "otp": otp
-        }
+        if smart_otp == True:
+            url = "https://services.entrade.com.vn/dnse-order-service/trading-token"
+            headers = {
+                "Authorization": f"Bearer {self.token}",
+                "smart-otp": otp
+            }
+        elif smart_otp == False:            
+            url = "https://services.entrade.com.vn/dnse-auth-service/api/email-otp"
+            headers = {
+                "Authorization": f"Bearer {self.token}",
+                 "otp": otp
+            }
         response = requests.post(url, headers=headers)
+        print(response)
         if response.status_code == 200:
             result = response.json()
             trading_token = result.get("tradingToken")
