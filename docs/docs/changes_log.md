@@ -4,6 +4,9 @@ sidebar_position: 7
 
 # Lịch sử cập nhật
 
+## 05-11-2023
+- Hoàn thiện tích hợp đầy đủ DNSE Lightspeed API vào mã nguồn vnstock. Phát hành phiên bản 0.2.8.1 để cập nhật.
+
 ## 29-10-2023
 - Tích hợp API endpoints cơ bản của DNSE vào vnstock
   - Demo cho các nhà đầu tư cách tạo 1 request và kết nối hệ thống DNSE để lấy JWT token
