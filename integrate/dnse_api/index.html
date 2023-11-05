@@ -1244,6 +1244,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#thong-tin-so-du-tai-khoan" class="md-nav__link">
+    Thông tin số dư tài khoản
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#danh-sach-goi-vay" class="md-nav__link">
     Danh sách gói vay
   </a>
@@ -1726,9 +1733,13 @@ API giao dịch của DNSE cho phép thực hiện đọc thông tin liên quan 
 <p>Sau khi nhận mã OTP qua email, bạn sử dụng cho bước tiếp theo. Bạn cũng có thể tự động hóa quá trình trích xuất OTP này và nạp cho bước tiếp theo bằng cách sử dụng Gmail API. Tham khảo thêm thông tin <a href="https://developers.google.com/gmail/api/guides?hl=vi">tại đây</a></p>
 <h4 id="tao-ma-trading-token-e-giao-dich">Tạo mã trading token để giao dịch<a class="headerlink" href="#tao-ma-trading-token-e-giao-dich" title="Anchor link to this section for reference">&para;</a></h4>
 <p>Tại bước này, bạn có thể nhập mã OTP để <code>tạo trading token</code> bằng mã SmartOTP hoặc email OTP.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">otp</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter OTP: &quot;</span><span class="p">)</span> <span class="c1"># Hiển thị prompt để yêu cầu nhập mã OTP, bạn cũng có thể bỏ qua bước sử dụng input() này và gán trực tiếp giá trị OTP cho biến otp.</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">trading_token</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">trading_token</span><span class="p">(</span><span class="n">otp</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">trading_token</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_trading_token</span><span class="p">(</span><span class="n">otp</span> <span class="o">=</span> <span class="s1">&#39;MÃ_OTP_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">smart_otp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div>
+<p>Trong đó:</p>
+<ul>
+<li><code>otp</code> là mã xác thực cấp 2 lấy từ app EntradeX dưới dạng SmartOTP hoặc mã được gửi qua email. Mã này phải được nhập dưới dạng string <code>'12345'</code>.</li>
+<li><code>smart_otp</code>: nhận giá trị <code>True</code> nếu bạn lấy mã từ app, <code>False</code> nếu lấy mã từ email</li>
+</ul>
 <h2 id="tra-cuu-thong-tin">Tra cứu thông tin<a class="headerlink" href="#tra-cuu-thong-tin" title="Anchor link to this section for reference">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Tra cứu thông tin với tên đăng nhập và mật khẩu tài khoản</p>
@@ -1776,12 +1787,16 @@ API giao dịch của DNSE cho phép thực hiện đọc thông tin liên quan 
 <p>Để tra cứu thông tin các tiểu khoản trong tài khoản của bạn, sử dụng hàm sau:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">client</span><span class="o">.</span><span class="n">sub_accounts</span><span class="p">()</span>
 </span></code></pre></div>
+<h3 id="thong-tin-so-du-tai-khoan">Thông tin số dư tài khoản<a class="headerlink" href="#thong-tin-so-du-tai-khoan" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Cho phép tra cứu thông tin tiền số dư tiền theo mã tiểu khoản của bạn.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">client</span><span class="o">.</span><span class="n">account_balance</span> <span class="p">(</span><span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">)</span>
+</span></code></pre></div>
 <h3 id="danh-sach-goi-vay">Danh sách gói vay<a class="headerlink" href="#danh-sach-goi-vay" title="Anchor link to this section for reference">&para;</a></h3>
 <div class="admonition info">
 <p class="admonition-title">Gói vay</p>
 <p>Gói vay là khái niệm của DNSE định nghĩa để hỗ trợ phân biệt các tỷ lệ ký quỹ khi đặt lệnh (margin, không margin). Mã gói vay được sử dụng khi đặt lệnh (nếu có).</p>
 </div>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">client</span><span class="o">.</span><span class="n">loan_packages</span><span class="p">(</span><span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">client</span><span class="o">.</span><span class="n">loan_packages</span><span class="p">(</span><span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Trong đó:</p>
 <ul>
@@ -1790,7 +1805,7 @@ API giao dịch của DNSE cho phép thực hiện đọc thông tin liên quan 
 </ul>
 <h3 id="suc-mua-suc-ban">Sức mua, sức bán<a class="headerlink" href="#suc-mua-suc-ban" title="Anchor link to this section for reference">&para;</a></h3>
 <p>Lấy thông tin sức mua sức bán tối đa theo tiểu khoản, mã, giá và gói vay</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">client</span><span class="o">.</span><span class="n">trade_capacities</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;VIC&#39;</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="mi">41600</span><span class="p">,</span> <span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">,</span> <span class="n">loan_package_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">client</span><span class="o">.</span><span class="n">trade_capacities</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;VIC&#39;</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="mi">41600</span><span class="p">,</span> <span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">,</span> <span class="n">loan_package_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Trong đó:</p>
 <ul>
@@ -1802,19 +1817,19 @@ API giao dịch của DNSE cho phép thực hiện đọc thông tin liên quan 
 </ul>
 <h2 id="at-lenh-sua-lenh-huy-lenh">Đặt lệnh, sửa lệnh, hủy lệnh<a class="headerlink" href="#at-lenh-sua-lenh-huy-lenh" title="Anchor link to this section for reference">&para;</a></h2>
 <h3 id="at-lenh">Đặt lệnh<a class="headerlink" href="#at-lenh" title="Anchor link to this section for reference">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">sub_account</span> <span class="o">=</span> <span class="s2">&quot;MÃ_TIỂU_KHOẢN_CỦA_BẠN&quot;</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;VIC&quot;</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">side</span> <span class="o">=</span> <span class="s2">&quot;buy&quot;</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">quantity</span> <span class="o">=</span> <span class="mi">100</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">price</span> <span class="o">=</span> <span class="mi">41600</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">order_type</span> <span class="o">=</span> <span class="s1">&#39;LO&#39;</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">loan_package_id</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Thay thế với mã gói vay thực tế của bạn</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">asset_type</span> <span class="o">=</span> <span class="s1">&#39;stock&#39;</span>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="n">client</span><span class="o">.</span><span class="n">place_order</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">order_type</span><span class="p">,</span> <span class="n">loan_package_id</span><span class="p">,</span> <span class="n">asset_type</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">sub_account</span> <span class="o">=</span> <span class="s2">&quot;MÃ_TIỂU_KHOẢN_CỦA_BẠN&quot;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;VIC&quot;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">side</span> <span class="o">=</span> <span class="s2">&quot;buy&quot;</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">quantity</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">price</span> <span class="o">=</span> <span class="mi">41600</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">order_type</span> <span class="o">=</span> <span class="s1">&#39;LO&#39;</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="n">loan_package_id</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Thay thế với mã gói vay thực tế của bạn</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="n">asset_type</span> <span class="o">=</span> <span class="s1">&#39;stock&#39;</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="n">client</span><span class="o">.</span><span class="n">place_order</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">order_type</span><span class="p">,</span> <span class="n">loan_package_id</span><span class="p">,</span> <span class="n">asset_type</span><span class="p">)</span>
 </span></code></pre></div>
 <p>hoặc sử dụng dạng rút gọn</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">client</span><span class="o">.</span><span class="n">place_order</span><span class="p">(</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="s1">&#39;VIC&#39;</span><span class="p">,</span> <span class="s1">&#39;buy&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">41600</span><span class="p">,</span> <span class="s1">&#39;LO&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;stock&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">client</span><span class="o">.</span><span class="n">place_order</span><span class="p">(</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="s1">&#39;VIC&#39;</span><span class="p">,</span> <span class="s1">&#39;buy&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">41600</span><span class="p">,</span> <span class="s1">&#39;LO&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;stock&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Trong đó:</p>
 <ul>
@@ -1830,10 +1845,10 @@ API giao dịch của DNSE cho phép thực hiện đọc thông tin liên quan 
 <h3 id="so-lenh">Sổ lệnh<a class="headerlink" href="#so-lenh" title="Anchor link to this section for reference">&para;</a></h3>
 <p>Cho phép liệt kê các lệnh đã đặt trong sổ lệnh. Áp dụng cho cả giao dịch cơ sở và phái sinh.</p>
 <p>Để liệt kê danh sách lệnh trong sổ lệnh, bạn sử dụng dòng lệnh sau đối với giao dịch cơ sở</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">client</span><span class="o">.</span><span class="n">order_list</span><span class="p">(</span><span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">client</span><span class="o">.</span><span class="n">order_list</span><span class="p">(</span><span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>hoặc sử dụng  lệnh sau cho phái sinh</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">client</span><span class="o">.</span><span class="n">order_list</span><span class="p">(</span><span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;derivative&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">client</span><span class="o">.</span><span class="n">order_list</span><span class="p">(</span><span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;derivative&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Trong đó:</p>
 <ul>
@@ -1842,7 +1857,7 @@ API giao dịch của DNSE cho phép thực hiện đọc thông tin liên quan 
 </ul>
 <h3 id="chi-tiet-lenh">Chi tiết lệnh<a class="headerlink" href="#chi-tiet-lenh" title="Anchor link to this section for reference">&para;</a></h3>
 <p>Tra cứu thông tin chi tiết của một lệnh bất kỳ thuộc mã tiểu khoản của bạn. Áp dụng cho cả giao dịch cơ sở và phái sinh.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">client</span><span class="o">.</span><span class="n">order_detail</span><span class="p">(</span><span class="n">order_id</span><span class="o">=</span><span class="s1">&#39;MÃ_LỆNH_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">client</span><span class="o">.</span><span class="n">order_detail</span><span class="p">(</span><span class="n">order_id</span><span class="o">=</span><span class="s1">&#39;MÃ_LỆNH_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Trong đó:</p>
 <ul>
@@ -1852,7 +1867,7 @@ API giao dịch của DNSE cho phép thực hiện đọc thông tin liên quan 
 </ul>
 <h3 id="huy-lenh">Hủy lệnh<a class="headerlink" href="#huy-lenh" title="Anchor link to this section for reference">&para;</a></h3>
 <p>Cho phép hủy lệnh bất kỳ theo id từ một tiểu khoản của bạn. Áp dụng cho cả giao dịch cơ sở và phái sinh.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">client</span><span class="o">.</span><span class="n">cancel_order</span> <span class="p">(</span><span class="n">order_id</span><span class="o">=</span><span class="s1">&#39;MÃ_LỆNH_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">client</span><span class="o">.</span><span class="n">cancel_order</span> <span class="p">(</span><span class="n">order_id</span><span class="o">=</span><span class="s1">&#39;MÃ_LỆNH_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Trong đó:</p>
 <ul>
@@ -1862,7 +1877,7 @@ API giao dịch của DNSE cho phép thực hiện đọc thông tin liên quan 
 </ul>
 <h3 id="deal-nam-giu">Deal nắm giữ<a class="headerlink" href="#deal-nam-giu" title="Anchor link to this section for reference">&para;</a></h3>
 <p>Trả về danh sách các deal bạn đang nắm giữ. Áp dụng cho cả giao dịch cơ sở và phái sinh.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">client</span><span class="o">.</span><span class="n">deals_list</span> <span class="p">(</span><span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">client</span><span class="o">.</span><span class="n">deals_list</span> <span class="p">(</span><span class="n">sub_account</span><span class="o">=</span><span class="s1">&#39;MÃ_TIỂU_KHOẢN_CỦA_BẠN&#39;</span><span class="p">,</span> <span class="n">asset_type</span><span class="o">=</span><span class="s1">&#39;stock&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Trong đó:</p>
 <ul>
