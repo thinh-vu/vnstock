@@ -1488,6 +1488,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#08-11-2023" class="md-nav__link">
+    08-11-2023
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#05-11-2023" class="md-nav__link">
     05-11-2023
   </a>
@@ -1707,9 +1714,16 @@
 
 
 <h1 id="lich-su-cap-nhat">Lịch sử cập nhật<a class="headerlink" href="#lich-su-cap-nhat" title="Anchor link to this section for reference">&para;</a></h1>
+<h2 id="08-11-2023">08-11-2023<a class="headerlink" href="#08-11-2023" title="Anchor link to this section for reference">&para;</a></h2>
+<ul>
+<li>Tùy biến hàm <code>stock_historical_data</code> giúp dễ dàng sử dụng với các thư viện phân tích kỹ thuật khác trong Python.</li>
+<li>Thêm tham số <code>decor</code>, nhận giá trị mặc định là <code>False</code> (không thay đổi dữ liệu trả về với cách sử dụng hiện tại của người dùng). Khi đặt <code>decor=True</code>, áp dụng thay tên các cột trong DataFrame trả về dưới dạng Title Case tức <code>Open, High, Low, Close, Time, Ticker</code> thay vì <code>open, high, low, close, time, ticker</code> như hiện tại đồng thời đặt cột Time là index. Việc này giảm bớt cho người dùng phải viết thêm câu lệnh khi sử dụng dữ liệu vnstock kết hợp các thư viện phân tích kỹ thuật phổ biến vốn dùng thư viện Yahoo Finance làm nguồn cấp dữ liệu.</li>
+<li>Bổ sung tham số <code>source</code> cho phép chọn nguồn tải dữ liệu là <code>TCBS</code> hay <code>DNSE</code>. Nguồn dữ liệu <code>TCBS</code> cho lấy dữ liệu lịch sử theo ngày (resolution = <code>1D</code>) trong thời gian dài, không hỗ trợ khung thời gian nhỏ hơn. Trong khi đó nguồn dữ liệu <code>DNSE</code> cho phép lấy dữ liệu với nhiều khung thời gian khác nhau, giới hạn 90 ngày gần nhất đối với dữ liệu phút, 10 năm gần nhất đối với dữ liệu ngày.</li>
+<li>Cập nhật tcbs_headers sử dụng cho các request đến API của TCBS</li>
+</ul>
 <h2 id="05-11-2023">05-11-2023<a class="headerlink" href="#05-11-2023" title="Anchor link to this section for reference">&para;</a></h2>
 <ul>
-<li>Hoàn thiện tích hợp đầy đủ DNSE Lightspeed API vào mã nguồn vnstock. Phát hành phiên bản 0.2.8.1 để cập nhật.</li>
+<li>Hoàn thiện tích hợp đầy đủ DNSE Lightspeed API vào mã nguồn vnstock. Phát hành phiên bản 0.2.8.2. Sử dụng lệnh <code>pip install -U vnstock</code> để cập nhật phiên bản.</li>
 </ul>
 <h2 id="29-10-2023">29-10-2023<a class="headerlink" href="#29-10-2023" title="Anchor link to this section for reference">&para;</a></h2>
 <ul>
