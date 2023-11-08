@@ -101,7 +101,7 @@ def longterm_ohlc_data (symbol='REE', start_date='2022-01-01', end_date='2023-10
         # devide price by 1000
         df['ticker'] = symbol
         # filter data from df to get data from start_date to end_date
-
+        df = df[(df['time'] >= start_date.strftime('%Y-%m-%d')) & (df['time'] <= end_date.strftime('%Y-%m-%d'))]
         if type == 'stock':
             df[['open', 'high', 'low', 'close']] = round(df[['open', 'high', 'low', 'close']] / 1000, 2)
         return df
@@ -120,6 +120,7 @@ def longterm_ohlc_data (symbol='REE', start_date='2022-01-01', end_date='2023-10
             # drop tradingDate column
             df.drop('tradingDate', axis=1, inplace=True)
             df['ticker'] = symbol
+            df = df[(df['time'] >= start_date.strftime('%Y-%m-%d')) & (df['time'] <= end_date.strftime('%Y-%m-%d'))]
             if type == 'stock':
                 df[['open', 'high', 'low', 'close']] = round(df[['open', 'high', 'low', 'close']] / 1000, 2)
             return df
