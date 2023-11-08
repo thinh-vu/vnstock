@@ -4,8 +4,14 @@ sidebar_position: 7
 
 # Lịch sử cập nhật
 
+## 08-11-2023
+- Tùy biến hàm `stock_historical_data` giúp dễ dàng sử dụng với các thư viện phân tích kỹ thuật khác trong Python.
+  - Thêm tham số `decor`, nhận giá trị mặc định là `False` (không thay đổi dữ liệu trả về với cách sử dụng hiện tại của người dùng). Khi đặt `decor=True`, áp dụng thay tên các cột trong DataFrame trả về dưới dạng Title Case tức `Open, High, Low, Close, Time, Ticker` thay vì `open, high, low, close, time, ticker` như hiện tại đồng thời đặt cột Time là index. Việc này giảm bớt cho người dùng phải viết thêm câu lệnh khi sử dụng dữ liệu vnstock kết hợp các thư viện phân tích kỹ thuật phổ biến vốn dùng thư viện Yahoo Finance làm nguồn cấp dữ liệu.
+  - Bổ sung tham số `source` cho phép chọn nguồn tải dữ liệu là `TCBS` hay `DNSE`. Nguồn dữ liệu `TCBS` cho lấy dữ liệu lịch sử theo ngày (resolution = `1D`) trong thời gian dài, không hỗ trợ khung thời gian nhỏ hơn. Trong khi đó nguồn dữ liệu `DNSE` cho phép lấy dữ liệu với nhiều khung thời gian khác nhau, giới hạn 90 ngày gần nhất đối với dữ liệu phút, 10 năm gần nhất đối với dữ liệu ngày.
+- Cập nhật tcbs_headers sử dụng cho các request đến API của TCBS
+
 ## 05-11-2023
-- Hoàn thiện tích hợp đầy đủ DNSE Lightspeed API vào mã nguồn vnstock. Phát hành phiên bản 0.2.8.1 để cập nhật.
+- Hoàn thiện tích hợp đầy đủ DNSE Lightspeed API vào mã nguồn vnstock. Phát hành phiên bản 0.2.8.2. Sử dụng lệnh `pip install -U vnstock` để cập nhật phiên bản.
 
 ## 29-10-2023
 - Tích hợp API endpoints cơ bản của DNSE vào vnstock
