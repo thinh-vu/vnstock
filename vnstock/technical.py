@@ -21,7 +21,7 @@ def stock_historical_data (symbol='TCB', start_date='2023-06-01', end_date='2023
         | YYYY-mm-dd  | xxxx | xxxx | xxx | xxxxx | xxxxxx |
     """
     if source == 'DNSE':
-        df = ohlc_data(symbol, start_date, end_date, resolution, type, beautify, headers=entrade_headers)
+        df = ohlc_data(symbol, start_date, end_date, resolution, type, headers=entrade_headers)
     elif source == 'TCBS':
         if resolution == '1D':
             resolution = 'D'
@@ -29,9 +29,12 @@ def stock_historical_data (symbol='TCB', start_date='2023-06-01', end_date='2023
         else:
             print('TCBS only support longterm daily data. Please set resolution to 1D')
             return None
+    df = df[['time', 'open', 'high', 'low', 'close', 'volume', 'ticker']]
     if beautify:
         if type == 'stock':
             df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']] * 1000
+            # convert open, high, low, close to int
+            df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']].astype(int)
     if decor == True:
         # Rename columns to Titlecase
         df.columns = df.columns.str.title()
@@ -97,6 +100,8 @@ def longterm_ohlc_data (symbol='REE', start_date='2022-01-01', end_date='2023-10
         df = df[(df['time'] >= start_date.strftime('%Y-%m-%d')) & (df['time'] <= end_date.strftime('%Y-%m-%d'))]
         # devide price by 1000
         df['ticker'] = symbol
+        # filter data from df to get data from start_date to end_date
+
         if type == 'stock':
             df[['open', 'high', 'low', 'close']] = round(df[['open', 'high', 'low', 'close']] / 1000, 2)
         return df
@@ -105,7 +110,6 @@ def longterm_ohlc_data (symbol='REE', start_date='2022-01-01', end_date='2023-10
             url = f"https://apipubaws.tcbs.com.vn/stock-insight/v2/stock/bars-long-term?ticker={symbol}&type={type}&resolution={resolution}&to={end_date_stp}&countBack={delta}"
         elif type == 'derivative':
             url = f'https://apipubaws.tcbs.com.vn/futures-insight/v2/stock/bars-long-term?ticker={symbol}&type=derivative&resolution={resolution}&to={end_date_stp}&countBack={delta}'
-        print(url)
         response = requests.request("GET", url, headers=headers)
         status_code = response.status_code
         if status_code == 200:
@@ -123,7 +127,7 @@ def longterm_ohlc_data (symbol='REE', start_date='2022-01-01', end_date='2023-10
             print(f'Error {status_code}. {response.text}')
             return None
         
-def ohlc_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', type='stock', beautify=True, headers=entrade_headers): # DNSE source (will be published on vnstock)
+def ohlc_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolution='1D', type='stock', headers=entrade_headers): # DNSE source (will be published on vnstock)
     """
     Get historical price data from entrade.com.vn. The unit price is VND.
     Parameters:
@@ -169,13 +173,6 @@ def ohlc_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolutio
         # if resolution is 1D, then convert time to date
         if resolution == '1D':
             df['time'] = df['time'].dt.date
-        else:
-            pass
-        # if type=stock and beautify=True, then convert open, high, low, close to VND, elif type=index keep as is
-        if type == 'stock' and beautify == True:
-            df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']] * 1000
-            # convert open, high, low, close to int
-            df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']].astype(int)
         else:
             pass
     else:
