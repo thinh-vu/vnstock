@@ -1,10 +1,50 @@
 # DNSE API: https://www.dnse.vn
 from .config import *
+from .technical import stock_historical_data
 
-import requests
-import json
-import pandas as pd
-from pandas import json_normalize
+# AMIBROKER CSV EXPORT
+
+def amibroker_ohlc_export (path='', symbol='TCB', start_date='2023-01-01', end_date='2023-11-08', resolution='1D', type='stock', beautify=False, source='DNSE'):
+    """
+    Get historical price data from entrade.com.vn. The default setting return dataset with unit price is thousands VND.
+    Parameters:
+        path (str): path to save the csv file. Default is the current directory
+        symbol (str): ticker of a stock or index. Available indices are: VNINDEX, VN30, HNX, HNX30, UPCOM, VNXALLSHARE, VN30F1M, VN30F2M, VN30F1Q, VN30F2Q
+        from_date (str): start date of the historical price data
+        to_date (str): end date of the historical price data
+        resolution (str): resolution of the historical price data. Default is '1D' (daily), other options are '1' (1 minute), 15 (15 minutes), 30 (30 minutes), '1H' (hourly)
+        type (str): stock, index, or derivative. Default is 'stock'
+        beautify (bool): if True, convert open, high, low, close to VND for stock symbols. Default is True which means the unit price is thousands VND
+        source (str): data source. Default is 'DNSE' EntradeX, other options are 'TCBS' (Only applicable for the `Day` resolution, longterm data)
+    Returns:
+        :obj:`pandas.DataFrame`:
+        | time | open | high | low | close | volume |
+        | ----------- | ---- | ---- | --- | ----- | ------ |
+        | YYYY-mm-dd  | xxxx | xxxx | xxx | xxxxx | xxxxxx |
+    """
+    df = stock_historical_data(symbol=symbol, start_date=start_date, end_date=end_date, resolution=resolution, type=type, beautify=beautify, decor=False, source=source)
+    # convert time column to datetime
+    if resolution == '1D':
+        df['time'] = pd.to_datetime(df['time'], format='%Y-%m-%d').dt.strftime('%Y%m%d')
+        # format columns headers for Amibroker
+        df = df.rename(columns={'ticker': '<Ticker>', 'time': '<DTYYYYMMDD>', 'open': '<Open>', 'high': '<High>', 'low': '<Low>', 'close': '<Close>', 'volume': '<Volume>'})
+        df = df[['<Ticker>', '<DTYYYYMMDD>', '<Open>', '<High>', '<Low>', '<Close>', '<Volume>']]
+    else:
+        # create <Time> column
+        df['<Time>'] = df['time'].dt.strftime('%H:%M')
+        df['time'] = pd.to_datetime(df['time'], format='%Y-%m-%d').dt.strftime('%Y%m%d')
+        # format columns headers for Amibroker
+        df = df.rename(columns={'ticker': '<Ticker>', 'time': '<DTYYYYMMDD>', 'open': '<Open>', 'high': '<High>', 'low': '<Low>', 'close': '<Close>', 'volume': '<Volume>'})
+        df = df[['<Ticker>', '<DTYYYYMMDD>', '<Open>', '<High>', '<Low>', '<Close>', '<Volume>', '<Time>']]
+    # if path = '' then get the cưrrent directory
+    if path == '':
+        path = os.getcwd()
+    # save to csv file
+    df.to_csv(f'{path}/amibroker_export_{type}_{symbol}_from_{start_date}_to{end_date}_{resolution}.csv', index=False)
+    preview = df.head(5)
+    print('Data preview:\n', preview)
+
+# DNSE LIGHTSPEED API
 
 class DNSEClient:
     def __init__(self):

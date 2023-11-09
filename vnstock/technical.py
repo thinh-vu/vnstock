@@ -10,7 +10,7 @@ def stock_historical_data (symbol='TCB', start_date='2023-06-01', end_date='2023
         to_date (str): end date of the historical price data
         resolution (str): resolution of the historical price data. Default is '1D' (daily), other options are '1' (1 minute), 15 (15 minutes), 30 (30 minutes), '1H' (hourly). For stock, the limit of 90 days is applied to resolution 1, 15, 30, 1H.
         type (str): stock, index, or derivative. Default is 'stock'
-        beautify (bool): if True, convert open, high, low, close to VND for stock symbols. Default is True
+        beautify (bool): if True, convert open, high, low, close to VND for stock symbols. Default is True which means the unit price is thousands VND
         decor (bool): if True, rename columns to Title Case (Open, High, Low, Close instead of open, high, low, close) and set Time column as index. Default is False. This option help to integrate vnstock with other libraries such as TA-Lib out of the box.
         source (str): data source. Default is 'DNSE' EntradeX, other options are 'TCBS' (Only applicable for the `Day` resolution, longterm data)
         headers (dict): headers of the request

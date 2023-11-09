@@ -1,18 +1,17 @@
----
-sidebar_position: 7
----
-
 # Lịch sử cập nhật
 
 ## 09-11-2023
-> Phát hành phiên bản 0.2.8.4
+> Phát hành phiên bản 0.2.8.5
 
 - Cập nhật hàm `stock_intraday_data`
   - Bổ sung tham số `investor_segment`, mặc định nhận giá trị `True` cho phép trả về dữ liệu khớp lệnh theo phân nhóm nhà đầu tư (như các phiên bản trước), khi đặt là `False` cho phép trả về dữ liệu thô, không gộp thông tin lệnh theo phân nhóm.
+- Bổ sung hàm `amibroker_ohlc_export` cho phép xuất dữ liệu sang định dạng CSV để nạp dữ liệu cho Amibroker. Chi tiết [tại đây](http://docs.vnstock.site/integrate/amibroker/)
+- Bổ sung hướng dẫn tích hợp vnstock với dự án sử dụng thư viện phân tích kỹ thuật TA-lib python. Chi tiết [tại đây](http://docs.vnstock.site/integrate/ta_lib/)
+- Giới thiệu một số thư viện Backtesting trong python giúp kiểm thử chiến lược giao dịch. Chi tiết [tại đây](http://docs.vnstock.site/integrate/backtesting/)
 
 ## 08-11-2023
 
-> Phát hành phiên bản 0.2.8.3
+> Phát hành phiên bản 0.2.8.4
 
 - Tùy biến hàm `stock_historical_data` giúp dễ dàng sử dụng với các thư viện phân tích kỹ thuật khác trong Python.
 

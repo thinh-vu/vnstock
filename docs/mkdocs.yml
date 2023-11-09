@@ -214,6 +214,8 @@ nav:
     - Amibroker: integrate/amibroker.md
     - Streamlit: integrate/streamlit.md
     - Huggingface: integrate/huggingface.md
+    - TA-Lib: integrate/ta_lib.md
+    - Thư viện Backtesting: integrate/backtesting.md
     - SSI Fast Connect API: integrate/ssi_fast_connect_api.md
     - DNSE Lightspeed API: integrate/dnse_api.md
   - Cộng đồng: 
