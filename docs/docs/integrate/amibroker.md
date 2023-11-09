@@ -8,7 +8,7 @@
 ## Xuất file CSV cho Amibroker
 
 ```python
-amibroker_ohlc (path=r'C:\Users\mrthi\Desktop', symbol='TCB', start_date='2023-01-01', end_date='2023-11-08', resolution='1D', type='stock', source='DNSE')
+amibroker_ohlc_export (path=r'C:\Users\mrthi\Desktop', symbol='TCB', start_date='2023-01-01', end_date='2023-11-08', resolution='1D', type='stock', source='DNSE')
 ```
 
 Trong đó:
@@ -17,7 +17,7 @@ Trong đó:
 - Các tham số khác, vui lòng xem chi tiết hàm [stock_historical_data](https://docs.vnstock.site/functions/technical/#truy-xuat-du-lieu-gia-lich-su)
 
 ```shell
->>> amibroker_ohlc (path=r'C:\Users\mrthi\Desktop', symbol='TCB', start_date='2023-01-01', end_date='2023-11-08', resolution='1D', type='stock', source='DNSE')
+>>> amibroker_ohlc_export (path=r'C:\Users\mrthi\Desktop', symbol='TCB', start_date='2023-01-01', end_date='2023-11-08', resolution='1D', type='stock', source='DNSE')
 
 Data preview:
    <Ticker> <DTYYYYMMDD>  <Open>  <High>  <Low>  <Close>  <Volume>
