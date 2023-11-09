@@ -1,5 +1,6 @@
 # DNSE API: https://www.dnse.vn
 from .config import *
+import os
 from .technical import stock_historical_data
 
 # AMIBROKER CSV EXPORT
