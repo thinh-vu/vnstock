@@ -804,18 +804,12 @@
     Truy xuất dữ liệu giá lịch sử
   </a>
   
-    <nav class="md-nav" aria-label="Truy xuất dữ liệu giá lịch sử">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#du-lieu-khop-lenh-trong-ngay-giao-dich" class="md-nav__link">
     Dữ liệu khớp lệnh trong ngày giao dịch
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1037,6 +1031,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1163,6 +1161,46 @@
   
   <span class="md-ellipsis">
     Huggingface
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../integrate/ta_lib/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TA-Lib
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../integrate/backtesting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Thư viện Backtesting
   </span>
   
 
@@ -1647,28 +1685,53 @@
 </span></code></pre></div></p>
 </li>
 </ul>
-<h3 id="du-lieu-khop-lenh-trong-ngay-giao-dich">Dữ liệu khớp lệnh trong ngày giao dịch<a class="headerlink" href="#du-lieu-khop-lenh-trong-ngay-giao-dich" title="Anchor link to this section for reference">&para;</a></h3>
-<ul>
-<li>Minh hoạ giao diện TCBS</li>
-</ul>
-<p><a class="glightbox" href="../../assets/images/tcbs_intraday_screen1.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/tcbs_intraday_screen1.png" /></a>
-<a class="glightbox" href="../../assets/images/tcbs_intraday_screen2.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/tcbs_intraday_screen2.png" /></a></p>
+<h2 id="du-lieu-khop-lenh-trong-ngay-giao-dich">Dữ liệu khớp lệnh trong ngày giao dịch<a class="headerlink" href="#du-lieu-khop-lenh-trong-ngay-giao-dich" title="Anchor link to this section for reference">&para;</a></h2>
 <p>vnstock cho phép người dùng tải xuống dữ liệu khớp lệnh trong ngày giao dịch theo thời gian thực. Nếu mốc thời gian bạn truy cứu rơi vào Thứ Bảy, Chủ Nhật thì dữ liệu nhận được thể hiện cho ngày giao dịch của Thứ 6 của tuần đó.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">df</span> <span class="o">=</span>  <span class="n">stock_intraday_data</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;TCB&#39;</span><span class="p">,</span> 
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>                            <span class="n">page_size</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>                            <span class="n">page_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">investor_segment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </span></code></pre></div>
+<p>Trong đó:</p>
 <ul>
-<li>Kết quả:</li>
+<li><code>page_size</code>: nhận giá trị tùy ý nhỏ hơn 100 hoặc bội số của 100. Ví dụ chọn 1000 sẽ cho phép lấy hầu hết dữ liệu khớp lệnh trong ngày giao dịch với đa số mã cổ phiếu.</li>
+<li><code>investor_segment</code>: mặc định nhận giá trị <code>True</code>, cho phép phân loại nhà đầu tư theo Cá Mập, Cừu Non hay Sói già. Đặt giá trị <code>False</code> để bỏ qua bước phân loại này, hiển thị tất cả các lệnh khớp dưới dạng dữ liệu thô. Cập nhật này áp dụng từ <a href="https://docs.vnstock.site/changes_log/#09-11-2023">phiên bản 0.2.8.4</a></li>
 </ul>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>&gt;&gt;&gt;<span class="w"> </span>stock_intraday_data<span class="o">(</span><span class="s1">&#39;TCB&#39;</span>,<span class="w"> </span><span class="m">500</span><span class="o">)</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>ticker<span class="w">      </span><span class="nb">time</span><span class="w">  </span>orderType<span class="w"> </span>investorType<span class="w">  </span>volume<span class="w">  </span>averagePrice<span class="w">  </span>orderCount
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="m">0</span><span class="w">    </span>TCB<span class="w">  </span><span class="m">14</span>:29:55<span class="w">  </span>Sell<span class="w"> </span>Down<span class="w">        </span>SHEEP<span class="w">    </span><span class="m">1000</span><span class="w">       </span><span class="m">32700</span>.0<span class="w">           </span><span class="m">1</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="m">1</span><span class="w">    </span>TCB<span class="w">  </span><span class="m">14</span>:29:47<span class="w">     </span>Buy<span class="w"> </span>Up<span class="w">        </span>SHEEP<span class="w">     </span><span class="m">200</span><span class="w">       </span><span class="m">32750</span>.0<span class="w">           </span><span class="m">1</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="m">2</span><span class="w">    </span>TCB<span class="w">  </span><span class="m">14</span>:29:44<span class="w">  </span>Sell<span class="w"> </span>Down<span class="w">         </span>WOLF<span class="w">    </span><span class="m">8000</span><span class="w">       </span><span class="m">32700</span>.0<span class="w">          </span><span class="m">14</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="m">3</span><span class="w">    </span>TCB<span class="w">  </span><span class="m">14</span>:29:41<span class="w">  </span>Sell<span class="w"> </span>Down<span class="w">        </span>SHEEP<span class="w">    </span><span class="m">1000</span><span class="w">       </span><span class="m">32700</span>.0<span class="w">           </span><span class="m">5</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="m">4</span><span class="w">    </span>TCB<span class="w">  </span><span class="m">14</span>:29:36<span class="w">  </span>Sell<span class="w"> </span>Down<span class="w">         </span>WOLF<span class="w">   </span><span class="m">23800</span><span class="w">       </span><span class="m">32700</span>.0<span class="w">          </span><span class="m">10</span>
+<p>Kết quả:</p>
+<ul>
+<li>Minh họa 1: Không phân loại nhà đầu tư</li>
+</ul>
+<p><a class="glightbox" href="../../assets/images/tcbs_intraday_screen1.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/tcbs_intraday_screen1.png" /></a>
+  <a class="glightbox" href="image-1.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="Alt text" src="image-1.png" /></a></p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>&gt;&gt;&gt;<span class="w"> </span>stock_intraday_data<span class="w"> </span><span class="o">(</span><span class="nv">symbol</span><span class="o">=</span><span class="s1">&#39;ACB&#39;</span>,<span class="w"> </span><span class="nv">page_size</span><span class="o">=</span><span class="m">10</span>,<span class="w"> </span><span class="nv">investor_segment</span><span class="o">=</span>False<span class="o">)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>ticker<span class="w">      </span><span class="nb">time</span><span class="w"> </span>orderType<span class="w">  </span>volume<span class="w">    </span>price<span class="w">  </span>prevPriceChange
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="m">0</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:45:00<span class="w">            </span><span class="m">211500</span><span class="w">  </span><span class="m">22550</span>.0<span class="w">           </span>-100.0
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="m">1</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:29:53<span class="w">        </span>BU<span class="w">    </span><span class="m">1000</span><span class="w">  </span><span class="m">22650</span>.0<span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="m">2</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:29:38<span class="w">        </span>BU<span class="w">     </span><span class="m">100</span><span class="w">  </span><span class="m">22650</span>.0<span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="m">3</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:34<span class="w">        </span>BU<span class="w">     </span><span class="m">300</span><span class="w">  </span><span class="m">22650</span>.0<span class="w">             </span><span class="m">50</span>.0
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="m">4</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:15<span class="w">        </span>SD<span class="w">    </span><span class="m">1200</span><span class="w">  </span><span class="m">22600</span>.0<span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="m">5</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:15<span class="w">        </span>SD<span class="w">     </span><span class="m">300</span><span class="w">  </span><span class="m">22600</span>.0<span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="m">6</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:15<span class="w">        </span>SD<span class="w">     </span><span class="m">400</span><span class="w">  </span><span class="m">22600</span>.0<span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="m">7</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:15<span class="w">        </span>SD<span class="w">     </span><span class="m">300</span><span class="w">  </span><span class="m">22600</span>.0<span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="m">8</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:15<span class="w">        </span>SD<span class="w">     </span><span class="m">100</span><span class="w">  </span><span class="m">22600</span>.0<span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="m">9</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:15<span class="w">        </span>SD<span class="w">     </span><span class="m">200</span><span class="w">  </span><span class="m">22600</span>.0<span class="w">              </span><span class="m">0</span>.0
+</span></code></pre></div>
+<ul>
+<li>Minh họa 2: Phân loại nhà đầu tư (kèm hình giao diện TCBS tương ứng)</li>
+</ul>
+<p><a class="glightbox" href="../../assets/images/tcbs_intraday_screen2.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/tcbs_intraday_screen2.png" /></a>
+  <a class="glightbox" href="image.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="Alt text" src="image.png" /></a></p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>&gt;&gt;&gt;<span class="w"> </span>stock_intraday_data<span class="w"> </span><span class="o">(</span><span class="nv">symbol</span><span class="o">=</span><span class="s1">&#39;ACB&#39;</span>,<span class="w"> </span><span class="nv">page_size</span><span class="o">=</span><span class="m">10</span>,<span class="w"> </span><span class="nv">investor_segment</span><span class="o">=</span>True<span class="o">)</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span>ticker<span class="w">      </span><span class="nb">time</span><span class="w">  </span>orderType<span class="w"> </span>investorType<span class="w">  </span>volume<span class="w">  </span>averagePrice<span class="w">  </span>orderCount<span class="w">  </span>prevPriceChange
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="m">0</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:29:54<span class="w">     </span>Buy<span class="w"> </span>Up<span class="w">        </span>SHEEP<span class="w">    </span><span class="m">1000</span><span class="w">       </span><span class="m">22650</span>.0<span class="w">           </span><span class="m">1</span><span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="m">1</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:29:39<span class="w">     </span>Buy<span class="w"> </span>Up<span class="w">        </span>SHEEP<span class="w">     </span><span class="m">100</span><span class="w">       </span><span class="m">22650</span>.0<span class="w">           </span><span class="m">1</span><span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="m">2</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:34<span class="w">     </span>Buy<span class="w"> </span>Up<span class="w">        </span>SHEEP<span class="w">     </span><span class="m">300</span><span class="w">       </span><span class="m">22650</span>.0<span class="w">           </span><span class="m">1</span><span class="w">             </span><span class="m">50</span>.0
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="m">3</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:16<span class="w">  </span>Sell<span class="w"> </span>Down<span class="w">        </span>SHEEP<span class="w">    </span><span class="m">7000</span><span class="w">       </span><span class="m">22600</span>.0<span class="w">          </span><span class="m">29</span><span class="w">            </span>-50.0
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="m">4</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:28:11<span class="w">     </span>Buy<span class="w"> </span>Up<span class="w">        </span>SHEEP<span class="w">     </span><span class="m">200</span><span class="w">       </span><span class="m">22650</span>.0<span class="w">           </span><span class="m">1</span><span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="m">5</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:27:43<span class="w">     </span>Buy<span class="w"> </span>Up<span class="w">        </span>SHEEP<span class="w">    </span><span class="m">1000</span><span class="w">       </span><span class="m">22650</span>.0<span class="w">           </span><span class="m">1</span><span class="w">             </span><span class="m">50</span>.0
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="m">6</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:27:28<span class="w">  </span>Sell<span class="w"> </span>Down<span class="w">        </span>SHEEP<span class="w">    </span><span class="m">3200</span><span class="w">       </span><span class="m">22600</span>.0<span class="w">           </span><span class="m">2</span><span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="m">7</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:26:38<span class="w">  </span>Sell<span class="w"> </span>Down<span class="w">        </span>SHEEP<span class="w">     </span><span class="m">300</span><span class="w">       </span><span class="m">22600</span>.0<span class="w">           </span><span class="m">1</span><span class="w">            </span>-50.0
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="m">8</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:26:36<span class="w">     </span>Buy<span class="w"> </span>Up<span class="w">        </span>SHEEP<span class="w">     </span><span class="m">100</span><span class="w">       </span><span class="m">22650</span>.0<span class="w">           </span><span class="m">1</span><span class="w">              </span><span class="m">0</span>.0
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="m">9</span><span class="w">    </span>ACB<span class="w">  </span><span class="m">14</span>:26:21<span class="w">     </span>Buy<span class="w"> </span>Up<span class="w">        </span>SHEEP<span class="w">    </span><span class="m">3000</span><span class="w">       </span><span class="m">22650</span>.0<span class="w">           </span><span class="m">1</span><span class="w">             </span><span class="m">50</span>.0
 </span></code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Giải thích ý nghĩa chỉ số</p>

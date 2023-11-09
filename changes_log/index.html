@@ -979,6 +979,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1105,6 +1109,46 @@
   
   <span class="md-ellipsis">
     Huggingface
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrate/ta_lib/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TA-Lib
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrate/backtesting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Thư viện Backtesting
   </span>
   
 
@@ -1488,6 +1532,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#09-11-2023" class="md-nav__link">
+    09-11-2023
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#08-11-2023" class="md-nav__link">
     08-11-2023
   </a>
@@ -1714,9 +1765,20 @@
 
 
 <h1 id="lich-su-cap-nhat">Lịch sử cập nhật<a class="headerlink" href="#lich-su-cap-nhat" title="Anchor link to this section for reference">&para;</a></h1>
+<h2 id="09-11-2023">09-11-2023<a class="headerlink" href="#09-11-2023" title="Anchor link to this section for reference">&para;</a></h2>
+<blockquote>
+<p>Phát hành phiên bản 0.2.8.5</p>
+</blockquote>
+<ul>
+<li>Cập nhật hàm <code>stock_intraday_data</code></li>
+<li>Bổ sung tham số <code>investor_segment</code>, mặc định nhận giá trị <code>True</code> cho phép trả về dữ liệu khớp lệnh theo phân nhóm nhà đầu tư (như các phiên bản trước), khi đặt là <code>False</code> cho phép trả về dữ liệu thô, không gộp thông tin lệnh theo phân nhóm.</li>
+<li>Bổ sung hàm <code>amibroker_ohlc_export</code> cho phép xuất dữ liệu sang định dạng CSV để nạp dữ liệu cho Amibroker. Chi tiết <a href="http://docs.vnstock.site/integrate/amibroker/">tại đây</a></li>
+<li>Bổ sung hướng dẫn tích hợp vnstock với dự án sử dụng thư viện phân tích kỹ thuật TA-lib python. Chi tiết <a href="http://docs.vnstock.site/integrate/ta_lib/">tại đây</a></li>
+<li>Giới thiệu một số thư viện Backtesting trong python giúp kiểm thử chiến lược giao dịch. Chi tiết <a href="http://docs.vnstock.site/integrate/backtesting/">tại đây</a></li>
+</ul>
 <h2 id="08-11-2023">08-11-2023<a class="headerlink" href="#08-11-2023" title="Anchor link to this section for reference">&para;</a></h2>
 <blockquote>
-<p>Phát hành phiên bản 0.2.8.3</p>
+<p>Phát hành phiên bản 0.2.8.4</p>
 </blockquote>
 <ul>
 <li>
