@@ -4,6 +4,12 @@ sidebar_position: 7
 
 # Lịch sử cập nhật
 
+## 09-11-2023
+> Phát hành phiên bản 0.2.8.4
+
+- Cập nhật hàm `stock_intraday_data`
+  - Bổ sung tham số `investor_segment`, mặc định nhận giá trị `True` cho phép trả về dữ liệu khớp lệnh theo phân nhóm nhà đầu tư (như các phiên bản trước), khi đặt là `False` cho phép trả về dữ liệu thô, không gộp thông tin lệnh theo phân nhóm.
+
 ## 08-11-2023
 
 > Phát hành phiên bản 0.2.8.3

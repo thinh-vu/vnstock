@@ -61,32 +61,61 @@ df = stock_historical_data("VN30F1M", "2023-07-01", "2023-07-24", "1D", 'derivat
 print(df)
 ```
 
-### Dữ liệu khớp lệnh trong ngày giao dịch
-
-- Minh hoạ giao diện TCBS
-
-![](../assets/images/tcbs_intraday_screen1.png)
-![](../assets/images/tcbs_intraday_screen2.png)
+## Dữ liệu khớp lệnh trong ngày giao dịch
 
 vnstock cho phép người dùng tải xuống dữ liệu khớp lệnh trong ngày giao dịch theo thời gian thực. Nếu mốc thời gian bạn truy cứu rơi vào Thứ Bảy, Chủ Nhật thì dữ liệu nhận được thể hiện cho ngày giao dịch của Thứ 6 của tuần đó.
 
 ```python
 df =  stock_intraday_data(symbol='TCB', 
-                            page_size=500)
+                            page_size=500, investor_segment=True)
 print(df)
 ```
 
-- Kết quả:
+Trong đó:
+
+- `page_size`: nhận giá trị tùy ý nhỏ hơn 100 hoặc bội số của 100. Ví dụ chọn 1000 sẽ cho phép lấy hầu hết dữ liệu khớp lệnh trong ngày giao dịch với đa số mã cổ phiếu.
+- `investor_segment`: mặc định nhận giá trị `True`, cho phép phân loại nhà đầu tư theo Cá Mập, Cừu Non hay Sói già. Đặt giá trị `False` để bỏ qua bước phân loại này, hiển thị tất cả các lệnh khớp dưới dạng dữ liệu thô. Cập nhật này áp dụng từ [phiên bản 0.2.8.4](https://docs.vnstock.site/changes_log/#09-11-2023)
+
+Kết quả:
+
+  - Minh họa 1: Không phân loại nhà đầu tư
+
+  ![](../assets/images/tcbs_intraday_screen1.png)
+  ![Alt text](image-1.png)
 
 ```shell
->>> stock_intraday_data('TCB', 500)
+>>> stock_intraday_data (symbol='ACB', page_size=10, investor_segment=False)
+  ticker      time orderType  volume    price  prevPriceChange
+0    ACB  14:45:00            211500  22550.0           -100.0
+1    ACB  14:29:53        BU    1000  22650.0              0.0
+2    ACB  14:29:38        BU     100  22650.0              0.0
+3    ACB  14:28:34        BU     300  22650.0             50.0
+4    ACB  14:28:15        SD    1200  22600.0              0.0
+5    ACB  14:28:15        SD     300  22600.0              0.0
+6    ACB  14:28:15        SD     400  22600.0              0.0
+7    ACB  14:28:15        SD     300  22600.0              0.0
+8    ACB  14:28:15        SD     100  22600.0              0.0
+9    ACB  14:28:15        SD     200  22600.0              0.0
+```
 
-  ticker      time  orderType investorType  volume  averagePrice  orderCount
-0    TCB  14:29:55  Sell Down        SHEEP    1000       32700.0           1
-1    TCB  14:29:47     Buy Up        SHEEP     200       32750.0           1
-2    TCB  14:29:44  Sell Down         WOLF    8000       32700.0          14
-3    TCB  14:29:41  Sell Down        SHEEP    1000       32700.0           5
-4    TCB  14:29:36  Sell Down         WOLF   23800       32700.0          10
+  - Minh họa 2: Phân loại nhà đầu tư (kèm hình giao diện TCBS tương ứng)
+
+  ![](../assets/images/tcbs_intraday_screen2.png)
+  ![Alt text](image.png)
+
+```shell
+>>> stock_intraday_data (symbol='ACB', page_size=10, investor_segment=True)
+  ticker      time  orderType investorType  volume  averagePrice  orderCount  prevPriceChange
+0    ACB  14:29:54     Buy Up        SHEEP    1000       22650.0           1              0.0
+1    ACB  14:29:39     Buy Up        SHEEP     100       22650.0           1              0.0
+2    ACB  14:28:34     Buy Up        SHEEP     300       22650.0           1             50.0
+3    ACB  14:28:16  Sell Down        SHEEP    7000       22600.0          29            -50.0
+4    ACB  14:28:11     Buy Up        SHEEP     200       22650.0           1              0.0
+5    ACB  14:27:43     Buy Up        SHEEP    1000       22650.0           1             50.0
+6    ACB  14:27:28  Sell Down        SHEEP    3200       22600.0           2              0.0
+7    ACB  14:26:38  Sell Down        SHEEP     300       22600.0           1            -50.0
+8    ACB  14:26:36     Buy Up        SHEEP     100       22650.0           1              0.0
+9    ACB  14:26:21     Buy Up        SHEEP    3000       22650.0           1             50.0
 ```
 
 !!! info "Giải thích ý nghĩa chỉ số"

@@ -170,13 +170,14 @@ def price_board (symbol_ls):
     return df
 
 
-def stock_intraday_data (symbol='ACB', page_size=50, page=0, headers=tcbs_headers):
+def stock_intraday_data (symbol='ACB', page_size=50, page=0, investor_segment=True, headers=tcbs_headers):
     """
     Get intraday stock insights from TCBS Trade Station
     Parameters:
         symbol (str): ticker of the stock
-        page_size (int): number of data points per page. Default is 50. You can increase this parameter to about 1000 to get all data in one trading day.
+        page_size (int): number of data points per page. Default is 50. You can increase this parameter multiply by 100, for instance, increase to about 1000 to get all data in one trading day.
         page (int): page number. Default is 0. You can ignore this parameter.
+        investor_segment (bool): True to get data by investor segment, False to get data by order type. Default is True.
         headers (dict): headers of the request. You can ignore this parameter.
     """
     # if the page_size is greater than 100, loop through the pages to get all data
@@ -184,7 +185,10 @@ def stock_intraday_data (symbol='ACB', page_size=50, page=0, headers=tcbs_header
         df = pd.DataFrame()
         for i in range(0, page_size//100):
             # create url
-            url = f"https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/investor/his/paging?page={i}&size=100&headIndex=-1"
+            if investor_segment == True:
+                url = f"https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/investor/his/paging?page={i}&size=100&headIndex=-1"
+            elif investor_segment == False:
+                url = f'https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/his/paging?page={i}&size=100&headIndex=-1'
             # send request to get response
             response = requests.request("GET", url, headers=headers)
             # if response status is 200, then get data from response
@@ -198,7 +202,10 @@ def stock_intraday_data (symbol='ACB', page_size=50, page=0, headers=tcbs_header
                 break
     else:
         # create url
-        url = f"https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/investor/his/paging?page={page}&size={page_size}&headIndex=-1"
+        if investor_segment == True:
+            url = f"https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/investor/his/paging?page={page}&size={page_size}&headIndex=-1"
+        elif investor_segment == False:
+            url = f'https://apipubaws.tcbs.com.vn/stock-insight/v1/intraday/{symbol}/his/paging?page={page}&size={page_size}&headIndex=-1'
         # send request to get response
         response = requests.request("GET", url, headers=headers)
         # if response status is 200, then get data from response
@@ -210,23 +217,15 @@ def stock_intraday_data (symbol='ACB', page_size=50, page=0, headers=tcbs_header
         else:
             print(response['message'])
             return None
-    # move ticker column to the first column
-    try:
-        cols = df.columns.tolist()
-        cols = cols[-1:] + cols[:-1]
-        df = df[cols]
-        # drop columns cp, rcp, pcp
-        df.drop(columns=['cp', 'rcp', 'pcp'], inplace=True)
-        # rename columns ap to averagePrice, v to volume, a to orderType, t to time, n to orderCount, type to investorType
-        df.rename(columns={'ap': 'averagePrice', 'v': 'volume', 'a': 'orderType', 't': 'time', 'n': 'orderCount', 'type': 'investorType'}, inplace=True)
-        # arrange columns by ticker, time, orderType, investorType, volume, averagePrice, orderCount
-        df = df[['ticker', 'time', 'orderType', 'investorType', 'volume', 'averagePrice', 'orderCount']]
+    df.drop(columns=['cp', 'rcp'], inplace=True)
+    df.rename(columns={'ap': 'averagePrice', 'p':'price', 'v': 'volume', 'a': 'orderType', 't': 'time', 'n': 'orderCount', 'type': 'investorType', 'pcp': 'prevPriceChange'}, inplace=True)
+    if investor_segment == True:
+        df = df[['ticker', 'time', 'orderType', 'investorType', 'volume', 'averagePrice', 'orderCount', 'prevPriceChange']]
         # rename values of orderType, SD to Sell Down, BU to Buy Up
         df['orderType'] = df['orderType'].replace({'SD': 'Sell Down', 'BU': 'Buy Up'})
-        # reset index
-        df.reset_index(drop=True, inplace=True)
-        return df
-    except:
-        print('No data available')
+    elif investor_segment == False:
+        df = df[['ticker', 'time', 'orderType', 'volume', 'price', 'prevPriceChange']]
+    df.reset_index(drop=True, inplace=True)
+    return df
 
 

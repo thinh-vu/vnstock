@@ -175,7 +175,8 @@ def ohlc_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolutio
         if resolution == '1D':
             df['time'] = df['time'].dt.date
         else:
-            pass
+            # format df['time'] to datetime string with format %Y-%m-%d %H:%M:%S
+            df['time'] = df['time'].dt.strftime('%Y-%m-%d %H:%M:%S')
     else:
         print(f"Error in API response {response.text}", "\n")
     return df
