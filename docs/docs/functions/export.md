@@ -99,9 +99,7 @@ worksheet.update_cells(cell_list)
 ## Xuất dữ liệu cho Amibroker
 
 !!! tip "Tải dữ liệu cho Amibroker" 
-    Thực hiện tùy biến đôi chút với hàm `stock_historical_data` là bạn có thể tải dữ liệu cho Amibrokder dưới dạng file csv một cách dễ dàng. Hiện tại `vnstock` cung cấp khả năng tải dữ liệu Amibroker không giới hạn với cả dữ liệu chứng khoán, phái sinh, và chỉ số với tất cả các khung thời gian cho phép từ 1, 3, 5, 15, 30, 60 phút và dữ liệu EOD.
-
-Hãy thử nghiệm ngay tính năng tải dữ liệu này với Vnstock Web App.
+    Để có thể sử dụng dữ liệu giá lịch sử từ vnstock cho ứng dụng Amibroker, bạn có thể xem chi tiết hướng dẫn tại mục [Tích hợp Amibroker](https://docs.vnstock.site/integrate/amibroker/)
 
 
 

@@ -53,7 +53,7 @@ Các tham số của hàm bao gồm:
 - `x_label`: Nhãn trục x (hoành)
 - `y_label`: Nhãn trục y (tung)
 - `colors`: Mã màu thể hiện cho khối lượng giao dịch trong những ngày giá cổ phiếu tăng/giảm, được nhập dưới dạng tupple. Ví dụ ('#00F4B0', '#FF3747').
-- `reference_color`: Cặp mã màu cho đường hỗ trợ (lowest low), kháng cự (highest high) được nhập vào dưới dạng tupple. Ví dụ ('black', 'blue')
+- `reference_color`: Cặp mã màu cho đường giá thấp nhất (lowest low), và cao nhất (highest high) được nhập vào dưới dạng tupple. Ví dụ ('black', 'blue')
 
 ![vnindex candlestick](../assets/images/VNINDEX_candlestick.png?raw=true)
 

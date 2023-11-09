@@ -1,8 +1,34 @@
----
-sidebar_position: 7
----
-
 # Lịch sử cập nhật
+
+## 09-11-2023
+> Phát hành phiên bản 0.2.8.5
+
+- Cập nhật hàm `stock_intraday_data`
+  - Bổ sung tham số `investor_segment`, mặc định nhận giá trị `True` cho phép trả về dữ liệu khớp lệnh theo phân nhóm nhà đầu tư (như các phiên bản trước), khi đặt là `False` cho phép trả về dữ liệu thô, không gộp thông tin lệnh theo phân nhóm.
+- Bổ sung hàm `amibroker_ohlc_export` cho phép xuất dữ liệu sang định dạng CSV để nạp dữ liệu cho Amibroker. Chi tiết [tại đây](http://docs.vnstock.site/integrate/amibroker/)
+- Bổ sung hướng dẫn tích hợp vnstock với dự án sử dụng thư viện phân tích kỹ thuật TA-lib python. Chi tiết [tại đây](http://docs.vnstock.site/integrate/ta_lib/)
+- Giới thiệu một số thư viện Backtesting trong python giúp kiểm thử chiến lược giao dịch. Chi tiết [tại đây](http://docs.vnstock.site/integrate/backtesting/)
+
+## 08-11-2023
+
+> Phát hành phiên bản 0.2.8.4
+
+- Tùy biến hàm `stock_historical_data` giúp dễ dàng sử dụng với các thư viện phân tích kỹ thuật khác trong Python.
+
+    - Thêm tham số `decor`, nhận giá trị mặc định là `False` (không thay đổi dữ liệu trả về với cách sử dụng hiện tại của người dùng). Khi đặt `decor=True`, áp dụng thay tên các cột trong DataFrame trả về dưới dạng Title Case tức `Open, High, Low, Close, Time, Ticker` thay vì `open, high, low, close, time, ticker` như hiện tại đồng thời đặt cột Time là index. Việc này giảm bớt cho người dùng phải viết thêm câu lệnh khi sử dụng dữ liệu vnstock kết hợp các thư viện phân tích kỹ thuật phổ biến vốn dùng thư viện Yahoo Finance làm nguồn cấp dữ liệu.
+
+    - Bổ sung tham số `source` cho phép chọn nguồn tải dữ liệu là `TCBS` hay `DNSE`. Nguồn dữ liệu `TCBS` cho lấy dữ liệu lịch sử theo ngày (resolution = `1D`) trong thời gian dài, không hỗ trợ khung thời gian nhỏ hơn. Trong khi đó nguồn dữ liệu `DNSE` cho phép lấy dữ liệu với nhiều khung thời gian khác nhau, giới hạn 90 ngày gần nhất đối với dữ liệu phút, 10 năm gần nhất đối với dữ liệu ngày.
+
+- Cập nhật tcbs_headers sử dụng cho các request đến API của TCBS
+
+## 05-11-2023
+- Hoàn thiện tích hợp đầy đủ DNSE Lightspeed API vào mã nguồn vnstock. Phát hành phiên bản 0.2.8.2. Sử dụng lệnh `pip install -U vnstock` để cập nhật phiên bản.
+
+## 29-10-2023
+- Tích hợp API endpoints cơ bản của DNSE vào vnstock
+  - Demo cho các nhà đầu tư cách tạo 1 request và kết nối hệ thống DNSE để lấy JWT token
+  - Demo xuất thông tin tài khoản
+- Cập nhật tài liệu sử dụng
 
 ## 27-10-2023
 - Bổ sung và hoàn thiện một số hàm cho vnstock
@@ -83,17 +109,17 @@ Thử nghiệm thành công và ra mắt phiên bản thử nghiệm 1.0 cho tra
   - Thêm một giá trị mới **derivative** cho tham số **type**, cho phép truy xuất dữ liệu phái sinh.
 - Các tham chiếu hàm trong tệp README đã được cấu trúc theo các tình huống sử dụng thực tế, như Phân tích Kỹ thuật, Phân tích Cơ bản, Sàng lọc Cổ phiếu, vv. Điều này giúp cho tài liệu thân thiện và có tổ chức hơn với người dùng. Phiên bản tiếng Anh của tệp README cũng đã được cập nhật để phù hợp với phiên bản tiếng Việt.
 
-### 22-07-2023
+## 22-07-2023
 - Bổ sung hướng dẫn vào [Demo Notebook](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) giúp người dùng xuất dữ liệu từ Google Colab ra Google Sheets.
 
-### 14-07-2023
+## 14-07-2023
 - Phát hành phiên bản 0.17 trên PyPI.
 - Những thay đổi trên nhánh **beta** sẽ được cập nhật vào nhánh **main** và phát hành qua PyPI hàng tháng từ bây giờ.
 - File README.md đã được cập nhật để đồng bộ hóa phiên bản tiếng Anh và tiếng Việt.
 - Dữ liệu file listing_companies_enhanced-2023.csv trong thư mục data của repo này được sử dụng để cung cấp dữ liệu công ty niêm yết cho hàm listing_companies.
 - Hàm mới, price_depth, đã được giới thiệu để lấy giá và khối lượng giao dịch cho danh sách các cổ phiếu. Hàm này có thể được sử dụng song song với hàm price_board.
 
-### 13-07-2023
+## 13-07-2023
 - Phân loại các tính năng của vnstock trong file Demo Jupyter Notebook theo 5 nhóm chính:
   1. Thị trường (Market Watch)
   2. Phân tích cơ bản (Fundamental Analysis)
@@ -106,7 +132,7 @@ Thử nghiệm thành công và ra mắt phiên bản thử nghiệm 1.0 cho tra
 - Hàm **price_board** đã được cập nhật.
 - Bổ sung hàm mới trong mô đun **utils.py** để trích xuất giá trị ngày tháng theo định dạng YYYY-mm-dd.
 
-### 05-07-2023
+## 05-07-2023
 - Cập nhật file README.md (áp dụng cho tiếng Việt trước).
 - Các hàm liên quan đến nguồn dữ liệu SSI không hoạt động đã bị loại bỏ.
 - Hàm **financial_ratio** đã được cải tiến với các cập nhật sau đây:
@@ -116,11 +142,11 @@ Thử nghiệm thành công và ra mắt phiên bản thử nghiệm 1.0 cho tra
   - DataFrame kết quả bây giờ có cấu trúc được chuyển vị, với tên mã cổ phiếu làm tiêu đề cột, giúp dễ sử dụng.
   - Thêm tham số **lang**, cho phép hiển thị cột DataFrame bằng nhãn tiếng Việt hoặc tiếng Anh.
 
-### 29-06-2023
+## 29-06-2023
 - Đã cập nhật hàm stock_intraday_data để cung cấp thêm dữ liệu chi tiết trả về bởi hàm và dễ sử dụng hơn
 - Cập nhật hàm stock_historical_data để hỗ trợ lấy dữ liệu lịch sử về các chỉ số.
 
-### 22-06-2023
+## 22-06-2023
 - Phát hành phiên bản 0.15 rên Pypi.
 - Giới thiệu một tính năng mới cho hàm stock_historical_data, cho phép lấy dữ liệu với nhiều độ phân giải thời gian khác nhau. Đã nâng cấp API tương ứng hỗ trợ hàm này.
   - Bao gồm tham số độ phân giải để cho phép người dùng lấy dữ liệu giá tại các khoảng thời gian 1 phút, 3 phút, 5 phút, 15 phút, 30 phút, 1 giờ hoặc 1 ngày.
@@ -129,10 +155,10 @@ Thử nghiệm thành công và ra mắt phiên bản thử nghiệm 1.0 cho tra
 - Tùy chọn **mode='live'** trong hàm listing_companies() đã được loại bỏ. Hàm này bây giờ chỉ đọc danh sách công ty từ tệp csv trên repo github này.
 - Cập nhật cây thư mục cho github repo, thêm thư mục dữ liệu và thêm tệp dữ liệu, thư mục demo để lưu trữ các tệp demo.
 
-### 07-06-2023
+## 07-06-2023
 Chính thức hỗ trợ hướng dẫn sử dụng bằng tiếng Việt cho tệp thư viện thông qua file README.md, giúp thúc đẩy khả năng tiếp cận với vnstock cho người dùng Việt Nam.
 
-### 20-05-2023
+## 20-05-2023
 - Nhánh **main** dành riêng cho các cập nhật quan trọng, trong khi nhánh **beta** được sử dụng cho các cập nhật nhỏ. Từ bây giờ, gói PyPI sẽ phản ánh nội dung của nhánh **main**.
 - Hàm listing_companies() bây giờ có thể đọc danh sách công ty từ tệp csv trên repo github này hoặc từ một yêu cầu API trực tiếp.
 - Hàm stock_intraday_data() bây giờ có một giới hạn mới là 100 cho tham số page_size do TCBS thiết lập.

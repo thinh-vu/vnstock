@@ -341,7 +341,7 @@ def financial_ratio_compare (symbol_ls=["CTG", "TCB", "ACB"], industry_compariso
 
     list_len = len(symbol_ls)
     if list_len == 1:
-        url = f'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/DownloadFinancialRatio2?language=vi&OrganCode={symbol_ls[0]}&CompareToIndustry={industry_comparison}&Frequency={frequency}&Ratios=ryd21&Ratios=ryd25&Ratios=ryd14&Ratios=ryd7&Ratios=rev&Ratios=isa22&Ratios=ryq44&Ratios=ryq14&Ratios=ryq12&Ratios=rtq51&Ratios=rtq50&Ratios=ryq48&Ratios=ryq47&Ratios=ryq45&Ratios=ryq46&Ratios=ryq54&Ratios=ryq55&Ratios=ryq56&Ratios=ryq57&Ratios=nob151&Ratios=casa&Ratios=ryq58&Ratios=ryq59&Ratios=ryq60&Ratios=ryq61&Ratios=ryd11&Ratios=ryd3&TimeLineFrom={timeline}'.format(symbol_ls[i], industry_comparison, '', frequency, timeline)
+        url = f'https://fiin-fundamental.ssi.com.vn/FinancialAnalysis/DownloadFinancialRatio2?language=vi&OrganCode={symbol_ls[0]}&CompareToIndustry={industry_comparison}&Frequency={frequency}&Ratios=ryd21&Ratios=ryd25&Ratios=ryd14&Ratios=ryd7&Ratios=rev&Ratios=isa22&Ratios=ryq44&Ratios=ryq14&Ratios=ryq12&Ratios=rtq51&Ratios=rtq50&Ratios=ryq48&Ratios=ryq47&Ratios=ryq45&Ratios=ryq46&Ratios=ryq54&Ratios=ryq55&Ratios=ryq56&Ratios=ryq57&Ratios=nob151&Ratios=casa&Ratios=ryq58&Ratios=ryq59&Ratios=ryq60&Ratios=ryq61&Ratios=ryd11&Ratios=ryd3&TimeLineFrom={timeline}'.format(symbol_ls[0], industry_comparison, '', frequency, timeline)
     elif  list_len > 1:
         main_symbol = symbol_ls[0]
         company_join = '&CompareToCompanies=' + '&CompareToCompanies='.join(symbol_ls[1:])
