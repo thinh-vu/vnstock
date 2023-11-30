@@ -1,5 +1,27 @@
 from .config import *
 
+# UTILS
+
+def check_language_input(lang):
+    """Check language input. Default to Vietnamese if the chosen language is not supported
+
+    Parameters
+    ----------
+        lang : str
+            language of the column label. Supported: 'vi' (default), 'en'
+    
+    Returns
+    -------
+        str
+            supported language
+    """
+    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
+    if lang.lower() not in supported_languages:
+        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
+        return 'vi'
+    else:
+        return lang.lower()
+
 # MUTUAL FUNDS
 
 def mutual_fund_listing(lang='vi', headers=fmarket_headers):
@@ -18,10 +40,7 @@ def mutual_fund_listing(lang='vi', headers=fmarket_headers):
             DataFrame of all available mutual fund listed on Fmarket.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
-    if lang.lower() not in supported_languages:
-        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
-        lang = 'vi'
+    lang = check_language_input(lang)
 
     # API call
     payload = {
@@ -116,10 +135,7 @@ def mutual_fund_top_holdings(symbol=23, lang='vi', headers=fmarket_headers):
         DataFrame of the current top 10 holdings of the selected fund.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
-    if lang.lower() not in supported_languages:
-        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
-        lang = 'vi'
+    lang = check_language_input(lang)
     
     # API call
     # Logic: there are funds which allocate to either equities or fixed income securities, or both
@@ -215,10 +231,7 @@ def mutual_fund_nav_report(symbol=23, lang='vi', headers=fmarket_headers):
             DataFrame of all avalaible daily NAV data points of the selected fund.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
-    if lang.lower() not in supported_languages:
-        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
-        lang = 'vi'
+    lang = check_language_input(lang)
         
     # API call
     # Get the current date and format it as 'yyyyMMdd'
