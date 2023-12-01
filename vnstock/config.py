@@ -96,6 +96,23 @@ rv_headers = {
   'sec-ch-ua-platform': '"Windows"'
 }
 
+fmarket_headers = {
+  'authority': 'api.fmarket.vn',
+  'accept': 'application/json, text/plain, */*',
+  'accept-language': 'vi',
+  'content-type': 'application/json',
+  'dnt': '1',
+  'origin': 'https://fmarket.vn',
+  'referer': 'https://fmarket.vn/',
+  'sec-ch-ua': '"Chromium";v="118", "Google Chrome";v="118", "Not=A?Brand";v="99"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"Windows"',
+  'sec-fetch-dest': 'empty',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-site': 'same-site',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
+}
+
 def api_request(url, headers=ssi_headers):
     r = requests.get(url, headers).json()
     return r
