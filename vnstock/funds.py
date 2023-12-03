@@ -116,3 +116,10 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
     else:
         print(f"Error in API response {response.text}", "\n")
 
+
+
+
+
+
+
+
