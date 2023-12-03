@@ -1,0 +1,199 @@
+{
+  "main": {
+    "id": "a1e89ea0477d582a",
+    "type": "split",
+    "children": [
+      {
+        "id": "65e47d6ab533a1f2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "853b07736ff0910b",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "613435e3b7b62ee6",
+    "type": "split",
+    "children": [
+      {
+        "id": "89c61b5d51913c21",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "89a3544ae7e7c67e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "b5aab821bd386159",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "width=\"757\" height=\"426\"",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "a63e290ec9a993ef",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 399.5
+  },
+  "right": {
+    "id": "804415cfd1e3e680",
+    "type": "split",
+    "children": [
+      {
+        "id": "558e2c039cf4f937",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1ea2c5ed4e70485b",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "89fbbaf655f45754",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "593d0d4d84de464e",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "bf29b2fc764f874e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {}
+            }
+          },
+          {
+            "id": "0f9806f8b337feab",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
+              "state": {}
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false
+    }
+  },
+  "active": "853b07736ff0910b",
+  "lastOpenFiles": [
+    "docs/community/contribute.md",
+    "site/feed_rss_updated.xml",
+    "site/feed_rss_created.xml",
+    "site/search/search_index.json",
+    "site/search",
+    "site/assets/javascripts/glightbox.min.js",
+    "site/assets/stylesheets/palette.356b1318.min.css.map",
+    "site/assets/stylesheets/palette.356b1318.min.css",
+    "site/assets/stylesheets/main.6a10b989.min.css.map",
+    "site/assets/stylesheets/main.6a10b989.min.css",
+    "site/assets/stylesheets/glightbox.min.css",
+    "site/assets/images/social/blog/category/huong-dan.png",
+    "site/assets/images/vnstock_web_app_fundamental_section.png",
+    "site/assets/images/vnstock_select_branch.jpeg",
+    "site/assets/images/vnstock_logo_color.png",
+    "site/assets/images/momo-qr-thinhvu.jpeg",
+    "site/assets/images/livedragon_derivative_history_match.png",
+    "site/assets/images/install_vnstock_neptyne.png",
+    "site/assets/images/ho_so_cty.png",
+    "site/assets/images/google_sheet_appscript_menu.png",
+    "site/assets/images/github_star_guide.png",
+    "docs/community/lan-toa-trai-nghiem-voi-vnstock.md",
+    "kien-thuc/python/thiet-lap-moi-truong-python.md",
+    "kien-thuc/cong-nghe/jamstack/tao-blog-dep-voi-jekyll-yat-theme-tu-ghi-chu-obsidian.md",
+    "kien-thuc/cong-nghe/jamstack/tuy-bien-trang-tai-lieu-mkdocs-material.md",
+    "kien-thuc/obsidian/su-dung-obsidian-trong-xuat-ban-chia-se-noi-dung.md",
+    "kien-thuc/cong-nghe/jamstack/su-dung-github-page-tao-website-mien-phi.md",
+    "kien-thuc/cong-nghe/jamstack/gioi-thieu-jamstack-trong-phat-trien-web.md",
+    "kien-thuc/cong-nghe/jamstack/thiet-lap-github-pages-chia-se-trang-web.md",
+    "kien-thuc/cong-nghe/jamstack/cai-dat-cong-cu-tao-trang-web-tinh-jekyll-ssg.md",
+    "assets/templates/Social link.md",
+    "assets/templates/Youtube Video embed.md",
+    "assets/post-folder-template/Nội dung của bạn.md",
+    "assets/templates/alias.md",
+    "assets/templates/Button.md",
+    "assets/templates/Photo layout.md",
+    "kien-thuc/cong-nghe/jamstack/tuy-bien-jekyll-yat-theme.md",
+    "kien-thuc/obsidian/to-chuc-thong-tin-trong-obsidian-hieu-qua.md",
+    "kien-thuc/obsidian/thiet-lap-ung-dung-ghi-chu-obsidian.md",
+    "kien-thuc/obsidian/su-dung-obsidian-plugin-hieu-qua.md",
+    "kien-thuc/obsidian/huong-dan-su-dung-markdown-trong-obsidian.md",
+    "kien-thuc/obsidian/ca-nhan-hoa-obsidian-cho-rieng-ban.md",
+    "kien-thuc/cong-nghe/visual-studio-code-ung-dung-lap-trinh-da-dung.md",
+    "kien-thuc/cong-nghe/git-va-github-tim-su-dung-cong-cu-quan-ly-phien-ban-trong-lap-trinh.md",
+    "blog/posts/().md",
+    "kien-thuc/lib/Google Colab Premium.md"
+  ]
+}
