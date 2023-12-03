@@ -12,6 +12,32 @@ Hầu hết mã nguồn Vnstock cho đến thời điểm 11/2023 đều do mộ
 3. **TÍNH NĂNG ĐA DẠNG**: Tôi ưu tiên tăng độ phủ các tính năng và nguồn cấp dữ liệu để giúp Vnstock đáp ứng nhu cầu đa dạng của người dùng trong khi nguồn lực phát triển hạn chế. Do đó, các tính năng có thể chưa hoàn toàn tối ưu, và sẽ được cải tiến thêm qua thời gian để tối ưu hiệu suất sử dụng. 
 4. **"SURVIVE, THEN THRIVE"**: Các nguồn cấp dữ liệu hiện tại của Vnstock có được thông qua thủ thuật Web Scraping, việc này không đảm bảo việc tồn tại lâu dài của nguồn cấp dữ liệu bởi nhà cung cấp có thể ngăn chặn hoặc từ chối hoàn toàn truy cập của bạn. Do đó, hãy  đảm bảo rằng tính năng được xây dựng có thể sống sót an toàn trước khi bỏ quá nhiều công sức vào việc tối ưu tận gốc nhưng bỗng dưng một ngày bạn nhận ra mình là "Dã tràng xe cát biển Đông" khi tính năng mình xây dựng bị ngưng hoạt động.
 
+## Hướng phát triển Vnstock
+
+> Bạn có thể đóng góp tính năng mình cảm thấy cần thiết hoặc phù hợp với những gì vnstock hiện có. Vnstock không chỉ dừng lại ở một gói phần mềm truy xuất dữ liệu hay chỉ giới hạn với chứng khoán Việt Nam mà mục tiêu lớn nhất là phục vụ người Việt, và do người Việt phát triển. 
+
+Dưới đây là các nhóm thông tin/tính năng bạn có thể tham khảo để phát triển.
+
+### Truy xuất dữ liệu
+- Dữ liệu kinh tế vĩ mô
+- Tin tức báo chí, sự kiện: giúp các bạn làm nghiên cứu theo hướng định lượng tiếp cận dữ liệu dễ dàng hơn.
+- Dữ liệu giao dịch quỹ, tiền tệ, hàng hóa, crypto, chứng quyền, vv
+### Tính toán
+- Tính toán các chỉ báo kỹ thuật, mô hình nến, điểm mua/bán, vv dựa trên tiêu chuẩn dữ liệu Vnstock đang cung cấp
+- Xử lý ngôn ngữ tự nhiên, phân loại sự kiện, vv
+### Biểu diễn dữ liệu
+- Cung cấp các phương thức giúp trực quan hóa dữ liệu và tìm cơ hội đầu tư/nghiên cứu nhanh chóng. Trước tiên, đưa các trải nghiệm và tính năng quen thuộc với số đông từ các phần mềm phân tích khác sang Vnstock để thúc đẩy việc phổ biến Vnstock tới cộng đồng.
+- Cung cấp các data app mẫu, ví dụ Streamlit để khuyến khích cộng đồng phát triển thêm tính năng và sử dụng.
+### Tích hợp
+- Tích hợp với các thư viện uy tín, sẵn có trong hệ sinh thái Python
+- Tích hợp tính năng liên kết với các đối tác cung cấp dịch vụ, ví dụ SSI và fc_data
+### AI & ML
+- Sử dụng Vnstock trong các dự án về máy học và AI trong thực tế đồng thời tạo ra các tính năng giúp việc triển khai Vnstock vào nhóm công việc này dễ dàng hơn.
+### Tự động hóa và bot
+- Xây dựng các tính năng giúp triển khai Vnstock dưới dạng Bot hoặc dự án tự động phục vụ cho việc cảnh báo/hoặc tham gia một phần trong việc xây dựng chương trình giao dịch tự động.
+### Hướng dẫn (demo & tutorial)
+- Cung cấp các ví dụ sinh động và cách sử dụng Vnstock hiệu quả trong thực tế giúp cộng đồng học hỏi và tiếp cận các phương pháp tiên tiến.
+
 ## Khởi động
 
 > Tôi tin là tới đây, bạn đã có đủ thông tin để bắt đầu hành trình code dạo cùng Vnstock. Dưới đây là những hướng dẫn giúp bạn bắt đầu dễ dàng hơn.
