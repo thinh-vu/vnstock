@@ -1,9 +1,27 @@
 # Ủng hộ quỹ vnstock
 
+!!! success ""
+    🖐 Nếu vnstock giúp ích cho bạn, hãy góp sức tài trợ cho sự phát triển dự án theo khả năng của bạn. Bạn có thể chọn hình thức phù hợp với mình nhất trong các hình thức dưới đây. Mọi khoản đóng góp đều đáng trân quý và là nguồn tài chính giúp duy trì vnstock luôn được nâng cấp, mã nguồn mở, và dễ tiếp cận cho cộng đồng.
+
+## Tài trợ dự án qua Github
+
+> Lựa chọn Sponsor (tài trợ) cho dự án qua Github là một cách minh bạch và thuận tiện nhất cho bất kỳ ai sở hữu thẻ thanh toán quốc tế Visa, Master, vv Đồng thời bạn có các tùy chọn tài trợ linh hoạt theo tháng hoặc một lần. Cùng với đó, bạn sẽ được xếp vào các tier (hạng) người dùng khác nhau để sở hữu những quyền lợi đi kèm, ví dụ truy cập những bản nâng cấp và tính năng độc quyền cho nhà tài trợ (đang triển khai).
+> Tất cả khoản tài trợ cho dự án sẽ được sử dụng cho mục đích phát triển dự án và duy trì hạ tầng công nghệ cho nhóm phát triển. 
+
+Lưu ý: để có thể tài trợ cho dự án qua Github Sponsor, bạn cần đăng nhập Github và sử dụng thẻ thanh toán quốc tế.
+
+=== "B1. Chọn mục Sponsor"
+	Bạn có thể tìm thấy mục Sponsor tại [Github repo](https://github.com/thinh-vu/vnstock) của Vnstock hoặc Github profile [Thịnh Vũ](https://github.com/thinh-vu).
+	![[tai-tro-du-an-vnstock-qua-github-sponsor.png]]
+=== "B2. Chọn loại hình và mức tài trợ "
+	![[github_sponsor_tai_tro_vnstock_theo_cach_cua_ban.png]]
+=== "B3. Nhập thông tin thanh toán"
+	![[github_sponsor_nhap_thong_tin_thanh_toan.png]]
 ## Gửi tặng một ly cafe
 
-!!! success ""
-    🖐 Nếu vnstock giúp ích cho bạn, hãy đóng góp quỹ phát triển dự án theo hình thức chuyển khoản ngân hàng hoặc Momo. Mọi khoản đóng góp đều đáng trân quý và là nguồn tài chính giúp duy trì vnstock luôn được nâng cấp, mã nguồn mở, và dễ tiếp cận cho cộng đồng.
+!!! tip "Tặng một ly cafe"
+	Bạn có thể gửi tặng tác giả một ly cafe để cảm ơn và động viên nếu thấy Vnstock giúp ích nhiều cho bạn. Bạn chọn Momo hoặc chuyển khoản tùy theo hình thức nào thuận tiện cho bạn nhất. Cám ơn bạn thật nhiều!
+
 
 <div id="QR" align="center">
   <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vcb-qr-thinhvu.jpg"/>
