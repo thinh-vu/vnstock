@@ -1,4 +1,4 @@
-# Ủng hộ quỹ vnstock
+# Tài trợ dự án Vnstock
 
 !!! success ""
     🖐 Nếu vnstock giúp ích cho bạn, hãy góp sức tài trợ cho sự phát triển dự án theo khả năng của bạn. Bạn có thể chọn hình thức phù hợp với mình nhất trong các hình thức dưới đây. Mọi khoản đóng góp đều đáng trân quý và là nguồn tài chính giúp duy trì vnstock luôn được nâng cấp, mã nguồn mở, và dễ tiếp cận cho cộng đồng.
