@@ -12,11 +12,16 @@ Lưu ý: để có thể tài trợ cho dự án qua Github Sponsor, bạn cần
 
 === "B1. Chọn mục Sponsor"
 	Bạn có thể tìm thấy mục Sponsor tại [Github repo](https://github.com/thinh-vu/vnstock) của Vnstock hoặc Github profile [Thịnh Vũ](https://github.com/thinh-vu).
-	![[tai-tro-du-an-vnstock-qua-github-sponsor.png]]
+
+	![Chọn Sponsor](/assets/images/tai-tro-du-an-vnstock-qua-github-sponsor.png)
 === "B2. Chọn loại hình và mức tài trợ "
-	![[github_sponsor_tai_tro_vnstock_theo_cach_cua_ban.png]]
+
+	![Chọn mức tài trợ](/assets/images/github_sponsor_tai_tro_vnstock_theo_cach_cua_ban.png)
+
 === "B3. Nhập thông tin thanh toán"
-	![[github_sponsor_nhap_thong_tin_thanh_toan.png]]
+
+	![Thêm thông tin thanh toán](/assets/images/github_sponsor_nhap_thong_tin_thanh_toan.png)
+
 ## Gửi tặng một ly cafe
 
 !!! tip "Tặng một ly cafe"
