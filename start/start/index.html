@@ -456,6 +456,23 @@
   
 
       
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+    
+  
+  Kiến thức
+
+      </a>
+    </li>
+  
+
+      
     </ul>
   </div>
 </nav>
@@ -660,6 +677,13 @@
         <li class="md-nav__item">
   <a href="#su-dung-trang-tai-lieu-toi-uu" class="md-nav__link">
     Sử dụng trang tài liệu tối ưu
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#docstring" class="md-nav__link">
+    Docstring
   </a>
   
 </li>
@@ -1296,6 +1320,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1377,11 +1405,51 @@
   
   
     <li class="md-nav__item">
+      <a href="../../community/lan-toa-trai-nghiem-voi-vnstock/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lan tỏa vnstock
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/feedback/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Góp ý & phản hồi
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../community/contribute/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Góp sức
+    Đóng góp mã nguồn
   </span>
   
 
@@ -1612,6 +1680,25 @@
   
 
     
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Kiến thức
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1687,6 +1774,29 @@
 <p><strong>Copy Code</strong>: Ở mỗi ô chứa dòng lệnh luôn có biểu tượng copy <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg></span> cho phép bạn click vào và sao chép đoạn mã dễ dàng.</p>
 </li>
 </ul>
+<h2 id="docstring">Docstring<a class="headerlink" href="#docstring" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Tất cả các hàm của vnstock đều được cung cấp docstring đầy đủ, do đó bạn có thể xem phần gợi ý khi viết câu lệnh trên các IDE như Google Colab, Visual Studio Code, hay Jupyter Notebook. </p>
+<p>Sau khi nạp thư viện vnstock vào môi trường làm việc thông qua câu lệnh <code>import</code>, bạn có thể in phần hướng dẫn sử dụng hàm vnstock bất kỳ thông qua thuộc tính <code>__doc__</code> của hàm đó như sau (dấu <code>__</code> được tạo bởi 2 dấu <code>_</code> tức shift <code>-</code>):</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&gt;&gt;&gt;<span class="w"> </span>print<span class="o">(</span>listing_companies.__doc__<span class="o">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>This<span class="w"> </span><span class="k">function</span><span class="w"> </span>returns<span class="w"> </span>the<span class="w"> </span>list<span class="w"> </span>of<span class="w"> </span>all<span class="w"> </span>available<span class="w"> </span>stock<span class="w"> </span>symbols<span class="w"> </span>from<span class="w"> </span>a<span class="w"> </span>csv<span class="w"> </span>file<span class="w"> </span>or<span class="w"> </span>a<span class="w"> </span>live<span class="w"> </span>api<span class="w"> </span>request.
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span>Parameters:<span class="w"> </span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span>live<span class="w"> </span><span class="o">(</span>bool<span class="o">)</span>:<span class="w"> </span>If<span class="w"> </span>True,<span class="w"> </span><span class="k">return</span><span class="w"> </span>the<span class="w"> </span>list<span class="w"> </span>of<span class="w"> </span>all<span class="w"> </span>available<span class="w"> </span>stock<span class="w"> </span>symbols<span class="w"> </span>from<span class="w"> </span>a<span class="w"> </span>live<span class="w"> </span>api<span class="w"> </span>request.<span class="w"> </span>If<span class="w"> </span>False,<span class="w"> </span><span class="k">return</span><span class="w"> </span>the<span class="w"> </span>list<span class="w"> </span>of<span class="w"> </span>all<span class="w"> </span>available<span class="w"> </span>stock<span class="w"> </span>symbols<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>Github<span class="w"> </span>csv<span class="w"> </span>file<span class="w"> </span><span class="o">(</span>monthly<span class="w"> </span>update<span class="o">)</span>.<span class="w"> </span>Default<span class="w"> </span>is<span class="w"> </span>False.
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span>Returns:<span class="w"> </span>df<span class="w"> </span><span class="o">(</span>DataFrame<span class="o">)</span>:<span class="w"> </span>A<span class="w"> </span>pandas<span class="w"> </span>dataframe<span class="w"> </span>containing<span class="w"> </span>the<span class="w"> </span>stock<span class="w"> </span>symbols<span class="w"> </span>and<span class="w"> </span>other<span class="w"> </span>information.
+</span></code></pre></div>
+<p>Tất nhiên, bạn luôn có thể mở phần mã nguồn của vnstock trên Github để xem chi tiết.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Docstring trong Google Colab</label><label for="__tabbed_1_2">Docstring trong mã nguồn</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Gợi ý cú pháp hàm được hiển thị khi viết bất kỳ hàm nào thuộc vnstock, trong ví dụ này hiển thị trong giao diện Google Colab.</p>
+<p><a class="glightbox" href="../../assets/images/docstring_suggestion.jpeg" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="docstring suggestion" src="../../assets/images/docstring_suggestion.jpeg" /></a></p>
+</div>
+<div class="tabbed-block">
+<p>Mở mã nguồn Github tại thư mục vnstock, tìm hàm bạn cần tra cứu docstring.</p>
+<p><a class="glightbox" href="../../assets/images/docstring_source_code.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="docstring source" src="../../assets/images/docstring_source_code.png" /></a></p>
+</div>
+</div>
+</div>
 
 
   
