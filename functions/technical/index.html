@@ -694,6 +694,8 @@
       
         
       
+        
+      
     
     
     
@@ -950,6 +952,26 @@
   
   <span class="md-ellipsis">
     Định giá cổ phiếu
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../funds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Thông tin quỹ mở
   </span>
   
 
@@ -1734,7 +1756,11 @@
 <p>Cập nhật mới, <a href="https://docs.vnstock.site/changes_log/#08-11-2023">phiên bản 0.2.8.3</a></p>
 <ul>
 <li><code>decor=True</code>: áp dụng thay tên các cột trong DataFrame trả về dưới dạng Title Case tức <code>Open, High, Low, Close, Time, Ticker</code> thay vì <code>open, high, low, close, time, ticker</code> như hiện tại đồng thời đặt cột Time là index. Việc này giảm bớt cho người dùng phải viết thêm câu lệnh khi sử dụng dữ liệu vnstock kết hợp các thư viện phân tích kỹ thuật phổ biến vốn dùng thư viện Yahoo Finance làm nguồn cấp dữ liệu. Giá trị mặc định là <code>False</code>.</li>
-<li><code>source='DNSE'</code>: mặc định sử dụng nguồn dữ liệu DNSE, cho phép lấy dữ liệu với nhiều khung thời gian khác nhau, giới hạn 90 ngày gần nhất đối với dữ liệu phút, 10 năm gần nhất đối với dữ liệu ngày. Chọn nguồn dữ liệu <code>TCBS</code> cho lấy dữ liệu lịch sử theo ngày (resolution = <code>1D</code>) trong thời gian dài, không hỗ trợ khung thời gian nhỏ hơn.</li>
+<li><code>source='DNSE'</code> (không phân biệt chữ thường hay in hoa): </li>
+<li>Nguồn dữ liệu DNSE (mặc định), cho phép lấy dữ liệu với nhiều khung thời gian khác nhau, giới hạn 90 ngày gần nhất đối với dữ liệu phút, 10 năm gần nhất đối với dữ liệu ngày. </li>
+<li>Nguồn dữ liệu <code>TCBS</code> cho lấy dữ liệu lịch sử theo ngày (resolution = <code>1D</code>) trong thời gian dài, không hỗ trợ khung thời gian nhỏ hơn.</li>
+<li>Nguồn dữ liệu <code>VND</code> cho phép lấy dữ liệu trong vòng 10 năm gần nhất cho resolution = <code>1D</code>. Tùy chọn này chỉ được áp dụng với người dùng Tài trợ dự án và sử dụng gói thư viện bổ sung <code>vnstock-advanced-data</code>.</li>
+<li>Nguồn dữ liệu <code>SSI</code>, <code>HSC</code> cho phép lấy dữ liệu từ năm 2000 cho resolution = <code>1D</code> với tốc độ truy cập nhanh chóng trong 1 truy vấn duy nhất. Tùy chọn này chỉ được áp dụng với người dùng Tài trợ dự án và sử dụng gói thư viện bổ sung <code>vnstock-advanced-data</code>.</li>
 </ul>
 </li>
 </ul>
