@@ -30,7 +30,11 @@ print(df)
 
 - Cập nhật mới, [phiên bản 0.2.8.3](https://docs.vnstock.site/changes_log/#08-11-2023)
     - `decor=True`: áp dụng thay tên các cột trong DataFrame trả về dưới dạng Title Case tức `Open, High, Low, Close, Time, Ticker` thay vì `open, high, low, close, time, ticker` như hiện tại đồng thời đặt cột Time là index. Việc này giảm bớt cho người dùng phải viết thêm câu lệnh khi sử dụng dữ liệu vnstock kết hợp các thư viện phân tích kỹ thuật phổ biến vốn dùng thư viện Yahoo Finance làm nguồn cấp dữ liệu. Giá trị mặc định là `False`.
-    - `source='DNSE'`: mặc định sử dụng nguồn dữ liệu DNSE, cho phép lấy dữ liệu với nhiều khung thời gian khác nhau, giới hạn 90 ngày gần nhất đối với dữ liệu phút, 10 năm gần nhất đối với dữ liệu ngày. Chọn nguồn dữ liệu `TCBS` cho lấy dữ liệu lịch sử theo ngày (resolution = `1D`) trong thời gian dài, không hỗ trợ khung thời gian nhỏ hơn.
+    - `source='DNSE'` (không phân biệt chữ thường hay in hoa): 
+      - Nguồn dữ liệu DNSE (mặc định), cho phép lấy dữ liệu với nhiều khung thời gian khác nhau, giới hạn 90 ngày gần nhất đối với dữ liệu phút, 10 năm gần nhất đối với dữ liệu ngày. 
+      - Nguồn dữ liệu `TCBS` cho lấy dữ liệu lịch sử theo ngày (resolution = `1D`) trong thời gian dài, không hỗ trợ khung thời gian nhỏ hơn.
+	  - Nguồn dữ liệu `VND` cho phép lấy dữ liệu trong vòng 10 năm gần nhất cho resolution = `1D`. Tùy chọn này chỉ được áp dụng với người dùng Tài trợ dự án và sử dụng gói thư viện bổ sung `vnstock-advanced-data`.
+      - Nguồn dữ liệu `SSI`, `HSC` cho phép lấy dữ liệu từ năm 2000 cho resolution = `1D` với tốc độ truy cập nhanh chóng trong 1 truy vấn duy nhất. Tùy chọn này chỉ được áp dụng với người dùng Tài trợ dự án và sử dụng gói thư viện bổ sung `vnstock-advanced-data`.
 
 Bạn cũng có thể viết hàm theo dạng rút gọn như dưới đây, điều này đúng với tất cả các hàm, miễn là thông số được nhập vào đúng thứ tự:
 

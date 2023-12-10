@@ -1,5 +1,10 @@
 # Lịch sử cập nhật
 
+## 09-12-2023
+- Đưa `plotly` thành thư viện tùy chọn, chỉ phải import vào dự án nếu người dùng có nhu cầu sử dụng tính năng vẽ đồ thị. Việc này giúp vnstock chạy trên môi trường khác Google Colab không cần cài đặt thêm `plotly` theo mặc định.
+- Cập nhật tài liệu hướng dẫn cho nội dung lấy dữ liệu giá lịch sử.
+
+
 ## 09-11-2023
 > Phát hành phiên bản 0.2.8.5
 
