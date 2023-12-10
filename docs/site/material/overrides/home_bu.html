@@ -1,0 +1,29 @@
+{#-
+    This file was automatically generated - do not edit
+  -#}
+  {% extends "main.html" %}
+  {% block tabs %}
+    {{ super() }}
+    <style>.md-header{position:initial}.md-main__inner{margin:0}.md-content{display:none}@media screen and (min-width:60em){.md-sidebar--secondary{display:none}}@media screen and (min-width:76.25em){.md-sidebar--primary{display:none}}</style>
+    <section class="mdx-container">
+      <div class="md-grid md-typeset">
+        <div class="mdx-hero">
+          <div class="mdx-hero__image">
+            <img src="assets/images/vnstock_home.png" alt="" width="1659" height="1200" draggable="false">
+          </div>
+          <div class="mdx-hero__content">
+            <h1>Phân tích đầu tư chứng khoán với Python dễ dàng</h1>
+            <p>{{ config.site_description }}. Trang tài liệu hướng dẫn toàn diện để bắt đầu với Vnstock. </p>
+            <a href="{{ page.next_page.url | url }}" title="{{ page.next_page.title | e }}" class="md-button md-button--primary">
+              Hướng dẫn nhanh
+            </a>
+            <a href="{{ 'faqs/' | url }}" title="Material for MkDocs Insiders" class="md-button">
+              Câu hỏi thường gặp
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endblock %}
+  {% block content %}{% endblock %}
+  {% block footer %}{% endblock %}
