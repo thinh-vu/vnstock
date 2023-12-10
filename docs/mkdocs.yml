@@ -205,6 +205,7 @@ nav:
     - So sánh cổ phiếu: functions/comparison.md
     - Xếp hạng cổ phiếu: functions/rating.md
     - Định giá cổ phiếu: functions/evaluation.md
+    - Thông tin quỹ mở: functions/funds.md
     - Thị trường: functions/market.md
     - Xuất dữ liệu: functions/export.md
     - Biểu diễn dữ liệu: functions/chart.md

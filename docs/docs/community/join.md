@@ -1,6 +1,6 @@
 # Cộng đồng vnstock
 
-Chào mừng bạn đến với dự án Vnstock! Chúng tôi trân trọng mọi đóng góp từ cộng đồng để phát triển gói phần mềm này thành một công cụ mạnh mẽ hỗ trợ đầu tư chứng khoán tại thị trường Việt Nam. Trước khi bạn đóng góp, hãy xem qua hướng dẫn dưới đây.
+Chào mừng bạn đến với dự án Vnstock! Chúng tôi trân trọng mọi đóng góp từ cộng đồng để phát triển gói phần mềm này thành một công cụ mạnh mẽ hỗ trợ đầu tư chứng khoán tại thị trường Việt Nam.
 
 Bạn có thể lựa chọn tham gia các cộng đồng Vnstock hiện có:
 

@@ -83,7 +83,7 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
         # rename column label according to language choice
         language_mappings = {
             'vi': {
-                'id': 'fund_id',
+                'id': 'fundId',
                 'shortName': 'Tên viết tắt',
                 'name': 'Tên CCQ',
                 'dataFundAssetType.name': 'Loại Quỹ',
@@ -102,7 +102,7 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
                 'productNavChange.navTo6Months': '6-month NAV change (%)',
                 'productNavChange.navTo36Months': '3-year NAV change (%)',
                 'nav': 'NAV/Unit (VND)',
-                'id': 'fund_id'
+                'id': 'fundId'
             }
         }
         column_mapping = language_mappings[lang.lower()]
@@ -128,12 +128,16 @@ def fund_details (symbol='SSISCA', type='top_holding_list', headers=fmarket_head
         df (pd.DataFrame): DataFrame of the current top holdings of the selected fund.
     """
     # get fundID from symbol using fund_filter
-    fundID = fund_filter (payload={"searchField": symbol, "pageSize": 1, "types": ["NEW_FUND", "TRADING_FUND"]})['id']
+    fundID = str(fund_filter (payload={"searchField": symbol, "pageSize": 1, "types": ["NEW_FUND", "TRADING_FUND"]})['id'][0])
     print(f'Getting data for {symbol}')
     if type == 'top_holding_list':
-        df = fund_top_holding(fundId=23, lang='vi', headers=headers)
+        df = fund_top_holding(fundId=fundID, lang='vi', headers=headers)
     elif type == 'industry_holding_list':
-        df = fund_industry_holding(fundId=23, lang='vi', headers=headers)
+        df = fund_industry_holding(fundId=fundID, lang='vi', headers=headers)
+    elif type == 'nav_report':
+        df = fund_nav_report(fundId=fundID, lang='vi', headers=headers)
+    elif type == 'asset_holding_list':
+        df = fund_asset_holding(fundId=fundID, lang='vi', headers=headers)
     else:
         print('Please specify type of data to retrieve.')
     try:
@@ -283,7 +287,10 @@ def fund_industry_holding (fundId=23, lang='vi', headers=fmarket_headers):
         data = response.json()
         df = json_normalize(data, record_path=['data', 'productIndustriesHoldingList'])
         # drop id column
-        df.drop(columns=['id'], inplace=True)
+        try:
+            df.drop(columns=['id'], inplace=True)
+        except:
+            pass
         columns_mapping = {'vi': {
                             'industry': 'Ngành',
                             'assetPercent': '% Giá trị tài sản',
@@ -299,12 +306,12 @@ def fund_industry_holding (fundId=23, lang='vi', headers=fmarket_headers):
         print(f"Error in API response {response.text}", "\n")
 
 
-def fund_nav_report(symbol='VESAF', lang='vi', headers=fmarket_headers):
+def fund_nav_report(fundId='23', lang='vi', headers=fmarket_headers):
     """Retrieve all available daily NAV data point of the specified fund. Live data is retrieved from the Fmarket API.
     Parameters
     ----------
         symbol: int
-            id of a fund in fmarket database. Retrieved from the 'fund_id_fmarket' column by calling the function mutual_fund_listing()
+            id of a fund in fmarket database. Retrieved from the 'fundId' column by calling the function mutual_fund_listing()
         lang: str
             language of the column label. Supported: 'vi' (default), 'en'
         headers: dict
@@ -315,7 +322,6 @@ def fund_nav_report(symbol='VESAF', lang='vi', headers=fmarket_headers):
         df: pd.DataFrame
             DataFrame of all avalaible daily NAV data points of the selected fund.
     """
-    fundId = str(fund_filter (payload={"searchField": symbol, "pageSize": 1, "types": ["NEW_FUND", "TRADING_FUND"]})['id'][0])
     # Check language input. Default to Vietnamese if the chosen language is not supported
     supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
     if lang.lower() not in supported_languages:
@@ -354,18 +360,57 @@ def fund_nav_report(symbol='VESAF', lang='vi', headers=fmarket_headers):
             'vi': {
                 'navDate': 'Ngày',
                 'nav': 'Giá trị tài sản ròng/CCQ (VND)',
-                'productId': 'fund_id_fmarket'
+                'productId': 'fundId'
             },
             'en': {
                 'navDate': 'Date',
                 'nav': 'NAV/Unit (VND)',
-                'productId': 'fund_id_fmarket'
+                'productId': 'fundId'
             }
         }
         column_mapping = language_mappings[lang.lower()]
         df.rename(columns=column_mapping, inplace=True)
 
         # output
+        return df
+    else:
+        print(f"Error in API response {response.text}", "\n")
+
+
+def fund_asset_holding (fundId=23, lang='vi', headers=fmarket_headers):
+    """
+    Retrieve list of assets holding allocation for specific fundID. Live data is retrieved from the Fmarket API.
+    """
+    # Check language input. Default to Vietnamese if the chosen language is not supported
+    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
+    if lang.lower() not in supported_languages:
+        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
+        lang = 'vi'
+
+    # API call
+    # Logic: there are funds which allocate to either equities or fixed income securities, or both
+    url = f"https://api.fmarket.vn/res/products/{fundId}"
+    response = requests.get(url, headers=headers, cookies=None)
+    if response.status_code == 200:
+        data = response.json()
+        df = json_normalize(data, record_path=['data', 'productAssetHoldingList'])
+        try:
+            # drop id column
+            df.drop(columns=['id', 'assetType.id', 'assetType.code', 'assetType.colorCode', 'createAt'], inplace=True)
+            # convert updateAt to YYYY-mm-dd format
+            df['updateAt'] = pd.to_datetime(df['updateAt'], unit='ms', utc=True).dt.strftime('%Y-%m-%d')
+        except:
+            pass
+        columns_mapping = {'vi': {
+                            'assetPercent': 'Tỉ trọng',
+                            'assetType.name': 'Loại tài sản',
+                            },
+                            'en': {
+                            'assetPercent': 'assetPercent',
+                            'assetType.name': 'assetType',
+                            }
+                            }
+        df.rename(columns=columns_mapping[lang.lower()], inplace=True)
         return df
     else:
         print(f"Error in API response {response.text}", "\n")
