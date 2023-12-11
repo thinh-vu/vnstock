@@ -24,18 +24,17 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
     if lang.lower() not in supported_languages:
         print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
         lang = 'vi'
-
-    if fund_type == "":
-        fundAssetTypes = []
-    elif fund_type == "BALANCED":
-        fundAssetTypes = ["BALANCED"]
-    elif fund_type == "BOND":
-        fundAssetTypes = ["BOND"]
-    elif fund_type == "STOCK":
-        fundAssetTypes = ["STOCK"]
-    else:
-        print(f"Error: Unsupported fund type '{fund_type}', defaulting to all funds.")
-        fundAssetTypes = []
+    
+    # Check fund_type input
+    fundAssetTypes = {
+        "": [],
+        "BALANCED": ["BALANCED"],
+        "BOND": ["BOND"],
+        "STOCK": ["STOCK"]
+    }.get(fund_type, [])
+        
+    if fund_type not in ["", "BALANCED", "BOND", "STOCK"]:
+        print(f"Warning: Unsupported fund type '{fund_type}', defaulting to all fund types.")
 
     # API call
     payload = {
