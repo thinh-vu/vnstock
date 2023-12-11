@@ -71,12 +71,10 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
             'productNavChange.navTo36Months',
             'nav',
             'code',
-            'vsdFeeId'
         ]
         df = df[column_subset]
 
-        # sort by 'Fund manager' then by 'Fund short name'
-        # df = df.sort_values(by=['owner.name', 'shortName'], ascending=[False, True])
+        # sort by '36-month NAV change'
         df = df.sort_values(by='productNavChange.navTo36Months', ascending=False)
         
         # rename column label according to language choice
