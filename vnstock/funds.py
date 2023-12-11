@@ -11,6 +11,7 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
         lang: str
             language of the column label. Supported: 'vi' (default), 'en'
         fund_type: list
+            available fund types: "" (default), "BALANCED", "BOND", "STOCK"
         headers: dict
             headers of the request
     
@@ -74,6 +75,9 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
         ]
         df = df[column_subset]
 
+        # set data type for columns, id to int
+        df = df.astype({'id': 'int'})
+
         # sort by '36-month NAV change'
         df = df.sort_values(by='productNavChange.navTo36Months', ascending=False)
         
@@ -103,8 +107,6 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
             }
         }
         column_mapping = language_mappings[lang.lower()]
-        # set data type for columns, id to object
-        df = df.astype({'id': 'object'})
         df.rename(columns=column_mapping, inplace=True)
         
         # reset index column
