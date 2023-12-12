@@ -120,13 +120,14 @@ def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=
         df = df[column_subsets.get(mode, column_subset_simplified)]
 
         # Convert Unix timestamp to date format
-        df = convert_unix_to_datetime(
-            df_to_convert=df,
-            columns=[
-                'firstIssueAt', 
-                'productNavChange.updateAt'
-                ]
-            )
+        if mode == "full":
+            df = convert_unix_to_datetime(
+                df_to_convert=df,
+                columns=[
+                    'firstIssueAt', 
+                    'productNavChange.updateAt'
+                    ]
+                )
 
         # set data type for columns, id to int
         df = df.astype({'id': 'int'})
