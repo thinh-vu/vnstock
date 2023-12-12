@@ -1,5 +1,17 @@
 from .config import *
 
+# UTILS
+
+def convert_unix_to_datetime(
+        df_to_convert: pd.DataFrame, columns: list[str]
+) -> pd.DataFrame:
+    """Converts all the specified columns of a dataframe to date format and fill NaN for negative values."""
+    df = df_to_convert.copy()
+    for col in columns:
+        df[col] = pd.to_datetime(df[col], unit='ms', utc=True, errors='coerce').dt.strftime('%Y-%m-%d')
+        df[col] = df[col].where(df[col].ge('1970-01-01'))
+    return df
+
 # MUTUAL FUNDS
 
 def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=fmarket_headers):
@@ -106,6 +118,15 @@ def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=
             "full": column_subset_full
         }
         df = df[column_subsets.get(mode, column_subset_simplified)]
+
+        # Convert Unix timestamp to date format
+        df = convert_unix_to_datetime(
+            df_to_convert=df,
+            columns=[
+                'firstIssueAt', 
+                'productNavChange.updateAt'
+                ]
+            )
 
         # set data type for columns, id to int
         df = df.astype({'id': 'int'})
