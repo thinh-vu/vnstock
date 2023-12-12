@@ -2,16 +2,20 @@ from .config import *
 
 # MUTUAL FUNDS
 
-def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
+def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=fmarket_headers):
     """
-    Retrieve list of available funds from Fmarket. Live data is retrieved from the Fmarket. Visit https://fmarket.vn to learn more.
+    Retrieve list of available funds from Fmarket. Live data is retrieved from the Fmarket API. Visit https://fmarket.vn to learn more.
     
     Parameters
     ----------
         lang: str
-            language of the column label. Supported: 'vi' (default), 'en'
+            language of the column label. Options: 'vi' (default), 'en'
         fund_type: list
             available fund types: "" (default), "BALANCED", "BOND", "STOCK"
+        mode: str
+            return only important columns or all available info. Options: "simplify" (default), "full"
+        decor: bool
+            transform column label to Title Case. Options: True (default), False
         headers: dict
             headers of the request
     
@@ -61,7 +65,30 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
         df = json_normalize(data, record_path=['data', 'rows'])
 
         # rearrange columns to display
-        column_subset = [
+        column_subset_full = [
+            'id',
+            'shortName',
+            'name',
+            'dataFundAssetType.name',
+            'owner.name',
+            'managementFee',
+            'firstIssueAt',
+            'productNavChange.navToPrevious',
+            'productNavChange.navToLastYear',
+            'productNavChange.navToBeginning',
+            'productNavChange.navTo1Months',
+            'productNavChange.navTo3Months',
+            'productNavChange.navTo6Months',
+            'productNavChange.navTo12Months',
+            'productNavChange.navTo24Months',
+            'productNavChange.navTo36Months',
+            'productNavChange.annualizedReturn36Months',
+            'productNavChange.updateAt',
+            'nav',
+            'code',
+            'vsdFeeId',
+        ]
+        column_subset_simplified = [
             'id',
             'shortName',
             'name',
@@ -73,7 +100,12 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
             'nav',
             'code',
         ]
-        df = df[column_subset]
+        # choose column_subset based on user input param "mode"
+        column_subsets = {
+            "simplify": column_subset_simplified,
+            "full": column_subset_full
+        }
+        df = df[column_subsets.get(mode, column_subset_simplified)]
 
         # set data type for columns, id to int
         df = df.astype({'id': 'int'})
@@ -106,8 +138,9 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
                 'id': 'fundId'
             }
         }
-        column_mapping = language_mappings[lang.lower()]
-        df.rename(columns=column_mapping, inplace=True)
+        if decor==True:
+            column_mapping = language_mappings[lang.lower()]
+            df.rename(columns=column_mapping, inplace=True)
         
         # reset index column
         df = df.reset_index(drop=True)
