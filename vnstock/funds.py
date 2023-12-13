@@ -393,8 +393,9 @@ def fund_industry_holding (fundId=23, lang='vi', headers=fmarket_headers):
         print(f"Error in API response {response.text}", "\n")
 
 
-def fund_nav_report(fundId='23', lang='vi', headers=fmarket_headers):
+def fund_nav_report(fundId='23', lang='vi', headers=fmarket_headers) -> pd.DataFrame:
     """Retrieve all available daily NAV data point of the specified fund. Live data is retrieved from the Fmarket API.
+
     Parameters
     ----------
         symbol: int
@@ -458,7 +459,7 @@ def fund_nav_report(fundId='23', lang='vi', headers=fmarket_headers):
         # output
         return df
     else:
-        print(f"Error in API response {response.text}", "\n")
+        raise ValueError(f"Error in API response.\n{response.text}")
 
 
 def fund_asset_holding (fundId=23, lang='vi', headers=fmarket_headers):
