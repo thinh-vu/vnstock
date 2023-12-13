@@ -215,6 +215,7 @@ nav:
     - Amibroker: integrate/amibroker.md
     - Streamlit: integrate/streamlit.md
     - Huggingface: integrate/huggingface.md
+    - OpenBB Terminal: integrate/OpenBBTerminal.md
     - TA-Lib: integrate/ta_lib.md
     - Thư viện Backtesting: integrate/backtesting.md
     - SSI Fast Connect API: integrate/ssi_fast_connect_api.md
