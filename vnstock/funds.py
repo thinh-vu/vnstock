@@ -12,6 +12,15 @@ def convert_unix_to_datetime(
         df[col] = df[col].where(df[col].ge('1970-01-01'))
     return df
 
+def check_language_input(lang):
+    """Check language input. Default to Vietnamese if not supported"""
+    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
+    if lang.lower() not in supported_languages:
+        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
+        return 'vi'
+    else:
+        return lang.lower()
+
 # MUTUAL FUNDS
 
 def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=fmarket_headers):
@@ -37,10 +46,7 @@ def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=
             DataFrame of all available mutual fund listed on Fmarket.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
-    if lang.lower() not in supported_languages:
-        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
-        lang = 'vi'
+    lang = check_language_input(lang)
     
     # Check fund_type input
     fundAssetTypes = {
@@ -258,25 +264,26 @@ def fund_filter(symbol="", headers=fmarket_headers) -> pd.DataFrame:
     else:
         raise ValueError(f"Error in API response.\n{response.text}")
 
-def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers):
+def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers) -> pd.DataFrame:
     """
     Retrieve list of top 10 holdings in the specified fund. Live data is retrieved from the Fmarket API.
     
     Parameters
     ----------
-        fundId (int): id of a fund in fmarket database. Retrieved from the 'fundId_fmarket' column by calling the function mutual_fund_listing()
-        lang (str): language of the column label. Supported: 'vi' (default), 'en'
-        headers (dict): headers of the request. Default is fmaker_headers
+        fundId: int
+            id of a fund in fmarket database
+        lang: str
+            language of the column label. Options: 'vi' (default), 'en'
+        headers: dict
+            headers of the request. Options: fmaker_headers (default)
     
     Returns
     -------
-    df (pd.DataFrame): DataFrame of the current top 10 holdings of the selected fund.
+        df: pd.DataFrame
+            DataFrame of the current top 10 holdings of the selected fund.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
-    if lang.lower() not in supported_languages:
-        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
-        lang = 'vi'
+    lang = check_language_input(lang)
 
     # API call
     # Logic: there are funds which allocate to either equities or fixed income securities, or both
@@ -294,7 +301,7 @@ def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers):
             )
         if not df_stock.empty:
             # Convert unix timestamp into date format
-            df_stock['updateAt'] = pd.to_datetime(df_stock['updateAt'], unit='ms', utc=True).dt.strftime('%Y-%m-%d')
+            df_stock = convert_unix_to_datetime(df_to_convert=df_stock, columns=["updateAt"])
             # Merge to output
             df = pd.concat([df, df_stock])
         else:
@@ -306,14 +313,14 @@ def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers):
             record_path=['data', 'productTopHoldingBondList']
             )
         if not df_bond.empty:
-            df_bond['updateAt'] = pd.to_datetime(df_bond['updateAt'], unit='ms', utc=True).dt.strftime('%Y-%m-%d')
+            df_bond = convert_unix_to_datetime(df_to_convert=df_bond, columns=["updateAt"])
             df = pd.concat([df, df_bond])
         else:
             pass
         
         # if df is not empty, then go ahead
         if not df.empty:
-            df['fundId'] = str(fundId)
+            df['fundId'] = int(fundId)
             # rearrange columns to display
             column_subset = [
                 'stockCode',
@@ -349,7 +356,7 @@ def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers):
             print(f"Warning: No data available for fundId {fundId}.")
             return None
     else:
-        print(f"Error in API response {response.text}", "\n")
+        raise ValueError(f"Error in API response.\n{response.text}")
 
 
 def fund_industry_holding (fundId=23, lang='vi', headers=fmarket_headers):
@@ -357,10 +364,7 @@ def fund_industry_holding (fundId=23, lang='vi', headers=fmarket_headers):
     Retrieve list of industries and fund distribution for specific fundID. Live data is retrieved from the Fmarket API.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
-    if lang.lower() not in supported_languages:
-        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
-        lang = 'vi'
+    lang = check_language_input(lang)
 
     # API call
     # Logic: there are funds which allocate to either equities or fixed income securities, or both
@@ -406,10 +410,7 @@ def fund_nav_report(fundId='23', lang='vi', headers=fmarket_headers):
             DataFrame of all avalaible daily NAV data points of the selected fund.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
-    if lang.lower() not in supported_languages:
-        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
-        lang = 'vi'
+    lang = check_language_input(lang)
 
     # API call
     # Get the current date and format it as 'yyyyMMdd'
@@ -465,10 +466,7 @@ def fund_asset_holding (fundId=23, lang='vi', headers=fmarket_headers):
     Retrieve list of assets holding allocation for specific fundID. Live data is retrieved from the Fmarket API.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
-    if lang.lower() not in supported_languages:
-        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
-        lang = 'vi'
+    lang = check_language_input(lang)
 
     # API call
     # Logic: there are funds which allocate to either equities or fixed income securities, or both
