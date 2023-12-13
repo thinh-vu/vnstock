@@ -193,12 +193,7 @@ def fund_details (symbol='SSISCA', type='top_holding_list', headers=fmarket_head
     symbol = symbol.upper()
     try:
         # Lookup a valid "fundID" related to "symbol"
-        payload={
-            "searchField": symbol,
-            "pageSize": 1,
-            "types": ["NEW_FUND", "TRADING_FUND"]
-            }
-        fundID = int(fund_filter(payload)['id'][0])
+        fundID = int(fund_filter(symbol)['id'][0])
         print(f'Retrieving data for {symbol}')
     except KeyError as e:
         print(f'Error: Unable to retrieve data for this fund {symbol}.\n'
@@ -229,16 +224,39 @@ def fund_details (symbol='SSISCA', type='top_holding_list', headers=fmarket_head
 
     return df
 
-def fund_filter (payload={"types": ["NEW_FUND", "TRADING_FUND"], "pageSize": 100, "searchField": "VESAF"}, columns=['id', 'shortName', 'name', 'description'], headers=fmarket_headers):
-  url = "https://api.fmarket.vn/res/products/filter"
-  payload = json.dumps(payload)
-  response = requests.request("POST", url, headers=headers, data=payload)
-  if response.status_code == 200:
-    data = response.json()
-    df = json_normalize(data, record_path=['data', 'rows'])
-    # subset df to get only the columns in column_subset
-    df = df[columns]
-    return df
+def fund_filter(symbol="", headers=fmarket_headers) -> pd.DataFrame:
+    """Filter FundID based on Fund short name
+
+    Parameters
+    ----------
+        symbol: str
+            Fund short name. Empty string by default to list all available funds
+        headers: dict
+            headers of API request. Options: fmarket_headers (default)
+    
+    Returns
+    -------
+        df: pd.DataFrame
+            DataFrame of filtered funds
+    """
+    symbol = symbol.upper()
+    payload = {
+        "searchField": symbol,
+        "types": ["NEW_FUND", "TRADING_FUND"],
+        "pageSize": 100,
+        }
+    url = "https://api.fmarket.vn/res/products/filter"
+    payload = json.dumps(payload)
+    response = requests.post(url, headers=headers, data=payload)
+    if response.status_code == 200:
+        data = response.json()
+        df = json_normalize(data, record_path=['data', 'rows'])
+        # retrieve only column_subset
+        column_subset=['id', 'shortName']
+        df = df[column_subset]
+        return df
+    else:
+        raise ValueError(f"Error in API response.\n{response.text}")
 
 def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers):
     """
