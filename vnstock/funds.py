@@ -1,16 +1,33 @@
 from .config import *
 
+# UTILS
+
+def convert_unix_to_datetime(
+        df_to_convert: pd.DataFrame, columns: list[str]
+) -> pd.DataFrame:
+    """Converts all the specified columns of a dataframe to date format and fill NaN for negative values."""
+    df = df_to_convert.copy()
+    for col in columns:
+        df[col] = pd.to_datetime(df[col], unit='ms', utc=True, errors='coerce').dt.strftime('%Y-%m-%d')
+        df[col] = df[col].where(df[col].ge('1970-01-01'))
+    return df
+
 # MUTUAL FUNDS
 
-def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
+def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=fmarket_headers):
     """
-    Retrieve list of available funds from Fmarket. Live data is retrieved from the Fmarket. Visit https://fmarket.vn to learn more.
+    Retrieve list of available funds from Fmarket. Live data is retrieved from the Fmarket API. Visit https://fmarket.vn to learn more.
     
     Parameters
     ----------
         lang: str
-            language of the column label. Supported: 'vi' (default), 'en'
+            language of the column label. Options: 'vi' (default), 'en'
         fund_type: list
+            available fund types: "" (default), "BALANCED", "BOND", "STOCK"
+        mode: str
+            return only important columns or all available info. Options: "simplify" (default), "full"
+        decor: bool
+            transform column label to Title Case. Options: True (default), False
         headers: dict
             headers of the request
     
@@ -24,18 +41,17 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
     if lang.lower() not in supported_languages:
         print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
         lang = 'vi'
-
-    if fund_type == "":
-        fundAssetTypes = []
-    elif fund_type == "BALANCED":
-        fundAssetTypes = ["BALANCED"]
-    elif fund_type == "BOND":
-        fundAssetTypes = ["BOND"]
-    elif fund_type == "STOCK":
-        fundAssetTypes = ["STOCK"]
-    else:
-        print(f"Error: Unsupported fund type '{fund_type}', defaulting to all funds.")
-        fundAssetTypes = []
+    
+    # Check fund_type input
+    fundAssetTypes = {
+        "": [],
+        "BALANCED": ["BALANCED"],
+        "BOND": ["BOND"],
+        "STOCK": ["STOCK"]
+    }.get(fund_type, [])
+        
+    if fund_type not in ["", "BALANCED", "BOND", "STOCK"]:
+        print(f"Warning: Unsupported fund type '{fund_type}', defaulting to all fund types.")
 
     # API call
     payload = {
@@ -61,7 +77,30 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
         df = json_normalize(data, record_path=['data', 'rows'])
 
         # rearrange columns to display
-        column_subset = [
+        column_subset_full = [
+            'id',
+            'shortName',
+            'name',
+            'dataFundAssetType.name',
+            'owner.name',
+            'managementFee',
+            'firstIssueAt',
+            'productNavChange.navToPrevious',
+            'productNavChange.navToLastYear',
+            'productNavChange.navToBeginning',
+            'productNavChange.navTo1Months',
+            'productNavChange.navTo3Months',
+            'productNavChange.navTo6Months',
+            'productNavChange.navTo12Months',
+            'productNavChange.navTo24Months',
+            'productNavChange.navTo36Months',
+            'productNavChange.annualizedReturn36Months',
+            'productNavChange.updateAt',
+            'nav',
+            'code',
+            'vsdFeeId',
+        ]
+        column_subset_simplified = [
             'id',
             'shortName',
             'name',
@@ -72,12 +111,28 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
             'productNavChange.navTo36Months',
             'nav',
             'code',
-            'vsdFeeId'
         ]
-        df = df[column_subset]
+        # choose column_subset based on user input param "mode"
+        column_subsets = {
+            "simplify": column_subset_simplified,
+            "full": column_subset_full
+        }
+        df = df[column_subsets.get(mode, column_subset_simplified)]
 
-        # sort by 'Fund manager' then by 'Fund short name'
-        # df = df.sort_values(by=['owner.name', 'shortName'], ascending=[False, True])
+        # Convert Unix timestamp to date format
+        if mode == "full":
+            df = convert_unix_to_datetime(
+                df_to_convert=df,
+                columns=[
+                    'firstIssueAt', 
+                    'productNavChange.updateAt'
+                    ]
+                )
+
+        # set data type for columns, id to int
+        df = df.astype({'id': 'int'})
+
+        # sort by '36-month NAV change'
         df = df.sort_values(by='productNavChange.navTo36Months', ascending=False)
         
         # rename column label according to language choice
@@ -105,10 +160,9 @@ def funds_listing(lang='vi', fund_type="", headers=fmarket_headers):
                 'id': 'fundId'
             }
         }
-        column_mapping = language_mappings[lang.lower()]
-        # set data type for columns, id to object
-        df = df.astype({'id': 'object'})
-        df.rename(columns=column_mapping, inplace=True)
+        if decor==True:
+            column_mapping = language_mappings[lang.lower()]
+            df.rename(columns=column_mapping, inplace=True)
         
         # reset index column
         df = df.reset_index(drop=True)
