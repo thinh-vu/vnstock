@@ -12,15 +12,6 @@ def convert_unix_to_datetime(
         df[col] = df[col].where(df[col].ge('1970-01-01'))
     return df
 
-def check_language_input(lang):
-    """Check language input. Default to Vietnamese if not supported"""
-    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
-    if lang.lower() not in supported_languages:
-        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
-        return 'vi'
-    else:
-        return lang.lower()
-
 # MUTUAL FUNDS
 
 def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=fmarket_headers):
@@ -46,7 +37,10 @@ def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=
             DataFrame of all available mutual fund listed on Fmarket.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    lang = check_language_input(lang)
+    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
+    if lang.lower() not in supported_languages:
+        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
+        lang = 'vi'
     
     # Check fund_type input
     fundAssetTypes = {
@@ -177,113 +171,83 @@ def funds_listing(lang='vi', fund_type="", mode="simplify", decor=True, headers=
     else:                               
         print(f"Error in API response {response.text}", "\n")
 
-def fund_details (symbol='SSISCA', type='top_holding_list', headers=fmarket_headers) -> pd.DataFrame:
+def fund_details (symbol='SSISCA', type='top_holding_list', headers=fmarket_headers):
     """
     Retrieve fund details for a specific fund. Live data is retrieved from the Fmarket API.
-
-    Parameters
-    ----------
-        symbol: str
-            ticker of a fund. A.k.a fund short name
-        type: str
-            type of data to retrieve. Options: 'top_holding_list' (default), 'industry_holding_list', 'nav_report', 'asset_holding_list'
-        headers: dict
-            headers of the request. Options: fmaker_headers (default)
-
-    Returns
-    -------
-        df: pd.DataFrame
-            DataFrame of the current top holdings of the selected fund.
+    Parameters:
+        symbol (str): ticker of a fund
+        type (str): type of data to retrieve. Default is 'top_holding_list', other options are 'industry_holding_list'
+        headers (dict): headers of the request. Default is fmaker_headers
+    Returns:
+        df (pd.DataFrame): DataFrame of the current top holdings of the selected fund.
     """
-    # validate "symbol" user input
-    symbol = symbol.upper()
-    try:
-        # Lookup a valid "fundID" related to "symbol"
-        fundID = int(fund_filter(symbol)['id'][0])
-        print(f'Retrieving data for {symbol}')
-    except KeyError as e:
-        print(f'Error: Unable to retrieve data for this fund {symbol}.\n'
-              f'See funds_listing() for the list of valid Fund short names.')
-        raise e
-    except Exception as e:
-        print(f'An unexpected error occurred.', e)
-    
-    # validate "type" user input
-    type_mappings = {
-        'top_holding_list': fund_top_holding,
-        'industry_holding_list': fund_industry_holding,
-        'nav_report': fund_nav_report,
-        'asset_holding_list': fund_asset_holding
-    }
-
-    if type in type_mappings:
-        # Match with appropriate function
-        df = type_mappings[type](fundId=fundID, lang='vi', headers=headers)
-        df['shortName'] = symbol
+    # get fundID from symbol using fund_filter
+    fundID = str(fund_filter (payload={"searchField": symbol, "pageSize": 1, "types": ["NEW_FUND", "TRADING_FUND"]})['id'][0])
+    print(f'Getting data for {symbol}')
+    if type == 'top_holding_list':
+        df = fund_top_holding(fundId=fundID, lang='vi', headers=headers)
+    elif type == 'industry_holding_list':
+        df = fund_industry_holding(fundId=fundID, lang='vi', headers=headers)
+    elif type == 'nav_report':
+        df = fund_nav_report(fundId=fundID, lang='vi', headers=headers)
+    elif type == 'asset_holding_list':
+        df = fund_asset_holding(fundId=fundID, lang='vi', headers=headers)
     else:
-        print(f'Error: {type} is not a valid input.\n'
-              f'4 current options are:\n'
-              f'top_holding_list\n'
-              f'industry_holding_list\n'
-              f'nav_report\n'
-              f'asset_holding_list')
-
+        print('Please specify type of data to retrieve.')
+    try:
+        df['symbol'] = symbol
+    except:
+        pass
     return df
 
-def fund_filter(symbol="", headers=fmarket_headers) -> pd.DataFrame:
-    """Filter FundID based on Fund short name
+# payload = {
+#   "types": [
+#     "NEW_FUND",
+#     "TRADING_FUND"
+#   ],
+#   "issuerIds": [],
+#   "sortOrder": "DESC",
+#   "sortField": "annualizedReturn36Months",
+#   "page": 1,
+#   "pageSize": 100,
+#   "isIpo": False,
+#   "fundAssetTypes": [],
+#   "bondRemainPeriods": [],
+#   "searchField": "VESAF",
+#   "isBuyByReward": False,
+#   "thirdAppIds": []
+# }
 
-    Parameters
-    ----------
-        symbol: str
-            Fund short name. Empty string by default to list all available funds
-        headers: dict
-            headers of API request. Options: fmarket_headers (default)
-    
-    Returns
-    -------
-        df: pd.DataFrame
-            DataFrame of filtered funds
-    """
-    symbol = symbol.upper()
-    payload = {
-        "searchField": symbol,
-        "types": ["NEW_FUND", "TRADING_FUND"],
-        "pageSize": 100,
-        }
-    url = "https://api.fmarket.vn/res/products/filter"
-    payload = json.dumps(payload)
-    response = requests.post(url, headers=headers, data=payload)
-    if response.status_code == 200:
-        data = response.json()
-        df = json_normalize(data, record_path=['data', 'rows'])
-        # retrieve only column_subset
-        column_subset=['id', 'shortName']
-        df = df[column_subset]
-        return df
-    else:
-        raise ValueError(f"Error in API response.\n{response.text}")
+def fund_filter (payload={"types": ["NEW_FUND", "TRADING_FUND"], "pageSize": 100, "searchField": "VESAF"}, columns=['id', 'shortName', 'name', 'description'], headers=fmarket_headers):
+  url = "https://api.fmarket.vn/res/products/filter"
+  payload = json.dumps(payload)
+  response = requests.request("POST", url, headers=headers, data=payload)
+  if response.status_code == 200:
+    data = response.json()
+    df = json_normalize(data, record_path=['data', 'rows'])
+    # subset df to get only the columns in column_subset
+    df = df[columns]
+    return df
 
-def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers) -> pd.DataFrame:
+def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers):
     """
     Retrieve list of top 10 holdings in the specified fund. Live data is retrieved from the Fmarket API.
     
     Parameters
     ----------
-        fundId: int
-            id of a fund in fmarket database
-        lang: str
-            language of the column label. Options: 'vi' (default), 'en'
-        headers: dict
-            headers of the request. Options: fmaker_headers (default)
+        fundId (int): id of a fund in fmarket database. Retrieved from the 'fundId_fmarket' column by calling the function mutual_fund_listing()
+        lang (str): language of the column label. Supported: 'vi' (default), 'en'
+        headers (dict): headers of the request. Default is fmaker_headers
     
     Returns
     -------
-        df: pd.DataFrame
-            DataFrame of the current top 10 holdings of the selected fund.
+    df (pd.DataFrame): DataFrame of the current top 10 holdings of the selected fund.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    lang = check_language_input(lang)
+    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
+    if lang.lower() not in supported_languages:
+        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
+        lang = 'vi'
 
     # API call
     # Logic: there are funds which allocate to either equities or fixed income securities, or both
@@ -301,7 +265,7 @@ def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers) -> pd.DataFr
             )
         if not df_stock.empty:
             # Convert unix timestamp into date format
-            df_stock = convert_unix_to_datetime(df_to_convert=df_stock, columns=["updateAt"])
+            df_stock['updateAt'] = pd.to_datetime(df_stock['updateAt'], unit='ms', utc=True).dt.strftime('%Y-%m-%d')
             # Merge to output
             df = pd.concat([df, df_stock])
         else:
@@ -313,14 +277,14 @@ def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers) -> pd.DataFr
             record_path=['data', 'productTopHoldingBondList']
             )
         if not df_bond.empty:
-            df_bond = convert_unix_to_datetime(df_to_convert=df_bond, columns=["updateAt"])
+            df_bond['updateAt'] = pd.to_datetime(df_bond['updateAt'], unit='ms', utc=True).dt.strftime('%Y-%m-%d')
             df = pd.concat([df, df_bond])
         else:
             pass
         
         # if df is not empty, then go ahead
         if not df.empty:
-            df['fundId'] = int(fundId)
+            df['fundId'] = str(fundId)
             # rearrange columns to display
             column_subset = [
                 'stockCode',
@@ -356,7 +320,7 @@ def fund_top_holding(fundId=23, lang='vi', headers=fmarket_headers) -> pd.DataFr
             print(f"Warning: No data available for fundId {fundId}.")
             return None
     else:
-        raise ValueError(f"Error in API response.\n{response.text}")
+        print(f"Error in API response {response.text}", "\n")
 
 
 def fund_industry_holding (fundId=23, lang='vi', headers=fmarket_headers):
@@ -364,7 +328,10 @@ def fund_industry_holding (fundId=23, lang='vi', headers=fmarket_headers):
     Retrieve list of industries and fund distribution for specific fundID. Live data is retrieved from the Fmarket API.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    lang = check_language_input(lang)
+    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
+    if lang.lower() not in supported_languages:
+        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
+        lang = 'vi'
 
     # API call
     # Logic: there are funds which allocate to either equities or fixed income securities, or both
@@ -393,9 +360,8 @@ def fund_industry_holding (fundId=23, lang='vi', headers=fmarket_headers):
         print(f"Error in API response {response.text}", "\n")
 
 
-def fund_nav_report(fundId='23', lang='vi', headers=fmarket_headers) -> pd.DataFrame:
+def fund_nav_report(fundId='23', lang='vi', headers=fmarket_headers):
     """Retrieve all available daily NAV data point of the specified fund. Live data is retrieved from the Fmarket API.
-
     Parameters
     ----------
         symbol: int
@@ -411,7 +377,10 @@ def fund_nav_report(fundId='23', lang='vi', headers=fmarket_headers) -> pd.DataF
             DataFrame of all avalaible daily NAV data points of the selected fund.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    lang = check_language_input(lang)
+    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
+    if lang.lower() not in supported_languages:
+        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
+        lang = 'vi'
 
     # API call
     # Get the current date and format it as 'yyyyMMdd'
@@ -459,7 +428,7 @@ def fund_nav_report(fundId='23', lang='vi', headers=fmarket_headers) -> pd.DataF
         # output
         return df
     else:
-        raise ValueError(f"Error in API response.\n{response.text}")
+        print(f"Error in API response {response.text}", "\n")
 
 
 def fund_asset_holding (fundId=23, lang='vi', headers=fmarket_headers):
@@ -467,7 +436,10 @@ def fund_asset_holding (fundId=23, lang='vi', headers=fmarket_headers):
     Retrieve list of assets holding allocation for specific fundID. Live data is retrieved from the Fmarket API.
     """
     # Check language input. Default to Vietnamese if the chosen language is not supported
-    lang = check_language_input(lang)
+    supported_languages = {'en': 'English', 'vi': 'Tiếng Việt'}
+    if lang.lower() not in supported_languages:
+        print(f"Warning: Unsupported language '{lang}', defaulting to Vietnamese.")
+        lang = 'vi'
 
     # API call
     # Logic: there are funds which allocate to either equities or fixed income securities, or both
