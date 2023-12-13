@@ -1,0 +1,168 @@
+{
+  "main": {
+    "id": "828ff7aff1a373b2",
+    "type": "split",
+    "children": [
+      {
+        "id": "1c30ef05bfd852c5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3fbd69331b6de4a1",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "9780f7c71d7d395c",
+    "type": "split",
+    "children": [
+      {
+        "id": "9ac9d475cca895d8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "818d101b2d9f3310",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "0208426ae71e4672",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "451abf3d162823a7",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "5feb909cc275149a",
+    "type": "split",
+    "children": [
+      {
+        "id": "9b9f5f11b93c1005",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1026769feae48079",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "21de62db5c07e844",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "dad2da871f64948a",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "611d19f7f81f0176",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "3fbd69331b6de4a1",
+  "lastOpenFiles": [
+    "docs/integrate/ssi_fast_connect_api.md",
+    "site/feed_rss_updated.xml",
+    "site/feed_rss_created.xml",
+    "site/search/search_index.json",
+    "site/search",
+    "site/assets/javascripts/glightbox.min.js",
+    "site/assets/stylesheets/glightbox.min.css",
+    "site/blog/category/huong-dan/index.html",
+    "site/blog/category/huong-dan",
+    "site/blog/archive/2023/index.html",
+    "site/blog/archive/2023",
+    "site/assets/images/favicon.png",
+    "site/assets/images/vnstock_web_app_fundamental_section.png",
+    "site/assets/images/vnstock_select_branch.jpeg",
+    "site/assets/images/vnstock_logo_color.png",
+    "site/assets/images/vnstock_logo_bw.png",
+    "site/assets/images/vnstock_home.png",
+    "site/assets/images/vnstock_google_sheets_appscript_code.png",
+    "site/assets/images/vnstock_google_sheet_result.png",
+    "site/assets/images/vnstock_download_stats.png",
+    "site/assets/images/vnstock_docs_home.png",
+    "docs/integrate/OpenBBTerminal.md",
+    "docs/integrate/huggingface.md",
+    "docs/integrate/messaging.md"
+  ]
+}

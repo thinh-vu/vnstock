@@ -1,0 +1,7 @@
+{
+  "useMarkdownLinks": true,
+  "alwaysUpdateLinks": true,
+  "attachmentFolderPath": "docs/assets/images",
+  "newFileLocation": "root",
+  "newLinkFormat": "relative"
+}
