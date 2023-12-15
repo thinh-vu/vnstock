@@ -56,3 +56,31 @@ Dưới đây là các gợi ý để bạn tra cứu trang tài liệu vnstock 
 - **Sử dụng bảng mục lục**: Thanh điều hướng bên trái :material-table-of-contents: cung cấp các đề mục để bạn có thể nhấp vào và di chuyển đến nội dung mình cần dễ dàng.
 
 - **Copy Code**: Ở mỗi ô chứa dòng lệnh luôn có biểu tượng copy :material-content-copy: cho phép bạn click vào và sao chép đoạn mã dễ dàng.
+
+## Docstring
+Tất cả các hàm của vnstock đều được cung cấp docstring đầy đủ, do đó bạn có thể xem phần gợi ý khi viết câu lệnh trên các IDE như Google Colab, Visual Studio Code, hay Jupyter Notebook. 
+
+Sau khi nạp thư viện vnstock vào môi trường làm việc thông qua câu lệnh `import`, bạn có thể in phần hướng dẫn sử dụng hàm vnstock bất kỳ thông qua thuộc tính `__doc__` của hàm đó như sau (dấu `__` được tạo bởi 2 dấu `_` tức shift `-`):
+
+```shell
+>>> print(listing_companies.__doc__)
+
+This function returns the list of all available stock symbols from a csv file or a live api request.
+    Parameters: 
+        live (bool): If True, return the list of all available stock symbols from a live api request. If False, return the list of all available stock symbols from the Github csv file (monthly update). Default is False.
+    Returns: df (DataFrame): A pandas dataframe containing the stock symbols and other information.
+```
+
+Tất nhiên, bạn luôn có thể mở phần mã nguồn của vnstock trên Github để xem chi tiết.
+
+=== "Docstring trong Google Colab"
+
+    Gợi ý cú pháp hàm được hiển thị khi viết bất kỳ hàm nào thuộc vnstock, trong ví dụ này hiển thị trong giao diện Google Colab.
+
+    ![docstring suggestion](../assets/images/docstring_suggestion.jpeg)
+
+=== "Docstring trong mã nguồn"
+
+    Mở mã nguồn Github tại thư mục vnstock, tìm hàm bạn cần tra cứu docstring.
+
+    ![docstring source](../assets/images/docstring_source_code.png)

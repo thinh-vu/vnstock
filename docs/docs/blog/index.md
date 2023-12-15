@@ -1,2 +1,2 @@
-# Kiến thức chung
+# Kiến thức
 

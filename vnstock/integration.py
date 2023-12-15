@@ -1,6 +1,8 @@
 # DNSE API: https://www.dnse.vn
 from .config import *
+import os
 from .technical import stock_historical_data
+from .utils import get_username, get_os
 
 # AMIBROKER CSV EXPORT
 
@@ -388,5 +390,27 @@ class DNSEClient:
             print("Error:", response.text)
             return None
 
-# SSI FAST CONNECT DATA
-## Data Streaming
+# OPENBB TERMINAL
+
+def export_for_openbb (df, file_name='ohlcv_export', extension='csv'):
+    """
+    Save a data file to the custom import folder of OpenBB C:/Users/<USER_NAME>/OpenBBUserData for Windows or "Macintosh HD/Users/<USER_NAME>/OpenBBUserData" for macOS
+    Parameters:
+        df (pd.DataFrame): DataFrame to save
+        file_name (str): name of the file. Default is 'ohlcv_export'
+        extension (str): extension of the file. Default is 'csv', other options is 'xlsx'
+    """
+    # get the computer's user name
+    user = get_username()
+    # get the computer's operating system
+    os = get_os()
+    # get the path of the custom import folder
+    if os == 'Windows':
+        path = f'C:/Users/{user}/OpenBBUserData/custom_imports/stocks'
+    elif os == 'Darwin': # macOS
+        path = f'Macintosh HD/Users/{user}/OpenBBUserData'
+    # if extension is csv, then save df to csv file
+    if extension == 'csv':
+        df.to_csv(f'{path}/{file_name}.{extension}', index=False)
+    elif extension == 'xlsx':
+        df.to_excel(f'{path}/{file_name}.{extension}', index=False)

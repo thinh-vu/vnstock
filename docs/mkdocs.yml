@@ -205,6 +205,7 @@ nav:
     - So sánh cổ phiếu: functions/comparison.md
     - Xếp hạng cổ phiếu: functions/rating.md
     - Định giá cổ phiếu: functions/evaluation.md
+    - Thông tin quỹ mở: functions/funds.md
     - Thị trường: functions/market.md
     - Xuất dữ liệu: functions/export.md
     - Biểu diễn dữ liệu: functions/chart.md
@@ -214,14 +215,17 @@ nav:
     - Amibroker: integrate/amibroker.md
     - Streamlit: integrate/streamlit.md
     - Huggingface: integrate/huggingface.md
+    - OpenBB Terminal: integrate/OpenBBTerminal.md
     - TA-Lib: integrate/ta_lib.md
     - Thư viện Backtesting: integrate/backtesting.md
     - SSI Fast Connect API: integrate/ssi_fast_connect_api.md
     - DNSE Lightspeed API: integrate/dnse_api.md
   - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
-    - Ủng hộ quỹ: community/support.md
-    - Góp sức: community/contribute.md
+    - Tài trợ dự án: community/support.md
+    - Lan tỏa vnstock: community/lan-toa-trai-nghiem-voi-vnstock.md
+    - Góp ý & phản hồi: community/feedback.md
+    - Đóng góp mã nguồn: community/contribute.md
   - FAQs: 
     - Sản phẩm: faq/feature.md
     - Cộng đồng: faq/community.md
@@ -231,8 +235,7 @@ nav:
   - Phiên bản: changes_log.md
   - Miễn trừ: disclaimer.md
   - Khóa học Python: course.md
-  # - Kiến thức: 
-  #   - Blog Home: blog/index.md
+  - Kiến thức: blog/index.md
 
 
 

@@ -1,5 +1,12 @@
 # Lịch sử cập nhật
 
+## 10-12-2023
+- Bổ sung tính năng truy xuất dữ liệu quỹ mở từ fmarket.vn, phát triển từ mã nguồn do `andrey_jef` đóng góp. Tài liệu mô tả và demo notebook đã được cập nhật tương ứng.
+- Đưa `plotly` thành thư viện tùy chọn, chỉ phải import vào dự án nếu người dùng có nhu cầu sử dụng tính năng vẽ đồ thị. Việc này giúp vnstock chạy trên môi trường khác Google Colab không cần cài đặt thêm `plotly` theo mặc định. Mã nguồn được cập nhật lên bản beta trên Github, thay đổi sẽ được đẩy lên PyPI trong tuần tới.
+- Cập nhật tài liệu hướng dẫn cho nội dung lấy dữ liệu giá lịch sử.
+- Cập nhật tài liệu hướng dẫn cách cài đặt thư viện TA-Lib cho phân tích kỹ thuật trên máy tính Windows.
+
+
 ## 09-11-2023
 > Phát hành phiên bản 0.2.8.5
 

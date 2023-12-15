@@ -20,9 +20,9 @@ def stock_historical_data (symbol='TCB', start_date='2023-06-01', end_date='2023
         | ----------- | ---- | ---- | --- | ----- | ------ |
         | YYYY-mm-dd  | xxxx | xxxx | xxx | xxxxx | xxxxxx |
     """
-    if source == 'DNSE':
+    if source.upper() == 'DNSE':
         df = ohlc_data(symbol, start_date, end_date, resolution, type, headers=entrade_headers)
-    elif source == 'TCBS':
+    elif source.upper() == 'TCBS':
         if resolution == '1D':
             resolution = 'D'
             df = longterm_ohlc_data(symbol, start_date, end_date, resolution, type, headers=tcbs_headers)
@@ -104,6 +104,9 @@ def longterm_ohlc_data (symbol='REE', start_date='2022-01-01', end_date='2023-10
         df = df[(df['time'] >= start_date.strftime('%Y-%m-%d')) & (df['time'] <= end_date.strftime('%Y-%m-%d'))]
         if type == 'stock':
             df[['open', 'high', 'low', 'close']] = round(df[['open', 'high', 'low', 'close']] / 1000, 2)
+        # convert df columns open, high, low, close, volume to float, volume to int
+        df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']].astype(float)
+        df['volume'] = df['volume'].astype(int)
         return df
     else:
         if type in ['stock', 'index']:
@@ -123,6 +126,9 @@ def longterm_ohlc_data (symbol='REE', start_date='2022-01-01', end_date='2023-10
             df = df[(df['time'] >= start_date.strftime('%Y-%m-%d')) & (df['time'] <= end_date.strftime('%Y-%m-%d'))]
             if type == 'stock':
                 df[['open', 'high', 'low', 'close']] = round(df[['open', 'high', 'low', 'close']] / 1000, 2)
+            # convert df columns open, high, low, close, volume to float, volume to int
+            df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']].astype(float)
+            df['volume'] = df['volume'].astype(int)
             return df
         else:
             print(f'Error {status_code}. {response.text}')
@@ -177,6 +183,9 @@ def ohlc_data (symbol, start_date='2023-06-01', end_date='2023-06-17', resolutio
         else:
             # format df['time'] to datetime string with format %Y-%m-%d %H:%M:%S
             df['time'] = df['time'].dt.strftime('%Y-%m-%d %H:%M:%S')
+        # convert df columns open, high, low, close, volume to float, volume to int
+        df[['open', 'high', 'low', 'close']] = df[['open', 'high', 'low', 'close']].astype(float)
+        df['volume'] = df['volume'].astype(int)
     else:
         print(f"Error in API response {response.text}", "\n")
     return df

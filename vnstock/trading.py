@@ -225,6 +225,7 @@ def stock_intraday_data (symbol='ACB', page_size=50, page=0, investor_segment=Tr
         df['orderType'] = df['orderType'].replace({'SD': 'Sell Down', 'BU': 'Buy Up'})
     elif investor_segment == False:
         df = df[['ticker', 'time', 'orderType', 'volume', 'price', 'prevPriceChange']]
+        df['orderType'] = df['orderType'].replace({'SD': 'Sell Down', 'BU': 'Buy Up'})
     df.reset_index(drop=True, inplace=True)
     return df
 

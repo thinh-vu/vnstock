@@ -3,10 +3,15 @@
 !!! abstract "Fast Connect API"
     SSI cung cấp bộ APIs cho phép thiết lập giao dịch tự động (FastConnect Trading) và truy xuất dữ liệu thị trường chứng khoán cơ bản (FastConnect Data) cho ngôn ngữ Python. Công cụ này hoàn toàn miễn phí, bạn có thể xin cấp quyền sử dụng bằng cách mang CCCD ra phòng giao dịch của SSI gần nhất để đăng ký và kích hoạt. 
     
-Để có thể sử dụng thành thạo, bạn cần có kiến thức Python vững bởi những đoạn code mẫu được cung cấp ở mức tối thiểu để demo tính năng. Dữ liệu chỉ được in ra màn hình mà không phải được trả về dưới dạng các Python object để sử dụng dễ dàng. Vấn đề này tôi đã gửi ticket và yêu cầu giải đáp từ team Dev của SSI, bạn có thể theo dõi link đính kèm bên dưới. Ngoài ra tài liệu của SSI cũng đã được cập nhật chuẩn hơn sau lần cập nhật gần nhất là 2 năm trước (từ 2021) sau khi nhận được phản hồi. Hiện tại bạn có thể dễ dàng hơn để bắt đầu thử nghiệm xây dựng bot giao dịch của riêng mình.
+vnstock cung cấp tới các bạn các hàm được tùy biến sẵn giúp dễ dàng sử dụng mà không cần bỏ nhiều thời gian nghiên cứu và tùy biến từ demo sơ khai do SSI cung cấp. Bạn có thể sở hữu gói phần mềm tích hợp này thông qua chương trình Github Sponsor. Theo đó, bạn sẽ trở thành nhà tài trợ của vnstock để có thể truy cập và sử dụng các tính năng này được phát hành dưới dạng gói phần mềm nâng cao cho vnstock. Truy cập [trang tài trợ](https://github.com/sponsors/thinh-vu) và chọn gói phù hợp và thanh toán bằng thẻ Visa/Master để có thể sử dụng ngay hôm nay.
 
-- Tài liệu sử dụng: [Tại đây](https://guide.ssi.com.vn/ssi-products/v/tieng-viet/fastconnect-data/du-lieu-streaming)
-- Yêu cầu giải đáp của tôi: [Tại đây](https://github.com/SSI-Securities-Corporation/python-fcdata/issues/1)
+[Kết nối SSI với vnstock :material-rocket-launch:](https://github.com/sponsors/thinh-vu){ .md-button }
+
+**Chia sẻ thêm:**
+
+Để có thể sử dụng thành thạo `ssi_fc_data` và `ssi_fc_trading`, bạn cần có kiến thức Python vững và dành nhiều thời gian nghiên cứu bởi những đoạn code mẫu được cung cấp ở mức tối thiểu để demo tính năng. Dữ liệu chỉ được in ra màn hình mà không phải được trả về dưới dạng các Python object để sử dụng dễ dàng. Vấn đề này tôi đã gửi [ticket](https://github.com/SSI-Securities-Corporation/python-fcdata/issues/1) và yêu cầu giải đáp từ team Dev của SSI, bạn có thể theo xem chi tiết tại link. Team dev SSI thường không phản hồi bạn qua Github nhanh chóng. Tài liệu của SSI cũng đã được cập nhật chuẩn hơn sau lần cập nhật gần đây sau khi nhận được đóng góp ý kiến.
+
+- Tài liệu sử dụng chính thức từ SSI: [Tại đây](https://guide.ssi.com.vn/ssi-products/v/tieng-viet/fastconnect-data/du-lieu-streaming)
 
 ## vnstock x SSI Fast Connect API?
 

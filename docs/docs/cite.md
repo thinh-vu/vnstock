@@ -21,13 +21,15 @@ Mã nguồn được lấy từ Vnstock - gói phần mềm Python phân tích t
 
 ## Giấy phép
 
-### Tiếng Việt
-
 Vnstock được cấp phép theo Giấy phép MIT. Nội dung của giấy phép như dưới đây, và thể hiện trong file [LICENSE](https://github.com/thinh-vu/vnstock/blob/beta/LICENSE).
 
 Khi sử dụng Vnstock trong dự án của mình, bạn phải tuân thủ và giữ nguyên giấy phép MIT của Vnstock. Đồng thời, hãy chắc chắn rằng bạn đã bao gồm tên tác giả và giấy phép trong dự án của bạn.
+
 Lưu ý: Vnstock là một dự án mã nguồn mở, do đó việc tuân thủ giấy phép và trích dẫn đóng vai trò quan trọng trong việc hỗ trợ và duy trì cộng đồng nguồn mở.
+
 Cảm ơn bạn đã sử dụng Vnstock và tuân thủ các hướng dẫn **Trích dẫn** và **Giấy phép** này. Nếu bạn có bất kỳ câu hỏi hoặc góp ý nào, xin vui lòng liên hệ với tôi qua mục [Thảo luận](https://github.com/thinh-vu/vnstock/discussions) của repo Github này hoặc nhắn tin trực tiếp.
+
+### Tiếng Việt
 
 ```
 Bản quyền (c) 2022 Thinh Vu | thinh-vu @ Github | MIT
