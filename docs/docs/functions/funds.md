@@ -12,18 +12,15 @@ Tính năng tra cứu thông tin quỹ mở hiện đã được cập nhật qu
 
 ## Liệt kê danh sách quỹ
 
-Để truy xuất thông tin toàn bộ các quỹ mở, bạn sử dụng hàm dưới đây:
+### Câu lệnh
+
+Để truy xuất thông tin toàn bộ các chứng chỉ quỹ (CCQ) mở, bạn sử dụng hàm dưới đây:
 
 ```python
-funds_listing(lang='vi', fund_type="")
+funds_listing()
 ```
 
-Trong đó:
-
-- `lang`: ngôn ngữ hiển thị thông tin quỹ. Hiện tại, vnstock hỗ trợ hai ngôn ngữ là `vi` (Tiếng Việt) và `en` (Tiếng Anh). Mặc định là `vi`.
-- `fund_type`: loại quỹ, chấp nhận các giá trị sau: `STOCK` cho quỹ cổ phiếu, `BOND` cho quỹ trái phiếu, `BALANCED` cho quỹ cân bằng. Nếu để trống, kết quả trả về là tất cả các quỹ hiện có.
-
-Thông tin trả về có là một DataFrame với các thông tin tóm tắt như sau:
+### Ví dụ thông tin trả về
 
 ```shell
 >>> funds_listing(lang='vi', fund_type="").head()
@@ -37,6 +34,36 @@ Total number of funds currently listed on Fmarket:  41
 
 [5 rows x 11 columns]
 ```
+
+### Tham số đầu vào
+
+| Name | Type | Description | Default | Optional |
+|---|---|---|---|---|
+| lang | str | ngôn ngữ hiển thị thông tin quỹ. Hiện tại, vnstock hỗ trợ hai ngôn ngữ là `vi` (Tiếng Việt) và `en` (Tiếng Anh) | `vi` | True |
+| fund_type | str | loại quỹ, chấp nhận các giá trị sau: </br>`STOCK` cho quỹ cổ phiếu, </br>`BOND` cho quỹ trái phiếu, </br>`BALANCED` cho quỹ cân bằng, </br>Nếu để trống, kết quả trả về là tất cả các quỹ hiện có. | None | True |
+| mode | str | `simplify`: chỉ trả về các dữ liệu chính </br> `full`: trả về thêm các dữ liệu khác | `simplify` | True | 
+| decor | bool | `True`: thực hiện đổi tên cột từ kiểu CamelCase sang Title Case | True | True |
+
+### Thông tin trả về 
+
+Thông tin trả về là một DataFrame có mô hình dữ liệu (data model) như sau:
+
+| Name | Type | Description |
+|---|---|---|
+| id | int | ID của CCQ trong csdl của Fmarket |
+| shortName | str | Tên viết tắt của CCQ |
+| name | str | Tên CCQ |
+| dataFundAssetType.name | str | Loại quỹ |
+| owner.name | str | Tổ chức phát hành |
+| managementFee | float | Phí quản lý (%) |
+| firstIssueAt | datetime | Ngày thành lập quỹ |
+| productNavChange.navTo6Months | float | Lợi nhuận 6 tháng gần nhất (%) |
+| productNavChange.navTo36Months | float | Lợi nhuận 36 tháng gần nhất (%) |
+| productNavChange.annualizedReturn36Months | float | Lợi nhuận trung bình năm trong 36 tháng gần nhất (%/năm) |
+| productNavChange.updateAt | datetime | Ngày cập nhật NAV | 
+| nav | float | Giá gần nhất |
+| code | str | Tên mã CCQ trong csdl của Fmarket |
+| vsdFeeId | str | Tên mã CCQ trong csdl của Trung tâm lưu ký (VSD) |
 
 ## Truy xuất thông tin quỹ
 

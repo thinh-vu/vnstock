@@ -15,7 +15,7 @@ vnstock Web app đã được giới thiệu lần đầu vào 4/9/2023 nhằm g
 
 vnstock web app được xây dựng bằng [streamlit](http://streamlit.io/) framework, sử dụng ngôn ngữ Python hoàn toàn. Đây  cũng là một định hướng rất triển vọng trong việc xây dựng các ứng dụng web trong việc phân tích chứng khoán với giao diện người dùng thân thiện và dễ sử dụng, bảo trì.
 
-[Mở Web App :material-rocket-launch:](https://vnstock.site/vnstock-app?utm_source=vnstock-docs&utm_medium=resource){ .md-button }
+[Mở Web App :material-rocket-launch:](https://vnstock.site/web-app?utm_source=vnstock-docs&utm_medium=resource){ .md-button }
 
 ## Notebook minh hoạ
 Bạn có thể mở file demo bằng Jupyter Notebook và dùng thử tất cả các hàm của vnstock từ giao diện Google Colab. Nếu muốn sử dụng Notebook trong Visual Studio Code hoặc IDE khác, bạn có thể tìm menu **File** > **Download** và chọn **Download.ipynb** để lưu file về máy.
