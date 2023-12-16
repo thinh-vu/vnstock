@@ -1,0 +1,86 @@
+/*Variables*/
+.body {
+  --at-button-height: 48;
+  --at-row-count: 2;
+  --at-row-count: 0;
+}
+
+/*Multi Row Toolbar*/
+.AT-multirow.AT-row .mobile-toolbar-options-container {
+  flex-flow: column wrap;
+}
+
+.is-mobile .mobile-toolbar {
+  position: absolute;
+  z-index: 5;
+  margin-bottom: var(--at-offset);
+}
+
+.AT-always-shown .is-pinned .workspace-drawer-inner {
+  margin-bottom: calc(
+    var(--at-button-height) * var(--at-row-count) + var(--at-spacing)
+  );
+}
+
+.AT-multirow.AT-column .mobile-toolbar-options-container {
+  flex-flow: row wrap;
+  overflow-y: auto;
+}
+
+.mobile-toolbar-option {
+  height: var(--at-button-height);
+  min-width: var(--at-button-width);
+}
+
+.AT-multirow .mobile-toolbar {
+  height: calc(
+    var(--at-button-height) * var(--at-row-count) + var(--at-spacing)
+  ) !important;
+}
+
+.AT-multirow .mobile-toolbar-options-container {
+  height: calc(
+    var(--at-button-height) * var(--at-row-count) + var(--at-spacing)
+  ) !important;
+}
+
+.AT-no-toolbar .mobile-toolbar {
+  display: none;
+}
+
+/*Icon Picker*/
+.AT-icon {
+  transform: translateY(3px);
+  margin-right: 8px;
+}
+
+.AT-icon-container {
+  display: flex;
+}
+
+.AT-settings-icon {
+  height: 20px;
+}
+
+/*Additional Stuff*/
+span.setting-item.AT-warning {
+  text-align: center;
+}
+
+.setting-item.AT-extra > .setting-item-info {
+  opacity: 0.65;
+}
+
+.is-mobile .setting-item.AT-extra > .setting-item-control {
+  justify-content: center !important;
+}
+
+a[href="https://ko-fi.com/phibr0"] > img
+{
+  height: 3em;
+}
+
+a[href="https://ko-fi.com/phibr0"]
+{
+  transform: translate(0, 5%);
+}

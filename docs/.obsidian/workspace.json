@@ -1,0 +1,199 @@
+{
+  "main": {
+    "id": "a1e89ea0477d582a",
+    "type": "split",
+    "children": [
+      {
+        "id": "06ced8dee2250d29",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "44d88177dd45e27d",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "613435e3b7b62ee6",
+    "type": "split",
+    "children": [
+      {
+        "id": "89c61b5d51913c21",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "89a3544ae7e7c67e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "b5aab821bd386159",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "a63e290ec9a993ef",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 602.5
+  },
+  "right": {
+    "id": "804415cfd1e3e680",
+    "type": "split",
+    "children": [
+      {
+        "id": "558e2c039cf4f937",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1ea2c5ed4e70485b",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "89fbbaf655f45754",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "593d0d4d84de464e",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "bf29b2fc764f874e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {}
+            }
+          },
+          {
+            "id": "e44e7dd00bacdd1e",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
+              "state": {}
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "table-editor-obsidian:Advanced Tables Toolbar": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "44d88177dd45e27d",
+  "lastOpenFiles": [
+    "docs/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program.md",
+    "docs/course.md",
+    "docs/changes_log.md",
+    "site/feed_rss_updated.xml",
+    "site/feed_rss_created.xml",
+    "site/search/search_index.json",
+    "site/search",
+    "site/assets/javascripts/lunr/min/lunr.zh.min.js",
+    "site/assets/javascripts/lunr/min/lunr.vi.min.js",
+    "site/assets/javascripts/lunr/min/lunr.tr.min.js",
+    "site/assets/javascripts/lunr/min/lunr.th.min.js",
+    "site/assets/javascripts/lunr/min/lunr.te.min.js",
+    "site/assets/javascripts/lunr/min/lunr.ta.min.js",
+    "site/assets/images/social/blog/category/huong-dan.png",
+    "site/assets/images/social/blog/archive/2023.png",
+    "site/assets/images/social/start/resources.png",
+    "site/assets/images/social/start/start.png",
+    "site/assets/images/social/integrate/web_app.png",
+    "site/assets/images/social/start/index.png",
+    "site/assets/images/social/integrate/ta_lib.png",
+    "site/assets/images/social/start/installation.png",
+    "site/assets/images/social/integrate/streamlit.png",
+    "site/assets/images/social/integrate/ssi_fast_connect_api.png",
+    "docs/community/support.md",
+    "docs/community/contribute.md",
+    "docs/integrate/ssi_fast_connect_api.md",
+    "_posts/2023-06-08-Tạo blog phong cách tối giản với Github Pages và Jekyll.md",
+    "_posts/2023-04-08-Thiết lập Digital Garden với Jekyll và Github Page.md",
+    "_posts/2017-12-08-mermaid-example.md",
+    "_posts/2017-12-15-table-example.md",
+    "_posts/2023-04-10-Stop Overthinking.md",
+    "_posts/2023-04-16-The forgetting curve.md",
+    "_posts/2023-04-17-Executive Presentation Guide.md",
+    "_posts/2023-05-22-The imperfectionists.md",
+    "_posts/2023-11-17-cong-cu-giup-lap-trinh-tren-moi-thiet-bi-moi-luc-moi-noi.md",
+    "_posts/2023-11-14-lua-chon-nen-tang-giai-phap-digital-garden-phu-hop.md",
+    "_posts/2023-11-14-ben-kia-cau-vong.md",
+    "_posts/2023-11-10-huong dan dung jekyll theme yat.md",
+    "_posts/2023-04-17-Storytelling.md",
+    "_posts/Untitled.md",
+    "_posts/src/template/Post.md",
+    "_posts/src/template/New Note.md",
+    "_posts/src/template/Index Note.md",
+    "_posts/src/template/Bullet Journal.md",
+    "_posts/src/template/Book Highlights.md"
+  ]
+}
