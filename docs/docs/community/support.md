@@ -28,6 +28,10 @@ Lưu ý: để có thể tài trợ cho dự án qua Github Sponsor, bạn cần
 !!! tip "Tặng một ly cafe"
 	Bạn có thể gửi tặng tác giả một ly cafe để cảm ơn và động viên nếu thấy Vnstock giúp ích nhiều cho bạn. Bạn chọn Momo hoặc chuyển khoản tùy theo hình thức nào thuận tiện cho bạn nhất. Cám ơn bạn thật nhiều!
 
+Thông tin chuyển khoản ngân hàng:
+
+- Ngân hàng nhận: `Vietcombank` chi nhánh Thanh Đa
+- Tài khoản: nhập `VNSTOCK` hoặc số tài khoản `0531002498288`
 
 <div id="QR" align="center">
   <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vcb-qr-thinhvu.jpg"/>

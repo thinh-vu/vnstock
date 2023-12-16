@@ -1,5 +1,21 @@
 # Lịch sử cập nhật
 
+## 16-12-2023
+- Cập nhật tài liệu dự án
+	- Bổ sung hướng dẫn sử dụng tích hợp SSI Fast Connect API trong gói `vnstock-pro-data` [tại đây](https://docs.vnstock.site/integrate/ssi_fast_connect_api/)
+	- Bổ sung thông tin chi tiết chương trình Vnstock Insider Program [tại đây](https://docs.vnstock.site/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program)
+- Bổ sung `requirements.txt` cho trình tạo trang tĩnh MKDocs giúp cài đặt gói phụ thuộc để thiết lập trang tài liệu và xem trước dễ dàng.
+## 14-12-2023
+Chính thức phát hành các thay đổi từ nhánh Beta trong phiên bản 0.2.8.7. Chi tiết cập nhật qua blog: [tại đây](https://vnstock.site/2023/12/15/ra-mat-vnstock-insider-program-cap-nhat-nhieu-tinh-nang-thu-vi/)
+
+- Ra mắt Vnstock Insiders Program cung cấp quyền truy cập tới các kho chứa mã nguồn riêng tư (private repo)
+- Ra mắt `vnstock-pro-data` trong chương trình Insiders, cung cấp khả năng truy cập dữ liệu chất lượng cao với độ trễ thấp.
+	- Tải dữ liệu giá OHLCV nhanh chóng, chính xác không cần xác thực qua Public API của SSI.
+	- Tải và streaming dữ liệu qua SSI Fast Connect API chính thức (cần đăng ký và xác thực người dùng)
+- Chính thức phát hành tính năng truy cập dữ liệu quỹ mở. Hướng dẫn [tại đây](https://docs.vnstock.site/functions/funds/)
+- Hỗ trợ xuất dữ liệu time series cho OpenBB Terminal. Hướng dẫn [tại đây](https://docs.vnstock.site/integrate/OpenBBTerminal/)
+- Cập nhật tài liệu dự án
+
 ## 10-12-2023
 - Bổ sung tính năng truy xuất dữ liệu quỹ mở từ fmarket.vn, phát triển từ mã nguồn do `andrey_jef` đóng góp. Tài liệu mô tả và demo notebook đã được cập nhật tương ứng.
 - Đưa `plotly` thành thư viện tùy chọn, chỉ phải import vào dự án nếu người dùng có nhu cầu sử dụng tính năng vẽ đồ thị. Việc này giúp vnstock chạy trên môi trường khác Google Colab không cần cài đặt thêm `plotly` theo mặc định. Mã nguồn được cập nhật lên bản beta trên Github, thay đổi sẽ được đẩy lên PyPI trong tuần tới.
