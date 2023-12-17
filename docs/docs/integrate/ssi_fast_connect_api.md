@@ -62,7 +62,11 @@ import config
 
 client = fc_md_client.MarketDataClient(config)
 ```
-### Tải dữ liệuliệu
+### Tải dữ liệu <!-- md:setting config.tags_extra_files -->
+
+<!-- md:sponsors -->
+<!-- md:version insiders-4.20.0 -->
+<!-- md:default none -->
 
 #### Danh sách mã chứng khoán theo sàn
 

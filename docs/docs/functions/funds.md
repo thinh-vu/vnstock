@@ -8,7 +8,7 @@
 
 Tính năng tra cứu thông tin quỹ mở hiện đã được cập nhật qua nhánh beta của vnstock trên Github. Bạn có thể cài đặt bản beta theo hướng dẫn tại đây:
 
-[Cài đặt bản beta :material-rocket-launch:](https://docs.vnstock.site/start/installation/#xac-inh-phien-ban-phu-hop){ .md-button }
+[Cài đặt bản beta :material-rocket-launch:](https://docs.vnstock.site/start/huong-dan-cai-dat-vnstock-python/#xac-inh-phien-ban-phu-hop){ .md-button }
 
 ## Liệt kê danh sách quỹ
 

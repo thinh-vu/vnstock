@@ -57,11 +57,15 @@ edit_uri: edit/main/docs/docs
 plugins:
   - glightbox
   # - search
-  - tags
+  - tags:
+      enabled: true
+      tags_file: tags.md
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - social: # display a preview on social for links
-      # cards_layout: default 
+      cards_layout: default/invert
+      cards_layout_options:
+        background_color: "#279B48" 
   # - meta # blog metadata
   - blog:
       enabled: true
@@ -177,6 +181,9 @@ extra:
     - icon: fontawesome/brands/discord
       link: https://discord.gg/ruugCSWVCJ
   generator: false
+  # version:
+  #   provider: mike
+  #   default: stable
   # alternate:
   # - name: English
   #   link: /en/ 
@@ -192,9 +199,10 @@ copyright: Copyright &copy; 2023 | vnstock.site
 nav:
   - Trang chủ: index.md
   - Hướng dẫn nhanh: 
-    - Bắt đầu: start/start.md
-    - Chọn phiên bản: start/installation.md
-    - Tài nguyên: start/resources.md
+    - Bắt đầu: start/huong-dan-su-dung-nhanh-vnstock.md
+    - Chọn phiên bản: start/huong-dan-cai-dat-vnstock-python.md
+    - Tài nguyên website: start/tai-nguyen-quan-trong-vnstock-website.md
+    # - Danh mục thẻ nội dung: tags.md
   - Tính năng:
     - Danh sách niêm yết: functions/listing.md
     - Thông tin cơ bản: functions/fundamental.md
@@ -228,13 +236,13 @@ nav:
     - Góp ý & phản hồi: community/feedback.md
     - Đóng góp mã nguồn: community/contribute.md
   - FAQs: 
+    - Giấy phép: cite.md
+    - Miễn trừ trách nhiệm: disclaimer.md
     - Sản phẩm: faq/feature.md
     - Cộng đồng: faq/community.md
     - Ủng hộ dự án: faq/pricing.md
     - Hỗ trợ người dùng: faq/support.md
-  - Giấy phép: cite.md
   - Phiên bản: changes_log.md
-  - Miễn trừ: disclaimer.md
   - Khóa học Python: course.md
   - Kiến thức: blog/index.md
 
