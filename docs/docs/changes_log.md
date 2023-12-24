@@ -1,5 +1,11 @@
 # Lịch sử cập nhật
 
+## 24-12-2023
+- Cập nhật tài liệu dự án
+	- Tài liệu truy xuất [giá lịch sử](https://docs.vnstock.site/functions/technical/)
+	- Hướng dẫn [truy xuất dữ liệu giao dịch nước ngoài/tự doanh](https://docs.vnstock.site/functions/market/#giao-dich-ntnn) sử dụng gói phần mềm `vnstock-data-pro`
+	- Hướng dẫn nhanh
+
 ## 16-12-2023
 - Cập nhật tài liệu dự án
 	- Bổ sung hướng dẫn sử dụng tích hợp SSI Fast Connect API trong gói `vnstock-pro-data` [tại đây](https://docs.vnstock.site/integrate/ssi_fast_connect_api/)

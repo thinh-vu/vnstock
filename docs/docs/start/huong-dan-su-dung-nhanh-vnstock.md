@@ -20,9 +20,10 @@ title: Cài đặt
 ---
 
 ## Giới thiệu chung
+
 vnstock là thư viện Python được thiết kế để tải dữ liệu chứng khoán Việt Nam một cách dễ dàng và miễn phí. Gói thư viện được thiết kế dựa trên nguyên tắc về sự đơn giản và tiện lợi, hầu hết các hàm đều có thể chạy ngay trên Google Colab khi cài đặt vnstock mà không yêu cầu thêm gói phụ thuộc.
 
-- vnstock có [40K+ lượt download](https://lookerstudio.google.com/reporting/06f4896d-21c5-4c4a-942e-126609c55fba) trên PyPI tính đến 5/11/2023. Lượt download trong tháng 10/2023 đạt mốc kỷ lục 5.266 kể từ lúc phát hành.
+- vnstock có [51K+ lượt download](https://lookerstudio.google.com/reporting/06f4896d-21c5-4c4a-942e-126609c55fba) trên PyPI tính đến 24/12/2023. Lượt download trong tháng 12/2023 đạt mốc kỷ lục 6.195 kể từ lúc phát hành.
 
 ## Cài đặt nhanh
 
@@ -43,7 +44,7 @@ Thư viện **vnstock** cung cấp khả năng kết nối tới các API công 
 ## Đánh dấu yêu thích
 
 - Giúp **vnstock** đạt mục tiêu 1000 lượt yêu thích trên Github thông qua việc đánh dấu sao - **Star** tại trang dự án. Đây cũng là cách các bạn ủng hộ dự án và giúp lan tỏa vnstock đơn giản nhất giúp ích cho cộng đồng.
-![](../assets/images/vnstock-watch-and-star.png)
+  ![](../assets/images/vnstock-watch-and-star.png)
 
 ## Sử dụng trang tài liệu tối ưu
 
@@ -57,7 +58,10 @@ Dưới đây là các gợi ý để bạn tra cứu trang tài liệu vnstock 
 
 - **Copy Code**: Ở mỗi ô chứa dòng lệnh luôn có biểu tượng copy :material-content-copy: cho phép bạn click vào và sao chép đoạn mã dễ dàng.
 
+- **Tính năng thuộc Insiders Program**: Bạn sẽ bắt gặp biểu tượng 🔐 đối với hướng dẫn dành cho các tính năng nâng cao chỉ dành cho người dùng tài trợ dự án thông qua chương trình Insiders Program. Tham khảo thêm chi tiết [tại đây](https://docs.vnstock.site/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program/)
+
 ## Docstring
+
 Tất cả các hàm của vnstock đều được cung cấp docstring đầy đủ, do đó bạn có thể xem phần gợi ý khi viết câu lệnh trên các IDE như Google Colab, Visual Studio Code, hay Jupyter Notebook. 
 
 Sau khi nạp thư viện vnstock vào môi trường làm việc thông qua câu lệnh `import`, bạn có thể in phần hướng dẫn sử dụng hàm vnstock bất kỳ thông qua thuộc tính `__doc__` của hàm đó như sau (dấu `__` được tạo bởi 2 dấu `_` tức shift `-`):
@@ -76,11 +80,11 @@ Tất nhiên, bạn luôn có thể mở phần mã nguồn của vnstock trên 
 === "Docstring trong Google Colab"
 
     Gợi ý cú pháp hàm được hiển thị khi viết bất kỳ hàm nào thuộc vnstock, trong ví dụ này hiển thị trong giao diện Google Colab.
-
+    
     ![docstring suggestion](../assets/images/docstring_suggestion.jpeg)
 
 === "Docstring trong mã nguồn"
 
     Mở mã nguồn Github tại thư mục vnstock, tìm hàm bạn cần tra cứu docstring.
-
+    
     ![docstring source](../assets/images/docstring_source_code.png)

@@ -121,7 +121,7 @@ Trong đó `report_name` là tên loại báo cáo cần truy xuất, nhận m�
     - `NetSellVal`: Top giá trị bán ròng
 - `report_range`: Chọn khung thời gian báo cáo `OneWeek` cho 5 ngày, `TwoWeek` cho 10 ngày, `OneMonth` cho 1 tháng, `ThreeMonths` cho 3 tháng, `SixMonths` cho 6 tháng, `OneYear` cho 1 năm
 - `rate`: Tỉ lệ Khối lượng giao dịch so với Khối lượng giao dịch trung bình trong số phiên xác định (ví dụ 10 ngày, 1 tháng). Nhận một trong các giá trị `OnePointTwo` cho 1.2, `OnePointFive` cho 1.5, `Two` cho 2, `Five` cho 5, `Ten` cho 10
-lang: chọn ngôn ngữ của dữ liệu trả về là tiếng Việt `vi`, hoặc Anh `en`
+- `lang`: chọn ngôn ngữ của dữ liệu trả về là tiếng Việt `vi`, hoặc Anh `en`
 
 Dưới đây là các mẫu lệnh để tải từng loại báo cáo nêu trên. Xem thêm chi tiết Demo Notebook để tham chiếu kết quả từng hàm cụ thể.
 
@@ -158,4 +158,93 @@ market_top_mover (report_name='NewHigh', exchange='All', filter= 'NetBuyVol', re
 
 ```python
 market_top_mover (report_name='Breakout', exchange='All', filter= 'NetBuyVol', report_range='TwoWeeks', rate='OnePointFive', lang='vi')
+```
+
+## 🔐 Giao dịch NĐTNN
+
+!!! tip "Giới thiệu" 
+	Dữ liệu được trích xuất từ CafeF, không giới hạn thời gian tra cứu. Nếu bạn xuất dữ liệu trực tiếp từ CafeF chỉ có thể xuất từng trang với giới hạn 20 dòng gần nhất. 
+	Tính năng chỉ dành cho người dùng tài trợ dự án qua chương trình Insiders Program và sử dụng gói thư viện bổ sung `vnstock-data-pro`. Xem hướng dẫn tham gia Insiders Program [tại đây](https://docs.vnstock.site/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-pro)
+
+Bạn có thể sử dụng câu lệnh sau:
+
+```python
+foreign_trade_data(symbol='VIC', start_date='2003-01-01', end_date='2023-12-22', limit=5000, page=1, lang='vi')
+```
+
+Trong đó:
+
+- `symbol`: Mã chứng khoán hoặc chỉ số cần tra cứu. Không phân biệt chữ hoa/thường.
+- `start_date`: Ngày bắt đầu tra cứu, định dạng `YYYY-MM-DD`
+- `end_date`: Ngày kết thúc tra cứu, định dạng `YYYY-MM-DD`
+- `limit`: Số lượng bản ghi trả về trong một lần truy vấn, mặc định là 500
+- `page`: Trang kết quả trả về, mặc định là 1. Bỏ qua tham số này và điều chỉnh `limit` để truy vấn tất cả các bản ghi.
+- `lang`: Ngôn ngữ của tên cột dữ liệu trả về, nhận giá trị `vi` hoặc `en` 
+
+
+Dưới đây là kết quả minh họa:
+
+```shell
+>>> foreign_trade_data(symbol='VIC', start_date='2003-01-01', end_date='2023-12-22', limit=5000, page=1, lang='vi')
+
+Total records: 4141. Returned records: 4141
+            Ngay  KLGDRong      GTDGRong         ThayDoi   KLMua         GtMua   KLBan         GtBan  RoomConLai  DangSoHuu MaCK
+0     22/12/2023   -396290 -1.700099e+10  43.15(-0.12 %)  231200  9.950400e+09  627490  2.695139e+10           0        0.0  VIC
+1     21/12/2023   -129968 -5.564799e+09   43.2(-0.12 %)  224100  9.642125e+09  354068  1.520692e+10           0        0.0  VIC
+2     20/12/2023    -59541 -2.503370e+09   43.25(0.12 %)  268088  1.158413e+10  327629  1.408750e+10           0        0.0  VIC
+3     19/12/2023   -199294 -8.485858e+09    43.2(0.00 %)  195100  8.357565e+09  394394  1.684342e+10           0        0.0  VIC
+4     18/12/2023   -145146 -6.305306e+09   43.2(-1.14 %)  263710  1.145286e+10  408856  1.775816e+10           0        0.0  VIC
+...          ...       ...           ...             ...     ...           ...     ...           ...         ...        ...  ...
+4136  07/03/2007         0  0.000000e+00       0(0.00 %)       0  0.000000e+00       0  0.000000e+00           0        0.0  VIC
+4137  06/03/2007         0  0.000000e+00       0(0.00 %)       0  0.000000e+00       0  0.000000e+00           0        0.0  VIC
+4138  05/03/2007         0  0.000000e+00       0(0.00 %)       0  0.000000e+00       0  0.000000e+00           0        0.0  VIC
+4139  02/03/2007         0  0.000000e+00       0(0.00 %)       0  0.000000e+00       0  0.000000e+00           0        0.0  VIC
+4140  01/03/2007         0  0.000000e+00       0(0.00 %)       0  0.000000e+00       0  0.000000e+00           0        0.0  VIC
+
+[4141 rows x 11 columns]
+```
+
+## 🔐 Giao dịch tự doanh
+
+> Tính năng chỉ dành cho người dùng Tài trợ dự án và sử dụng gói thư viện bổ sung `vnstock-data-pro`. Xem hướng dẫn người dùng tham gia tài trợ dự án qua Insiders Program [tại đây](https://docs.vnstock.site/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program/)
+
+!!! tip "Giới thiệu" 
+	Dữ liệu được trích xuất từ CafeF, giới hạn thời gian tra cứu trong vòng 1 năm. Nếu bạn xuất dữ liệu trực tiếp từ CafeF chỉ có thể xuất từng trang với giới hạn 20 dòng gần nhất. 
+	Tính năng chỉ dành cho người dùng tài trợ dự án qua chương trình Insiders Program và sử dụng gói thư viện bổ sung `vnstock-data-pro`. Xem hướng dẫn tham gia Insiders Program [tại đây](https://docs.vnstock.site/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-pro)
+
+Bạn có thể sử dụng câu lệnh sau:
+
+```python
+proprietary_trade_data(symbol='VIC', start_date='2022-01-01', end_date='2023-12-22', limit=1000, page=1, lang='vi')
+```
+
+Trong đó:
+
+- `symbol`: Mã chứng khoán hoặc chỉ số cần tra cứu. Không phân biệt chữ hoa/thường.
+- `start_date`: Ngày bắt đầu tra cứu, định dạng `YYYY-MM-DD`
+- `end_date`: Ngày kết thúc tra cứu, định dạng `YYYY-MM-DD`
+- `limit`: Số lượng bản ghi trả về trong một lần truy vấn, mặc định là 500
+- `page`: Trang kết quả trả về, mặc định là 1. Bỏ qua tham số này và điều chỉnh `limit` để truy vấn tất cả các bản ghi.
+- `lang`: Ngôn ngữ của tên cột dữ liệu trả về, nhận giá trị `vi` hoặc `en` 
+
+Dưới đây là kết quả minh họa:
+
+```shell
+>>> proprietary_trade_data(symbol='VIC', start_date='2022-01-01', end_date='2023-12-22', limit=1000, page=1, lang='vi')
+
+Total records: 287. Returned records: 287
+           Ngay  KLcpMua  KlcpBan        GtMua        GtBan MaCK
+0    22/12/2023   112100   361000   4832690000  15497035000  VIC
+1    21/12/2023   257900   402100  11096970000  17287675000  VIC
+2    20/12/2023    56400   353200   2423970000  15201520000  VIC
+3    19/12/2023   226300   357100   9690645000  15290020000  VIC
+4    18/12/2023   160000   177800   6955905000   7715020000  VIC
+..          ...      ...      ...          ...          ...  ...
+282  07/11/2022   183600    27200   9778640000   1424160000  VIC
+283  04/11/2022   153000   165700   8108240000   8866530000  VIC
+284  03/11/2022    71700    15300   3907960000    836750000  VIC
+285  02/11/2022    87700   180000   4817810000   9893270000  VIC
+286  01/11/2022   198900    81800  10938740000   4461310000  VIC
+
+[287 rows x 6 columns]
 ```
