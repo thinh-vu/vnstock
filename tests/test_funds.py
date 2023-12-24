@@ -1,3 +1,4 @@
+import unittest
 import pandas as pd
 from vnstock.funds import funds_listing
 
@@ -5,7 +6,7 @@ def assert_valid_dataframe(result):
     assert isinstance(result, pd.DataFrame)
     assert len(result) > 0
 
-class TestFundsListing:
+class TestFundsListing (unittest.TestCase):
     # Retrieve list of available funds with default parameters
     def test_default_parameters(self):
         result = funds_listing()
@@ -25,3 +26,6 @@ class TestFundsListing:
     def test_unsupported_fund_type(self):
         result = funds_listing(fund_type="INVALID")
         assert_valid_dataframe(result)
+
+if __name__ == '__main__':
+    unittest.main()
