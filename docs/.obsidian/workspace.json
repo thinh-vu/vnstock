@@ -1,0 +1,170 @@
+{
+  "main": {
+    "id": "b5ba624b8fe28ef7",
+    "type": "split",
+    "children": [
+      {
+        "id": "ec79825bcc5778f1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7050e1066e1714e3",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "d65d11a427e85323",
+    "type": "split",
+    "children": [
+      {
+        "id": "679cf8c158922fa9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7a281c4c0b38627e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "79a88448f94317c2",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "179f6286de6ed368",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "9c7bdd271183532a",
+    "type": "split",
+    "children": [
+      {
+        "id": "bcd5f177abf3f4b9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7c2ef70719cd7fd6",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "3ce7337bd6831986",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "b2ce533131cea73d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "9eb164bc646ef47e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "7050e1066e1714e3",
+  "lastOpenFiles": [
+    "docs/course.md",
+    "site/feed_rss_updated.xml",
+    "site/feed_rss_created.xml",
+    "site/search/search_index.json",
+    "site/search",
+    "site/assets/javascripts/lunr/min/lunr.zh.min.js",
+    "site/assets/javascripts/lunr/min/lunr.vi.min.js",
+    "site/assets/javascripts/lunr/min/lunr.tr.min.js",
+    "site/assets/javascripts/lunr/min/lunr.th.min.js",
+    "site/assets/javascripts/lunr/min/lunr.te.min.js",
+    "site/assets/javascripts/lunr/min/lunr.ta.min.js",
+    "site/assets/images/social/start/tai-nguyen-quan-trong-vnstock-website.png",
+    "site/assets/images/social/start/huong-dan-cai-dat-vnstock-python.png",
+    "site/assets/images/social/start/huong-dan-su-dung-nhanh-vnstock.png",
+    "site/assets/images/social/integrate/ta_lib.png",
+    "site/assets/images/social/integrate/web_app.png",
+    "site/assets/images/social/integrate/ssi_fast_connect_api.png",
+    "site/assets/images/social/integrate/streamlit.png",
+    "site/assets/images/social/integrate/google_sheets.png",
+    "site/assets/images/social/integrate/huggingface.png",
+    "site/assets/images/social/integrate/dnse_api.png",
+    "docs/community/tai-tro-du-an-vnstock.md",
+    "docs/faq/ung-ho-du-an-vnstock.md",
+    "docs/trich-dan-va-giay-phep-su-dung-vnstock.md",
+    "docs/community/support.md",
+    "docs/community/join.md"
+  ]
+}
