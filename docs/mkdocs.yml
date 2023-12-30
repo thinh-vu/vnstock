@@ -231,17 +231,17 @@ nav:
   - Insiders Program: insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program.md
   - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
-    - Tài trợ dự án: community/support.md
+    - Tài trợ dự án: community/tai-tro-du-an-vnstock.md
     - Lan tỏa vnstock: community/lan-toa-trai-nghiem-voi-vnstock.md
     - Góp ý & phản hồi: community/feedback.md
     - Đóng góp mã nguồn: community/contribute.md
   - FAQs: 
-    - Giấy phép: cite.md
+    - Giấy phép: trich-dan-va-giay-phep-su-dung-vnstock.md
     - Miễn trừ trách nhiệm: disclaimer.md
     - Sản phẩm: faq/feature.md
     - Cộng đồng: faq/community.md
-    - Ủng hộ dự án: faq/pricing.md
-    - Hỗ trợ người dùng: faq/support.md
+    - Ủng hộ dự án: faq/ung-ho-du-an-vnstock.md
+    - Hỗ trợ người dùng: faq/vnstock-ho-tro-nguoi-dung.md
   - Phiên bản: changes_log.md
   - Khóa học Python: course.md
   - Kiến thức: blog/index.md
