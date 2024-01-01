@@ -1,10 +1,11 @@
 from .config import *
+from typing import List
 
 # UTILS
 
 
 def convert_unix_to_datetime(
-    df_to_convert: pd.DataFrame, columns: list[str]
+    df_to_convert: pd.DataFrame, columns: List[str]
 ) -> pd.DataFrame:
     """Converts all the specified columns of a dataframe to date format and fill NaN for negative values."""
     df = df_to_convert.copy()
@@ -25,7 +26,7 @@ def funds_listing(fund_type="", headers=fmarket_headers) -> pd.DataFrame:
 
     Parameters
     ----------
-        fund_type : list
+        fund_type : str
             available fund types: "" (default), "BALANCED", "BOND", "STOCK"
         headers : dict
             headers of the request
