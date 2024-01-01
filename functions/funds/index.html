@@ -995,29 +995,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#danh-muc-cac-ma-quy-nam-giu" class="md-nav__link">
-    Danh mục các mã quỹ nắm giữ
+  <a href="#tham-so-au-vao_1" class="md-nav__link">
+    Tham số đầu vào
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#ti-trong-cac-nganh-ma-quy-ang-au-tu" class="md-nav__link">
-    Tỉ trọng các ngành mà quỹ đang đầu tư
+  <a href="#thong-tin-tra-ve_1" class="md-nav__link">
+    Thông tin trả về
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#bao-cao-nav-quy" class="md-nav__link">
-    Báo cáo NAV quỹ
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ti-trong-tai-san-nam-giu" class="md-nav__link">
-    Tỉ trọng tài sản nắm giữ
+  <a href="#vi-du-thong-tin-tra-ve_1" class="md-nav__link">
+    Ví dụ thông tin trả về
   </a>
   
 </li>
@@ -1110,6 +1103,8 @@
   
     
     
+      
+        
       
         
       
@@ -1357,6 +1352,26 @@
   
   <span class="md-ellipsis">
     DNSE Lightspeed API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PyTesseract OCR
   </span>
   
 
@@ -1846,7 +1861,7 @@
 <table>
 <thead>
 <tr>
-<th>Name</th>
+<th>Field</th>
 <th>Type</th>
 <th>Description</th>
 <th>Default</th>
@@ -1855,32 +1870,11 @@
 </thead>
 <tbody>
 <tr>
-<td>lang</td>
+<td><code>fund_type</code></td>
 <td>str</td>
-<td>ngôn ngữ hiển thị thông tin quỹ. Hiện tại, vnstock hỗ trợ hai ngôn ngữ là <code>vi</code> (Tiếng Việt) và <code>en</code> (Tiếng Anh)</td>
-<td><code>vi</code></td>
-<td>True</td>
-</tr>
-<tr>
-<td>fund_type</td>
-<td>str</td>
-<td>loại quỹ, chấp nhận các giá trị sau: </br><code>STOCK</code> cho quỹ cổ phiếu, </br><code>BOND</code> cho quỹ trái phiếu, </br><code>BALANCED</code> cho quỹ cân bằng, </br>Nếu để trống, kết quả trả về là tất cả các quỹ hiện có.</td>
+<td>loại quỹ, chấp nhận các giá trị sau: </br><code>STOCK</code> cho quỹ cổ phiếu, </br><code>BOND</code> cho quỹ trái phiếu, </br><code>BALANCED</code> cho quỹ cân bằng, </br>Nếu để trống, kết quả trả về là tất cả các quỹ hiện có trên Fmarket.</td>
 <td>None</td>
-<td>True</td>
-</tr>
-<tr>
-<td>mode</td>
-<td>str</td>
-<td><code>simplify</code>: chỉ trả về các dữ liệu chính </br> <code>full</code>: trả về thêm các dữ liệu khác</td>
-<td><code>simplify</code></td>
-<td>True</td>
-</tr>
-<tr>
-<td>decor</td>
-<td>bool</td>
-<td><code>True</code>: thực hiện đổi tên cột từ kiểu CamelCase sang Title Case</td>
-<td>True</td>
-<td>True</td>
+<td>False</td>
 </tr>
 </tbody>
 </table>
@@ -1889,87 +1883,284 @@
 <table>
 <thead>
 <tr>
-<th>Name</th>
+<th>Field</th>
 <th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>id</td>
-<td>int</td>
-<td>ID của CCQ trong csdl của Fmarket</td>
-</tr>
-<tr>
-<td>shortName</td>
+<td><code>short_name</code></td>
 <td>str</td>
 <td>Tên viết tắt của CCQ</td>
 </tr>
 <tr>
-<td>name</td>
+<td><code>name</code></td>
 <td>str</td>
 <td>Tên CCQ</td>
 </tr>
 <tr>
-<td>dataFundAssetType.name</td>
+<td><code>fund_type</code></td>
 <td>str</td>
 <td>Loại quỹ</td>
 </tr>
 <tr>
-<td>owner.name</td>
+<td><code>fund_owner_name</code></td>
 <td>str</td>
 <td>Tổ chức phát hành</td>
 </tr>
 <tr>
-<td>managementFee</td>
+<td><code>management_fee</code></td>
 <td>float</td>
 <td>Phí quản lý (%)</td>
 </tr>
 <tr>
-<td>firstIssueAt</td>
-<td>datetime</td>
+<td><code>inception_date</code></td>
+<td>date</td>
 <td>Ngày thành lập quỹ</td>
 </tr>
 <tr>
-<td>productNavChange.navTo6Months</td>
-<td>float</td>
-<td>Lợi nhuận 6 tháng gần nhất (%)</td>
-</tr>
-<tr>
-<td>productNavChange.navTo36Months</td>
-<td>float</td>
-<td>Lợi nhuận 36 tháng gần nhất (%)</td>
-</tr>
-<tr>
-<td>productNavChange.annualizedReturn36Months</td>
-<td>float</td>
-<td>Lợi nhuận trung bình năm trong 36 tháng gần nhất (%/năm)</td>
-</tr>
-<tr>
-<td>productNavChange.updateAt</td>
-<td>datetime</td>
-<td>Ngày cập nhật NAV</td>
-</tr>
-<tr>
-<td>nav</td>
+<td><code>nav</code></td>
 <td>float</td>
 <td>Giá gần nhất</td>
 </tr>
 <tr>
-<td>code</td>
+<td><code>nav_change_previous</code></td>
+<td>float</td>
+<td>Lợi nhuận so với phiên trước (%)</td>
+</tr>
+<tr>
+<td><code>nav_change_last_year</code></td>
+<td>float</td>
+<td>Lợi nhuận so với năm trước (%)</td>
+</tr>
+<tr>
+<td><code>nav_change_inception</code></td>
+<td>float</td>
+<td>Lợi nhuận từ khi thành lập (%)</td>
+</tr>
+<tr>
+<td><code>nav_change_1m</code></td>
+<td>float</td>
+<td>Lợi nhuận 1 tháng gần nhất (%)</td>
+</tr>
+<tr>
+<td><code>nav_change_3m</code></td>
+<td>float</td>
+<td>Lợi nhuận 3 tháng (%)</td>
+</tr>
+<tr>
+<td><code>nav_change_6m</code></td>
+<td>float</td>
+<td>Lợi nhuận 6 tháng (%)</td>
+</tr>
+<tr>
+<td><code>nav_change_12m</code></td>
+<td>float</td>
+<td>Lợi nhuận 12 tháng (%)</td>
+</tr>
+<tr>
+<td><code>nav_change_24m</code></td>
+<td>float</td>
+<td>Lợi nhuận 24 tháng (%)</td>
+</tr>
+<tr>
+<td><code>nav_change_36m</code></td>
+<td>float</td>
+<td>Lợi nhuận 36 tháng (%)</td>
+</tr>
+<tr>
+<td><code>nav_change_36m_annualized</code></td>
+<td>float</td>
+<td>Lợi nhuận trung bình 36 tháng (%/năm)</td>
+</tr>
+<tr>
+<td><code>nav_update_at</code></td>
+<td>date</td>
+<td>Ngày cập nhật NAV</td>
+</tr>
+<tr>
+<td><code>fund_id_fmarket</code></td>
+<td>int</td>
+<td>ID của CCQ trong csdl của Fmarket</td>
+</tr>
+<tr>
+<td><code>fund_code</code></td>
 <td>str</td>
 <td>Tên mã CCQ trong csdl của Fmarket</td>
 </tr>
 <tr>
-<td>vsdFeeId</td>
+<td><code>vsd_fee_id</code></td>
 <td>str</td>
 <td>Tên mã CCQ trong csdl của Trung tâm lưu ký (VSD)</td>
 </tr>
 </tbody>
 </table>
 <h2 id="truy-xuat-thong-tin-quy">Truy xuất thông tin quỹ<a class="headerlink" href="#truy-xuat-thong-tin-quy" title="Anchor link to this section for reference">&para;</a></h2>
-<p>Bạn có thể truy xuất các thông tin cơ bản của một quỹ qua hàm <code>fund_details</code> như dưới dây:</p>
-<h3 id="danh-muc-cac-ma-quy-nam-giu">Danh mục các mã quỹ nắm giữ<a class="headerlink" href="#danh-muc-cac-ma-quy-nam-giu" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Bạn có thể truy xuất các thông tin cơ bản của một quỹ qua hàm <code>fund_details</code> như dưới dây.</p>
+<h3 id="tham-so-au-vao_1">Tham số đầu vào<a class="headerlink" href="#tham-so-au-vao_1" title="Anchor link to this section for reference">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+<th>Optional</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>symbol</code></td>
+<td>str</td>
+<td>Tên CCQ</td>
+<td>"SSISCA"</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>str</td>
+<td>loại thông tin cần truy xuất, chấp nhận các giá trị sau: </br><code>top_holding_list</code>: danh mục đầu tư lớn, </br><code>industry_holding_list</code>: phân bổ theo ngành, </br><code>asset_holding_list</code>: phân bổ theo loại tài sản, </br><code>nav_report</code>: lịch sử giá đơn vị quỹ.</td>
+<td>"top_holding_list"</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+<h3 id="thong-tin-tra-ve_1">Thông tin trả về<a class="headerlink" href="#thong-tin-tra-ve_1" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Tương ứng với từng loại thông tin cần truy xuất, dữ liệu trả về là một DataFrame có mô hình dữ liệu (data model) như sau:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">top_holding_list</label><label for="__tabbed_1_2">industry_holding_list</label><label for="__tabbed_1_3">asset_holding_list</label><label for="__tabbed_1_4">nav_report</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stock_code</code></td>
+<td>str</td>
+<td>Mã cổ phiếu / trái phiếu mà quỹ đang nắm giữ</td>
+</tr>
+<tr>
+<td><code>industry</code></td>
+<td>str</td>
+<td>Ngành</td>
+</tr>
+<tr>
+<td><code>net_asset_percent</code></td>
+<td>float</td>
+<td>% giá trị tài sản</td>
+</tr>
+<tr>
+<td><code>type_asset</code></td>
+<td>str</td>
+<td>Loại tài sản</td>
+</tr>
+<tr>
+<td><code>update_at</code></td>
+<td>date</td>
+<td>Cập nhật lúc</td>
+</tr>
+<tr>
+<td><code>short_name</code></td>
+<td>str</td>
+<td>Tên CCQ</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>industry</code></td>
+<td>str</td>
+<td>Ngành</td>
+</tr>
+<tr>
+<td><code>net_asset_percent</code></td>
+<td>float</td>
+<td>% giá trị tài sản</td>
+</tr>
+<tr>
+<td><code>short_name</code></td>
+<td>str</td>
+<td>Tên CCQ</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>asset_percent</code></td>
+<td>str</td>
+<td>% giá trị tài sản</td>
+</tr>
+<tr>
+<td><code>asset_type</code></td>
+<td>str</td>
+<td>Loại tài sản</td>
+</tr>
+<tr>
+<td><code>short_name</code></td>
+<td>str</td>
+<td>Tên CCQ</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>date</code></td>
+<td>str</td>
+<td>Ngày</td>
+</tr>
+<tr>
+<td><code>nav_per_unit</code></td>
+<td>str</td>
+<td>NAV / đơn vị quỹ (đơn vị: VND)</td>
+</tr>
+<tr>
+<td><code>short_name</code></td>
+<td>str</td>
+<td>Tên CCQ</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<h3 id="vi-du-thong-tin-tra-ve_1">Ví dụ thông tin trả về<a class="headerlink" href="#vi-du-thong-tin-tra-ve_1" title="Anchor link to this section for reference">&para;</a></h3>
+<h4 id="danh-muc-au-tu-lon-top-10-cac-ma-quy-nam-giu">Danh mục đầu tư lớn - top 10 các mã quỹ nắm giữ<a class="headerlink" href="#danh-muc-au-tu-lon-top-10-cac-ma-quy-nam-giu" title="Anchor link to this section for reference">&para;</a></h4>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">fund_details</span> <span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;SSISCA&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;top_holding_list&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Dữ liệu trả về có dạng như sau:</p>
@@ -1987,7 +2178,7 @@
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="m">8</span><span class="w">  </span>TV2<span class="w">  </span>Dịch<span class="w"> </span>vụ<span class="w"> </span>tư<span class="w"> </span>vấn,<span class="w"> </span>hỗ<span class="w"> </span>trợ<span class="w">               </span><span class="m">3</span>.42<span class="w">        </span>STOCK<span class="w">        </span><span class="m">2023</span>-12-08<span class="w">     </span><span class="m">11</span><span class="w">  </span>SSISCA
 </span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="m">9</span><span class="w">  </span>TCB<span class="w">               </span>Ngân<span class="w"> </span>hàng<span class="w">               </span><span class="m">3</span>.31<span class="w">        </span>STOCK<span class="w">        </span><span class="m">2023</span>-12-08<span class="w">     </span><span class="m">11</span><span class="w">  </span>SSISCA
 </span></code></pre></div>
-<h3 id="ti-trong-cac-nganh-ma-quy-ang-au-tu">Tỉ trọng các ngành mà quỹ đang đầu tư<a class="headerlink" href="#ti-trong-cac-nganh-ma-quy-ang-au-tu" title="Anchor link to this section for reference">&para;</a></h3>
+<h4 id="ti-trong-cac-nganh-ma-quy-ang-au-tu">Tỉ trọng các ngành mà quỹ đang đầu tư<a class="headerlink" href="#ti-trong-cac-nganh-ma-quy-ang-au-tu" title="Anchor link to this section for reference">&para;</a></h4>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">fund_details</span> <span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;VESAF&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;industry_holding_list&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Dữ liệu trả về có dạng như sau:</p>
@@ -2009,7 +2200,7 @@
 </span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="m">12</span><span class="w">                  </span>Tiện<span class="w"> </span>ích<span class="w">               </span><span class="m">2</span>.31<span class="w">  </span>VESAF
 </span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="m">13</span><span class="w">                  </span>Bảo<span class="w"> </span>hiểm<span class="w">               </span><span class="m">1</span>.41<span class="w">  </span>VESAF
 </span></code></pre></div>
-<h3 id="bao-cao-nav-quy">Báo cáo NAV quỹ<a class="headerlink" href="#bao-cao-nav-quy" title="Anchor link to this section for reference">&para;</a></h3>
+<h4 id="bao-cao-nav-quy">Báo cáo NAV quỹ<a class="headerlink" href="#bao-cao-nav-quy" title="Anchor link to this section for reference">&para;</a></h4>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">fund_details</span> <span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;VESAF&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;nav_report&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Dữ liệu trả về là DataFrame có dạng như sau:</p>
@@ -2030,7 +2221,7 @@
 </span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>
 </span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>[821 rows x 4 columns]
 </span></code></pre></div>
-<h3 id="ti-trong-tai-san-nam-giu">Tỉ trọng tài sản nắm giữ<a class="headerlink" href="#ti-trong-tai-san-nam-giu" title="Anchor link to this section for reference">&para;</a></h3>
+<h4 id="ti-trong-tai-san-nam-giu">Tỉ trọng tài sản nắm giữ<a class="headerlink" href="#ti-trong-tai-san-nam-giu" title="Anchor link to this section for reference">&para;</a></h4>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">fund_details</span> <span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;VESAF&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;asset_holding_list&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Dữ liệu trả về là DataFrame như sau:</p>

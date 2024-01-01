@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://docs.vnstock.site/start/tai-nguyen-quan-trong-vnstock-website/">
+        <link rel="canonical" href="https://docs.vnstock.site/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban/">
       
       
-        <link rel="prev" href="../huong-dan-cai-dat-vnstock-python/">
+        <link rel="prev" href="../dnse_api/">
       
       
-        <link rel="next" href="../../functions/listing/">
+        <link rel="next" href="../../insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program/">
       
       
         <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
@@ -27,7 +27,7 @@
     
     
       
-        <title>Tài nguyên website - Vnstock Docs</title>
+        <title>PyTesseract OCR - Vnstock Docs</title>
       
     
     
@@ -77,11 +77,11 @@
       
         <meta  property="og:type"  content="website" >
       
-        <meta  property="og:title"  content="Tài nguyên website - Vnstock Docs" >
+        <meta  property="og:title"  content="PyTesseract OCR - Vnstock Docs" >
       
         <meta  property="og:description"  content="Vnstock Docs" >
       
-        <meta  property="og:image"  content="https://docs.vnstock.site/assets/images/social/start/tai-nguyen-quan-trong-vnstock-website.png" >
+        <meta  property="og:image"  content="https://docs.vnstock.site/assets/images/social/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.png" >
       
         <meta  property="og:image:type"  content="image/png" >
       
@@ -89,15 +89,15 @@
       
         <meta  property="og:image:height"  content="630" >
       
-        <meta  property="og:url"  content="https://docs.vnstock.site/start/tai-nguyen-quan-trong-vnstock-website/" >
+        <meta  property="og:url"  content="https://docs.vnstock.site/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban/" >
       
         <meta  name="twitter:card"  content="summary_large_image" >
       
-        <meta  name="twitter:title"  content="Tài nguyên website - Vnstock Docs" >
+        <meta  name="twitter:title"  content="PyTesseract OCR - Vnstock Docs" >
       
         <meta  name="twitter:description"  content="Vnstock Docs" >
       
-        <meta  name="twitter:image"  content="https://docs.vnstock.site/assets/images/social/start/tai-nguyen-quan-trong-vnstock-website.png" >
+        <meta  name="twitter:image"  content="https://docs.vnstock.site/assets/images/social/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.png" >
       
     
     
@@ -134,7 +134,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tai-nguyen-quan-trong" class="md-skip">
+        <a href="#pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu" class="md-skip">
           Skip to content
         </a>
       
@@ -169,7 +169,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Tài nguyên website
+              PyTesseract OCR
             
           </span>
         </div>
@@ -289,13 +289,11 @@
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../huong-dan-su-dung-nhanh-vnstock/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../start/huong-dan-su-dung-nhanh-vnstock/" class="md-tabs__link">
           
   
     
@@ -331,11 +329,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../integrate/web_app/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../web_app/" class="md-tabs__link">
           
   
     
@@ -531,8 +531,6 @@
       
   
   
-    
-  
   
     
     
@@ -550,12 +548,14 @@
       
       
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
@@ -569,7 +569,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Hướng dẫn nhanh
@@ -582,7 +582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../huong-dan-su-dung-nhanh-vnstock/" class="md-nav__link">
+      <a href="../../start/huong-dan-su-dung-nhanh-vnstock/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -602,7 +602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../huong-dan-cai-dat-vnstock-python/" class="md-nav__link">
+      <a href="../../start/huong-dan-cai-dat-vnstock-python/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -620,29 +620,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Tài nguyên website
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../start/tai-nguyen-quan-trong-vnstock-website/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -651,49 +631,6 @@
   
 
       </a>
-      
-        
-
-  
-
-<nav class="md-nav md-nav--secondary" aria-label="Mục lục">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Mục lục
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#vnstock-website" class="md-nav__link">
-    vnstock Website
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vnstock-web-app" class="md-nav__link">
-    vnstock Web app
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#notebook-minh-hoa" class="md-nav__link">
-    Notebook minh hoạ
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1046,6 +983,8 @@
       
   
   
+    
+  
   
     
     
@@ -1079,14 +1018,12 @@
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
@@ -1100,7 +1037,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             Ứng dụng & Tích hợp
@@ -1113,7 +1050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/web_app/" class="md-nav__link">
+      <a href="../web_app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1133,7 +1070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/google_sheets/" class="md-nav__link">
+      <a href="../google_sheets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1153,7 +1090,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/amibroker/" class="md-nav__link">
+      <a href="../amibroker/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1173,7 +1110,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/streamlit/" class="md-nav__link">
+      <a href="../streamlit/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1193,7 +1130,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/huggingface/" class="md-nav__link">
+      <a href="../huggingface/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1213,7 +1150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/OpenBBTerminal/" class="md-nav__link">
+      <a href="../OpenBBTerminal/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1233,7 +1170,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/ta_lib/" class="md-nav__link">
+      <a href="../ta_lib/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1253,7 +1190,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/backtesting/" class="md-nav__link">
+      <a href="../backtesting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1273,7 +1210,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/ssi_fast_connect_api/" class="md-nav__link">
+      <a href="../ssi_fast_connect_api/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1293,7 +1230,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrate/dnse_api/" class="md-nav__link">
+      <a href="../dnse_api/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1311,9 +1248,27 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    PyTesseract OCR
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1322,6 +1277,60 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Mục lục">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Mục lục
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu" class="md-nav__link">
+    Pytesseract OCR căn bản với một hình ảnh tài liệu
+  </a>
+  
+    <nav class="md-nav" aria-label="Pytesseract OCR căn bản với một hình ảnh tài liệu">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cai-at-moi-truong" class="md-nav__link">
+    Cài đặt môi trường
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nhan-dien-van-ban-tu-anh" class="md-nav__link">
+    Nhận diện văn bản từ ảnh
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trich-xuat-toan-bo-van-ban-tu-bao-cao-tai-chinh" class="md-nav__link">
+    🔐 Trích xuất toàn bộ văn bản từ báo cáo tài chính
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1771,27 +1780,68 @@
     
       
     
-    <a href="https://github.com/thinh-vu/vnstock/raw/main/docs/docs/start/tai-nguyen-quan-trong-vnstock-website.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/thinh-vu/vnstock/raw/main/docs/docs/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.15 8.15 0 0 1-1.23-2Z"/></svg>
     </a>
   
 
 
-<h1 id="tai-nguyen-quan-trong">Tài nguyên quan trọng<a class="headerlink" href="#tai-nguyen-quan-trong" title="Anchor link to this section for reference">&para;</a></h1>
-<p>Trước khi bắt đầu, bạn có thể xem Video giới thiệu chính thức cho vnstock mình mới chia sẻ trên Youtube tại đây:</p>
-<iframe width="800" height="452" src="https://www.youtube.com/embed/6kP2TTtEY9Y?si=EOe0aW8cpqLyCnw5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  <h1>PyTesseract OCR</h1>
 
-<h2 id="vnstock-website">vnstock Website<a class="headerlink" href="#vnstock-website" title="Anchor link to this section for reference">&para;</a></h2>
-<p>vnstock đã hoàn thiện bước đầu việc xây dựng một website chuyên biệt để cập nhật thông tin về dự án, tài liệu sử dụng, blog, khóa học, và các tài nguyên hữu ích khác. Các nội dung của website đang từng bước được cập nhật và hoàn thiện.</p>
-<p>Bạn có thể truy cập <a href="https://vnstock.site?utm_source=vnstock-docs&amp;utm_medium=resource">vnstock.site</a> để biết thêm chi tiết.</p>
-<h2 id="vnstock-web-app">vnstock Web app<a class="headerlink" href="#vnstock-web-app" title="Anchor link to this section for reference">&para;</a></h2>
-<p>vnstock Web app đã được giới thiệu lần đầu vào 4/9/2023 nhằm giúp người dùng phổ thông có thể tiếp cận với vnstock theo cách đơn giản và thuận tiện nhất dù cho bạn không có bất cứ kỹ năng hay hiểu biết về lập trình python để sử dụng. </p>
-<p>vnstock web app được xây dựng bằng <a href="http://streamlit.io/">streamlit</a> framework, sử dụng ngôn ngữ Python hoàn toàn. Đây  cũng là một định hướng rất triển vọng trong việc xây dựng các ứng dụng web trong việc phân tích chứng khoán với giao diện người dùng thân thiện và dễ sử dụng, bảo trì.</p>
-<p><a class="md-button" href="https://vnstock.site/web-app?utm_source=vnstock-docs&amp;utm_medium=resource">Mở Web App <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27l-2.77 6.1M5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83-.78.78-2.05.78-2.83 0m-5.66 7.07-1.41-1.41 1.41 1.41M6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22h1.41M2 22h1.41l4.77-4.76-1.42-1.41L2 20.59V22m0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76v1.41Z"/></svg></span></a></p>
-<h2 id="notebook-minh-hoa">Notebook minh hoạ<a class="headerlink" href="#notebook-minh-hoa" title="Anchor link to this section for reference">&para;</a></h2>
-<p>Bạn có thể mở file demo bằng Jupyter Notebook và dùng thử tất cả các hàm của vnstock từ giao diện Google Colab. Nếu muốn sử dụng Notebook trong Visual Studio Code hoặc IDE khác, bạn có thể tìm menu <strong>File</strong> &gt; <strong>Download</strong> và chọn <strong>Download.ipynb</strong> để lưu file về máy.</p>
-<p><a class="md-button" href="https://colab.research.google.com/github/thinh-vu/vnstock/blob/beta/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb">Mở Notebook <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27l-2.77 6.1M5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83-.78.78-2.05.78-2.83 0m-5.66 7.07-1.41-1.41 1.41 1.41M6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22h1.41M2 22h1.41l4.77-4.76-1.42-1.41L2 20.59V22m0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76v1.41Z"/></svg></span></a></p>
+<div class="admonition abstract">
+<p class="admonition-title">Giới thiệu</p>
+<p><a href="https://github.com/madmaze/pytesseract">pytesseract</a> là một thư viện Python giúp người dùng sử dụng công cụ Tesseract OCR của Google một cách dễ dàng. Tesseract là công cụ OCR mã nguồn mở, mạnh mẽ và hỗ trợ nhiều ngôn ngữ bao gồm tiếng Việt. Vnstock giới thiệu đến bạn cách thức nhận dạng văn bản từ hình ảnh với pytesseract từ đơn giản đến luồng tự động chuyển đổi toàn bộ tài liệu một cách dễ dàng từ Google Colab.</p>
+</div>
+<p>PyTesseract có thể được sử dụng để trích xuất văn bản từ tất cả các định dạng hình ảnh được hỗ trợ bởi gói thư viện <a href="https://github.com/python-pillow/Pillow">Pillow</a> và <a href="https://github.com/DanBloomberg/leptonica">Leptonica</a>, bao gồm <code>JPEG</code>, <code>PNG</code>, <code>GIF</code>, <code>BMP</code>, <code>TIFF</code>, v.v.</p>
+<p>PyTesseract có thể được sử dụng trong nhiều ứng dụng khác nhau, cụ thể với lĩnh vực tài chính/chứng khoán thì bạn có thể chuyển đổi tài liệu scan sang văn bản kỹ thuật số đối với các tài liệu phổ biến như:</p>
+<ul>
+<li>Báo cáo tài chính của công ty niêm yết</li>
+<li>Báo cáo thường niên</li>
+<li>Báo cáo quản trị</li>
+<li>Giải trình kết quả kinh doanh</li>
+<li>Tài liệu ĐHĐCĐ</li>
+<li>Bản cáo bạch</li>
+</ul>
+<p>Các tài liệu scan này, bạn có thể dễ dàng tìm thấy trên Vietstock hoặc CafeF.</p>
+<h2 id="pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu">Pytesseract OCR căn bản với một hình ảnh tài liệu<a class="headerlink" href="#pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu" title="Anchor link to this section for reference">&para;</a></h2>
+<p><a class="md-button" href="https://colab.research.google.com/github/thinh-vu/vnstock/blob/beta/docs/pytesseract_ocr_demo.ipynb">Mở Demo Notebook <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27l-2.77 6.1M5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83-.78.78-2.05.78-2.83 0m-5.66 7.07-1.41-1.41 1.41 1.41M6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22h1.41M2 22h1.41l4.77-4.76-1.42-1.41L2 20.59V22m0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76v1.41Z"/></svg></span></a></p>
+<p>Cụ thể các bước thực hiện được giải thích dưới đây.</p>
+<h3 id="cai-at-moi-truong">Cài đặt môi trường<a class="headerlink" href="#cai-at-moi-truong" title="Anchor link to this section for reference">&para;</a></h3>
+<div class="admonition tip">
+<p class="admonition-title">Cài đặt áp dụng cho môi trường Linux</p>
+<p>Cài đặt môi trường để chạy Pytesseract từ Google Colab trên nền hệ điều hành Ubuntu diễn ra khá đơn giản.</p>
+</div>
+<p>Bạn copy các dòng lệnh sau và paste vào một ô lệnh mới để thực thi:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="err">!</span><span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">tesseract</span><span class="o">-</span><span class="n">ocr</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">pytesseract</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="err">!</span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">tesseract</span><span class="o">-</span><span class="n">ocr</span><span class="o">-</span><span class="n">vie</span> <span class="c1"># Cài đặt gói ngôn ngữ tiếng Việt</span>
+</span></code></pre></div>
+<p>Quá trình cài đặt diễn ra trong khoảng 30 giây. Sau đó, bạn nạp các thư viện vào môi trường làm việc với đoạn lệnh sau:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">pytesseract</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">try</span><span class="p">:</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="kn">import</span> <span class="nn">Image</span>
+</span></code></pre></div>
+<h3 id="nhan-dien-van-ban-tu-anh">Nhận diện văn bản từ ảnh<a class="headerlink" href="#nhan-dien-van-ban-tu-anh" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Sau khi các bước thiết lập môi trường đã chuẩn bị xong. Bạn có thể upload hình ảnh lên </p>
+<p><a class="glightbox" href="../../assets/images/google_colab_pytesseract_ocr_upload_file.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/google_colab_pytesseract_ocr_upload_file.png" /></a></p>
+<p>Như vậy, chúng ta có thể bắt đầu trích xuất văn bản từ hình ảnh vừa upload với câu lệnh sau:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">extracted_text</span> <span class="o">=</span> <span class="n">pytesseract</span><span class="o">.</span><span class="n">image_to_string</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;/content/chrome_runiB0dpB3.png&#39;</span><span class="p">),</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vie&#39;</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">extracted_text</span>
+</span></code></pre></div></p>
+<p>Để lưu văn bản đã trích xuất thành file text, bạn có thể dùng câu lệnh dưới đây:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;extracted_text.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="c1"># Mặc định lưu file vào thư mục đang làm việc của Colab, bị xóa khi kết thúc phiên. Chọn địa chỉ lưu trong Drive để thay thế.</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">extracted_text</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="trich-xuat-toan-bo-van-ban-tu-bao-cao-tai-chinh">🔐 Trích xuất toàn bộ văn bản từ báo cáo tài chính<a class="headerlink" href="#trich-xuat-toan-bo-van-ban-tu-bao-cao-tai-chinh" title="Anchor link to this section for reference">&para;</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">Chương trình viết sẵn</p>
+<p>Bạn cần tham gia gói <strong>vnstock-data-pro</strong> thông qua <a href="http://localhost:8000/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program/">Vnstock Insiders Program</a> để có thể trích xuất toàn bộ một tài liệu bất kỳ hoặc báo cáo tài chính của công ty bạn quan tâm sử dụng chương trình viết sẵn từ vnstock giúp tự động hóa hoàn toàn quá trình từ khâu truy cập tài liệu từ API. Sau khi tài trợ dự án, bạn nhận được quyền truy cập private repo trên Github để sử dụng kèm hướng dẫn chi tiết.</p>
+</div>
+<p><a class="glightbox" href="../../assets/images/pytesseract_ocr_pdf_file_extracting.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/pytesseract_ocr_pdf_file_extracting.png" /></a></p>
+<p><a class="glightbox" href="../../assets/images/pytesseract_ocr_compare_image_extracted_text_bctc.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/pytesseract_ocr_compare_image_extracted_text_bctc.png" /></a></p>
 
 
   
@@ -1821,7 +1871,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../huong-dan-cai-dat-vnstock-python/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Chọn phiên bản">
+          <a href="../dnse_api/" class="md-footer__link md-footer__link--prev" aria-label="Previous: DNSE Lightspeed API">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1831,20 +1881,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Chọn phiên bản
+                DNSE Lightspeed API
               </div>
             </div>
           </a>
         
         
           
-          <a href="../../functions/listing/" class="md-footer__link md-footer__link--next" aria-label="Next: Danh sách niêm yết">
+          <a href="../../insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program/" class="md-footer__link md-footer__link--next" aria-label="Next: Insiders Program">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Danh sách niêm yết
+                Insiders Program
               </div>
             </div>
             <div class="md-footer__button md-icon">
