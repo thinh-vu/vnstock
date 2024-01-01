@@ -228,6 +228,7 @@ nav:
     - Thư viện Backtesting: integrate/backtesting.md
     - SSI Fast Connect API: integrate/ssi_fast_connect_api.md
     - DNSE Lightspeed API: integrate/dnse_api.md
+    - PyTesseract OCR: integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.md
   - Insiders Program: insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program.md
   - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
