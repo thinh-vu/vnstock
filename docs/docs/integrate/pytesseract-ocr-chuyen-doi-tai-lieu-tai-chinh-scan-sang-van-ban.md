@@ -59,6 +59,7 @@ move vie.traineddata C:\Users\{USER_NAME_CUA_BAN}\AppData\Local\Programs\Tessera
   ![Di chuyển file trong Command Prompt](../assets/images/di_chuyen_file_sang_thu_muc_khac_windows_command_prompt.png)
   <figcaption>Di chuyển file trong Command Prompt</figcaption>
 </figure>
+5. Bạn có thể sẽ cần cài đặt thêm gói phần mềm [Poppler cho Windows](https://github.com/oschwartz10612/poppler-windows?tab=readme-ov-file) để sử dụng với Pytesseract. Xem thêm [hướng dẫn](https://stackoverflow.com/questions/18381713/how-to-install-poppler-on-windows) nếu cần thiết.
 ## Pytesseract OCR căn bản với một hình ảnh tài liệu
 
 Bạn chỉ cần nạp hàm được cung cấp bởi vnstock để thực hiện nhận diện ảnh thành văn bản như sau. Trong đó `image_path` là địa chỉ file ảnh cần nhận dạng.
