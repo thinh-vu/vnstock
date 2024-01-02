@@ -23,7 +23,7 @@ title: Cài đặt
 
 vnstock là thư viện Python được thiết kế để tải dữ liệu chứng khoán Việt Nam một cách dễ dàng và miễn phí. Gói thư viện được thiết kế dựa trên nguyên tắc về sự đơn giản và tiện lợi, hầu hết các hàm đều có thể chạy ngay trên Google Colab khi cài đặt vnstock mà không yêu cầu thêm gói phụ thuộc.
 
-- vnstock có [51K+ lượt download](https://lookerstudio.google.com/reporting/06f4896d-21c5-4c4a-942e-126609c55fba) trên PyPI tính đến 24/12/2023. Lượt download trong tháng 12/2023 đạt mốc kỷ lục 6.195 kể từ lúc phát hành.
+- vnstock có [57.2K+ lượt download](https://lookerstudio.google.com/reporting/06f4896d-21c5-4c4a-942e-126609c55fba) trên PyPI tính đến 2/1/2023. Lượt download trong tháng 12/2023 đạt mốc kỷ lục 11.354 kể từ lúc phát hành và 2X so với tháng 11. Đây là một dấu mốc đáng nhớ của vnstock nhờ sự ủng hộ của cộng đồng!
 
 ## Cài đặt nhanh
 
