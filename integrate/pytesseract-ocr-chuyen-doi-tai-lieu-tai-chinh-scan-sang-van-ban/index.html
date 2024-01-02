@@ -134,7 +134,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu" class="md-skip">
+        <a href="#cai-at-moi-truong" class="md-skip">
           Skip to content
         </a>
       
@@ -1294,19 +1294,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#cai-at-moi-truong" class="md-nav__link">
+    Cài đặt môi trường
+  </a>
+  
+    <nav class="md-nav" aria-label="Cài đặt môi trường">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#google-colab-linux" class="md-nav__link">
+    Google Colab &amp; Linux
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#windows" class="md-nav__link">
+    Windows
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu" class="md-nav__link">
     Pytesseract OCR căn bản với một hình ảnh tài liệu
   </a>
   
     <nav class="md-nav" aria-label="Pytesseract OCR căn bản với một hình ảnh tài liệu">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cai-at-moi-truong" class="md-nav__link">
-    Cài đặt môi trường
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#nhan-dien-van-ban-tu-anh" class="md-nav__link">
@@ -1803,11 +1823,12 @@
 <li>Tài liệu ĐHĐCĐ</li>
 <li>Bản cáo bạch</li>
 </ul>
-<p>Các tài liệu scan này, bạn có thể dễ dàng tìm thấy trên Vietstock hoặc CafeF.</p>
-<h2 id="pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu">Pytesseract OCR căn bản với một hình ảnh tài liệu<a class="headerlink" href="#pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Các tài liệu scan này, bạn có thể dễ dàng tìm thấy trên Vietstock hoặc CafeF. </p>
+<p>👇 Bạn có thể bắt đầu với Demo Notebook dưới đây, đọc thêm chi tiết để đảm bảo bạn có thể sử dụng dễ dàng.</p>
 <p><a class="md-button" href="https://colab.research.google.com/github/thinh-vu/vnstock/blob/beta/docs/pytesseract_ocr_demo.ipynb">Mở Demo Notebook <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27l-2.77 6.1M5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83-.78.78-2.05.78-2.83 0m-5.66 7.07-1.41-1.41 1.41 1.41M6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22h1.41M2 22h1.41l4.77-4.76-1.42-1.41L2 20.59V22m0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76v1.41Z"/></svg></span></a></p>
-<p>Cụ thể các bước thực hiện được giải thích dưới đây.</p>
-<h3 id="cai-at-moi-truong">Cài đặt môi trường<a class="headerlink" href="#cai-at-moi-truong" title="Anchor link to this section for reference">&para;</a></h3>
+<p>Tính năng này hiện tại đã được cập nhật lên mã nguồn, nhánh <code>beta</code> trên Github. Xem hướng dẫn cài đặt <a href="https://docs.vnstock.site/start/huong-dan-cai-dat-vnstock-python/#xac-inh-phien-ban-phu-hop">tại đây</a></p>
+<h2 id="cai-at-moi-truong">Cài đặt môi trường<a class="headerlink" href="#cai-at-moi-truong" title="Anchor link to this section for reference">&para;</a></h2>
+<h3 id="google-colab-linux">Google Colab &amp; Linux<a class="headerlink" href="#google-colab-linux" title="Anchor link to this section for reference">&para;</a></h3>
 <div class="admonition tip">
 <p class="admonition-title">Cài đặt áp dụng cho môi trường Linux</p>
 <p>Cài đặt môi trường để chạy Pytesseract từ Google Colab trên nền hệ điều hành Ubuntu diễn ra khá đơn giản.</p>
@@ -1817,23 +1838,53 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">pytesseract</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="err">!</span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">tesseract</span><span class="o">-</span><span class="n">ocr</span><span class="o">-</span><span class="n">vie</span> <span class="c1"># Cài đặt gói ngôn ngữ tiếng Việt</span>
 </span></code></pre></div>
-<p>Quá trình cài đặt diễn ra trong khoảng 30 giây. Sau đó, bạn nạp các thư viện vào môi trường làm việc với đoạn lệnh sau:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">pytesseract</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">try</span><span class="p">:</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="kn">import</span> <span class="nn">Image</span>
+<p>Quá trình cài đặt diễn ra trong khoảng 30 giây.</p>
+<h3 id="windows">Windows<a class="headerlink" href="#windows" title="Anchor link to this section for reference">&para;</a></h3>
+<div class="admonition tip">
+<p class="admonition-title">Cài đặt áp dụng cho môi trường Linux</p>
+<p>Để chạy được Pytesseract từ máy tính Windows, quá trình cài đặt sẽ phức tạp hơn đôi chút.</p>
+</div>
+<ol>
+<li>Truy cập trang Github <a href="https://github.com/UB-Mannheim/tesseract/wiki">UB Mannheim</a> để tải file cài đặt cho hệ điều hành Windows, chọn phiên bản 64bit hoặc 32bit phù hợp với máy của bạn. Link download như trong hình mô tả sau:</li>
+</ol>
+<p><a class="glightbox" href="../../assets/images/link_download_pytesseract_ocr_windows_ub_mannheim.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/link_download_pytesseract_ocr_windows_ub_mannheim.png" /></a></p>
+<ol>
+<li>Mở file cài đặt có định dạng đuôi <code>.exe</code> là bắt đầu quá trình cài đặt, mọi tùy chọn để mặc định, bấm Next là được. Bạn chú ý ghi nhớ địa chỉ cài đặt Tesseract-OCR trên máy tính trong quá trình cài đặt. </li>
+<li>Cài đặt gói dữ liệu đã đào tạo sẵn để nhận dạng tiếng Việt. Bạn có thể lựa chọn gói ngôn ngữ được hỗ trợ <a href="https://github.com/tesseract-ocr/tessdata">tại đây</a>. Mặc định hệ thống đã được cài sẵn bộ dữ liệu tiếng Anh. Tải dữ liệu đào tạo cho tiếng Việt <a href="https://github.com/tesseract-ocr/tessdata/blob/main/vie.traineddata">tại link này</a>. Chọn icon download <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/><path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/></svg></span> ở góc bên phải.</li>
+<li>Chép file <code>vie.traineddata</code> mới vừa tải về vào thư mục Tesseract-OCR. Từ thư mục chứa file bạn lưu, ví dụ Downloads, nhập <code>cmd</code> vào ô địa chỉ thư mục để mở giao diện dòng lệnh và chạy lệnh di chuyển file dưới đây. Trong đó, bạn thay thế <code>{USER_NAME_CUA_BAN}</code> thành tên username trên máy tính của bạn. Ví dụ trên máy tính của mình thì user name là <code>mrthi</code> như trong các hình minh họa bên dưới.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>move vie.traineddata C:\Users\{USER_NAME_CUA_BAN}\AppData\Local\Programs\Tesseract-OCR\tessdata   
+</span></code></pre></div></li>
+</ol>
+<figure>
+<p><a class="glightbox" href="../../assets/images/mo_command_prompt_tu_file_explorer_windows.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="Mở cmd từ File Explorer" src="../../assets/images/mo_command_prompt_tu_file_explorer_windows.png" /></a>
+  </p>
+<figcaption>Mở Command Prompt từ File Explorer</figcaption>
+</figure>
+<figure>
+<p><a class="glightbox" href="../../assets/images/di_chuyen_file_sang_thu_muc_khac_windows_command_prompt.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="Di chuyển file trong Command Prompt" src="../../assets/images/di_chuyen_file_sang_thu_muc_khac_windows_command_prompt.png" /></a>
+  </p>
+<figcaption>Di chuyển file trong Command Prompt</figcaption>
+</figure>
+<h2 id="pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu">Pytesseract OCR căn bản với một hình ảnh tài liệu<a class="headerlink" href="#pytesseract-ocr-can-ban-voi-mot-hinh-anh-tai-lieu" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Bạn chỉ cần nạp hàm được cung cấp bởi vnstock để thực hiện nhận diện ảnh thành văn bản như sau. Trong đó <code>image_path</code> là địa chỉ file ảnh cần nhận dạng.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">vnstock.ocr</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">image_ocr</span><span class="p">(</span><span class="n">image_path</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;/content/chrome_runiB0dpB3.png&#39;</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vie&#39;</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;string_from_image.txt&#39;</span><span class="p">)</span>
 </span></code></pre></div>
+<p>Các tham số khác như sau:</p>
+<ul>
+<li><code>output_path</code>: địa chỉ lưu file văn bản đã nhận dạng từ hình ảnh</li>
+<li><code>file_name</code>: đặt tên file văn bản sẽ lưu. Mặc định là: <code>string_from_image.txt</code></li>
+</ul>
 <h3 id="nhan-dien-van-ban-tu-anh">Nhận diện văn bản từ ảnh<a class="headerlink" href="#nhan-dien-van-ban-tu-anh" title="Anchor link to this section for reference">&para;</a></h3>
 <p>Sau khi các bước thiết lập môi trường đã chuẩn bị xong. Bạn có thể upload hình ảnh lên </p>
 <p><a class="glightbox" href="../../assets/images/google_colab_pytesseract_ocr_upload_file.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/google_colab_pytesseract_ocr_upload_file.png" /></a></p>
 <p>Như vậy, chúng ta có thể bắt đầu trích xuất văn bản từ hình ảnh vừa upload với câu lệnh sau:
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">extracted_text</span> <span class="o">=</span> <span class="n">pytesseract</span><span class="o">.</span><span class="n">image_to_string</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;/content/chrome_runiB0dpB3.png&#39;</span><span class="p">),</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vie&#39;</span><span class="p">)</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">extracted_text</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">extracted_text</span> <span class="o">=</span> <span class="n">pytesseract</span><span class="o">.</span><span class="n">image_to_string</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;/content/chrome_runiB0dpB3.png&#39;</span><span class="p">),</span> <span class="n">lang</span><span class="o">=</span><span class="s1">&#39;vie&#39;</span><span class="p">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">extracted_text</span>
 </span></code></pre></div></p>
 <p>Để lưu văn bản đã trích xuất thành file text, bạn có thể dùng câu lệnh dưới đây:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;extracted_text.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="c1"># Mặc định lưu file vào thư mục đang làm việc của Colab, bị xóa khi kết thúc phiên. Chọn địa chỉ lưu trong Drive để thay thế.</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">extracted_text</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;extracted_text.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="c1"># Mặc định lưu file vào thư mục đang làm việc của Colab, bị xóa khi kết thúc phiên. Chọn địa chỉ lưu trong Drive để thay thế.</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">extracted_text</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="trich-xuat-toan-bo-van-ban-tu-bao-cao-tai-chinh">🔐 Trích xuất toàn bộ văn bản từ báo cáo tài chính<a class="headerlink" href="#trich-xuat-toan-bo-van-ban-tu-bao-cao-tai-chinh" title="Anchor link to this section for reference">&para;</a></h2>
 <div class="admonition tip">
