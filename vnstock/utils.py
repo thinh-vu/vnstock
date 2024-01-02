@@ -32,14 +32,12 @@ def get_os():
         print(f"Error: {e}")
         return None
 
-# def previous_weekday (date):
-#   date_value = datetime.strptime(date, '%Y-%m-%d')
-#   weekday_name = date_value.strftime('%a')
-#   if weekday_name == 'Sun':
-#     prev_weekday_date = date_value - timedelta(days=2)
-#   elif weekday_name == 'Mon':
-#     prev_weekday_date = date_value - timedelta(days=3)
-#   else:
-#     prev_weekday_date = date_value - timedelta(days=1)
-#   return prev_weekday_date
+def get_cwd():
+    """Return current working directory"""
+    try:
+        cwd = os.getcwd()
+        return cwd
+    except OSError as e:
+        print(f"Error: {e}")
+        return None
 
