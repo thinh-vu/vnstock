@@ -37,8 +37,20 @@ Nội dung và giáot trình của khóa Python #5 này sẽ được thiết k�
 - Biết sử dụng công cụ AI cơ bản như ChatGPT, Bard. Nếu chưa biết sẽ được hướng dẫn.
 ### Khung chương trình
 !!! tip "Ghi chú"
-	Đang cập nhật
+	Nội dung khóa học được chia thành 6 module với nội dung chi tiết từng module được mô tả dưới đây. Nội dung lý thuyết của chương trình sẽ được kết hợp với các bài học thực hành và hướng dẫn thực tế bám sát các bước triển khai phân tích & giao dịch thực tế.
 
+=== "Module 1: Tổng quát"
+	![](../assets/images/Python_5_Module_1_Tong_quan_chuong_trinh_thinhvu_vnstock_learn_anything.png)
+=== "Module 2: Thu thập dữ liệu"
+	![](../assets/images/Python_5_Module_2_Thu_thap_du_lieu_thinhvu_vnstock_learn_anything.png)
+=== "Module 3: Bộ lọc"
+	![](../assets/images/Python_5_Module_3_Bo_loc_co_phieu_thinhvu_vnstock_learn_anything.png)
+=== "Module 4: Backtest"
+	![](../assets/images/Python_5_Module_4_Chien_thuat_va_kiem_thu_thinhvu_vnstock_learn_anything.png)
+=== "Module 5: Tối ưu"
+	![](../assets/images/Python_5_Module_5_Tinh_chinh_va_toi_uu_thinhvu_vnstock_learn_anything.png)
+=== "Module 6: Đóng gói"
+	![](../assets/images/Python_5_Module_6_Dong_goi_va_phan_phoi_thinhvu_vnstock_learn_anything.png)
 ## Vì sao chọn Python cho phân tích chứng khoán?
 
 1. **Mã nguồn mở, miễn phí**: Bạn không phải trả chi phí cho việc sử dụng Python. Bạn không cần sử dụng bản phần mềm lậu như việc dùng Amibroker hiện nay.
