@@ -11,12 +11,8 @@
             "id": "0474d5f9ee8b6fe6",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -85,7 +81,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +97,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -124,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -148,33 +140,36 @@
   },
   "active": "0474d5f9ee8b6fe6",
   "lastOpenFiles": [
-    "docs/community/tai-tro-du-an-vnstock.md",
-    "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
-    "docs/course.md",
-    "docs/community/get_contributors.py",
-    "docs/community/vnstock-contributors-thanh-vien-dong-gop-du-an.md",
-    "docs/community/contributors.md",
-    "docs/assets/images/vnstock_web_app_fundamental_section.png",
-    "CNAME",
-    "contributors.md",
-    "site/assets/images/social/integrate/amibroker.png",
-    "site/assets/images/social/integrate/backtesting.png",
-    "site/assets/images/social/integrate/dnse_api.png",
+    "site/assets/images/social/start/tai-nguyen-quan-trong-vnstock-website.png",
+    "site/assets/images/social/start/huong-dan-su-dung-nhanh-vnstock.png",
+    "site/assets/images/social/integrate/ta_lib.png",
+    "site/assets/images/social/start/huong-dan-cai-dat-vnstock-python.png",
+    "site/assets/images/social/integrate/web_app.png",
+    "site/assets/images/social/integrate/ssi_fast_connect_api.png",
+    "site/assets/images/favicon.png",
     "site/assets/images/social/integrate/google_sheets.png",
     "site/assets/images/social/integrate/huggingface.png",
-    "site/assets/images/social/integrate/messaging.png",
-    "site/assets/images/social/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.png",
-    "site/assets/images/social/integrate/OpenBBTerminal.png",
-    "site/assets/images/social/integrate/ssi_fast_connect_api.png",
-    "site/assets/images/favicon.ico",
-    "site/requirements.txt",
-    "site/material/overrides/partials/integrations/analytics/custom.html",
-    "site/material/overrides/partials/integrations/analytics",
-    "site/material/overrides/partials/integrations",
-    "site/material/overrides/partials",
-    "site/material/overrides/home.html",
-    "site/material/overrides/main.html",
-    "docs/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.md",
-    "docs/start/huong-dan-su-dung-nhanh-vnstock.md"
+    "site/assets/images/social/integrate/backtesting.png",
+    "site/assets/images/tcbs_stock_evaluation.png",
+    "site/assets/images/social/start",
+    "site/assets/images/social/integrate",
+    "site/assets/images/social/insiders-program",
+    "site/assets/images/social/functions",
+    "site/assets/images/social/faq",
+    "site/assets/images/social/community",
+    "site/assets/images/social/blog/category",
+    "site/assets/images/social/blog",
+    "site/assets/images/social",
+    "site/assets/images",
+    "docs/start/tai-nguyen-quan-trong-vnstock-website.md",
+    "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
+    "docs/start/huong-dan-cai-dat-vnstock-python.md",
+    "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
+    "docs/community/tai-tro-du-an-vnstock.md",
+    "docs/course.md",
+    "docs/community/vnstock-contributors-thanh-vien-dong-gop-du-an.md",
+    "docs/community/contributors.md",
+    "contributors.md",
+    "docs/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.md"
   ]
 }

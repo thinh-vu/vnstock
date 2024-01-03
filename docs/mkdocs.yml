@@ -50,6 +50,7 @@ theme:
     - toc.follow
     - toc.integrate # tắt để hiện riêng bên thanh bên phải
     - navigation.top
+    - announce.dismiss # tắt banner thông báo bởi user
   # language: en
 extra_css:
   - stylesheets/extra.css
