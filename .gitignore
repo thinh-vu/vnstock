@@ -30,3 +30,6 @@ dist/vnstock-0.1.9.5.tar.gz
 visualize_downloads.ipynb
 vnstock_download_pypi_stats.csv
 docs/.obsidian
+docs/.obsidian/workspace.json
+docs/.trash
+docs/community/get_contributors.py

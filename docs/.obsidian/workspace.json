@@ -1,0 +1,180 @@
+{
+  "main": {
+    "id": "3af0408a269e9b0a",
+    "type": "split",
+    "children": [
+      {
+        "id": "3c24099e6888fedd",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0474d5f9ee8b6fe6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "179345e9067412b5",
+    "type": "split",
+    "children": [
+      {
+        "id": "5a91191eee3768e2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "20915827a1eeadf2",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "78e70bbfa1109c6c",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "3d72aa0458562cda",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 362.5
+  },
+  "right": {
+    "id": "c88d5653496c21ea",
+    "type": "split",
+    "children": [
+      {
+        "id": "0bf845b620e2f3c5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "fd2474208ba8421f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "6ac0a7ef7639b515",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "8101ec5921a09701",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "6970cdf7f2dcbf82",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "0474d5f9ee8b6fe6",
+  "lastOpenFiles": [
+    "docs/community/tai-tro-du-an-vnstock.md",
+    "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
+    "docs/course.md",
+    "docs/community/get_contributors.py",
+    "docs/community/vnstock-contributors-thanh-vien-dong-gop-du-an.md",
+    "docs/community/contributors.md",
+    "docs/assets/images/vnstock_web_app_fundamental_section.png",
+    "CNAME",
+    "contributors.md",
+    "site/assets/images/social/integrate/amibroker.png",
+    "site/assets/images/social/integrate/backtesting.png",
+    "site/assets/images/social/integrate/dnse_api.png",
+    "site/assets/images/social/integrate/google_sheets.png",
+    "site/assets/images/social/integrate/huggingface.png",
+    "site/assets/images/social/integrate/messaging.png",
+    "site/assets/images/social/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.png",
+    "site/assets/images/social/integrate/OpenBBTerminal.png",
+    "site/assets/images/social/integrate/ssi_fast_connect_api.png",
+    "site/assets/images/favicon.ico",
+    "site/requirements.txt",
+    "site/material/overrides/partials/integrations/analytics/custom.html",
+    "site/material/overrides/partials/integrations/analytics",
+    "site/material/overrides/partials/integrations",
+    "site/material/overrides/partials",
+    "site/material/overrides/home.html",
+    "site/material/overrides/main.html",
+    "docs/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.md",
+    "docs/start/huong-dan-su-dung-nhanh-vnstock.md"
+  ]
+}
