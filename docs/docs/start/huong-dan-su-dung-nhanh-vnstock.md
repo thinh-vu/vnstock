@@ -59,6 +59,7 @@ Dưới đây là các gợi ý để bạn tra cứu trang tài liệu vnstock 
 - **Copy Code**: Ở mỗi ô chứa dòng lệnh luôn có biểu tượng copy :material-content-copy: cho phép bạn click vào và sao chép đoạn mã dễ dàng.
 
 - **Tính năng thuộc Insiders Program**: Bạn sẽ bắt gặp biểu tượng 🔐 đối với hướng dẫn dành cho các tính năng nâng cao chỉ dành cho người dùng tài trợ dự án thông qua chương trình Insiders Program. Tham khảo thêm chi tiết [tại đây](https://docs.vnstock.site/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program/)
+- **Cấu trúc điều hướng** trang tài liệu được mô tả trong file cấu hình của mã nguồn tài liệu: [mkdocs.yml](https://github.com/thinh-vu/vnstock/blob/beta/docs/mkdocs.yml) bắt đầu từ dòng 200.
 
 ## Docstring
 
