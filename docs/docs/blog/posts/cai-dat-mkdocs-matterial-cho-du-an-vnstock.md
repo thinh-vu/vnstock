@@ -12,7 +12,7 @@ tags:
 draft: false
 links:
 ---
-# Thiết lập trang tài liệu sử dụng với Mkdocs Matterial
+# Thiết lập trang tài liệu Vnstock sử dụng với Mkdocs Matterial
 
 !!! abstract "Vì sao có bài viết này?"
 	Ghi chú về các thiết lập trang tài liệu với Mkdocs Matterial giúp các bạn đóng góp mã nguồn và tài liệu cho dự án có thể dễ dàng cấu hình môi trường lập trình của mình và xem trước nội dung sẽ chia sẻ trên trang tài liệu vnstock. Hoặc đơn giản là bạn muốn sử dụng MKDocs tương tự vnstocho mục đích cá nhân của mình. 
