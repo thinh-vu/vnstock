@@ -60,7 +60,6 @@ plugins:
   # - search
   - tags:
       enabled: true
-      tags_file: tags.md
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - social: # display a preview on social for links
