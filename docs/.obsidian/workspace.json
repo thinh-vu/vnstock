@@ -1,14 +1,26 @@
 {
   "main": {
-    "id": "3af0408a269e9b0a",
+    "id": "a1e89ea0477d582a",
     "type": "split",
     "children": [
       {
-        "id": "3c24099e6888fedd",
+        "id": "0e50805bc2e808d0",
         "type": "tabs",
         "children": [
           {
-            "id": "0474d5f9ee8b6fe6",
+            "id": "8387f7bed2e0fbf4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "e36703fec5dad9cf",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -21,15 +33,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "179345e9067412b5",
+    "id": "613435e3b7b62ee6",
     "type": "split",
     "children": [
       {
-        "id": "5a91191eee3768e2",
+        "id": "89c61b5d51913c21",
         "type": "tabs",
         "children": [
           {
-            "id": "20915827a1eeadf2",
+            "id": "89a3544ae7e7c67e",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -39,12 +51,12 @@
             }
           },
           {
-            "id": "78e70bbfa1109c6c",
+            "id": "b5aab821bd386159",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "width=\"757\" height=\"426\"",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -54,7 +66,7 @@
             }
           },
           {
-            "id": "3d72aa0458562cda",
+            "id": "a63e290ec9a993ef",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -65,22 +77,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 362.5
+    "width": 399.5
   },
   "right": {
-    "id": "c88d5653496c21ea",
+    "id": "804415cfd1e3e680",
     "type": "split",
     "children": [
       {
-        "id": "0bf845b620e2f3c5",
+        "id": "558e2c039cf4f937",
         "type": "tabs",
         "children": [
           {
-            "id": "fd2474208ba8421f",
+            "id": "1ea2c5ed4e70485b",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -92,18 +105,19 @@
             }
           },
           {
-            "id": "6ac0a7ef7639b515",
+            "id": "89fbbaf655f45754",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "8101ec5921a09701",
+            "id": "593d0d4d84de464e",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -114,19 +128,29 @@
             }
           },
           {
-            "id": "6970cdf7f2dcbf82",
+            "id": "bf29b2fc764f874e",
             "type": "leaf",
             "state": {
               "type": "outline",
+              "state": {
+                "file": "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md"
+              }
+            }
+          },
+          {
+            "id": "0f9806f8b337feab",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
               "state": {}
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -135,41 +159,57 @@
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
-      "command-palette:Open command palette": false
+      "command-palette:Open command palette": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false
     }
   },
-  "active": "0474d5f9ee8b6fe6",
+  "active": "8387f7bed2e0fbf4",
   "lastOpenFiles": [
-    "site/assets/images/social/start/tai-nguyen-quan-trong-vnstock-website.png",
-    "site/assets/images/social/start/huong-dan-su-dung-nhanh-vnstock.png",
-    "site/assets/images/social/integrate/ta_lib.png",
-    "site/assets/images/social/start/huong-dan-cai-dat-vnstock-python.png",
-    "site/assets/images/social/integrate/web_app.png",
-    "site/assets/images/social/integrate/ssi_fast_connect_api.png",
-    "site/assets/images/favicon.png",
-    "site/assets/images/social/integrate/google_sheets.png",
-    "site/assets/images/social/integrate/huggingface.png",
-    "site/assets/images/social/integrate/backtesting.png",
-    "site/assets/images/tcbs_stock_evaluation.png",
-    "site/assets/images/social/start",
-    "site/assets/images/social/integrate",
-    "site/assets/images/social/insiders-program",
-    "site/assets/images/social/functions",
-    "site/assets/images/social/faq",
-    "site/assets/images/social/community",
-    "site/assets/images/social/blog/category",
-    "site/assets/images/social/blog",
-    "site/assets/images/social",
-    "site/assets/images",
-    "docs/start/tai-nguyen-quan-trong-vnstock-website.md",
     "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
+    "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md",
+    "docs/start/tai-nguyen-quan-trong-vnstock-website.md",
     "docs/start/huong-dan-cai-dat-vnstock-python.md",
-    "docs/community/vnstock-contributors-thanh-vien-tich-cuc.md",
-    "docs/community/tai-tro-du-an-vnstock.md",
-    "docs/course.md",
-    "docs/community/vnstock-contributors-thanh-vien-dong-gop-du-an.md",
-    "docs/community/contributors.md",
-    "contributors.md",
-    "docs/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.md"
+    "docs/functions/technical.md",
+    "docs/functions/comparison.md",
+    "docs/functions/screener.md",
+    "docs/functions/ratio.md",
+    "docs/functions/rating.md",
+    "docs/functions/listing.md",
+    "docs/functions/market.md",
+    "docs/functions/funds.md",
+    "docs/functions/fundamental.md",
+    "docs/functions/financial.md",
+    "docs/functions/export.md",
+    "docs/functions/evaluation.md",
+    "assets/templates/Photo layout.md",
+    "gioi-thieu/dong-gop-phat-trien-learn-anything.md",
+    "assets/images/momo_qr_all_in_one.jpg",
+    "gioi-thieu/dinh-huong-phat-trien-noi-dung.md",
+    "khoa-hoc/hoc-tap-cung-learn-anything.md",
+    "khoa-hoc/khoa-hoc-phan-tich-du-lieu-voi-python.md",
+    "khoa-hoc/phan-tich-du-lieu-chung-khoan-python.md",
+    "kien-thuc/obsidian/giao-dien-obsidian-va-tinh-nang.md",
+    "assets/images/python_course_5_build_your_own_trading_bot_from_scratch.png",
+    "kien-thuc/obsidian/tao-va-chinh-sua-bang-obsidian.md",
+    "assets/images/thao-tac-voi-bang-table-trong-obsidian.png",
+    "kien-thuc/obsidian/huong-dan-su-dung-markdown-trong-obsidian.md",
+    "kien-thuc/obsidian/dong-bo-du-lieu-obsidian.md",
+    "assets/images/tao-repo-github-tren-website.png",
+    "assets/images/su-dung-jupyter-notebook-tren-github-codespace-lap-trinh-python.png",
+    "assets/images/screenshot-homepage-learn-anything.png",
+    "assets/images/python_course_4_thinhvu_square.png",
+    "assets/images/prompt-yeu-cau-github-copilot-viet-code-trong-visual-studio-code.png",
+    "assets/images/obsidian-text-editor-zone-soan-thao-van-ban-tren-mobile.png",
+    "assets/images/obsidian-text-editor-zone-soan-thao-van-ban-tren-desktop.png",
+    "assets/images/logo icon youtube channel.psd",
+    "assets/images",
+    "assets/post-folder-template.zip",
+    "kien-thuc/lib",
+    "kien-thuc/phat-trien-ban-than/Untitled",
+    "kien-thuc/phat-trien-ban-than",
+    "kien-thuc/ky-nang",
+    "material/overrides/home.html",
+    "material/overrides/test_home.html",
+    "material/overrides/backup_home.html"
   ]
 }

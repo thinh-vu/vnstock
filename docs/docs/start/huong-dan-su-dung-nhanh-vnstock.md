@@ -37,6 +37,10 @@ Hoặc chỉ cần mở file Demo Notebook với Google Colab, chạy lần lư�
 
 [Mở Notebook :material-rocket-launch:](https://colab.research.google.com/github/thinh-vu/vnstock/blob/beta/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb){ .md-button }
 
+## Mới làm quen với Python?
+Nếu bạn mới bắt đầu tìm hiểu Python và còn choáng ngợp với quá nhiều thứ mới mẻ thì dự án [LEarn Anything](https://learn-anything.vn?utm_source=vnstock&utm_medium=quick_start) từ cùng tác giả [Thịnh Vũ](http://thinhvu.com?utm_source=vnstock&utm_medium=quick_start) sẽ là cẩm nang không thể thiếu cho bạn. Thông qua các bài viết và video hướng dẫn về Python dễ hiểu, bạn sẽ có một cái nhìn tổng quát và cũng rất dễ hiểu để bước chân vào hành trình khám phá một thế giới đầy mê hoặc của python trong mọi lĩnh vực của cuộc sống, không chỉ riêng thị trường chứng khoán.
+
+[Python vỡ lòng :blue_book:](https://learn-anything.vn/kien-thuc/python/hoc-python-cung-learn-anything?utm_source=vnstock&utm_medium=quick_start){ .md-button }
 ## Nguồn cấp dữ liệu
 
 Thư viện **vnstock** cung cấp khả năng kết nối tới các API công khai của các nguồn cấp dữ liệu đáng tin cậy để người dùng có thể truy xuất dữ liệu chứng khoán Việt Nam và tương tác với các đối tượng Pandas DataFrame trong môi trường Python. Bạn cũng có thể xuất dữ liệu sang các định dạng phổ thông như csv, Excel, Google Sheets, Database để tiến hành phân tích nếu muốn. Việc truy xuất dữ liệu này là **TỰ DO** và hoàn toàn **MIỄN PHÍ**.
