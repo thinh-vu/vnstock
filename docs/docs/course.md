@@ -2,40 +2,56 @@
 
 !!! success "Giới thiệu"
     :simple-python: Python là ngôn ngữ lập trình đa dụng, mã nguồn mở. Trong lĩnh vực tài chính, Python được sử dụng trong việc phân tích dữ liệu (data analysis), xây dựng chiến lược giao dịch, thiết kế bot giao dịch tự động giúp loại bỏ yếu tố cảm xúc của con người trong việc ra quyết định đầu tư chuyên nghiệp. Ngoài ra Python được sử dụng rộng rãi cho các dự án khoa học dữ liệu (data science) như mô hình máy học (ML), trí tuệ nhân tạo (AI).
-![](assets/images/python-course-5-xay-dung-chuong-trinh-phan-tich-va-giao-dich-chung-khoan-voi-python.png)
+
+<div style="display: flex; justify-content: center;">
+<iframe width="914" height="514"src="https://www.youtube.com/embed/AM14IE6gdfo?si=KA0rfXmMmhd7ubtV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
 
 ## Khóa học đang triển khai
 
-Hiện tại, [Thinh Vu](https://thinhvu.com) đang mở khóa học **Xây dựng chương trình phân tích & giao dịch chứng khoán với Python** được thiết kế riêng cho trader/nhà đầu tư chứng khoán. 
+Hiện tại, [Thinh Vu](https://thinhvu.com/2024/01/16/khoa-hoc-python-du-lieu-bot-giao-dich-chung-khoan/) đang mở khóa học **Phân tích dữ liệu & tạo bot giao dịch chứng khoán với Python** được thiết kế riêng cho trader/nhà đầu tư chứng khoán. 
 
-Khóa học thứ 5 của chương trình đào tạo Python này sẽ được xây dựng theo kiểu "guided tour" giúp bình dân hóa Python cho những kẻ tay mơ hoặc đang học tập nửa vời để đầu tư chứng khoán. Qua chương trình cầm tay chỉ việc này bạn sẽ được:
+Khóa học thứ 5 của chương trình đào tạo Python này sẽ được xây dựng theo kiểu "guided tour" giúp bình dân hóa Python cho những kẻ tay mơ hoặc đang học tập nửa vời để đầu tư chứng khoán. 
 
-- Tiếp xúc và hình thành tư duy thiết kế chương trình phân tích/giao dịch chứng khoán với Python.
-- Có tấm vé khởi đầu hành trình thú vị với Python thông qua chương trình đào tạo với ví dụ minh họa thực tế.
-- **Được tặng bộ đồ nghề là các module Python chất lượng** do tác giả phát triển trên nền tảng Vnstock giúp bình dân hóa việc xây dựng chương trình phân tích/giao dịch chứng khoán với Python. 
-- Sở hữu "tool" nhà trồng, thuật toán tự phát triển, chương trình tự xây dựng. Mã nguồn mở, minh bạch & tin cậy.
-- Đón đầu xu hướng giao dịch T0 khi triển khai KRX, 0đ phí giao dịch trong tương lai gần.
-- Nội dung đào tạo tích hợp với các giải pháp mà vnstock đang cung cấp, do chính tác giả chia sẻ.
-- Sử dụng Python từ khâu thu thập dữ liệu cho đến khi thiết kế ứng dụng phân tích dưới dạng dashboard hoàn chỉnh.
-- Hiểu và sử dụng vnstock bài bản đồng thời tận dụng được các API giao dịch hiện tại trên thị trường.
-- Có kiến thức nền tảng về Python để có thể tận dụng hệ thống thư viện ứng dụng Python đa dạng từ phân tích kỹ thuật cho đến máy học, AI.
+## Tại sao khóa học đáng quan tâm?
 
-Nội dung và giáot trình của khóa Python #5 này sẽ được thiết kế mới hoàn toàn. Để tham khảo các khoá học đã triển khai, bạn có thể xem giới thiệu [tại đây](https://thinhvu.com/2023/08/09/phan-tich-du-lieu-voi-python-for-data-analysis-3?utm_source=vnstock_docs&utm_medium=python_course) 
+- **Dễ hiểu, có hệ thống**: Đó là những gì học viên khóa học và các bạn khi xem qua nội dung của Vnstock, LEarn Anything mà Thịnh chia sẻ.
+- **Tư Duy Thiết Kế Chương Trình Mạch Lạc**: Lộ trình này giúp bạn hình thành tư duy thiết kế chương trình phân tích/giao dịch chứng khoán với Python, từ lý thuyết đến ứng dụng thực tế với sự hỗ trợ tận tình của Thịnh.
+- **Bộ Đồ Nghề Chất Lượng**: Bạn được truyền đạt các module Python do Thịnh phát triển cho khóa học và Vnstock, giúp bạn dễ dàng để bắt đầu. Hiểu, tin và sẵn sàng cải tiến chúng khi nắm vững kiến thức. Bạn cũng sẽ được hướng dẫn sử dụng các công cụ AI sẵn có trên thị trường để có thể “code” một cách thần sầu như lập trình viên.
+- **Đón Đầu Xu Hướng Giao Dịch T0 và phí 0đ**: Sẵn sàng cho một thời kỳ nâng hạng thị trường, triển khai hệ thống giao dịch mới KRX cho phép giao dịch T0 và triển khai 0đ phí giao dịch rộng rãi giữa các công ty chứng khoán. Sự đổi mới công nghệ trong lĩnh vực tài chính là điều chắc chắn xảy ra, mình tin rằng bạn sẽ chọn là một phần của sự thay đổi thay vì phần còn lại.
+- **Sử Dụng Python Từ A đến Z trong đầu tư chứng khoán**: Thực hiện mọi bước từ thu thập dữ liệu đến thiết kế ứng dụng phân tích dưới dạng dashboard hoàn chỉnh, backtest chiến lược, đặt lệnh, quản lý danh mục, vv bằng Python. Kiến thức lý thuyết của bạn sẽ được củng cố thông qua thực hành với môi trường thực tế. Thông qua dự án Vnstock và LEarn Anything, lần đầu tiên nhiều người đã được tiếp cận với các API dữ liệu chứng khoán và đặt lệnh tự động một cách trực quan và dễ hiểu với bộ “code” được cung cấp mở, miễn phí.
+
+## Lộ trình khóa học
+
+- Khai giảng: 21/1/2024 - 31/3/2024
+- Thời gian học: 2PM – 4:30PM mỗi Chủ Nhật hàng tuần (kéo dài tới 5PM nếu bài dài)
+- Hình thức tổ chức: Học trực tuyến qua Microsoft Teams. Tất cả các buổi học được ghi hình và tổ chức thành nội dung trực tuyến để các bạn tiện theo dõi và xem lại qua trang học tập [LEarn Anything](http://course.learn-anything.vn/)kể cả khi bạn không thể tham gia buổi bất kỳ.
+- Số buổi: 10
+- Học phí: Trao đổi trực tiếp qua Inbox Messenger.
 
 [Trao đổi với Thịnh :simple-messenger:](https://www.messenger.com/t/mr.thinh.ueh){ .md-button }
+## Ai nên tham gia khóa học?
 
-### Lộ trình khóa học
-- Khai giảng: Giữa tháng 1/2024 hoặc đầu tháng 2/2024.
-- Thời gian học: 2PM-4:30PM mỗi Chủ Nhật hàng tuần. Có thể kéo dài đến 5PM nếu bài dài.
-- Số buổi: 10
-### Yêu cầu đầu vào
-- Mới tiếp cận với Python hoặc đã tự học nhưng không hiệu quả.
-- Đang nghiên cứu hoặc đã có kinh nghiệm giao dịch chứng khoán.
+### Nghề nghiệp
+
+- **Môi giới chứng khoán**: muốn đón đầu xu thế 0đ phí giao dịch. Điển hình là các bạn làm việc tại chứng khoán SSI, Rồng Việt
+- **Nhà đầu tư cá nhân**: đón đầu xu thế T0, 0đ phí giao dịch và hiện thực hóa chiến lược đầu tư đã kiểm chứng.
+- Người **làm việc trong lĩnh vực tài chính, ngân hàng, bảo hiểm**.
+- **Nghiên cứu viên** tại trường đại học, viện nghiên cứu.
+- **Lập trình viên** đã quen thuộc với ngôn ngữ lập trình khác ngoài Python. Các anh/bạn này có thể tự học Python nhưng chọn có người đồng hành để nhanh chóng nắm bắt kiến thức dễ dàng hơn.
+- **Người đã học Python** nhưng không hiệu quả dù là tự học hay theo học tại trung tâm.
+### Nhân khẩu học
+
+- **Không giới hạn độ tuổi**: Khóa học python của Thịnh có bạn sinh năm 2000 nhưng cũng có các anh U60 và rất ham học hỏi, tham gia tất cả buổi học cũng như làm bài tập với cam kết rất cao.
+- **Không giới hạn vùng miền**: học viên khóa Python của Thịnh ở khắp cả 3 miền Việt Nam. Nhiều nhất là Tp. HCM, Hà Nội, Đà Nẵng.
+
+## Yêu cầu đầu vào
+
+- Biết đọc, viết và cộng, trừ, nhân, chia. 😁
+- Có hiểu biết về thị trường chứng khoán. Điều này quan trọng bởi nếu bạn không biết về chứng khoán lẫn python thì sẽ khó muôn trùng khó.
+- Có thể đọc, nghe tiếng Anh tốt là một lợi thế để khai thác thêm kho tài liệu tiếng Anh đồ sộ.
 - Có tư duy logic/tư duy tiến trình là một lợi thế.
-- Có khả năng sử dụng tốt tiếng Anh là một lợi thế.
-- Biết cộng, trừ, nhân, chia 😁
-- Biết sử dụng công cụ AI cơ bản như ChatGPT, Bard. Nếu chưa biết sẽ được hướng dẫn.
-### Khung chương trình
+## Khung chương trình
 !!! tip "Ghi chú"
 	Nội dung khóa học được chia thành 6 module với nội dung chi tiết từng module được mô tả dưới đây. Nội dung lý thuyết của chương trình sẽ được kết hợp với các bài học thực hành và hướng dẫn thực tế bám sát các bước triển khai phân tích & giao dịch thực tế.
 

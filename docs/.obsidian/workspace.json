@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md",
+                "file": "docs/course.md",
                 "mode": "source",
                 "source": false
               }
@@ -93,7 +93,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md",
+                "file": "docs/course.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -110,7 +110,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md",
+                "file": "docs/course.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -133,7 +133,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md"
+                "file": "docs/course.md"
               }
             }
           },
@@ -159,14 +159,15 @@
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
-      "command-palette:Open command palette": false,
-      "table-editor-obsidian:Advanced Tables Toolbar": false
+      "command-palette:Open command palette": false
     }
   },
   "active": "8387f7bed2e0fbf4",
   "lastOpenFiles": [
-    "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
+    "docs/assets/images/Python Course 5 - Phan tich du lieu va giao dich chung khoan.png",
+    "docs/assets/images/Python Course 5 - Phan tich du lieu va giao dich chung khoan (1).png",
     "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md",
+    "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
     "docs/start/tai-nguyen-quan-trong-vnstock-website.md",
     "docs/start/huong-dan-cai-dat-vnstock-python.md",
     "docs/functions/technical.md",
@@ -193,14 +194,12 @@
     "kien-thuc/obsidian/tao-va-chinh-sua-bang-obsidian.md",
     "assets/images/thao-tac-voi-bang-table-trong-obsidian.png",
     "kien-thuc/obsidian/huong-dan-su-dung-markdown-trong-obsidian.md",
-    "kien-thuc/obsidian/dong-bo-du-lieu-obsidian.md",
     "assets/images/tao-repo-github-tren-website.png",
     "assets/images/su-dung-jupyter-notebook-tren-github-codespace-lap-trinh-python.png",
     "assets/images/screenshot-homepage-learn-anything.png",
     "assets/images/python_course_4_thinhvu_square.png",
     "assets/images/prompt-yeu-cau-github-copilot-viet-code-trong-visual-studio-code.png",
     "assets/images/obsidian-text-editor-zone-soan-thao-van-ban-tren-mobile.png",
-    "assets/images/obsidian-text-editor-zone-soan-thao-van-ban-tren-desktop.png",
     "assets/images/logo icon youtube channel.psd",
     "assets/images",
     "assets/post-folder-template.zip",
