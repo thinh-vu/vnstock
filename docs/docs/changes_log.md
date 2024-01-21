@@ -1,6 +1,11 @@
 # Lịch sử cập nhật
 
-# ## 3-1-2024
+## 21-1-2024
+- Bổ sung tích hợp cho phép sử dụng các hàm gửi tin nhắn từ vnstock qua Telegram/Slack với các channel/group chat được cài đặt.
+- Cập nhật nội dung trang tài liệu
+- Khởi động dự án vnstock-next cho thế hệ phần mềm vnstock tiếp theo.
+
+## 3-1-2024
 
 - Cập nhật khung chương trình khóa học Python 5 khai giảng 21/1/2024
 
@@ -10,7 +15,7 @@
 
 - Bổ sung tính năng OCR sử dụng Pytesseract cho vnstock và vnstock-data-pro. Chi tiết [tại đây](https://docs.vnstock.site/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban/)
   
-  ## 24-12-2023
+## 24-12-2023
 - Cập nhật tài liệu dự án
   - Tài liệu truy xuất [giá lịch sử](https://docs.vnstock.site/functions/technical/)
   - Hướng dẫn [truy xuất dữ liệu giao dịch nước ngoài/tự doanh](https://docs.vnstock.site/functions/market/#giao-dich-ntnn) sử dụng gói phần mềm `vnstock-data-pro`
@@ -25,7 +30,7 @@
 
 - Bổ sung `requirements.txt` cho trình tạo trang tĩnh MKDocs giúp cài đặt gói phụ thuộc để thiết lập trang tài liệu và xem trước dễ dàng.
   
-  ## 14-12-2023
+## 14-12-2023
   
   Chính thức phát hành các thay đổi từ nhánh Beta trong phiên bản 0.2.8.7. Chi tiết cập nhật qua blog: [tại đây](https://vnstock.site/2023/12/15/ra-mat-vnstock-insider-program-cap-nhat-nhieu-tinh-nang-thu-vi/)
 

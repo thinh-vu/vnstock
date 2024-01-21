@@ -229,6 +229,7 @@ nav:
     - SSI Fast Connect API: integrate/ssi_fast_connect_api.md
     - DNSE Lightspeed API: integrate/dnse_api.md
     - PyTesseract OCR: integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.md
+    - Gửi tin nhắn Telegram/Slack: integrate/telegram-slack-gui-tin-nhan-thong-bao-qua-chat-tu-python.md
   - Insiders Program: insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program.md
   - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
