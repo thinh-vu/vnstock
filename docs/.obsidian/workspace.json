@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/community/tai-tro-du-an-vnstock.md",
+                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
                 "mode": "source",
                 "source": false
               }
@@ -93,7 +93,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/community/tai-tro-du-an-vnstock.md",
+                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -110,7 +110,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/community/tai-tro-du-an-vnstock.md",
+                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -133,7 +133,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/community/tai-tro-du-an-vnstock.md"
+                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md"
               }
             }
           },
@@ -164,6 +164,8 @@
   },
   "active": "8387f7bed2e0fbf4",
   "lastOpenFiles": [
+    "docs/community/tai-tro-du-an-vnstock.md",
+    "docs/assets/templates/announcement.md",
     "docs/community/support.md",
     "docs/community/lan-toa-trai-nghiem-voi-vnstock.md",
     "docs/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program.md",
@@ -191,8 +193,6 @@
     "assets/images/momo_qr_all_in_one.jpg",
     "gioi-thieu/dinh-huong-phat-trien-noi-dung.md",
     "khoa-hoc/hoc-tap-cung-learn-anything.md",
-    "khoa-hoc/khoa-hoc-phan-tich-du-lieu-voi-python.md",
-    "khoa-hoc/phan-tich-du-lieu-chung-khoan-python.md",
     "assets/images/python_course_5_build_your_own_trading_bot_from_scratch.png",
     "assets/images/thao-tac-voi-bang-table-trong-obsidian.png",
     "assets/images/tao-repo-github-tren-website.png",
