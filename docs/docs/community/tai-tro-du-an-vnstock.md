@@ -44,21 +44,9 @@ Lưu ý: để có thể tài trợ cho dự án qua Github Sponsor, bạn cần
   <figcaption>QR chuyển tiền Momo và mọi ngân hàng</figcaption>
 </figure>
 
-
-## Sử dụng dịch vụ
-
-!!! tip "Dịch vụ"
-    Nếu bạn nào quan tâm và có nhu cầu về `code` theo yêu cầu hoặc học python, vui lòng [inbox](https://www.messenger.com/t/mr.thinh.ueh) với Thịnh để trao đổi thêm. Hoạt động này cũng giúp tác giả hiểu thêm về những ứng dụng thực tế và phát triển vnstock trong tương lai.
-
-<div id="badges" align="center">
-  <a href="https://www.messenger.com/t/mr.thinh.ueh">
-    <img src="https://img.shields.io/badge/Messenger-00B2FF?style=for-the-badge&logo=messenger&logoColor=white" alt="Messenger Badge"/>
-  </a>
-</div>
-
 ### Đào tạo Python
 
 !!! tip "Khóa học" 
     Nếu bạn yêu thích vnstock, muốn ủng hộ tác giả đồng thời quan tâm về học lập trình Python cho việc phân tích dữ liệu nói chung và chứng khoán nói riêng, bạn có thể đăng ký các khóa học phân tích dữ liệu từ tác giả Thịnh Vũ. Hiện tại, AI cũng có thể hỗ trợ bạn thực hiện hầu hết công việc lập trình miễn là bạn có kiến thức căn bản và biết cách sử dụng chúng. Tham gia khóa học giúp bạn có nền tảng kiến thức tốt để tận dụng sức mạnh của AI.
 
-Khóa học Phân tích dữ liệu với Python #5 dự kiến triển khai vào cuối 1/2024, bạn nào quan tâm hãy [inbox](https://www.messenger.com/t/mr.thinh.ueh) cho tôi để trao đổi thêm. Bạn cũng có thể tham khảo bài viết giới thiệu khóa học trên blog về phân tích dữ liệu tôi đã từng tổ chức [tại đây](https://docs.vnstock.site/course/)
+Bạn có thể tham khảo khóa học được cung cấp bởi Thịnh tại mục [Khóa học](https://docs.vnstock.site/course/) tại trang web này.
