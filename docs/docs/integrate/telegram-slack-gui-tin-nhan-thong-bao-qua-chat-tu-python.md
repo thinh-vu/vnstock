@@ -1,7 +1,7 @@
 # Gửi tin tức, cảnh báo qua Telegram, Slack
 
 !!! abstract "Giới thiệu"
-    vnstock cung cấp tới bạn các hàm kết nối tới HTTPS API từ Telegram và Slack cho phép gửi tin nhắn, hình ảnh qua Slack channel và Telegram group. Đây là tính năng mở ra các ứng dụng gửi tin tức, cảnh báo giao dịch và các thông tin quan trọng tới bạn mà không cần đi qua bất kỳ dịch vụ trung gian nào.
+    vnstock cung cấp tới bạn các hàm kết nối tới [Telegram API](https://core.telegram.org/) và [Slack API](https://api.slack.com/) cho phép gửi tin nhắn, hình ảnh qua Slack channel và Telegram group. Đây là tính năng mở ra các ứng dụng gửi tin tức, cảnh báo giao dịch và các thông tin quan trọng tới bạn mà không cần đi qua bất kỳ dịch vụ trung gian nào.
 
 Để sử dụng tính năng này bạn có thể sử dụng code mẫu trong file demo notebook chung của vnstock. Cú pháp của hàm tương đối đơn giản.
 
@@ -20,7 +20,17 @@ file_path = 'ĐƯỜNG_DẪN_ĐẾN_FILE_HÌNH_TRÊN_MÁY_TÍNH'
 
 Bây giờ thì bạn đã sẵn sàng để lựa chọn 1 trong 2 hình thức gửi tin nhắn
 
-- Gửi tin kèm hình: `slack_send_file(token_key, slack_channel, text_comment, file_path)`
+- Gửi tin kèm hình: 
+
+```python
+slack_send_file(token_key, slack_channel, text_comment, file_path)
+```
+
+- Gửi tin nhắn văn bản: 
+
+```
+pythonslack_send_message(token_key, slack_channel, message)
+```
 
 Trong đó:
 
@@ -28,11 +38,6 @@ Trong đó:
 - `slack_channel`: là tên channel, bắt đầu với `#` ví dụ `#market_trend`
 - `text_comment`: caption cho file hình ảnh gửi kèm
 - `file_path`: đường dẫn tới file hình ảnh trên máy tính
-
-- Gửi tin nhắn văn bản: `slack_send_message(token_key, slack_channel, message)`
-
-Trong đó:
-
 - `message`: là nội dung tin nhắn
 
 ## Slack
