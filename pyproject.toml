@@ -4,7 +4,8 @@ requires = [
     "wheel",
     "requests",
     "bs4",
-    "pandas"
+    "pandas",
+    "openpyxl"
 ]
 build-backend = "setuptools.build_meta"
 # dependencies = []
