@@ -41,3 +41,8 @@ def get_cwd():
         print(f"Error: {e}")
         return None
 
+def get_path_delimiter():
+    """
+    Detect the running OS and return the appropriate file path delimiter.
+    """
+    return '\\' if os.name == 'nt' else '/'

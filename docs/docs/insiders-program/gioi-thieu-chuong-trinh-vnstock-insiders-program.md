@@ -25,10 +25,10 @@ Thông tin mô tả quyền lợi tương ứng các gói tài trợ được c�
 
 **Tài trợ dự án** mã nguồn mở trên Github Sponsor là một cách mà bạn và cộng đồng có thể ủng hộ tài chính để tác giả có thể phát triển và duy trì dự án với mục đích cung cấp giá trị và quyền sử dụng sản phẩm tới cộng đồng nhà tài trợ. Với tư cách là nhà tài trợ, bạn nhận được những ưu đãi đặc biệt như truy cập private repo (kho chứa mã nguồn riêng tư) hay tham gia cộng đồng thành viên của vnstock, vv. Trong quá trình tham gia tài trợ, dự án có thể luôn có những cập nhật thường xuyên cho mã nguồn để bạn sử dụng như những người dùng trải nghiệm. 
 
-!!! warning "Lưu ý"
-Vnstock chỉ cung cấp các giải pháp công nghệ (thông qua chương trình python) giúp bạn kết nối tới nguồn cấp dữ liệu công khai, hợp lệ mà không phân phối hay hay sử dụng bất kỳ dữ liệu nào từ bên thứ 3 cho mục đích thương mại tới người dùng.
-
 **Mua/bán giấy phép Sản phẩm thương mại** là việc bạn bỏ ra một khoản phí trả cho nhà phát hành sản phẩm, đổi lại bạn có quyền sử dụng sản phẩm (giấy phép) như một khách hàng với những tiêu chuẩn cao về yêu cầu của một dịch vụ thương mại. 
+
+!!! warning "Lưu ý"
+	Vnstock chỉ cung cấp các giải pháp công nghệ (thông qua chương trình python) giúp bạn kết nối tới nguồn cấp dữ liệu công khai, hợp lệ mà không phân phối hay hay sử dụng bất kỳ dữ liệu nào từ bên thứ 3 cho mục đích thương mại tới người dùng.
 
 ### Giấy phép sử dụng sản phẩm
 

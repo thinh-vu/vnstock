@@ -23,7 +23,7 @@ funds_listing()
 ### Ví dụ thông tin trả về
 
 ```shell
->>> funds_listing(lang='vi', fund_type="").head()
+>>> funds_listing(fund_type="").head()
 Total number of funds currently listed on Fmarket:  41
   fundId Tên viết tắt                                            Tên CCQ  ... Giá gần nhất     code     vsdFeeId
 0     23        VESAF  QUỸ ĐẦU TƯ CỔ PHIẾU TIẾP CẬN THỊ TRƯỜNG VINACA...  ...     25620.68    VESAF    VESAFN002
