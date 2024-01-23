@@ -1,4 +1,12 @@
 # Lịch sử cập nhật
+## 23-1-2024
+
+!!! hot "Cập nhật bản 2.8.8"
+	Cập nhật thay đổi từ ngày 16/12/2023 ở phiên bản `beta` sang `main` và phát hành chính thức phiên bản 2.8.8. 
+	
+- Cập nhật mã nguồn hàm `financial_report` sửa lỗi triệt để lỗi sử dụng 'Excel file format cannot be determined, you must specify an engine manually' do dữ liệu trả về không phải định dạng Excel.
+  -   Nguồn dữ liệu từ Fiintrade của SSI sử dụng mã `OrganCode` để tra cứu thông tin công ty trong đó có báo cáo tài chính. Có khoảng > 600 mã cổ phiếu có mã symbol khác OrganCode do đó có nhiều mã khi tra cứu BCTC với mã symbol sẽ gây ra rỗi trong khi với các mã khác thì không. Ví dụ `YTC` có OrganCode là `YTECO` dùng để tra cứu BCTC.
+  -   Bổ sung `openpyxl` là gói phụ thuộc để đọc dữ liệu trả về từ API dưới dạng file Excel. Lỗi này xảy ra khi cài bản Python thuần. Không gặp lỗi với Google Colab hoặc Anaconda.
 
 ## 21-1-2024
 - Bổ sung tích hợp cho phép sử dụng các hàm gửi tin nhắn từ vnstock qua Telegram/Slack với các channel/group chat được cài đặt.
@@ -32,7 +40,7 @@
   
 ## 14-12-2023
   
-  Chính thức phát hành các thay đổi từ nhánh Beta trong phiên bản 0.2.8.7. Chi tiết cập nhật qua blog: [tại đây](https://vnstock.site/2023/12/15/ra-mat-vnstock-insider-program-cap-nhat-nhieu-tinh-nang-thu-vi/)
+  Chính thức phát hành các thay đổi từ nhánh Beta trong phiên bản 2.8.7. Chi tiết cập nhật qua blog: [tại đây](https://vnstock.site/2023/12/15/ra-mat-vnstock-insider-program-cap-nhat-nhieu-tinh-nang-thu-vi/)
 
 - Ra mắt Vnstock Insiders Program cung cấp quyền truy cập tới các kho chứa mã nguồn riêng tư (private repo)
 
