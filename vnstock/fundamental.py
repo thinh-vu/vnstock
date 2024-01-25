@@ -290,7 +290,9 @@ def financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quart
         report_type (:obj:`str`, required): BalanceSheet, IncomeStatement, CashFlow
         report_range (:obj:`str`, required): Yearly or Quarterly.
     """
-    url = 'https://fiin-fundamental.ssi.com.vn/FinancialStatement/Download{}?language=vi&OrganCode={}&Skip=0&Frequency={}'.format(report_type, symbol, frequency)
+    symbol = symbol.upper()
+    organ_code = organ_listing().query(f'ticker == @symbol')['organCode'].values[0]
+    url = f'https://fiin-fundamental.ssi.com.vn/FinancialStatement/Download{report_type}?language=vi&OrganCode={organ_code}&Skip=0&Frequency={frequency}'
     response = requests.get(url, headers=headers)
     status = response.status_code
     if status == 200:

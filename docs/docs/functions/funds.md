@@ -8,25 +8,22 @@
 
 Tính năng tra cứu thông tin quỹ mở hiện đã được cập nhật qua nhánh beta của vnstock trên Github. Bạn có thể cài đặt bản beta theo hướng dẫn tại đây:
 
-[Cài đặt bản beta :material-rocket-launch:](https://docs.vnstock.site/start/installation/#xac-inh-phien-ban-phu-hop){ .md-button }
+[Cài đặt bản beta :material-rocket-launch:](https://docs.vnstock.site/start/huong-dan-cai-dat-vnstock-python/#xac-inh-phien-ban-phu-hop){ .md-button }
 
 ## Liệt kê danh sách quỹ
 
-Để truy xuất thông tin toàn bộ các quỹ mở, bạn sử dụng hàm dưới đây:
+### Câu lệnh
+
+Để truy xuất thông tin toàn bộ các chứng chỉ quỹ (CCQ) mở, bạn sử dụng hàm dưới đây:
 
 ```python
-funds_listing(lang='vi', fund_type="")
+funds_listing()
 ```
 
-Trong đó:
-
-- `lang`: ngôn ngữ hiển thị thông tin quỹ. Hiện tại, vnstock hỗ trợ hai ngôn ngữ là `vi` (Tiếng Việt) và `en` (Tiếng Anh). Mặc định là `vi`.
-- `fund_type`: loại quỹ, chấp nhận các giá trị sau: `STOCK` cho quỹ cổ phiếu, `BOND` cho quỹ trái phiếu, `BALANCED` cho quỹ cân bằng. Nếu để trống, kết quả trả về là tất cả các quỹ hiện có.
-
-Thông tin trả về có là một DataFrame với các thông tin tóm tắt như sau:
+### Ví dụ thông tin trả về
 
 ```shell
->>> funds_listing(lang='vi', fund_type="").head()
+>>> funds_listing(fund_type="").head()
 Total number of funds currently listed on Fmarket:  41
   fundId Tên viết tắt                                            Tên CCQ  ... Giá gần nhất     code     vsdFeeId
 0     23        VESAF  QUỸ ĐẦU TƯ CỔ PHIẾU TIẾP CẬN THỊ TRƯỜNG VINACA...  ...     25620.68    VESAF    VESAFN002
@@ -38,11 +35,93 @@ Total number of funds currently listed on Fmarket:  41
 [5 rows x 11 columns]
 ```
 
+### Tham số đầu vào
+
+| Field | Type | Description | Default | Optional |
+|---|---|---|---|---|
+| `fund_type` | str | loại quỹ, chấp nhận các giá trị sau: </br>`STOCK` cho quỹ cổ phiếu, </br>`BOND` cho quỹ trái phiếu, </br>`BALANCED` cho quỹ cân bằng, </br>Nếu để trống, kết quả trả về là tất cả các quỹ hiện có trên Fmarket. | None | False |
+
+### Thông tin trả về 
+
+Thông tin trả về là một DataFrame có mô hình dữ liệu (data model) như sau:
+
+| Field | Type | Description |
+|---|---|---|
+| `short_name` | str | Tên viết tắt của CCQ |
+| `name` | str | Tên CCQ |
+| `fund_type` | str | Loại quỹ |
+| `fund_owner_name` | str | Tổ chức phát hành |
+| `management_fee` | float | Phí quản lý (%) |
+| `inception_date` | date | Ngày thành lập quỹ |
+| `nav` | float | Giá gần nhất |
+| `nav_change_previous` | float | Lợi nhuận so với phiên trước (%) |
+| `nav_change_last_year` | float | Lợi nhuận so với năm trước (%) |
+| `nav_change_inception` | float | Lợi nhuận từ khi thành lập (%) |
+| `nav_change_1m` | float | Lợi nhuận 1 tháng gần nhất (%) |
+| `nav_change_3m` | float | Lợi nhuận 3 tháng (%) |
+| `nav_change_6m` | float | Lợi nhuận 6 tháng (%) |
+| `nav_change_12m` | float | Lợi nhuận 12 tháng (%) |
+| `nav_change_24m` | float | Lợi nhuận 24 tháng (%) |
+| `nav_change_36m` | float | Lợi nhuận 36 tháng (%) |
+| `nav_change_36m_annualized` | float | Lợi nhuận trung bình 36 tháng (%/năm) |
+| `nav_update_at` | date | Ngày cập nhật NAV | 
+| `fund_id_fmarket` | int | ID của CCQ trong csdl của Fmarket |
+| `fund_code` | str | Tên mã CCQ trong csdl của Fmarket |
+| `vsd_fee_id` | str | Tên mã CCQ trong csdl của Trung tâm lưu ký (VSD) |
+
 ## Truy xuất thông tin quỹ
 
-Bạn có thể truy xuất các thông tin cơ bản của một quỹ qua hàm `fund_details` như dưới dây:
+Bạn có thể truy xuất các thông tin cơ bản của một quỹ qua hàm `fund_details` như dưới dây.
 
-### Danh mục các mã quỹ nắm giữ
+### Tham số đầu vào
+
+| Field | Type | Description | Default | Optional |
+|---|---|---|---|---|
+| `symbol` | str | Tên CCQ | "SSISCA" | False |
+| `type` | str | loại thông tin cần truy xuất, chấp nhận các giá trị sau: </br>`top_holding_list`: danh mục đầu tư lớn, </br>`industry_holding_list`: phân bổ theo ngành, </br>`asset_holding_list`: phân bổ theo loại tài sản, </br>`nav_report`: lịch sử giá đơn vị quỹ. | "top_holding_list" | False |
+
+### Thông tin trả về
+
+Tương ứng với từng loại thông tin cần truy xuất, dữ liệu trả về là một DataFrame có mô hình dữ liệu (data model) như sau:
+
+=== "top_holding_list"
+
+    | Field | Type | Description |
+    |---|---|---|
+    | `stock_code` | str | Mã cổ phiếu / trái phiếu mà quỹ đang nắm giữ |
+    | `industry` | str | Ngành |
+    | `net_asset_percent` | float | % giá trị tài sản |
+    | `type_asset` | str | Loại tài sản |
+    | `update_at` | date | Cập nhật lúc |
+    | `short_name` | str | Tên CCQ |
+
+=== "industry_holding_list"
+
+    | Field | Type | Description |
+    |---|---|---|
+    | `industry` | str | Ngành |
+    | `net_asset_percent` | float | % giá trị tài sản |
+    | `short_name` | str | Tên CCQ |
+
+=== "asset_holding_list"
+
+    | Field | Type | Description |
+    |---|---|---|
+    | `asset_percent` | str | % giá trị tài sản |
+    | `asset_type` | str | Loại tài sản |
+    | `short_name` | str | Tên CCQ |
+
+=== "nav_report"
+
+    | Field | Type | Description |
+    |---|---|---|
+    | `date` | str | Ngày |
+    | `nav_per_unit` | str | NAV / đơn vị quỹ (đơn vị: VND) |
+    | `short_name` | str | Tên CCQ |
+
+### Ví dụ thông tin trả về
+
+#### Danh mục đầu tư lớn - top 10 các mã quỹ nắm giữ
 
 ```python
 fund_details (symbol='SSISCA', type='top_holding_list')
@@ -66,7 +145,7 @@ Getting data for SSISCA
 9  TCB               Ngân hàng               3.31        STOCK        2023-12-08     11  SSISCA
 ```
 
-### Tỉ trọng các ngành mà quỹ đang đầu tư
+#### Tỉ trọng các ngành mà quỹ đang đầu tư
 
 ```python
 fund_details (symbol='VESAF', type='industry_holding_list')
@@ -94,7 +173,7 @@ Getting data for VESAF
 13                  Bảo hiểm               1.41  VESAF
 ```
 
-### Báo cáo NAV quỹ
+#### Báo cáo NAV quỹ
 
 ```python
 fund_details (symbol='VESAF', type='nav_report')
@@ -121,7 +200,7 @@ Getting data for VESAF
 [821 rows x 4 columns]
 ```
 
-### Tỉ trọng tài sản nắm giữ
+#### Tỉ trọng tài sản nắm giữ
 
 ```python
 fund_details (symbol='VESAF', type='asset_holding_list')

@@ -24,8 +24,10 @@ TABLE OF CONTENTS
 
 
 # I. 🎤 Introduction
+
 ## 1.1. General Introduction
-vnstock is a Python library designed to easily and freely download Vietnamese stock market data. vnstock utilizes reliable data sources, including but not limited to securities companies and market analysis firms in Vietnam. The library is built based on the principles of simplicity and open-source, with most functions written using the request and pandas libraries available in the Google Colab environment. Therefore, users do not need to install additional libraries.
+
+`vnstock` is a Python library specifically designed for convenient and free downloads of Vietnamese stock market data. `vnstock` utilizes reliable data from both brokerage firms and financial research entities providing market intelligence in Vietnam. The library is built on the principles of simplicity and open-source, leveraging the [requests](https://requests.readthedocs.io/en/latest/) and [pandas](https://pandas.pydata.org/) libraries readily available in the Google Colab environment. This design ensures a user-friendly experience while harnessing the power of well-established tools for efficient data manipulation and analysis.
 
 ## 1.2. Key Features
 vnstock provides a variety of features, such as downloading historical price data, listed company information, and market information for all listed securities.
@@ -86,7 +88,7 @@ All functions of vnstock are provided with complete docstrings, while this READM
   <summary>Supporting the vnstock Development Fund</summary>
   If vnstock has been helpful to you, you can contribute to the development fund of this application through either bank transfer or Momo. All contributions are greatly appreciated and serve as motivation for the author to maintain vnstock as a useful, free, and accessible resource for the community.
 
-  - ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vcb-qr-thinhvu.jpg?raw=true)
+  - ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vcb-qr-thinhvu-vnstock.jpg?raw=true)
   - ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/momo-qr-thinhvu.jpeg?raw=true)
 
 </details>

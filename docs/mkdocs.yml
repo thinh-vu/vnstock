@@ -50,6 +50,7 @@ theme:
     - toc.follow
     - toc.integrate # tắt để hiện riêng bên thanh bên phải
     - navigation.top
+    - announce.dismiss # tắt banner thông báo bởi user
   # language: en
 extra_css:
   - stylesheets/extra.css
@@ -57,11 +58,14 @@ edit_uri: edit/main/docs/docs
 plugins:
   - glightbox
   # - search
-  - tags
+  - tags:
+      enabled: true
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - social: # display a preview on social for links
-      # cards_layout: default 
+      cards_layout: default/invert
+      cards_layout_options:
+        background_color: "#279B48" 
   # - meta # blog metadata
   - blog:
       enabled: true
@@ -177,6 +181,9 @@ extra:
     - icon: fontawesome/brands/discord
       link: https://discord.gg/ruugCSWVCJ
   generator: false
+  # version:
+  #   provider: mike
+  #   default: stable
   # alternate:
   # - name: English
   #   link: /en/ 
@@ -192,9 +199,10 @@ copyright: Copyright &copy; 2023 | vnstock.site
 nav:
   - Trang chủ: index.md
   - Hướng dẫn nhanh: 
-    - Bắt đầu: start/start.md
-    - Chọn phiên bản: start/installation.md
-    - Tài nguyên: start/resources.md
+    - Bắt đầu: start/huong-dan-su-dung-nhanh-vnstock.md
+    - Chọn phiên bản: start/huong-dan-cai-dat-vnstock-python.md
+    - Tài nguyên website: start/tai-nguyen-quan-trong-vnstock-website.md
+    # - Danh mục thẻ nội dung: tags.md
   - Tính năng:
     - Danh sách niêm yết: functions/listing.md
     - Thông tin cơ bản: functions/fundamental.md
@@ -220,22 +228,28 @@ nav:
     - Thư viện Backtesting: integrate/backtesting.md
     - SSI Fast Connect API: integrate/ssi_fast_connect_api.md
     - DNSE Lightspeed API: integrate/dnse_api.md
+    - PyTesseract OCR: integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban.md
+    - Gửi tin nhắn Telegram/Slack: integrate/telegram-slack-gui-tin-nhan-thong-bao-qua-chat-tu-python.md
+  - Insiders Program: insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program.md
   - Cộng đồng: 
     - Tham gia cộng đồng: community/join.md
-    - Tài trợ dự án: community/support.md
+    - Tài trợ dự án: community/tai-tro-du-an-vnstock.md
+    # - vnstock Roadmap: community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md
+    - Thành viên tích cực: community/vnstock-contributors-thanh-vien-tich-cuc.md
     - Lan tỏa vnstock: community/lan-toa-trai-nghiem-voi-vnstock.md
     - Góp ý & phản hồi: community/feedback.md
     - Đóng góp mã nguồn: community/contribute.md
   - FAQs: 
+    - Giấy phép: trich-dan-va-giay-phep-su-dung-vnstock.md
+    - Miễn trừ trách nhiệm: disclaimer.md
     - Sản phẩm: faq/feature.md
     - Cộng đồng: faq/community.md
-    - Ủng hộ dự án: faq/pricing.md
-    - Hỗ trợ người dùng: faq/support.md
-  - Giấy phép: cite.md
+    - Ủng hộ dự án: faq/ung-ho-du-an-vnstock.md
+    - Hỗ trợ người dùng: faq/vnstock-ho-tro-nguoi-dung.md
   - Phiên bản: changes_log.md
-  - Miễn trừ: disclaimer.md
   - Khóa học Python: course.md
   - Kiến thức: blog/index.md
+  # - Từ điển kinh tế: docs/financial-dictionary/index.md
 
 
 

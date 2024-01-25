@@ -10,10 +10,23 @@ Bạn có thể chọn cách đơn giản là gửi tặng một ly cafe như vi
 
 ## Tôi có thể đóng góp quỹ Vnstock như thế nào?
 
-Để đóng góp cho dự án, bạn có thể chọn chuyển khoản ngân hàng hoặc chuyển tiền qua ví điện tử Momo. Nếu bạn đang ở nước ngoài, bạn có thể chọn ủng hộ qua [Paypal](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US)
+Để đóng góp cho dự án, bạn lựa chọn 1 trong 4 cách sau đây:
 
-![vcb qr](../assets/images/vcb-qr-thinhvu.jpg?raw=true)
-![momo qr](../assets/images/momo-qr-thinhvu.jpeg?raw=true)
+1. **Chuyển tiền từ ví điện tử Momo**: Scan mã QR nhận tiền Momo bên dưới để chuyển tiền 👇
+
+2. **Chuyển khoản ngân hàng:** Scan mã QR nhận tiền Momo bên dưới để chuyển tiền 👇. Mã này chấp nhận chuyển tiền từ tất cả ngân hàng tại Việt Nam. Bạn cũng có thể chọn gửi tới số tài khoản ngân hàng nếu sử dụng Internet Banking qua trình duyệt web mà không tiện dùng tính năng QR. Thông tin người nhận như sau:
+   
+   - Ngân hàng nhận: `Vietcombank` chi nhánh Thanh Đa
+   - Tài khoản: nhập tên `VNSTOCK` hoặc số tài khoản `0531002498288`
+
+3. **Chuyển tiền qua Paypal** bằng link nhận tiền [tại đây](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US)
+
+4. **Tài trợ thông qua Github Sponsor** bằng thẻ thanh toán quốc tế Visa/Master Card [tại đây
+
+<figure markdown>
+  ![Momo QR](../assets/images/momo_qr_all_in_one.jpg?raw=true){ width="500" }
+  <figcaption>QR chuyển tiền Momo và mọi ngân hàng</figcaption>
+</figure>
 
 ## Quỹ Vnstock được sử dụng như thế nào?
 

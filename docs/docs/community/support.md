@@ -11,28 +11,38 @@
 Lưu ý: để có thể tài trợ cho dự án qua Github Sponsor, bạn cần đăng nhập Github và sử dụng thẻ thanh toán quốc tế.
 
 === "B1. Chọn mục Sponsor"
-	Bạn có thể tìm thấy mục Sponsor tại [Github repo](https://github.com/thinh-vu/vnstock) của Vnstock, tại Github profile [Thịnh Vũ](https://github.com/thinh-vu) hoặc phần thông tin Sponsor được nhúng vào web ở trên 👆.
+    Bạn có thể tìm thấy mục Sponsor tại [Github repo](https://github.com/thinh-vu/vnstock) của Vnstock, tại Github profile [Thịnh Vũ](https://github.com/thinh-vu) hoặc phần thông tin Sponsor được nhúng vào web ở trên 👆.
 
+    ![Chọn Sponsor](/assets/images/tai-tro-du-an-vnstock-qua-github-sponsor.png)
 
-	![Chọn Sponsor](/assets/images/tai-tro-du-an-vnstock-qua-github-sponsor.png)
 === "B2. Chọn loại hình và mức tài trợ "
 
-	![Chọn mức tài trợ](/assets/images/github_sponsor_tai_tro_vnstock_theo_cach_cua_ban.png)
+    ![Chọn mức tài trợ](/assets/images/github_sponsor_tai_tro_vnstock_theo_cach_cua_ban.png)
 
 === "B3. Nhập thông tin thanh toán"
 
-	![Thêm thông tin thanh toán](/assets/images/github_sponsor_nhap_thong_tin_thanh_toan.png)
+    ![Thêm thông tin thanh toán](/assets/images/github_sponsor_nhap_thong_tin_thanh_toan.png)
 
 ## Gửi tặng một ly cafe
 
 !!! tip "Tặng một ly cafe"
-	Bạn có thể gửi tặng tác giả một ly cafe để cảm ơn và động viên nếu thấy Vnstock giúp ích nhiều cho bạn. Bạn chọn Momo hoặc chuyển khoản tùy theo hình thức nào thuận tiện cho bạn nhất. Cám ơn bạn thật nhiều!
+    Bạn có thể gửi tặng tác giả một ly cafe để cảm ơn và động viên nếu thấy Vnstock giúp ích nhiều cho bạn. Bạn chọn một trong 4 cách sau tùy theo hình thức nào thuận tiện cho bạn nhất. Cám ơn bạn thật nhiều!
 
+1. **Chuyển tiền từ ví điện tử Momo**: Scan mã QR nhận tiền Momo bên dưới để chuyển tiền 👇
 
-<div id="QR" align="center">
-  <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vcb-qr-thinhvu.jpg"/>
-  <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/momo-qr-thinhvu.jpeg"/>
-</div>
+2. **Chuyển khoản ngân hàng:** Scan mã QR nhận tiền Momo bên dưới để chuyển tiền 👇. Mã này chấp nhận chuyển tiền từ tất cả ngân hàng tại Việt Nam. Bạn cũng có thể chọn gửi tới số tài khoản ngân hàng nếu sử dụng Internet Banking qua trình duyệt web mà không tiện dùng tính năng QR. Thông tin người nhận như sau:
+   
+   - Ngân hàng nhận: `Vietcombank` chi nhánh Thanh Đa
+   - Tài khoản: nhập tên `VNSTOCK` hoặc số tài khoản `0531002498288`
+
+3. **Chuyển tiền qua Paypal** bằng link nhận tiền [tại đây](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US)
+
+4. **Tài trợ thông qua Github Sponsor** bằng thẻ thanh toán quốc tế Visa/Master Card [tại đây](https://github.com/sponsors/thinh-vu)
+
+<figure markdown>
+  ![Momo QR](../assets/images/momo_qr_all_in_one.jpg?raw=true){ width="500" }
+  <figcaption>QR chuyển tiền Momo và mọi ngân hàng</figcaption>
+</figure>
 
 ## Sử dụng dịch vụ
 

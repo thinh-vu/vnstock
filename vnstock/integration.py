@@ -2,7 +2,7 @@
 from .config import *
 import os
 from .technical import stock_historical_data
-from .utils import get_username, get_os
+from .utils import get_username, get_os, get_path_delimiter
 
 # AMIBROKER CSV EXPORT
 
@@ -414,3 +414,94 @@ def export_for_openbb (df, file_name='ohlcv_export', extension='csv'):
         df.to_csv(f'{path}/{file_name}.{extension}', index=False)
     elif extension == 'xlsx':
         df.to_excel(f'{path}/{file_name}.{extension}', index=False)
+
+
+# SEND MESSAGES TO SLACK
+def slack_send_file(token_key, slack_channel, text_comment, file_path, title=None):
+    """
+    Send a file to a Slack channel using either a bot or a user token.
+
+    Args:
+        token_key (str): Bot token (start with 'xoxb-..') or user token (start with 'xoxp-..').
+        slack_channel (str): Name of the target channel, e.g., '#mkt_daily_tracking'.
+        text_comment (str): Text comment for the file.
+        file_path (str): Path to the target file.
+        title (str): Optional title for the file.
+
+    Returns:
+        dict: Response from the Slack API in JSON format.
+    """
+    file_name = file_path.split(get_path_delimiter())[-1]
+    file_type = file_name.split('.')[-1]
+    file_bytes = open(file_path, 'rb').read()
+    url = 'https://slack.com/api/files.upload'
+    payload = {
+        'token': token_key,
+        'filename': file_name,
+        'channels': slack_channel,
+        'filetype': file_type,
+        'initial_comment': text_comment,
+        'title': title
+    }
+    r = requests.post(url, payload, files={'file': file_bytes})
+    return r.json()
+
+def slack_send_message(token_key, slack_channel, message):
+    """
+    Send a message to a Slack channel using either a bot or a user token.
+
+    Args:
+        token_key (str): Bot token (start with 'xoxb-..') or user token (start with 'xoxp-..').
+        slack_channel (str): Name of the target channel, e.g., '#mkt_daily_tracking'.
+        message (str): Text message for the file.
+
+    Returns:
+        dict: Response from the Slack API in JSON format.
+    """
+    header = {
+        'Content-type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer {}'.format(token_key)
+    }
+    payload = json.dumps({
+        "channel": "{}".format(slack_channel),
+        "text": "{}".format(message)
+    })
+    r = requests.post('https://slack.com/api/chat.postMessage', data=payload, headers=header)
+    return r.json()
+
+# SEND MESSAGE TO TELEGRAM
+def telegram_send_photo(token_key, chat_id, message, file_path):
+    """
+    Send a photo to a Telegram group.
+
+    Args:
+        token_key (str): Telegram token key.
+        chat_id (str): ID of the target Telegram channel/group, e.g., '-1001439492355'.
+        message (str): Your text message.
+        file_path (str): Path of the file/photo to send via Telegram.
+
+    Returns:
+        object: Response object from the Telegram API.
+    """
+    file_name = file_path.split(get_path_delimiter())[-1]
+    file_type = file_name.split('.')[-1]
+    files = [('photo', (file_name, open(file_path, 'rb'), 'image/{}'.format(file_type)))]
+    url = 'https://api.telegram.org/{}/sendPhoto'.format(token_key)
+    payload = {'chat_id': chat_id, 'caption': message}
+    response = requests.post(url, headers={}, data=payload, files=files)
+    return response
+
+def telegram_send_message(token_key, chat_id, message):
+    """
+    Send a message to a Telegram group.
+
+    Args:
+        token_key (str): Telegram token key.
+        chat_id (str): ID of the target Telegram channel/group, e.g., '-1001439492355'.
+        message (str): Your text message.
+
+    Returns:
+        object: Response object from the Telegram API.
+    """
+    tel_url = 'https://api.telegram.org/{}/sendMessage?chat_id={}&text={}'.format(token_key, chat_id, message)
+    return requests.post(tel_url)
