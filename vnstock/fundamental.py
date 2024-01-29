@@ -26,7 +26,7 @@ def organ_listing (lang='vi', headers=ssi_headers):
     status = response.status_code
     if status == 200:
         data = response.json()
-        print('Total number of companies: ', data['totalCount'])
+        # print('Total number of companies: ', data['totalCount'])
         df = pd.DataFrame(data['items'])
         return df
     else:
