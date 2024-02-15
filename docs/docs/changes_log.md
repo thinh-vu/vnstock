@@ -1,4 +1,10 @@
 # Lịch sử cập nhật
+## 15-2-2024
+> Phát hành bản nâng cấp tính năng truy xuất dữ liệu BCTC - phiên bản 0.2.8.8
+
+- Cập nhật nâng cấp cấu trúc API từ SSI cho hàm `financial_report` giúp truy xuất dữ liệu thuận tiện hơn
+  - Cho phép 
+- Cập nhật Demo notebook và tài liệu hướng dẫn tương ứng
 
 ## 21-1-2024
 - Bổ sung tích hợp cho phép sử dụng các hàm gửi tin nhắn từ vnstock qua Telegram/Slack với các channel/group chat được cài đặt.
