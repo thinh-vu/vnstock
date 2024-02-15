@@ -1,18 +1,22 @@
 # Lịch sử cập nhật
-## 15-2-2024
-> Phát hành bản nâng cấp tính năng truy xuất dữ liệu BCTC - phiên bản 0.2.8.9
 
+## 15-2-2024
+!!! tip "Cập nhật bản 2.8.9"
+  Phát hành bản nâng cấp tính năng truy xuất dữ liệu BCTC - phiên bản 0.2.8.9
+  
 - Cập nhật nâng cấp cấu trúc API từ SSI cho hàm `financial_report` giúp truy xuất dữ liệu thuận tiện hơn
   - Cho phép chọn số kỳ tải báo cáo và năm gần nhất để làm mốc tính số kỳ tra cứu dữ liệu về quá khứ.
 - Cập nhật Demo notebook và tài liệu hướng dẫn tương ứng
 
-!!! hot "Cập nhật bản 2.8.8"
+## 29-1-2024
+!!! tip "Cập nhật bản 2.8.8"
 	Cập nhật thay đổi từ ngày 16/12/2023 ở phiên bản `beta` sang `main` và phát hành chính thức phiên bản 2.8.8. 
 	
 - Cập nhật mã nguồn hàm `financial_report` sửa lỗi triệt để lỗi sử dụng 'Excel file format cannot be determined, you must specify an engine manually' do dữ liệu trả về không phải định dạng Excel.
   -   Nguồn dữ liệu từ Fiintrade của SSI sử dụng mã `OrganCode` để tra cứu thông tin công ty trong đó có báo cáo tài chính. Có khoảng > 600 mã cổ phiếu có mã symbol khác OrganCode do đó có nhiều mã khi tra cứu BCTC với mã symbol sẽ gây ra rỗi trong khi với các mã khác thì không. Ví dụ `YTC` có OrganCode là `YTECO` dùng để tra cứu BCTC.
   -   Bổ sung `openpyxl` là gói phụ thuộc để đọc dữ liệu trả về từ API dưới dạng file Excel. Lỗi này xảy ra khi cài bản Python thuần. Không gặp lỗi với Google Colab hoặc Anaconda.
 - Sửa lỗi vnstock web app
+
 ## 21-1-2024
 - Bổ sung tích hợp cho phép sử dụng các hàm gửi tin nhắn từ vnstock qua Telegram/Slack với các channel/group chat được cài đặt.
 - Cập nhật nội dung trang tài liệu
