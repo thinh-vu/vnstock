@@ -1,11 +1,22 @@
 # Lịch sử cập nhật
+<<<<<<< HEAD
 ## 15-2-2024
 > Phát hành bản nâng cấp tính năng truy xuất dữ liệu BCTC - phiên bản 0.2.8.8
 
 - Cập nhật nâng cấp cấu trúc API từ SSI cho hàm `financial_report` giúp truy xuất dữ liệu thuận tiện hơn
   - Cho phép 
 - Cập nhật Demo notebook và tài liệu hướng dẫn tương ứng
+=======
+## 23-1-2024
+>>>>>>> efa6a280453fd2445cdeb5de8d9652b3e5a589b2
 
+!!! hot "Cập nhật bản 2.8.8"
+	Cập nhật thay đổi từ ngày 16/12/2023 ở phiên bản `beta` sang `main` và phát hành chính thức phiên bản 2.8.8. 
+	
+- Cập nhật mã nguồn hàm `financial_report` sửa lỗi triệt để lỗi sử dụng 'Excel file format cannot be determined, you must specify an engine manually' do dữ liệu trả về không phải định dạng Excel.
+  -   Nguồn dữ liệu từ Fiintrade của SSI sử dụng mã `OrganCode` để tra cứu thông tin công ty trong đó có báo cáo tài chính. Có khoảng > 600 mã cổ phiếu có mã symbol khác OrganCode do đó có nhiều mã khi tra cứu BCTC với mã symbol sẽ gây ra rỗi trong khi với các mã khác thì không. Ví dụ `YTC` có OrganCode là `YTECO` dùng để tra cứu BCTC.
+  -   Bổ sung `openpyxl` là gói phụ thuộc để đọc dữ liệu trả về từ API dưới dạng file Excel. Lỗi này xảy ra khi cài bản Python thuần. Không gặp lỗi với Google Colab hoặc Anaconda.
+- Sửa lỗi vnstock web app
 ## 21-1-2024
 - Bổ sung tích hợp cho phép sử dụng các hàm gửi tin nhắn từ vnstock qua Telegram/Slack với các channel/group chat được cài đặt.
 - Cập nhật nội dung trang tài liệu
@@ -38,7 +49,7 @@
   
 ## 14-12-2023
   
-  Chính thức phát hành các thay đổi từ nhánh Beta trong phiên bản 0.2.8.7. Chi tiết cập nhật qua blog: [tại đây](https://vnstock.site/2023/12/15/ra-mat-vnstock-insider-program-cap-nhat-nhieu-tinh-nang-thu-vi/)
+  Chính thức phát hành các thay đổi từ nhánh Beta trong phiên bản 2.8.7. Chi tiết cập nhật qua blog: [tại đây](https://vnstock.site/2023/12/15/ra-mat-vnstock-insider-program-cap-nhat-nhieu-tinh-nang-thu-vi/)
 
 - Ra mắt Vnstock Insiders Program cung cấp quyền truy cập tới các kho chứa mã nguồn riêng tư (private repo)
 
@@ -59,6 +70,13 @@
 - Đưa `plotly` thành thư viện tùy chọn, chỉ phải import vào dự án nếu người dùng có nhu cầu sử dụng tính năng vẽ đồ thị. Việc này giúp vnstock chạy trên môi trường khác Google Colab không cần cài đặt thêm `plotly` theo mặc định. Mã nguồn được cập nhật lên bản beta trên Github, thay đổi sẽ được đẩy lên PyPI trong tuần tới.
 - Cập nhật tài liệu hướng dẫn cho nội dung lấy dữ liệu giá lịch sử.
 - Cập nhật tài liệu hướng dẫn cách cài đặt thư viện TA-Lib cho phân tích kỹ thuật trên máy tính Windows.
+
+## 10-12-2023
+- Bổ sung tính năng truy xuất dữ liệu quỹ mở từ fmarket.vn, phát triển từ mã nguồn do `andrey_jef` đóng góp. Tài liệu mô tả và demo notebook đã được cập nhật tương ứng.
+- Đưa `plotly` thành thư viện tùy chọn, chỉ phải import vào dự án nếu người dùng có nhu cầu sử dụng tính năng vẽ đồ thị. Việc này giúp vnstock chạy trên môi trường khác Google Colab không cần cài đặt thêm `plotly` theo mặc định. Mã nguồn được cập nhật lên bản beta trên Github, thay đổi sẽ được đẩy lên PyPI trong tuần tới.
+- Cập nhật tài liệu hướng dẫn cho nội dung lấy dữ liệu giá lịch sử.
+- Cập nhật tài liệu hướng dẫn cách cài đặt thư viện TA-Lib cho phân tích kỹ thuật trên máy tính Windows.
+
 
 ## 09-11-2023
 

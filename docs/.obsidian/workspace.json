@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
+                "file": "docs/changes_log.md",
                 "mode": "source",
                 "source": false
               }
@@ -93,7 +93,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
+                "file": "docs/changes_log.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -110,7 +110,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
+                "file": "docs/changes_log.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -133,7 +133,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md"
+                "file": "docs/changes_log.md"
               }
             }
           },
@@ -164,13 +164,13 @@
   },
   "active": "8387f7bed2e0fbf4",
   "lastOpenFiles": [
+    "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
     "docs/community/tai-tro-du-an-vnstock.md",
     "docs/assets/templates/announcement.md",
     "docs/community/support.md",
     "docs/community/lan-toa-trai-nghiem-voi-vnstock.md",
     "docs/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program.md",
     "docs/start/huong-dan-cai-dat-vnstock-python.md",
-    "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
     "docs/start/tai-nguyen-quan-trong-vnstock-website.md",
     "docs/course.md",
     "docs/assets/images/Python Course 5 - Phan tich du lieu va giao dich chung khoan.png",
