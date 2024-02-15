@@ -1,14 +1,10 @@
 # Lịch sử cập nhật
-<<<<<<< HEAD
 ## 15-2-2024
-> Phát hành bản nâng cấp tính năng truy xuất dữ liệu BCTC - phiên bản 0.2.8.8
+> Phát hành bản nâng cấp tính năng truy xuất dữ liệu BCTC - phiên bản 0.2.8.9
 
 - Cập nhật nâng cấp cấu trúc API từ SSI cho hàm `financial_report` giúp truy xuất dữ liệu thuận tiện hơn
-  - Cho phép 
+  - Cho phép chọn số kỳ tải báo cáo và năm gần nhất để làm mốc tính số kỳ tra cứu dữ liệu về quá khứ.
 - Cập nhật Demo notebook và tài liệu hướng dẫn tương ứng
-=======
-## 23-1-2024
->>>>>>> efa6a280453fd2445cdeb5de8d9652b3e5a589b2
 
 !!! hot "Cập nhật bản 2.8.8"
 	Cập nhật thay đổi từ ngày 16/12/2023 ở phiên bản `beta` sang `main` và phát hành chính thức phiên bản 2.8.8. 

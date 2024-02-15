@@ -15,6 +15,8 @@
 - `symbol` là mã chứng khoán bạn muốn phân tích
 - `report_type` nhận 1 trong 3 giá trị: `IncomeStatement` cho phép trả về báo cáo kết quả kinh doanh, `BalanceSheet` trả về báo cáo cân đối kế toán, `CashFlow` trả về báo cáo lưu chuyển tiền tệ
 - `frequency` nhận 1 trong 2 giá trị: `Quarterly` cho phép trả về báo cáo theo quý, `Yearly` trả về dữ liệu theo năm
+- `periods=15`: 🆕 từ v0.2.8.9. Cho phép chọn số kỳ tải báo cáo
+- `latest_year`: 🆕 từ v0.2.8.9. Cho phép chọn mốc thời gian tra cứu nhất định để truy xuất ngược dữ liệu về quá khứ. Ví dụ 15 kỳ kể từ năm 202 (hoặc năm bất kỳ). Giá trị mặc định là `None` cho phép chọn năm hiện tại là mốc tính toán.
 
 Lưu ý: Dữ liệu  trả về có đơn vị Tỷ VND
 
