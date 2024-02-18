@@ -2,7 +2,7 @@
 
 ## 15-2-2024
 !!! tip "Cập nhật bản 2.8.9"
-  Phát hành bản nâng cấp tính năng truy xuất dữ liệu BCTC - phiên bản 0.2.8.9
+	Phát hành bản nâng cấp tính năng truy xuất dữ liệu BCTC - phiên bản 0.2.8.9
   
 - Cập nhật nâng cấp cấu trúc API từ SSI cho hàm `financial_report` giúp truy xuất dữ liệu thuận tiện hơn
   - Cho phép chọn số kỳ tải báo cáo và năm gần nhất để làm mốc tính số kỳ tra cứu dữ liệu về quá khứ.
