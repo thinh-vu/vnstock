@@ -282,18 +282,29 @@ def company_news (symbol='TCB', page_size=15, page=0, headers=tcbs_headers):
 
 # FINANCIAL REPORT
 ## Financial report from SSI
-def financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly', headers=ssi_headers): # Quarterly, Yearly
+def financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly', periods=15, latest_year=None, headers=ssi_headers): # Quarterly, Yearly
     """
     Return financial reports of a stock symbol by type and period.
     Args:
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
         report_type (:obj:`str`, required): BalanceSheet, IncomeStatement, CashFlow
         report_range (:obj:`str`, required): Yearly or Quarterly.
+        periods (:obj: `int`, required): Numbers of periods to retrieving data
+        latest_year (:obj: `int`, required): The latest year to start looking back for data.
     """
     symbol = symbol.upper()
     organ_code = organ_listing().query(f'ticker == @symbol')['organCode'].values[0]
-    url = f'https://fiin-fundamental.ssi.com.vn/FinancialStatement/Download{report_type}?language=vi&OrganCode={organ_code}&Skip=0&Frequency={frequency}'
+    this_year = str(datetime.now().year)
+    if latest_year == None:
+      latest_year = this_year
+    else:
+      if isinstance(latest_year, int) != True:
+        print('Please input latest_year as int number')
+      else:
+        pass
+    url = f'https://fiin-fundamental.ssi.com.vn/FinancialStatement/Download{report_type}?language=vi&OrganCode={organ_code}&Skip=0&Frequency={frequency}&numberOfPeriod={periods}&latestYear={latest_year}'
     response = requests.get(url, headers=headers)
+    # print(response.text)
     status = response.status_code
     if status == 200:
         df = pd.read_excel(BytesIO(response.content), skiprows=7).dropna()

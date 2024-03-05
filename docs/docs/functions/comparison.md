@@ -121,7 +121,7 @@ industry_analysis("VNM", lang='vi')
 - Kết quả:
 
 ```shell
->>> industry_analysis('VNM', label='vi')
+>>> industry_analysis('VNM', lang='vi')
 Mã CP                          VNM     MSN    MCH    QNS    KDC     IDP    SBT    MML    PAN    MCM    VSF    VOC    OCH    VSN    CLX    LSS     KTC    HSL    HKB
 Vốn hóa (tỷ)                  None  107634  51307  17543  16102   13204  11478  10108   4303   4232   3979   2890   1680   1618   1274    932     383    219     46
 Giá                           None   75600  71603  49149  62600  224000  15500  30900  20600  38473   7958  23727   8400  19994  14713  12500   10500   6180    900

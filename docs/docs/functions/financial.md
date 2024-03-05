@@ -15,85 +15,90 @@
 - `symbol` là mã chứng khoán bạn muốn phân tích
 - `report_type` nhận 1 trong 3 giá trị: `IncomeStatement` cho phép trả về báo cáo kết quả kinh doanh, `BalanceSheet` trả về báo cáo cân đối kế toán, `CashFlow` trả về báo cáo lưu chuyển tiền tệ
 - `frequency` nhận 1 trong 2 giá trị: `Quarterly` cho phép trả về báo cáo theo quý, `Yearly` trả về dữ liệu theo năm
+- `periods=15`: 🆕 từ v0.2.8.9. Cho phép chọn số kỳ tải báo cáo
+- `latest_year`: 🆕 từ v0.2.8.9. Cho phép chọn mốc thời gian tra cứu nhất định để truy xuất ngược dữ liệu về quá khứ. Ví dụ 15 kỳ kể từ năm 202 (hoặc năm bất kỳ). Giá trị mặc định là `None` cho phép chọn năm hiện tại là mốc tính toán.
 
 Lưu ý: Dữ liệu  trả về có đơn vị Tỷ VND
 
 ### Báo cáo kinh doanh
 
 ```python
-financial_report (symbol='SSI', report_type='IncomeStatement', frequency='Quarterly')
+financial_report (symbol='SSI', report_type='IncomeStatement', frequency='Quarterly', periods=15, latest_year=None)
 ```
 
 Kết quả trả về nha sau:
     
 ```shell
->>> financial_report (symbol='SSI', report_type='IncomeStatement', frequency='Quarterly')
-                                             CHỈ TIÊU       Q2 2021  ...       Q2 2023       Q3 2023
-0                                 Doanh thu hoạt động  1.766190e+12  ...  1.679982e+12  1.941239e+12
-1   Lãi từ các tài sản tài chính ghi nhận thông qu...  5.945796e+11  ...  7.074174e+11  7.646041e+11
-2                       Lãi bán các tài sản tài chính  3.597305e+11  ...  2.414507e+11  2.494068e+11
-3   Chêch lệch tăng đánh giá lại các tài sản tài c...  9.998599e+10  ...  3.001238e+10  7.229216e+10
-4   Cổ tức, tiền lãi phát sinh từ tài sản tài chín...  1.348630e+11  ...  4.359542e+11  4.429051e+11
-..                                                ...           ...  ...           ...           ...
-78          Thu nhập toàn diện phân bổ cho chủ sở hữu  5.908075e+11  ...  5.690949e+11  7.021931e+11
-79  Thu nhập toàn diện phân bổ cho cổ đông không k...  0.000000e+00  ...  0.000000e+00  0.000000e+00
-80             Thu nhập thuần trên cổ phiếu phổ thông  0.000000e+00  ...  0.000000e+00  0.000000e+00
-81                          Lãi cơ bản trên cổ phiếu   0.000000e+00  ...  0.000000e+00  0.000000e+00
-82                   Thu nhập pha loãng trên cổ phiếu  0.000000e+00  ...  0.000000e+00  0.000000e+00
+>>> income_df = financial_report (symbol='SSI', report_type='IncomeStatement', frequency='Quarterly', periods=15, latest_year=None)
+income_df.iloc[:, :5]
+                                             CHỈ TIÊU       Q2 2020       Q3 2020       Q4 2020       Q1 2021
+0                                 Doanh thu hoạt động  1.327443e+12  9.195507e+11  1.174729e+12  1.505580e+12
+1   Lãi từ các tài sản tài chính ghi nhận thông qu...  7.340652e+11  3.273310e+11  5.215590e+11  6.001373e+11
+2                       Lãi bán các tài sản tài chính  2.194943e+11  1.175892e+11  2.630871e+11  3.947613e+11
+3   Chêch lệch tăng đánh giá lại các tài sản tài c...  4.326673e+11  9.963909e+10  1.132451e+11  8.292811e+10
+4   Cổ tức, tiền lãi phát sinh từ tài sản tài chín...  8.190361e+10  1.101027e+11  1.452268e+11  1.224479e+11
+..                                                ...           ...           ...           ...           ...
+78          Thu nhập toàn diện phân bổ cho chủ sở hữu  5.372627e+11  2.924053e+11  3.925444e+11  4.246680e+11
+79  Thu nhập toàn diện phân bổ cho cổ đông không k...  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+80             Thu nhập thuần trên cổ phiếu phổ thông  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+81                          Lãi cơ bản trên cổ phiếu   0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+82                   Thu nhập pha loãng trên cổ phiếu  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
 
-[83 rows x 11 columns]
+[83 rows x 5 columns]
 ```
 
 ### Bảng cân đối kế toán
 
 ```python
-financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly')
+financial_report (symbol='SSI', report_type='BalanceSheet', frequency='quarterly', periods=15, latest_year=None)
 ```
 
 Kết quả trả về như sau:
 
 ```shell
->>> financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly')
-                                      CHỈ TIÊU       Q2 2021       Q3 2021  ...       Q1 2023       Q2 2023       Q3 2023
-0                            TỔNG CỘNG TÀI SẢN  4.190985e+13  4.760360e+13  ...  5.270890e+13  5.013608e+13  5.528245e+13
-1                             TÀI SẢN NGẮN HẠN  3.767755e+13  4.131681e+13  ...  4.918462e+13  4.662242e+13  5.184164e+13
-2                   Tài sản tài chính ngắn hạn  3.761463e+13  4.123722e+13  ...  4.904718e+13  4.648384e+13  5.171536e+13
-3                    Tiền và tương đương tiền   2.433256e+11  2.898345e+11  ...  1.425135e+11  1.553829e+11  4.109663e+11
-4                                         Tiền  1.942694e+11  2.678036e+11  ...  1.386841e+11  1.472953e+11  1.820621e+11
-..                                         ...           ...           ...  ...           ...           ...           ...
-155                   Vốn ngân sách nhà nước    0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
-156          Nguồn kinh phí đã hình thành TSCĐ  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
-157  LỢI ÍCH CỦA CỔ ĐÔNG THIỂU SỐ (trước 2015)  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
-158                        TỔNG CỘNG NGUỒN VỐN  4.190985e+13  4.760360e+13  ...  5.270890e+13  5.013608e+13  5.528245e+13
-159      LỢI NHUẬN ĐÃ PHÂN PHỐI CHO NHÀ ĐẦU TƯ  0.000000e+00  0.000000e+00  ...  0.000000e+00  0.000000e+00  0.000000e+00
+>>> balance_df = financial_report (symbol='SSI', report_type='BalanceSheet', frequency='quarterly', periods=15, latest_year=None)
+>>> balance_df.iloc[:, :5]
+                                      CHỈ TIÊU       Q2 2020       Q3 2020       Q4 2020       Q1 2021
+0                            TỔNG CỘNG TÀI SẢN  2.592647e+13  2.693295e+13  3.576953e+13  3.762330e+13
+1                             TÀI SẢN NGẮN HẠN  2.004129e+13  2.105024e+13  2.904003e+13  3.286192e+13
+2                   Tài sản tài chính ngắn hạn  2.000235e+13  2.100282e+13  2.888881e+13  3.280760e+13
+3                    Tiền và tương đương tiền   2.024338e+11  2.123246e+11  3.632519e+11  2.792879e+11
+4                                         Tiền  1.913260e+11  2.123246e+11  2.319712e+11  2.251205e+11
+..                                         ...           ...           ...           ...           ...
+155                   Vốn ngân sách nhà nước    0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+156          Nguồn kinh phí đã hình thành TSCĐ  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+157  LỢI ÍCH CỦA CỔ ĐÔNG THIỂU SỐ (trước 2015)  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+158                        TỔNG CỘNG NGUỒN VỐN  2.592647e+13  2.693295e+13  3.576953e+13  3.762330e+13
+159      LỢI NHUẬN ĐÃ PHÂN PHỐI CHO NHÀ ĐẦU TƯ  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
 
-[160 rows x 11 columns]
+[160 rows x 5 columns]
 ```
 
 ### Báo cáo lưu chuyển tiền tệ
 
 ```python
-financial_report (symbol='SSI', report_type='CashFlow', frequency='Quarterly')
+financial_report (symbol='SSI', report_type='CashFlow', frequency='Quarterly', periods=15, latest_year=None)
 ```
 
 Kết quả trả về như sau:
 
 ```shell
->>> financial_report (symbol='SSI', report_type='CashFlow', frequency='Quarterly')
-                                             CHỈ TIÊU       Q2 2021  ...       Q2 2023       Q3 2023
-0   Lưu chuyển thuần từ hoạt động kinh doanh chứng... -4.371889e+12  ...  3.570369e+12 -4.136934e+12
-1   Lợi nhuận từ hoạt động kinh doanh trước thay đ...  3.506681e+11  ...  2.855112e+11  3.169111e+11
-2                                Lợi nhuận trước thuế  7.334780e+11  ...  7.065172e+11  8.803150e+11
-3                            Điều chỉnh cho các khoản -3.688521e+11  ... -4.205791e+11 -5.597634e+11
-4                            Khấu hao tài sản cố định  1.454978e+10  ...  2.566442e+10  2.346254e+10
-..                                                ...           ...  ...           ...           ...
-93          Tiền và các khoản tương đương tiền đầu kỳ  2.792879e+11  ...  1.425135e+11  1.553829e+11
-94                Tiền mặt, tiền gửi ngân hàng đầu kỳ  2.253831e+11  ...  1.389411e+11  1.471383e+11
-95                         Các khoản tương đương tiền  5.416740e+10  ...  3.829481e+09  8.087528e+09
-96  Ảnh hưởng của thay đổi tỷ giá hối đoán quy đổi... -2.626010e+08  ... -2.570934e+08  1.570900e+08
-97        Tiền và các khoảng tương đương tiền cuối kỳ  2.433256e+11  ...  1.553829e+11  4.109663e+11
+>>> cashflow_df = financial_report (symbol='SSI', report_type='CashFlow', frequency='Quarterly', periods=15, latest_year=None)
+>>> cashflow_df.iloc[:, :5]
+                                             CHỈ TIÊU       Q2 2020       Q3 2020       Q4 2020       Q1 2021
+0   Lưu chuyển thuần từ hoạt động kinh doanh chứng... -1.405338e+12 -3.067307e+12 -7.146167e+12 -7.818107e+11
+1   Lợi nhuận từ hoạt động kinh doanh trước thay đ...  2.548685e+10  8.183428e+10  1.992083e+11  2.596829e+11
+2                                Lợi nhuận trước thuế  6.515280e+11  4.208731e+11  4.771873e+11  5.300678e+11
+3                            Điều chỉnh cho các khoản -2.123427e+11 -1.965194e+11 -2.268494e+11 -2.521012e+11
+4                            Khấu hao tài sản cố định  1.315363e+10  1.378121e+10  1.333019e+10  1.445720e+10
+..                                                ...           ...           ...           ...           ...
+93          Tiền và các khoản tương đương tiền đầu kỳ  2.824377e+11  2.024338e+11  2.123246e+11  3.632519e+11
+94                Tiền mặt, tiền gửi ngân hàng đầu kỳ  2.485882e+11  1.911860e+11  2.123605e+11  2.323398e+11
+95                         Các khoản tương đương tiền  3.120858e+10  1.110788e+10  0.000000e+00  1.312807e+11
+96  Ảnh hưởng của thay đổi tỷ giá hối đoán quy đổi...  2.640888e+09  1.399426e+08 -3.589952e+07 -3.685565e+08
+97        Tiền và các khoảng tương đương tiền cuối kỳ  2.024338e+11  2.123246e+11  3.632519e+11  2.792879e+11
 
-[98 rows x 11 columns]
+[98 rows x 5 columns]
 ```
 
 
