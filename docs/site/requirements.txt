@@ -1,5 +1,0 @@
-# requirements to run mkdocs
-mkdocs-material
-mkdocs-glightbox
-mkdocs-rss-plugin
-mkdocs-material[imaging]

@@ -4,27 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "0e50805bc2e808d0",
+        "id": "70911de90d412df6",
         "type": "tabs",
         "children": [
           {
-            "id": "8387f7bed2e0fbf4",
+            "id": "0e3a71ec0b166795",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/changes_log.md",
+                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
                 "mode": "source",
                 "source": false
               }
-            }
-          },
-          {
-            "id": "e36703fec5dad9cf",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {}
             }
           }
         ]
@@ -93,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/changes_log.md",
+                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -110,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/changes_log.md",
+                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -133,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/changes_log.md"
+                "file": "docs/start/huong-dan-su-dung-nhanh-vnstock.md"
               }
             }
           },
@@ -162,17 +154,19 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "8387f7bed2e0fbf4",
+  "active": "0e3a71ec0b166795",
   "lastOpenFiles": [
+    "docs/start/tai-nguyen-quan-trong-vnstock-website.md",
+    "docs/start/huong-dan-cai-dat-vnstock-python.md",
+    "docs/course.md",
+    "docs/assets/images/hinh-anh-thuc-te-giao-trinh-khoa-hoc-google-colab.png",
+    "docs/changes_log.md",
     "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
     "docs/community/tai-tro-du-an-vnstock.md",
     "docs/assets/templates/announcement.md",
     "docs/community/support.md",
     "docs/community/lan-toa-trai-nghiem-voi-vnstock.md",
     "docs/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program.md",
-    "docs/start/huong-dan-cai-dat-vnstock-python.md",
-    "docs/start/tai-nguyen-quan-trong-vnstock-website.md",
-    "docs/course.md",
     "docs/assets/images/Python Course 5 - Phan tich du lieu va giao dich chung khoan.png",
     "docs/assets/images/Python Course 5 - Phan tich du lieu va giao dich chung khoan (1).png",
     "docs/community/vnstock-road-map-lo-trinh-phat-trien-vnstock.md",
@@ -191,15 +185,12 @@
     "assets/templates/Photo layout.md",
     "gioi-thieu/dong-gop-phat-trien-learn-anything.md",
     "assets/images/momo_qr_all_in_one.jpg",
-    "gioi-thieu/dinh-huong-phat-trien-noi-dung.md",
-    "khoa-hoc/hoc-tap-cung-learn-anything.md",
     "assets/images/python_course_5_build_your_own_trading_bot_from_scratch.png",
     "assets/images/thao-tac-voi-bang-table-trong-obsidian.png",
     "assets/images/tao-repo-github-tren-website.png",
     "assets/images/su-dung-jupyter-notebook-tren-github-codespace-lap-trinh-python.png",
     "assets/images/screenshot-homepage-learn-anything.png",
     "assets/images/python_course_4_thinhvu_square.png",
-    "assets/images/prompt-yeu-cau-github-copilot-viet-code-trong-visual-studio-code.png",
     "assets/images/logo icon youtube channel.psd",
     "assets/images",
     "assets/post-folder-template.zip",
