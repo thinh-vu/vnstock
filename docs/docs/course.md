@@ -159,6 +159,12 @@ Bắt đầu từ Khóa 5 (K5), chương trình đào tạo Python được xây
 
 ## Chia sẻ của học viên
 
+=== "Thanh Nguyễn"
+	<div class="result" markdown>
+	![Thanh Nguyễn](https://scontent.fsgn5-9.fna.fbcdn.net/v/t1.6435-9/82401600_2486428701466708_813343724984598528_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=5f2048&_nc_ohc=o-xWAT3ZusAAX90pq_y&_nc_oc=AQnSpNqS1gutsP-IerhNpbedsaVzBoTmUypdCpmptzufWgOU7z2o6yEc8XEr0SL9Nh-aYuLqJVJhepiDz7WsWjlL&_nc_ht=scontent.fsgn5-9.fna&oh=00_AfDoHbW_azcb_8OtQ0J-hJOVyDGYuwGeqG-Dn3_zFtsy4g&oe=66169B60){ align=left width=110 }
+	!!! quote "Thanh Nguyễn @ Nhà đầu tư cá nhân | HCM"
+		Sau khoá học em có thể chạy định giá hàng loạt, có thể biết được công ty nào có cái gì mới. Biết cái mới này là theo kiểu hàng loạt. Cái đó mà ngồi soi từng báo cáo thì tới tết Công gô!
+	</div>
 === "Dũng Nguyễn"
 	<div class="result" markdown>
 	![Dũng Nguyễn](https://course.learn-anything.vn/wp-content/uploads/2024/03/tien-dung-nguyen-public-testimonial-python5.jpg){ align=left width=110 }
@@ -188,7 +194,7 @@ Bắt đầu từ Khóa 5 (K5), chương trình đào tạo Python được xây
 === "Chi Vu"
 	<div class="result" markdown>
 	![Chi Vũ](https://course.learn-anything.vn/wp-content/uploads/2024/01/chi_vu_tiktok_testimonial.jpeg){ align=left width=100 }
-	!!! quote "Chi Vũ - Marketing Solution @ Tiktok, HCM"
+	!!! quote "Chi Vũ - Marketing Solution @ Tiktok | HCM"
 		Cảm ơn Thịnh nhiều, các kiến thức trong khoá khá nhiều nhưng được sắp xếp cô đọng, tớ học xong thấy tự tin khi nhìn dữ liệu hơn hẳn kaka.
 	</div>
 === "Bonnie Đinh"
