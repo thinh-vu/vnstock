@@ -148,6 +148,7 @@
   },
   "active": "87839185651a80b3",
   "lastOpenFiles": [
+<<<<<<< Updated upstream
     "site/feed_rss_updated.xml",
     "site/feed_rss_created.xml",
     "site/search/search_index.json",
@@ -169,5 +170,41 @@
     "site/assets/images/vnstock_google_sheet_result.png",
     "site/assets/images/vnstock_download_stats.png",
     "site/assets/images/vnstock_docs_home.png"
+=======
+    "ta_lib_colab_demo.ipynb",
+    "secret_template.yml",
+    "pytesseract_ocr_demo.ipynb",
+    "mkdocs.yml",
+    "license.md",
+    "google31049145a24afdba.html",
+    "gen2_vnstock_demo_index_all_functions_testing_2023.ipynb",
+    "docs/trich-dan-va-giay-phep-su-dung-vnstock.md",
+    "docs/stylesheets/extra.css",
+    "docs/stylesheets",
+    "docs/start/tai-nguyen-quan-trong-vnstock-website.md",
+    "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
+    "docs/start/huong-dan-cai-dat-vnstock-python.md",
+    "docs/start",
+    "docs/requirements.txt",
+    "docs/material/overrides/partials/integrations/analytics/custom.html",
+    "docs/assets/templates/substack subscribe.md",
+    "docs/assets/templates/new-post.md",
+    "docs/assets/templates/announcement.md",
+    "docs/assets/templates/alias.md",
+    "docs/assets/templates/Youtube Video embed.md",
+    "docs/assets/templates/Social link.md",
+    "docs/assets/templates/Photo layout.md",
+    "docs/assets/templates/Button.md",
+    "docs/assets/images/vnstock_web_app_fundamental_section.png",
+    "docs/assets/images/vnstock_select_branch.jpeg",
+    "docs/assets/images/vnstock_logo_color.png",
+    "docs/assets/images/vnstock_logo_bw.png",
+    "docs/assets/images/vnstock_home.png",
+    "docs/assets/images/vnstock_google_sheet_result.png",
+    "docs/assets/images/vnstock_google_sheets_appscript_code.png",
+    "docs/assets/images/vnstock_download_stats.png",
+    "docs/assets/images/vnstock_docs_home.png",
+    "docs/assets/images/vnstock-watch-and-star.png"
+>>>>>>> Stashed changes
   ]
 }
