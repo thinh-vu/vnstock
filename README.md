@@ -1,6 +1,6 @@
 <div align="center">
 
-[![python_course_5](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/python_course_5_build_your_own_trading_bot_from_scratch.png)](https://docs.vnstock.site/course/#khoa-hoc-ang-trien-khai)
+[![python_course_6](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/python_tao_bot_chung_khoan_k6_banner.png)](https://docs.vnstock.site/course/#khoa-hoc-ang-trien-khai)
 
 </div>
 
