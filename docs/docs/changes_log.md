@@ -1,4 +1,10 @@
 # Lịch sử cập nhật
+
+## 2-4-2024
+!!! "Cập nhật bản 0.2.9.0"
+  Cập nhật tài liệu hướng dẫn và sửa đổi nhỏ cho hàm gửi tin nhắn Telegram.
+
+
 ## 23-1-2024
 
 !!! hot "Cập nhật bản 0.2.8.8"
