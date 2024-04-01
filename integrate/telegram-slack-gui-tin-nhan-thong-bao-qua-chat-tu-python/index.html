@@ -147,8 +147,8 @@
             
 <!-- Add a panorama banner here -->
 <div style="width: 100%; overflow: hidden; position: relative;">
-  <a href="https://youtu.be/IDDL9_cqXI0" style="display: block; width: 100%; height: 100%;">
-      <img src="https://docs.vnstock.site/assets/images/vnstock-ezchart.png?raw=true" alt="Giới thiệu vnstock ezchart" style="width: 100%; height: 100%; object-fit: cover;">
+  <a href="https://docs.vnstock.site/course/" style="display: block; width: 100%; height: 100%;">
+      <img src="../assets/images/python_chung_khoan_k6_small_vnstock.png?raw=true" alt="Khai giảng khóa Python chứng khoán #6" style="width: 100%; height: 100%; object-fit: cover;">
   </a>
 </div>
 
@@ -1901,41 +1901,53 @@
 </div>
 <p>Để sử dụng tính năng này bạn có thể sử dụng code mẫu trong file demo notebook chung của vnstock. Cú pháp của hàm tương đối đơn giản.</p>
 <h2 id="telegram">Telegram<a class="headerlink" href="#telegram" title="Anchor link to this section for reference">&para;</a></h2>
-<p>Tham khảo bài viết trên Thịnh Vũ Blog <a href="https://thinhvu.com/2021/04/11/tao-telegram-bot-lap-trinh-ung-dung-python/">tại đây</a> và <a href="https://thinhvu.com/2021/04/11/tao-alert-bot-telegram-chi-phi-facebook-ad/">đây nữa</a> để hiểu hơn về các bước thiết lập Telegram Bot trước khi bạn có thể cấu hình các hàm gửi tin nhắn dưới đây. Thịnh cũng sẽ cập nhật lại hướng dẫn mới nhất trong thời gian tới.</p>
+<p>Tạo Telegram bot đầu tay là một quá trình tương đối đơn giản, bạn có thể thực hiện toàn bộ các công đoạn để có thể gửi được tin nhắn trong chưa đầy 15 phút.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">1. Tạo bot với BotFather</label><label for="__tabbed_1_2">2. Thiết lập thông tin bot</label><label for="__tabbed_1_3">3. Gửi tin nhắn</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="admonition tip">
+<p class="admonition-title">Gợi ý</p>
+<ol>
+<li>
+<p>Nếu bạn không muốn sử dụng bot chung với tài khoản Telegram hiện có vì lý do bảo mật thì cần bắt đầu tạo tài khoản mới với App Telegram trên Smartphone trước khi bắt đầu. </p>
+</li>
+<li>
+<p>Đăng nhập telgram web để tạo và thiết lập bot. </p>
+</li>
+<li>
+<p>Copy đoạn token và lưu giữ cẩn thận để bảo mật.</p>
+</li>
+</ol>
+</div>
+<p><a class="glightbox" href="../../assets/images/telegram_botfather_tao_bot_vnstock.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/telegram_botfather_tao_bot_vnstock.png" /></a></p>
+</div>
+<div class="tabbed-block">
+<div class="admonition tip">
+<p class="admonition-title">Gợi ý</p>
+<p>Bước này chỉ đơn giản là cập nhật ảnh đại diện và mô tả của bot để dễ phân biệt với tài khoản thông thường.</p>
+</div>
+<p><a class="glightbox" href="../../assets/images/thong_tin_telegram_bot_va_thiet_lap_vnstock.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/thong_tin_telegram_bot_va_thiet_lap_vnstock.png" /></a></p>
+</div>
+<div class="tabbed-block">
+<div class="admonition tip">
+<p class="admonition-title">Gợi ý</p>
+<ol>
+<li>Copy ID của nhóm chat để sử dụng cho hàm gửi tin nhắn.</li>
+<li>Sử dụng đoạn code do vnstock cung cấp để gửi tin nhắn</li>
+<li>Tận hưởng thành quả: tin nhắn gửi từ API thành công</li>
+</ol>
+</div>
+<p><a class="glightbox" href="../../assets/images/code_vnstock_telegram_bot_vnstock.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/code_vnstock_telegram_bot_vnstock.png" /></a>
+<a class="glightbox" href="../../assets/images/id_nhom_chat_telegram_vnstock_tin_nhan_thanh_cong_vnstock.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="" src="../../assets/images/id_nhom_chat_telegram_vnstock_tin_nhan_thanh_cong_vnstock.png" /></a></p>
+</div>
+</div>
+</div>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">vnstock.integration</span> <span class="kn">import</span> <span class="o">*</span> <span class="c1"># Nếu đã nạp tất cả hàm thì bỏ qua.</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">token_key</span> <span class="o">=</span> <span class="s1">&#39;TOKEN_KEY_SLACK_CỦA_BẠN&#39;</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">slack_channel</span> <span class="o">=</span> <span class="s1">&#39;TÊN_CHANNEL&#39;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">token_key</span> <span class="o">=</span> <span class="s1">&#39;TOKEN_KEY_CỦA_BẠN&#39;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">chat_id</span> <span class="o">=</span> <span class="s1">&#39;ID_NHÓM_CHAT&#39;</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Tin nhắn của bạn&#39;</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;ĐƯỜNG_DẪN_ĐẾN_FILE_HÌNH_TRÊN_MÁY_TÍNH&#39;</span>
-</span></code></pre></div>
-<p>Bây giờ thì bạn đã sẵn sàng để lựa chọn 1 trong 2 hình thức gửi tin nhắn</p>
-<ul>
-<li>Gửi tin kèm hình: </li>
-</ul>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">slack_send_file</span><span class="p">(</span><span class="n">token_key</span><span class="p">,</span> <span class="n">slack_channel</span><span class="p">,</span> <span class="n">text_comment</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
-</span></code></pre></div>
-<ul>
-<li>Gửi tin nhắn văn bản: </li>
-</ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pythonslack_send_message(token_key, slack_channel, message)
-</span></code></pre></div>
-<p>Trong đó:</p>
-<ul>
-<li><code>token_key</code>: Bạn có thể sử dụng bot token bắt đầu với <code>xoxb-..</code> hoặc user token bắt đầu với <code>xoxp-..</code></li>
-<li><code>slack_channel</code>: là tên channel, bắt đầu với <code>#</code> ví dụ <code>#market_trend</code></li>
-<li><code>text_comment</code>: caption cho file hình ảnh gửi kèm</li>
-<li><code>file_path</code>: đường dẫn tới file hình ảnh trên máy tính</li>
-<li><code>message</code>: là nội dung tin nhắn</li>
-</ul>
-<h2 id="slack">Slack<a class="headerlink" href="#slack" title="Anchor link to this section for reference">&para;</a></h2>
-<p>Tương tự với các hàm sử dụng cho Telegram. Bạn có thể thiết lập cấu hình nhắn tin tới 1 channel Slack bất kỳ bằng các hàm dưới đây.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">vnstock.integration</span> <span class="kn">import</span> <span class="o">*</span> <span class="c1"># Nếu đã nạp tất cả hàm thì bỏ qua.</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">token_key</span> <span class="o">=</span> <span class="s1">&#39;TOKEN_KEY_CỦA_BẠN&#39;</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">chat_id</span> <span class="o">=</span> <span class="s1">&#39;ID_NHÓM_CHAT&#39;</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Tin nhắn của bạn&#39;</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;ĐƯỜNG_DẪN_ĐẾN_FILE_HÌNH_TRÊN_MÁY_TÍNH&#39;</span>
 </span></code></pre></div>
 <ul>
 <li>
@@ -1944,6 +1956,38 @@
 <li>
 <p>Gửi tin nhắn văn bản: <code>telegram_send_message(token_key, chat_id, message)</code></p>
 </li>
+</ul>
+<div class="admonition success">
+<p class="admonition-title">Tham khảo</p>
+<p>Tham khảo bài viết trên Thịnh Vũ Blog <a href="https://thinhvu.com/2021/04/11/tao-telegram-bot-lap-trinh-ung-dung-python/">tại đây</a> và <a href="https://thinhvu.com/2021/04/11/tao-alert-bot-telegram-chi-phi-facebook-ad/">đây nữa</a> để hiểu hơn về các bước thiết lập Telegram Bot trước khi bạn có thể cấu hình các hàm gửi tin nhắn dưới đây. Thịnh cũng sẽ cập nhật lại hướng dẫn mới nhất trong thời gian tới.</p>
+</div>
+<h2 id="slack">Slack<a class="headerlink" href="#slack" title="Anchor link to this section for reference">&para;</a></h2>
+<p>Tương tự với các hàm sử dụng cho Telegram. Bạn có thể thiết lập cấu hình nhắn tin tới 1 channel Slack bất kỳ bằng các hàm dưới đây.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">vnstock.integration</span> <span class="kn">import</span> <span class="o">*</span> <span class="c1"># Nếu đã nạp tất cả hàm thì bỏ qua.</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">token_key</span> <span class="o">=</span> <span class="s1">&#39;TOKEN_KEY_SLACK_CỦA_BẠN&#39;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">slack_channel</span> <span class="o">=</span> <span class="s1">&#39;TÊN_CHANNEL&#39;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Tin nhắn của bạn&#39;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">file_path</span> <span class="o">=</span> <span class="s1">&#39;ĐƯỜNG_DẪN_ĐẾN_FILE_HÌNH_TRÊN_MÁY_TÍNH&#39;</span>
+</span></code></pre></div>
+<p>Bây giờ thì bạn đã sẵn sàng để lựa chọn 1 trong 2 hình thức gửi tin nhắn</p>
+<ul>
+<li>Gửi tin kèm hình: </li>
+</ul>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">slack_send_file</span><span class="p">(</span><span class="n">token_key</span><span class="p">,</span> <span class="n">slack_channel</span><span class="p">,</span> <span class="n">text_comment</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li>Gửi tin nhắn văn bản: </li>
+</ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pythonslack_send_message(token_key, slack_channel, message)
+</span></code></pre></div>
+<p>Trong đó:</p>
+<ul>
+<li><code>token_key</code>: Bạn có thể sử dụng bot token bắt đầu với <code>xoxb-..</code> hoặc user token bắt đầu với <code>xoxp-..</code></li>
+<li><code>slack_channel</code>: là tên channel, bắt đầu với <code>#</code> ví dụ <code>#market_trend</code></li>
+<li><code>text_comment</code>: caption cho file hình ảnh gửi kèm</li>
+<li><code>file_path</code>: đường dẫn tới file hình ảnh trên máy tính</li>
+<li><code>message</code>: là nội dung tin nhắn</li>
 </ul>
 
 
