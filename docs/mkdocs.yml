@@ -219,6 +219,7 @@ nav:
     - Biểu diễn dữ liệu: functions/chart.md
   - Ứng dụng & Tích hợp: 
     - Web app: integrate/web_app.md
+    - Biểu diễn dữ liệu: integrate/vnstock_ezchart.md
     - Google Sheets: integrate/google_sheets.md
     - Amibroker: integrate/amibroker.md
     - Streamlit: integrate/streamlit.md
