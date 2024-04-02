@@ -11,8 +11,8 @@
 <div id="badges" align="center">
 <img src="https://img.shields.io/pypi/pyversions/vnstock_ezchart?logoColor=brown&style=plastic" alt= "Version"/>
 <img src="https://img.shields.io/pypi/dm/vnstock_ezchart" alt="Download Badge"/>
-<img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock_ezchart" alt="Commit Badge"/>
-<img src="https://img.shields.io/github/license/thinh-vu/vnstock_ezchart?color=red" alt="License Badge"/>
+<img src="https://img.shields.io/github/last-commit/vnstock-hq/vnstock_ezchart" alt="Commit Badge"/>
+<img src="https://img.shields.io/github/license/vnstock-hq/vnstock_ezchart?color=red" alt="License Badge"/>
 </div>
 
 
