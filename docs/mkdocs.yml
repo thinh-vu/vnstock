@@ -3,8 +3,8 @@ site_url: https://docs.vnstock.site
 site_description: >-
   Vnstock Docs
 theme:
-  custom_dir: docs/material/overrides
   name: material
+  custom_dir: docs/material/overrides
   icon:
     repo: fontawesome/brands/github
   logo: assets/images/vnstock_logo_bw.png
@@ -63,10 +63,10 @@ plugins:
       enabled: true
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
-  # - social: # display a preview on social for links
-  #     cards_layout: default/invert
-  #     cards_layout_options:
-  #       background_color: "#279B48" 
+  - social: # display a preview on social for links
+      cards_layout: default/invert
+      cards_layout_options:
+        background_color: "#279B48" 
   # - meta # blog metadata
   - blog:
       enabled: true
