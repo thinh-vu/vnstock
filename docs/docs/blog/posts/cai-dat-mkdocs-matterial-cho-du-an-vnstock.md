@@ -17,7 +17,7 @@ links:
 !!! abstract "Vì sao có bài viết này?"
 	Ghi chú về các thiết lập trang tài liệu với Mkdocs Matterial giúp các bạn đóng góp mã nguồn và tài liệu cho dự án có thể dễ dàng cấu hình môi trường lập trình của mình và xem trước nội dung sẽ chia sẻ trên trang tài liệu vnstock. Hoặc đơn giản là bạn muốn sử dụng MKDocs tương tự vnstocho mục đích cá nhân của mình. 
 
-<!-- more -->
+
 
 ## Cài đặt môi trường
 
@@ -29,6 +29,7 @@ links:
 - Nếu sử dụng Windows, lời khuyên cho bạn là cài đặt Python từ Microsoft Store thay vì tải trực tiếp từ python.org. 
 - Nếu bạn sử dụng Anaconda trên Windows, đảm bảo rằng bạn chọn Anaconda Prompt làm cửa sổ lệnh để chạy các lệnh ở bước tiếp theo.
 
+<!-- more -->
 ### Cài đặt gói phụ thuộc
 
 > Thư mục MKDocs của vnstock được đặt tại thư mục `vnstock/docs` của dự án.

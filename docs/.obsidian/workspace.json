@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/integrate/financialmodelingprep-vnstock.md",
+                "file": "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/integrate/financialmodelingprep-vnstock.md",
+                "file": "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/integrate/financialmodelingprep-vnstock.md",
+                "file": "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/integrate/financialmodelingprep-vnstock.md"
+                "file": "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md"
               }
             }
           }
@@ -148,6 +148,8 @@
   },
   "active": "50945b5871ef604b",
   "lastOpenFiles": [
+    "docs/blog/posts/so-sanh-du-lieu-vnstock-va-cac-nguon-khac.md",
+    "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md",
     "docs/integrate/financialmodelingprep-vnstock.md"
   ]
 }
