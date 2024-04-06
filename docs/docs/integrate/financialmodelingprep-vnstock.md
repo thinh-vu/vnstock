@@ -1,8 +1,14 @@
+
+<div id="logo" align="center">
+    <img src="https://thinh-vu.github.io/FinancialModelingPrep/assets/fmp_logo.png" alt= "logo"/>
+    <img src = "https://thinh-vu.github.io/FinancialModelingPrep/assets/vnstock_logo_color.png" alt="vnstock_logo"/>
+</div>
 ## Giới thiệu
 
-Vnstock chính thức giới thiệu thư viện Python giúp tích hợp hoàn hảo API dữ liệu chứng khoán, tài chính toàn cầu từ nhà từ FinancialModelingPrep (FMP) vào các dự án khoa học dữ liệu và đầu tư thực tế.
+13/10/2023, Vnstock chính thức giới thiệu thư viện Python giúp tích hợp hoàn hảo API dữ liệu chứng khoán, tài chính toàn cầu từ nhà từ FinancialModelingPrep (FMP) vào các dự án khoa học dữ liệu và đầu tư thực tế.
 
-[FinancialModelingPrep API](https://intelligence.financialmodelingprep.com/pricing-plans?couponCode=thinhvu&utm_source=github&utm_medium=thinhvu_repos&utm_campaign=thinhvu) cung cấp một nền tảng dữ liệu tài chính toàn diện cho phép truy cứu dữ liệu lịch sử tới 30 năm với độ phủ trên 40.000 mã cổ phiếu, tiền mã hóa, ngoại hối, hàng hóa trên toàn thế giới. API này cung cấp dữ liệu từ trên 90 sàn giao dịch tại 46 quốc gia trên thế giới. Dữ liệu có độ phủ toàn bộ sàn giao dịch ở Hoa Kỳ cho tới XETRA, EURONEX, TSX, SEDAR, SEHK và hơn thế.
+!!! info "Giới thiệu"
+	[FinancialModelingPrep API](https://intelligence.financialmodelingprep.com/pricing-plans?couponCode=thinhvu&utm_source=github&utm_medium=thinhvu_repos&utm_campaign=thinhvu) cung cấp một nền tảng dữ liệu tài chính toàn diện cho phép truy cứu dữ liệu lịch sử tới 30 năm với độ phủ trên 40.000 mã cổ phiếu, tiền mã hóa, ngoại hối, hàng hóa trên toàn thế giới. API này cung cấp dữ liệu từ trên 90 sàn giao dịch tại 46 quốc gia trên thế giới. Dữ liệu có độ phủ toàn bộ sàn giao dịch ở Hoa Kỳ cho tới XETRA, EURONEX, TSX, SEDAR, SEHK và hơn thế. Vnstock sẽ tích hợp trực tiếp thư viện FMP vào mã nguồn trong các bản phát hành tiếp theo.
 
 [Tìm hiểu thêm :material-arrow-right:](https://intelligence.financialmodelingprep.com/pricing-plans?couponCode=thinhvu&utm_source=github&utm_medium=thinhvu_repos&utm_campaign=thinhvu){ .md-button }
 
