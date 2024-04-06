@@ -56,6 +56,7 @@ extra_css:
   - stylesheets/extra.css
 edit_uri: edit/main/docs/docs                 
 plugins:
+  - info
   - glightbox
   # - search
   - tags:
@@ -220,6 +221,7 @@ nav:
   - Ứng dụng & Tích hợp: 
     - Web app: integrate/web_app.md
     - Biểu diễn dữ liệu: integrate/vnstock_ezchart.md
+    - Dữ liệu tài chính thế giới từ FMP: integrate/financialmodelingprep-vnstock.md
     - Google Sheets: integrate/google_sheets.md
     - Amibroker: integrate/amibroker.md
     - Streamlit: integrate/streamlit.md

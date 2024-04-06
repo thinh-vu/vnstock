@@ -1,19 +1,19 @@
 {
   "main": {
-    "id": "f57a7fb22f0069b6",
+    "id": "ab526c8520a3d01a",
     "type": "split",
     "children": [
       {
-        "id": "d88245be7f439fd4",
+        "id": "37439a777a094fb2",
         "type": "tabs",
         "children": [
           {
-            "id": "87839185651a80b3",
+            "id": "50945b5871ef604b",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/course.md",
+                "file": "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md",
                 "mode": "source",
                 "source": false
               }
@@ -25,15 +25,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "bb13dc5e56b6506c",
+    "id": "7207db56169edfa9",
     "type": "split",
     "children": [
       {
-        "id": "17bfe641a5aef202",
+        "id": "7a7bbed33e637287",
         "type": "tabs",
         "children": [
           {
-            "id": "cf1e9179d987fa42",
+            "id": "d60edf137cbff46c",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -43,7 +43,7 @@
             }
           },
           {
-            "id": "7fc618c4fe1fda65",
+            "id": "296efd6f50dfb022",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -58,7 +58,7 @@
             }
           },
           {
-            "id": "b0e5dcda58a1199c",
+            "id": "2ffc84e8d58b3dfc",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -72,20 +72,20 @@
     "width": 300
   },
   "right": {
-    "id": "bf09058f2a0cfe7c",
+    "id": "7d01f6f29597e5f5",
     "type": "split",
     "children": [
       {
-        "id": "5c0d2175784fcbdc",
+        "id": "1d943cf2a6237c9f",
         "type": "tabs",
         "children": [
           {
-            "id": "f7f085174995d33b",
+            "id": "93a8e793f20247e0",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/course.md",
+                "file": "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,19 +97,19 @@
             }
           },
           {
-            "id": "e1b251989c2713ce",
+            "id": "efd2606216167a21",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/course.md",
+                "file": "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "d6b0f7f99c8eda1a",
+            "id": "4f0b1604be2fff7b",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -120,12 +120,12 @@
             }
           },
           {
-            "id": "92335c901606f623",
+            "id": "f98479036bd1c5f2",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/course.md"
+                "file": "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md"
               }
             }
           }
@@ -146,65 +146,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "87839185651a80b3",
+  "active": "50945b5871ef604b",
   "lastOpenFiles": [
-<<<<<<< Updated upstream
-    "site/feed_rss_updated.xml",
-    "site/feed_rss_created.xml",
-    "site/search/search_index.json",
-    "site/search",
-    "site/assets/javascripts/glightbox.min.js",
-    "site/assets/stylesheets/glightbox.min.css",
-    "site/blog/category/huong-dan/index.html",
-    "site/blog/category/huong-dan",
-    "site/blog/archive/2023/index.html",
-    "site/blog/archive/2023",
-    "site/blog/archive",
-    "site/assets/images/favicon.png",
-    "site/assets/images/vnstock_web_app_fundamental_section.png",
-    "site/assets/images/vnstock_select_branch.jpeg",
-    "site/assets/images/vnstock_logo_color.png",
-    "site/assets/images/vnstock_logo_bw.png",
-    "site/assets/images/vnstock_home.png",
-    "site/assets/images/vnstock_google_sheets_appscript_code.png",
-    "site/assets/images/vnstock_google_sheet_result.png",
-    "site/assets/images/vnstock_download_stats.png",
-    "site/assets/images/vnstock_docs_home.png"
-=======
-    "ta_lib_colab_demo.ipynb",
-    "secret_template.yml",
-    "pytesseract_ocr_demo.ipynb",
-    "mkdocs.yml",
-    "license.md",
-    "google31049145a24afdba.html",
-    "gen2_vnstock_demo_index_all_functions_testing_2023.ipynb",
-    "docs/trich-dan-va-giay-phep-su-dung-vnstock.md",
-    "docs/stylesheets/extra.css",
-    "docs/stylesheets",
-    "docs/start/tai-nguyen-quan-trong-vnstock-website.md",
-    "docs/start/huong-dan-su-dung-nhanh-vnstock.md",
-    "docs/start/huong-dan-cai-dat-vnstock-python.md",
-    "docs/start",
-    "docs/requirements.txt",
-    "docs/material/overrides/partials/integrations/analytics/custom.html",
-    "docs/assets/templates/substack subscribe.md",
-    "docs/assets/templates/new-post.md",
-    "docs/assets/templates/announcement.md",
-    "docs/assets/templates/alias.md",
-    "docs/assets/templates/Youtube Video embed.md",
-    "docs/assets/templates/Social link.md",
-    "docs/assets/templates/Photo layout.md",
-    "docs/assets/templates/Button.md",
-    "docs/assets/images/vnstock_web_app_fundamental_section.png",
-    "docs/assets/images/vnstock_select_branch.jpeg",
-    "docs/assets/images/vnstock_logo_color.png",
-    "docs/assets/images/vnstock_logo_bw.png",
-    "docs/assets/images/vnstock_home.png",
-    "docs/assets/images/vnstock_google_sheet_result.png",
-    "docs/assets/images/vnstock_google_sheets_appscript_code.png",
-    "docs/assets/images/vnstock_download_stats.png",
-    "docs/assets/images/vnstock_docs_home.png",
-    "docs/assets/images/vnstock-watch-and-star.png"
->>>>>>> Stashed changes
+    "docs/blog/posts/so-sanh-du-lieu-vnstock-va-cac-nguon-khac.md",
+    "docs/blog/posts/cai-dat-mkdocs-matterial-cho-du-an-vnstock.md",
+    "docs/integrate/financialmodelingprep-vnstock.md"
   ]
 }
