@@ -1,11 +1,37 @@
+# Build System Configuration
 [build-system]
 requires = [
     "setuptools>=42",
-    "wheel",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+# Metadata Information
+[project]
+name = "vnstock"
+version = "0.3.0.0"
+description = "A comprehensive and transparent solution for Vietnamese stock market analysis."
+authors = [
+    { name = "Thinh Vu", email = "mrthinh@live.com" },
+    ]
+license = { file = "LICENSE.md" }
+requires-python = ">=3.10"
+readme = { file = "README.md", content-type = "text/markdown" }
+urls = { Homepage = "https://github.com/thinh-vu/vnstock" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
     "requests",
-    "bs4",
+    "beautifulsoup4",
     "pandas",
     "openpyxl"
 ]
-build-backend = "setuptools.build_meta"
-# dependencies = []
+
+# Dependency Management
+[project.optional-dependencies]
+dev = ["flake8"]
+test = ["unittest"]
+

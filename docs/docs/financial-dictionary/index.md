@@ -1,1 +1,0 @@
-# Kiến thức căn bản & thuật ngữ chứng khoán
