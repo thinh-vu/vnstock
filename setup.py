@@ -5,7 +5,7 @@ from setuptools import setup, find_packages, Command
 from setuptools.command.install import install
 
 setup(
-    name="vnstock",
+    name="vnstock3",
     version="0.3.0.0",
     description="A comprehensive and transparent solution for Vietnamese stock market analysis.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
@@ -20,16 +20,18 @@ setup(
     ],
     python_requires=">=3.10",
     packages=find_packages(where="vnstock3"),
-    package_dir={"": "vnstock3"},
+    package_dir={"vnstock3": "vnstock3"},
     package_data={
         "vnstock3": ["docs/*.txt", "docs/*.csv"],
     },
     install_requires=[
         "requests",
-        "bs4",
+        "beautifulsoup4",
         "pandas",
-        "openpyxl"
-    ],
+        "vnai",
+        "openpyxl",
+        "pydantic"
+     ],
     extras_require={
         "dev": ["flake8"],
         "docs": ["sphinx", "sphinx_rtd_theme"],

@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 # Metadata Information
 [project]
-name = "vnstock"
+name = "vnstock3"
 version = "0.3.0.0"
 description = "A comprehensive and transparent solution for Vietnamese stock market analysis."
 authors = [
@@ -36,4 +36,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["flake8"]
 test = ["unittest"]
+
+[tool.poetry]
+packages = [
+    { include = "vnstock3" },
+]
 
