@@ -7,3 +7,4 @@ vnstock_ezchart
 fake_useragent
 cryptography
 psutil
+fake_useragent
