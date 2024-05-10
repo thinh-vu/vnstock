@@ -29,7 +29,9 @@ setup(
         "pandas",
         "vnai",
         "openpyxl",
-        "pydantic"
+        "pydantic",
+        "psutil",
+        "fake_useragent"
      ],
     extras_require={
         "dev": ["flake8"],

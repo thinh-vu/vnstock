@@ -6,3 +6,4 @@ openpyxl
 vnstock_ezchart
 fake_useragent
 cryptography
+psutil

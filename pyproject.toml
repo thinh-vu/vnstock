@@ -29,7 +29,9 @@ dependencies = [
     "pandas",
     "vnai",
     "openpyxl",
-    "pydantic"
+    "pydantic",
+    "psutil",
+    "fake_useragent"
 ]
 
 # Dependency Management
