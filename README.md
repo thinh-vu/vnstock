@@ -32,7 +32,7 @@ Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án c�
 Cài đặt thư viện với câu lệnh sau:
 
 ```
-pip install -U vnstock
+pip install git+https://github.com/thinh-vu/vnstock.git@dev
 ```
 
 Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstock.site](https://vnstock.site). 
