@@ -3,3 +3,4 @@ from .quote import *
 from .analysis import *
 from .company import *
 from .trading import *
+from .financial import *
