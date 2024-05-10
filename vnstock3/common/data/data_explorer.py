@@ -190,11 +190,41 @@ class Listing:
         """
         return self.data_source.symbols_by_exchange(**kwargs)
     
+    def symbols_by_group(self, group='VN30', **kwargs):
+        """
+        Liệt kê tất cả mã chứng khoán theo nhóm phân loại. Ví dụ HOSE, VN30, VNMidCap, VNSmallCap, VNAllShare, VN100, ETF, HNX, HNX30, HNXCon, HNXFin, HNXLCap, HNXMSCap, HNXMan, UPCOM, FU_INDEX (mã chỉ số hợp đồng tương lai)
+        """
+        return self.data_source.symbols_by_group(group, **kwargs)
+
     def industries_icb(self, **kwargs):
         """
         Liệt kê tất cả thông tin các ngành icb từ nguồn dữ liệu được chọn.
         """
         return self.data_source.industries_icb(**kwargs)
+    
+    def all_future_indices(self, **kwargs):
+        """
+        Liệt kê tất cả thông tin các mã hợp đồng tương lai.
+        """
+        return self.data_source.all_future_indices(**kwargs)
+
+    def all_covered_warrant(self, **kwargs):
+        """
+        Liệt kê tất cả thông tin các mã chứng quyền.
+        """
+        return self.data_source.all_covered_warrant(**kwargs)
+
+    def all_bonds(self, **kwargs):
+        """
+        Liệt kê tất cả thông tin các mã trái phiếu hiện hành.
+        """
+        return self.data_source.all_bonds(**kwargs)
+    
+    def all_government_bonds(self, **kwargs):
+        """
+        Liệt kê tất cả thông tin các mã trái phiếu chính phủ.
+        """
+        return self.data_source.all_government_bonds(**kwargs)
     
 class Trading:
     """
