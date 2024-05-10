@@ -19,7 +19,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.10",
-    packages=find_packages(where="."),
+    packages=find_packages(),
     package_dir={"": ""},
     package_data={
         "vnstock3": ["docs/*.txt", "docs/*.csv"],
