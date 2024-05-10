@@ -27,6 +27,7 @@ dependencies = [
     "requests",
     "beautifulsoup4",
     "pandas",
+    "vnai"
     "openpyxl"
 ]
 

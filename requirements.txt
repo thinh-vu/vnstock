@@ -1,6 +1,7 @@
 pandas
 requests
 bs4
+vnai
 openpyxl
 vnstock_ezchart
 fake_useragent
