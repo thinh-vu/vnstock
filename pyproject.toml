@@ -28,7 +28,8 @@ dependencies = [
     "beautifulsoup4",
     "pandas",
     "vnai",
-    "openpyxl"
+    "openpyxl",
+    "pydantic"
 ]
 
 # Dependency Management
