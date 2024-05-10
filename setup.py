@@ -20,7 +20,7 @@ setup(
     ],
     python_requires=">=3.10",
     packages=find_packages(where="."),
-    package_dir={"": "."},
+    package_dir={"": ""},
     package_data={
         "vnstock3": ["docs/*.txt", "docs/*.csv"],
     },
