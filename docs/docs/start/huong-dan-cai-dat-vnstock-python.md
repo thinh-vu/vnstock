@@ -27,7 +27,7 @@ title: Lựa chọn phiên bản
 
 ## Chạy câu lệnh cài đặt
 
-> Khi sử dụng file [Demo Notebook](https://github.com/thinh-vu/vnstock/blob/beta/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) để bắt đầu, các câu lệnh cài đặt cần thiết đã được cung cấp sẵn để bạn thực thi (run).
+> Khi sử dụng file [Demo Notebook](https://github.com/thinh-vu/vnstock/blob/legacy/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) để bắt đầu, các câu lệnh cài đặt cần thiết đã được cung cấp sẵn để bạn thực thi (run).
 
 `pip được sử dụng để cài đặt vnstock`. pip có sẵn trong hầu hết các bản phân phối Python được cài đặt. Phiên bản python cần thiết cho vnstock tối thiểu là 3.7. Bạn có thể paste câu lệnh đã copy ở Bước 1 và chạy nó trong môi trường Python bạn đang sử dụng.
 
@@ -50,7 +50,7 @@ title: Lựa chọn phiên bản
 
 Để quá trình cài đặt diễn ra đơn giản và suôn sẻ, bạn có thể làm theo các bước sau:
 
-- Tải file [requirement.txt](https://github.com/thinh-vu/vnstock/blob/beta/requirements.txt) về máy
+- Tải file [requirement.txt](https://github.com/thinh-vu/vnstock/blob/legacy/requirements.txt) về máy
 
 - Mở Command Prompt / Terminal, trỏ tới thư mục chứa file `requirements.txt`, thông thường là `Downloads` bằng lệnh:
 

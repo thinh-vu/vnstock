@@ -71,7 +71,7 @@ Tôi hướng đến một môi trường trao đổi thân thiện, tích cực
 - Để lại comment cho các đoạn mã bạn cung cấp giúp các thành viên khác hiểu được logic thiết kế và bắt kịp ý tưởng của bạn tốt hơn.
 
 ## Bản quyền và giấy phép
-- Bằng cách đóng góp vào dự án Vnstock, bạn đồng ý rằng đóng góp của bạn sẽ được công bố tự do theo giấy phép [MIT License](https://github.com/thinh-vu/vnstock/blob/beta/LICENSE).
-- Vui lòng thêm tên của bạn vào phần "Người đóng góp" trong tệp [CONTRIBUTORS.md](https://github.com/thinh-vu/vnstock/blob/beta/CONTRIBUTORS.md).
+- Bằng cách đóng góp vào dự án Vnstock, bạn đồng ý rằng đóng góp của bạn sẽ được công bố tự do theo giấy phép [MIT License](https://github.com/thinh-vu/vnstock/blob/legacy/LICENSE).
+- Vui lòng thêm tên của bạn vào phần "Người đóng góp" trong tệp [CONTRIBUTORS.md](https://github.com/thinh-vu/vnstock/blob/legacy/CONTRIBUTORS.md).
 
 Chúng tôi cảm ơn sự đóng góp của bạn cho Vnstock. Nhóm phát triển sẵn lòng hỗ trợ và xem xét mọi đóng góp để nâng cao chất lượng và tính năng của dự án. Hãy cùng nhau tạo nên một công cụ mạnh mẽ hỗ trợ đầu tư chứng khoán Việt Nam! 🚀

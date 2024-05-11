@@ -18,7 +18,7 @@ Mã nguồn được lấy từ Vnstock - gói phần mềm Python phân tích t
 
 ## Giấy phép
 
-Vnstock được cấp phép theo Giấy phép MIT. Nội dung của giấy phép như dưới đây, và thể hiện trong file [LICENSE](https://github.com/thinh-vu/vnstock/blob/beta/LICENSE).
+Vnstock được cấp phép theo Giấy phép MIT. Nội dung của giấy phép như dưới đây, và thể hiện trong file [LICENSE](https://github.com/thinh-vu/vnstock/blob/legacy/LICENSE).
 
 Khi sử dụng Vnstock trong dự án của mình, bạn phải tuân thủ và giữ nguyên giấy phép MIT của Vnstock. Đồng thời, hãy chắc chắn rằng bạn đã bao gồm tên tác giả và giấy phép trong dự án của bạn.
 

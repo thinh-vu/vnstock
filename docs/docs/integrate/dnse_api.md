@@ -6,7 +6,7 @@
 
 vnstock cung cấp phương thức kết nối với API DNSE hoàn chỉnh để đọc thông tin, đặt/chỉnh sửa/hủy lệnh giao dịch. 
 
-Để bắt đầu sử dụng, các bạn cần cài đặt gói thư viện vnstock mới nhất v0.2.8.1 có hỗ trợ đầy đủ các chức năng cho DNSE Lightspeed API. Từ các hàm python này, các bạn có thể xây dựng bot giao dịch/web app dễ dàng từ môi trường cloud hoặc máy tính cá nhân. Xem thêm [mã nguồn](https://github.com/thinh-vu/vnstock/blob/beta/vnstock/integration.py) để lấy cảm hứng.
+Để bắt đầu sử dụng, các bạn cần cài đặt gói thư viện vnstock mới nhất v0.2.8.1 có hỗ trợ đầy đủ các chức năng cho DNSE Lightspeed API. Từ các hàm python này, các bạn có thể xây dựng bot giao dịch/web app dễ dàng từ môi trường cloud hoặc máy tính cá nhân. Xem thêm [mã nguồn](https://github.com/thinh-vu/vnstock/blob/legacy/vnstock/integration.py) để lấy cảm hứng.
 
 [Xem hướng dẫn :material-rocket-launch:](../start/huong-dan-su-dung-nhanh-vnstock.md){ .md-button }
 

@@ -20,4 +20,4 @@ vnstock web app được xây dựng bằng [streamlit](http://streamlit.io/) fr
 ## Notebook minh hoạ
 Bạn có thể mở file demo bằng Jupyter Notebook và dùng thử tất cả các hàm của vnstock từ giao diện Google Colab. Nếu muốn sử dụng Notebook trong Visual Studio Code hoặc IDE khác, bạn có thể tìm menu **File** > **Download** và chọn **Download.ipynb** để lưu file về máy.
 
-[Mở Notebook :material-rocket-launch:](https://colab.research.google.com/github/thinh-vu/vnstock/blob/beta/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb){ .md-button }
+[Mở Notebook :material-rocket-launch:](https://colab.research.google.com/github/thinh-vu/vnstock/blob/legacy/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb){ .md-button }

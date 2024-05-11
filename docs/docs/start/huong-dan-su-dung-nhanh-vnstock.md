@@ -6,7 +6,7 @@ title: Cài đặt
 
 <div id="logo" align="center">
     <a href="http://vnstock.site?utm_source=vnstock_docs&utm_medium=start&utm_content=logo">
-        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_logo_color.png" alt="vnstock_logo"/>
+        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/legacy/docs/docs/assets/images/vnstock_logo_color.png" alt="vnstock_logo"/>
     </a>
 </div>
 
@@ -34,7 +34,7 @@ pip install --upgrade vnstock
 
 Hoặc chỉ cần mở file Demo Notebook với Google Colab, chạy lần lượt các câu lệnh để trải nghiệm các tính năng của vnstock.
 
-[Mở Notebook :material-rocket-launch:](https://colab.research.google.com/github/thinh-vu/vnstock/blob/beta/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb){ .md-button }
+[Mở Notebook :material-rocket-launch:](https://colab.research.google.com/github/thinh-vu/vnstock/blob/legacy/docs/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb){ .md-button }
 
 ## Mới làm quen với Python?
 Nếu bạn mới bắt đầu tìm hiểu Python và còn choáng ngợp với quá nhiều thứ mới mẻ thì dự án [LEarn Anything](https://learn-anything.vn?utm_source=vnstock&utm_medium=quick_start) từ cùng tác giả [Thịnh Vũ](http://thinhvu.com?utm_source=vnstock&utm_medium=quick_start) sẽ là cẩm nang không thể thiếu cho bạn. Thông qua các bài viết và video hướng dẫn về Python dễ hiểu, bạn sẽ có một cái nhìn tổng quát và cũng rất dễ hiểu để bước chân vào hành trình khám phá một thế giới đầy mê hoặc của python trong mọi lĩnh vực của cuộc sống, không chỉ riêng thị trường chứng khoán.
@@ -62,7 +62,7 @@ Dưới đây là các gợi ý để bạn tra cứu trang tài liệu vnstock 
 - **Copy Code**: Ở mỗi ô chứa dòng lệnh luôn có biểu tượng copy :material-content-copy: cho phép bạn click vào và sao chép đoạn mã dễ dàng.
 
 - **Tính năng thuộc Insiders Program**: Bạn sẽ bắt gặp biểu tượng 🔐 đối với hướng dẫn dành cho các tính năng nâng cao chỉ dành cho người dùng tài trợ dự án thông qua chương trình Insiders Program. Tham khảo thêm chi tiết [tại đây](https://docs.vnstock.site/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program/)
-- **Cấu trúc điều hướng** trang tài liệu được mô tả trong file cấu hình của mã nguồn tài liệu: [mkdocs.yml](https://github.com/thinh-vu/vnstock/blob/beta/docs/mkdocs.yml) bắt đầu từ dòng 200.
+- **Cấu trúc điều hướng** trang tài liệu được mô tả trong file cấu hình của mã nguồn tài liệu: [mkdocs.yml](https://github.com/thinh-vu/vnstock/blob/legacy/docs/mkdocs.yml) bắt đầu từ dòng 200.
 
 ## Docstring
 

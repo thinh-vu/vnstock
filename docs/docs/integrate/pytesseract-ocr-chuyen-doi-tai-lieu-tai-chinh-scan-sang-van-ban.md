@@ -16,7 +16,7 @@ Các tài liệu scan này, bạn có thể dễ dàng tìm thấy trên Vietsto
 
 👇 Bạn có thể bắt đầu với Demo Notebook dưới đây, đọc thêm chi tiết để đảm bảo bạn có thể sử dụng dễ dàng.
 
-[Mở Demo Notebook :material-rocket-launch:](https://colab.research.google.com/github/thinh-vu/vnstock/blob/beta/docs/pytesseract_ocr_demo.ipynb){ .md-button }
+[Mở Demo Notebook :material-rocket-launch:](https://colab.research.google.com/github/thinh-vu/vnstock/blob/legacy/docs/pytesseract_ocr_demo.ipynb){ .md-button }
 
 Tính năng này hiện tại đã được cập nhật lên mã nguồn, nhánh `beta` trên Github. Xem hướng dẫn cài đặt [tại đây](https://docs.vnstock.site/start/huong-dan-cai-dat-vnstock-python/#xac-inh-phien-ban-phu-hop)
 ## Cài đặt môi trường

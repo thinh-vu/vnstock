@@ -1,13 +1,13 @@
 <div align="center">
 
-[![python_course_6](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/Python%20Course%206%20-%20Phan%20tich%20du%20lieu%20va%20giao%20dich%20chung%20khoan.png)](https://docs.vnstock.site/course/#khoa-hoc-ang-trien-khai)
+[![python_course_6](https://raw.githubusercontent.com/thinh-vu/vnstock/legacy/docs/docs/assets/images/Python%20Course%206%20-%20Phan%20tich%20du%20lieu%20va%20giao%20dich%20chung%20khoan.png)](https://docs.vnstock.site/course/#khoa-hoc-ang-trien-khai)
 
 </div>
 
 ---
 <div id="logo" align="center">
     <a href="http://vnstock.site?utm_source=github&utm_medium=vnstock&utm_content=readme">
-        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_logo_color.png" alt="vnstock_logo"/>
+        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/legacy/docs/docs/assets/images/vnstock_logo_color.png" alt="vnstock_logo"/>
     </a>
 </div>
 
@@ -21,7 +21,7 @@
 ---
 
 
-🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/beta/docs/README-en.md)**
+🌐 View in **[English](https://github.com/thinh-vu/vnstock/blob/legacy/docs/README-en.md)**
 
 # I. 🎤 Giới thiệu
 
@@ -31,7 +31,7 @@ vnstock là thư viện Python được thiết kế để tải dữ liệu ch�
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
-![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
+![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/legacy/docs/docs/assets/images/github_star_guide.png)
 
 Cài đặt thư viện với câu lệnh sau:
 
@@ -43,7 +43,7 @@ pip install -U vnstock
 
 [![vnstock docs - Xem Thêm](https://img.shields.io/badge/vnstock_docs-Xem_Thêm-2ea44f?style=for-the-badge&logo=Github)](https://thinh-vu.github.io/vnstock)
 
-[![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_docs_home.png)](https://thinh-vu.github.io/vnstock)
+[![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/legacy/docs/docs/assets/images/vnstock_docs_home.png)](https://thinh-vu.github.io/vnstock)
 
 # III. 🙋‍♂️ Thông tin liên hệ
 
@@ -66,7 +66,7 @@ Bạn có thể kết nối với tác giả qua các hình thức sau. Trong tr
 
 # IV. 🔑 Giấy phép (License)
 
-Vnstock được cấp phép theo Giấy phép MIT. Nội dung của giấy phép như dưới đây, và thể hiện trong file [LICENSE](https://github.com/thinh-vu/vnstock/blob/beta/LICENSE).
+Vnstock được cấp phép theo Giấy phép MIT. Nội dung của giấy phép như dưới đây, và thể hiện trong file [LICENSE](https://github.com/thinh-vu/vnstock/blob/legacy/LICENSE).
 
 Khi sử dụng Vnstock trong dự án của mình, bạn phải tuân thủ và giữ nguyên giấy phép MIT của Vnstock. Đồng thời, hãy chắc chắn rằng bạn đã bao gồm tên tác giả và giấy phép trong dự án của bạn.
 

@@ -42,7 +42,7 @@ This Python library connects to public APIs of data providers to download data a
 <details>
   <summary> Minh họa tính năng Watch và Star </summary>
 
-  ![watch-star](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vnstock-watch-and-star.png?raw=true)
+  ![watch-star](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/vnstock-watch-and-star.png?raw=true)
 
 </details>
 
@@ -58,7 +58,7 @@ You can contribute to the development of vnstock through various means, includin
 👉 For more information and illustrations on how to use, please visit the blog post, available in Vietnamese/English [here](https://thinhvu.com/2022/09/22/vnstock-api-tai-du-lieu-chung-khoan-python?utm_source=github&utm_medium=vnstock).
 
 ### 2.1.2 Notebook Illustration
-👉 You can open the Jupyter Notebook file [vnstock_demo_index_all_functions_testing](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023_07_07.ipynb) to try out all the functions of vnstock. To use, click the ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) button at the top of the notebook to open it with Google Colab.
+👉 You can open the Jupyter Notebook file [vnstock_demo_index_all_functions_testing](https://github.com/thinh-vu/vnstock/blob/legacy/demo/gen2_vnstock_demo_index_all_functions_testing_2023_07_07.ipynb) to try out all the functions of vnstock. To use, click the ![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg) button at the top of the notebook to open it with Google Colab.
 
 ### 2.1.3. Docstring
 All functions of vnstock are provided with complete docstrings, while this README.md file may not include a full description of the parameters allowed for each function. You can refer to the code hints when writing commands in IDEs like Google Colab, Visual Studio Code, or Jupyter Notebook, or open the source code on Github for more details. In the future, vnstock will provide full descriptions in the README.md when possible.
@@ -67,16 +67,16 @@ All functions of vnstock are provided with complete docstrings, while this READM
   <summary>Docstring in Google Colab</summary>
   Syntax hints for functions are displayed when writing any function belonging to vnstock. In this example, it is shown in the Google Colab interface.
 
-  ![docstring_ide](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/docstring_suggestion.jpeg?raw=true)
+  ![docstring_ide](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/docstring_suggestion.jpeg?raw=true)
 
 </details>
 
 <details>
   <summary>Docstring in source code</summary>
   
-  Open the source code file [vnstock.py](https://github.com/thinh-vu/vnstock/blob/beta/vnstock/stock.py) and find the function you want to look up the docstring for.
+  Open the source code file [vnstock.py](https://github.com/thinh-vu/vnstock/blob/legacy/vnstock/stock.py) and find the function you want to look up the docstring for.
 
-  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/docstring_source_code.png?raw=true)
+  ![docstring_source](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/docstring_source_code.png?raw=true)
 
 </details>
 
@@ -88,8 +88,8 @@ All functions of vnstock are provided with complete docstrings, while this READM
   <summary>Supporting the vnstock Development Fund</summary>
   If vnstock has been helpful to you, you can contribute to the development fund of this application through either bank transfer or Momo. All contributions are greatly appreciated and serve as motivation for the author to maintain vnstock as a useful, free, and accessible resource for the community.
 
-  - ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vcb-qr-thinhvu-vnstock.jpg?raw=true)
-  - ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/momo-qr-thinhvu.jpeg?raw=true)
+  - ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/vcb-qr-thinhvu-vnstock.jpg?raw=true)
+  - ![momo-qr](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/momo-qr-thinhvu.jpeg?raw=true)
 
 </details>
 
@@ -99,7 +99,7 @@ All functions of vnstock are provided with complete docstrings, while this READM
 
 ### 2.1.6. Notes
 
-👉 Starting from version 0.1.3, all updates regarding features and enhancements for the library are compiled in the [Changelog](https://github.com/thinh-vu/vnstock/blob/beta/changes_log.md) file.
+👉 Starting from version 0.1.3, all updates regarding features and enhancements for the library are compiled in the [Changelog](https://github.com/thinh-vu/vnstock/blob/legacy/changes_log.md) file.
 
 ## 2.2 🛠 Installing vnstock
 ### Step 1. Choose the appropriate version
@@ -118,13 +118,13 @@ All functions of vnstock are provided with complete docstrings, while this READM
 <details>
   <summary> Choose the appropriate branch </summary>
 
-  ![select_branch](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vnstock_select_branch.jpeg?raw=true)
+  ![select_branch](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/vnstock_select_branch.jpeg?raw=true)
 
 </details>
 
 ### Step 2. Run the installation command
 
-> When using the demo file [vnstock_demo_index_all_functions_testing_2023_06_22.ipynb](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023_07_07.ipynb) to get started, the necessary installation commands are provided for you to execute (run).
+> When using the demo file [vnstock_demo_index_all_functions_testing_2023_06_22.ipynb](https://github.com/thinh-vu/vnstock/blob/legacy/demo/gen2_vnstock_demo_index_all_functions_testing_2023_07_07.ipynb) to get started, the necessary installation commands are provided for you to execute (run).
 
 **pip is used to install vnstock**. pip is available in most Python distributions. The minimum required Python version for vnstock is 3.7. You can paste the command you copied in Step 1 and run it in your Python environment.
 
@@ -219,7 +219,7 @@ You can download the price table of a selected list of stocks to facilitate anal
 <details>
   <summary>Price Table</summary>
 
-  ![price_board](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//tcbs_trading_board_sector.png?raw=true)
+  ![price_board](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images//tcbs_trading_board_sector.png?raw=true)
 
 </details>
 
@@ -246,8 +246,8 @@ Using this function allows you to analyze price depth and volume on the price ta
 <details>
   <summary>Intraday view on TCBS</summary>
 
-  ![intraday](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//tcbs_intraday_screen1.png?raw=true)
-  ![intraday](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//tcbs_intraday_screen2.png?raw=true)
+  ![intraday](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images//tcbs_intraday_screen1.png?raw=true)
+  ![intraday](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images//tcbs_intraday_screen2.png?raw=true)
 
 </details>
 vnstock allows the user to **download intraday real-time/historical data**. In 
@@ -353,7 +353,7 @@ industry_analysis("VNM")
 <details>
   <summary>Output</summary>
 
-![preview](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/stock_comparison_industries.png?raw=true)
+![preview](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/stock_comparison_industries.png?raw=true)
 
 ```
 >>> industry_analysis("VNM")
@@ -373,7 +373,7 @@ stock_ls_analysis("TCB, BID, CEO, GMD")
 <details>
   <summary>Output</summary>
 
-![preview](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/stock_ls_comparison.png?raw=true)
+![preview](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/stock_ls_comparison.png?raw=true)
 
 ```
   ticker  marcap  price  numberOfDays  priceToEarning  peg  priceToBook  valueBeforeEbitda  dividend  ...  debtOnEbitda  income5year  sale5year income1quarter  sale1quarter  nextIncome  nextSale   rsi    rs
@@ -438,7 +438,7 @@ financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quarterly
 
 ##### 📄 Income Statement
 
-![income_statement](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//financial_income_statement.png?raw=true)
+![income_statement](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images//financial_income_statement.png?raw=true)
 ```python
 financial_flow(symbol="TCB", report_type='incomestatement', report_range='quarterly')
 ```
@@ -459,7 +459,7 @@ index                                                                           
 
 ##### 🧾Balance Sheet
 
-![balance_sheet](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//financial_balancesheet.png?raw=true)
+![balance_sheet](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images//financial_balancesheet.png?raw=true)
 ```python
 financial_flow(symbol="TCB", report_type='balancesheet', report_range='quarterly')
 ```
@@ -611,10 +611,10 @@ industry_financial_health("VNM")
   <summary>SSI Top Stocks</summary>
 
 Top Breakout > Top Gainers > Top Losers > Top Value > Top Volume
-![top_mover](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/ssi_top_breakout_gainer_loser.png?raw=true)
+![top_mover](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/ssi_top_breakout_gainer_loser.png?raw=true)
 
 Top New High > Top Foreign Trading > Top New Low
-![top_foreigntrading_high_low](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/top_foreigntrading_newhigh_newlow.png?raw=true)
+![top_foreigntrading_high_low](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/top_foreigntrading_newhigh_newlow.png?raw=true)
 
 </details>
 
@@ -661,7 +661,7 @@ fr_trade_heatmap ('All', 'FrBuyVol')
 </details>
 
 ### 2.15.3. Market latest indices & values
-![latest_indices](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//get_latest_indices.png?raw=true)
+![latest_indices](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images//get_latest_indices.png?raw=true)
 
 Retrieve the latest indices values & brief insights
 
@@ -704,7 +704,7 @@ get_latest_indices()
 </details>
 
 ### 2.15.4. Market latest indices in depth data
-![index_series_data](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images//get_index_series_data.png?raw=true)
+![index_series_data](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images//get_index_series_data.png?raw=true)
 
 ```python
 get_index_series(index_code='VNINDEX', time_range='OneYear')
@@ -776,8 +776,8 @@ If you find value in vnstock and my open-source projects, you can support their 
 You have three options to contribute: Momo, Bank Transfer, and Paypal. Your contribution will help me cover the hosting fees for my blog and continue creating high-quality content. Thank you for your support!
 
 - [Paypal](https://paypal.me/thinhvuphoto?country.x=VN&locale.x=en_US)
-- ![momo-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/momo-qr-thinhvu.jpeg)
-- ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/beta/docs/assets/images/vcb-qr-thinhvu.jpg)
+- ![momo-qr](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/momo-qr-thinhvu.jpeg)
+- ![vcb-qr](https://github.com/thinh-vu/vnstock/blob/legacy/docs/assets/images/vcb-qr-thinhvu.jpg)
 
 # VI. ⚖ Disclaimer
 vnstock is designed solely for the purpose of analysis and practical investment research. Any misuse or unauthorized use of the library for malicious purposes, such as attacking public APIs or causing harm to systems through denial of service or similar actions, is strictly beyond the intended scope of usage and falls outside the responsibility of the development team.

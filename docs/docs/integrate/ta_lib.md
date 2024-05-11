@@ -11,7 +11,7 @@ Dữ liệu giá lịch sử từ hàm `stock_historical_data` do vnstock cung c
 
 Mở Notebook demo để sử dụng code mẫu.
 
-[Mở Notebook :material-rocket-launch:](https://colab.research.google.com/github/thinh-vu/vnstock/blob/beta/docs/ta_lib_colab_demo.ipynb){ .md-button }
+[Mở Notebook :material-rocket-launch:](https://colab.research.google.com/github/thinh-vu/vnstock/blob/legacy/docs/ta_lib_colab_demo.ipynb){ .md-button }
 
 
 ## Môi trường local

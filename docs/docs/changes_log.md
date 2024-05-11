@@ -261,7 +261,7 @@ Thử nghiệm thành công và ra mắt phiên bản thử nghiệm 1.0 cho tra
 
 ## 22-07-2023
 
-- Bổ sung hướng dẫn vào [Demo Notebook](https://github.com/thinh-vu/vnstock/blob/beta/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) giúp người dùng xuất dữ liệu từ Google Colab ra Google Sheets.
+- Bổ sung hướng dẫn vào [Demo Notebook](https://github.com/thinh-vu/vnstock/blob/legacy/demo/gen2_vnstock_demo_index_all_functions_testing_2023.ipynb) giúp người dùng xuất dữ liệu từ Google Colab ra Google Sheets.
 
 ## 14-07-2023
 

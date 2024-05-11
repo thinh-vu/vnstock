@@ -2,7 +2,7 @@
 
 <div id="logo" align="center">
     <a href="http://vnstock.site?utm_source=vnstock_docs&utm_medium=start&utm_content=logo">
-        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_logo_color.png" alt="vnstock_logo"/>
+        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/legacy/docs/docs/assets/images/vnstock_logo_color.png" alt="vnstock_logo"/>
     </a>
 </div>
 

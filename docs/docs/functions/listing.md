@@ -8,7 +8,7 @@ listing_companies(live=True)
 Trong đó: 
 
 - Tham số `live` nhận một trong hai giá trị.
-  - `live=False`: Cho phép đọc dữ liệu cục bộ từ tệp csv [listing_companies](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/data/listing_companies_enhanced-2023.csv) đính kèm trên Github theo mặc định. File này được cập nhật hàng tháng. Chứa thông tin rất chi tiết. Bởi danh sách các công ty niêm yết thường không thay đổi liên tục nên việc này không gây trở ngại nhiều.
+  - `live=False`: Cho phép đọc dữ liệu cục bộ từ tệp csv [listing_companies](https://raw.githubusercontent.com/thinh-vu/vnstock/legacy/data/listing_companies_enhanced-2023.csv) đính kèm trên Github theo mặc định. File này được cập nhật hàng tháng. Chứa thông tin rất chi tiết. Bởi danh sách các công ty niêm yết thường không thay đổi liên tục nên việc này không gây trở ngại nhiều.
 
   - `live=True`: Cho phép đọc dữ liệu danh sách công ty niêm yết được cập nhật realtime từ API miễn phí do Wifeed cung cấp. Dữ liệu được trả về trong trường hợp này chỉ gồm 4 thông tin cơ bản: mã CK, tên công ty, mã phân loại công ty, sàn niêm yết.
 
