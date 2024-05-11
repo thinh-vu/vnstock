@@ -18,11 +18,7 @@ title: Lựa chọn phiên bản
 
     - Bản `beta` (nhận cập nhật mới nhất) được chia sẻ tại nhánh `beta` của Github repo.
      ```shell
-     pip install git+https://github.com/thinh-vu/vnstock.git@beta
-     ```
-    - Bản `stable` (đã phát triển ổn định) được chia sẻ qua pypi.org và nhánh `main` tại Github repo.
-     ```shell
-       pip install git+https://github.com/thinh-vu/vnstock.git@main
+     pip install git+https://github.com/thinh-vu/vnstock.git@dev
      ```
 
 ??? info "Chọn xem nhánh phù hợp"
