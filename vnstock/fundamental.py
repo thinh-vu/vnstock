@@ -26,7 +26,7 @@ def organ_listing (lang='vi', headers=ssi_headers):
     status = response.status_code
     if status == 200:
         data = response.json()
-        print('Total number of companies: ', data['totalCount'])
+        # print('Total number of companies: ', data['totalCount'])
         df = pd.DataFrame(data['items'])
         return df
     else:
@@ -289,6 +289,8 @@ def financial_report (symbol='SSI', report_type='BalanceSheet', frequency='Quart
         symbol (:obj:`str`, required): 3 digits name of the desired stock.
         report_type (:obj:`str`, required): BalanceSheet, IncomeStatement, CashFlow
         report_range (:obj:`str`, required): Yearly or Quarterly.
+        periods (:obj: `int`, required): Numbers of periods to retrieving data
+        latest_year (:obj: `int`, required): The latest year to start looking back for data.
     """
     symbol = symbol.upper()
     organ_code = organ_listing().query(f'ticker == @symbol')['organCode'].values[0]

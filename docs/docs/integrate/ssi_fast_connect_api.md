@@ -21,9 +21,9 @@ vnstock cung cấp tới các bạn các hàm được tùy biến sẵn giúp d
 Các bước thực hiện thiết lập xác thực người dùng để kết nối API như sau:
 
 1. Truy cập [iBoard](https://iboard.ssi.com.vn/) của SSI, tìm mục `Dịch vụ & Tiện ích` > `Dịch vụ API` như hình minh họa bên dưới. Chọn biểu tượng chìa khóa để lấy mã xác thực. Bạn sẽ được yêu cầu cung cấp OTP được gửi qua tin nhắn (hoặc hình thức bạn đăng ký tương ứng).
-	![truy cập dịch vụ API](/assets/images/quan-ly-dich-vu-api-ssi-fast-connect-api.png)
+	![truy cập dịch vụ API](../assets/images/quan-ly-dich-vu-api-ssi-fast-connect-api.png)
 2. Sau khi xác thực OTP, màn hình tiếp theo hiện ra thông tin các mã xác thực. Bạn cần copy thông tin `ConsumerID` và `ConsumerSecret` và lưu vào file để tiếp tục các bước thiết lập tiếp theo.
-	![thông tin mã bảo mật](/assets/images/ma-xac-thuc-nguoi-dung-token-key-ssi-fast-connect-api.png)
+	![thông tin mã bảo mật](../assets/images/ma-xac-thuc-nguoi-dung-token-key-ssi-fast-connect-api.png)
 ## vnstock x Fast Connect Data API
 
 !!! abstract "Hướng dẫn sử dụng module SSI Fast Connect API trong vnstock"

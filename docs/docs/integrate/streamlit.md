@@ -10,3 +10,7 @@
 Để có thể làm chủ Streamlit nhanh chóng với lộ trình đào tạo thực tế, ứng dụng cho chính thị trường chứng khoán Việt Nam và sử dụng vnstock. Bạn có thể trao đổi thêm với Thịnh về khóa học ngắn hạn sắp triển khai.
 
 [![Thinh Vu - Nhắn tin](https://img.shields.io/badge/Thinh_Vu-Nhắn_tin-F74F8A?style=for-the-badge&logo=messenger&logoColor=F74F8A)](https://www.messenger.com/t/mr.thinh.ueh)
+
+``` title="candlestick chart"
+--8<-- "../assets/embed/candlestick_rsi_chart.html"
+```

@@ -1,0 +1,12 @@
+{
+  "insert-template": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "T"
+    }
+  ]
+}
