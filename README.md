@@ -2,7 +2,7 @@
 
 <div id="logo" align="center">
     <a href="http://vnstock.site?utm_source=github&utm_medium=vnstock&utm_content=readme">
-        <img src="assets/images/vnstock_bw_logo_trans_rec.png" alt="vnstock_logo"/>
+        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/main/assets/images/vnstock_bw_logo_trans_rec.png" alt="vnstock_logo"/>
     </a>
 </div>
 
@@ -32,10 +32,26 @@ Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án c�
 Cài đặt thư viện với câu lệnh sau:
 
 ```
-pip install git+https://github.com/thinh-vu/vnstock.git@dev
+pip install vnstock3
 ```
 
 Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstock.site](https://vnstock.site). 
+
+Bạn cần mở Vnstock3 từ Terminal hoặc Jupyter Notebook và nạp thư viện lần đầu cài đặt để chấp nhận điều khoản & điều kiện sử dụng trước khi tiếp tục.
+
+```
+from vnstock3 import Vnstock
+```
+Thông báo hiện ra, bạn chỉ cần ấn phím Enter để đồng ý. Lời nhắc này chỉ hỏi 1 lần duy nhất khi bạn cài đặt trên thiết bị lần đầu tiên.
+
+Để bỏ qua lời nhắc và tự động chấp nhận điều khoản, bạn có thể chèn đoạn code sau vào đầu dự án của mình khi thực thi.
+
+```
+import os
+if "ACCEPT_TC" not in os.environ:
+    os.environ["ACCEPT_TC"] = "tôi đồng ý"
+```
+Chúc các bạn thành công và có nhiều trải nghiệm thú vị với Vnstock3!
 
 <!-- [![vnstock docs - Xem Thêm](https://img.shields.io/badge/vnstock_docs-Xem_Thêm-2ea44f?style=for-the-badge&logo=Github)](https://thinh-vu.github.io/vnstock) -->
 
