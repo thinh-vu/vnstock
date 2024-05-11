@@ -1,4 +1,66 @@
 # Lịch sử cập nhật
+## 23-1-2024
+
+!!! hot "Cập nhật bản 2.8.8"
+	Cập nhật thay đổi từ ngày 16/12/2023 ở phiên bản `beta` sang `main` và phát hành chính thức phiên bản 2.8.8. 
+	
+- Cập nhật mã nguồn hàm `financial_report` sửa lỗi triệt để lỗi sử dụng 'Excel file format cannot be determined, you must specify an engine manually' do dữ liệu trả về không phải định dạng Excel.
+  -   Nguồn dữ liệu từ Fiintrade của SSI sử dụng mã `OrganCode` để tra cứu thông tin công ty trong đó có báo cáo tài chính. Có khoảng > 600 mã cổ phiếu có mã symbol khác OrganCode do đó có nhiều mã khi tra cứu BCTC với mã symbol sẽ gây ra rỗi trong khi với các mã khác thì không. Ví dụ `YTC` có OrganCode là `YTECO` dùng để tra cứu BCTC.
+  -   Bổ sung `openpyxl` là gói phụ thuộc để đọc dữ liệu trả về từ API dưới dạng file Excel. Lỗi này xảy ra khi cài bản Python thuần. Không gặp lỗi với Google Colab hoặc Anaconda.
+- Sửa lỗi vnstock web app
+## 21-1-2024
+- Bổ sung tích hợp cho phép sử dụng các hàm gửi tin nhắn từ vnstock qua Telegram/Slack với các channel/group chat được cài đặt.
+- Cập nhật nội dung trang tài liệu
+- Khởi động dự án vnstock-next cho thế hệ phần mềm vnstock tiếp theo.
+
+## 3-1-2024
+
+- Cập nhật khung chương trình khóa học Python 5 khai giảng 21/1/2024
+
+- Bổ sung tính năng hiện banner thông báo quan trọng trên trang tài liệu.
+
+## 2-1-2024
+
+- Bổ sung tính năng OCR sử dụng Pytesseract cho vnstock và vnstock-data-pro. Chi tiết [tại đây](https://docs.vnstock.site/integrate/pytesseract-ocr-chuyen-doi-tai-lieu-tai-chinh-scan-sang-van-ban/)
+  
+## 24-12-2023
+- Cập nhật tài liệu dự án
+  - Tài liệu truy xuất [giá lịch sử](https://docs.vnstock.site/functions/technical/)
+  - Hướng dẫn [truy xuất dữ liệu giao dịch nước ngoài/tự doanh](https://docs.vnstock.site/functions/market/#giao-dich-ntnn) sử dụng gói phần mềm `vnstock-data-pro`
+  - Hướng dẫn nhanh
+
+## 16-12-2023
+
+- Cập nhật tài liệu dự án
+  
+  - Bổ sung hướng dẫn sử dụng tích hợp SSI Fast Connect API trong gói `vnstock-pro-data` [tại đây](https://docs.vnstock.site/integrate/ssi_fast_connect_api/)
+  - Bổ sung thông tin chi tiết chương trình Vnstock Insider Program [tại đây](https://docs.vnstock.site/insiders-program/gioi-thieu-chuong-trinh-vnstock-insiders-program)
+
+- Bổ sung `requirements.txt` cho trình tạo trang tĩnh MKDocs giúp cài đặt gói phụ thuộc để thiết lập trang tài liệu và xem trước dễ dàng.
+  
+## 14-12-2023
+  
+  Chính thức phát hành các thay đổi từ nhánh Beta trong phiên bản 2.8.7. Chi tiết cập nhật qua blog: [tại đây](https://vnstock.site/2023/12/15/ra-mat-vnstock-insider-program-cap-nhat-nhieu-tinh-nang-thu-vi/)
+
+- Ra mắt Vnstock Insiders Program cung cấp quyền truy cập tới các kho chứa mã nguồn riêng tư (private repo)
+
+- Ra mắt `vnstock-pro-data` trong chương trình Insiders, cung cấp khả năng truy cập dữ liệu chất lượng cao với độ trễ thấp.
+  
+  - Tải dữ liệu giá OHLCV nhanh chóng, chính xác không cần xác thực qua Public API của SSI.
+  - Tải và streaming dữ liệu qua SSI Fast Connect API chính thức (cần đăng ký và xác thực người dùng)
+
+- Chính thức phát hành tính năng truy cập dữ liệu quỹ mở. Hướng dẫn [tại đây](https://docs.vnstock.site/functions/funds/)
+
+- Hỗ trợ xuất dữ liệu time series cho OpenBB Terminal. Hướng dẫn [tại đây](https://docs.vnstock.site/integrate/OpenBBTerminal/)
+
+- Cập nhật tài liệu dự án
+
+## 10-12-2023
+
+- Bổ sung tính năng truy xuất dữ liệu quỹ mở từ fmarket.vn, phát triển từ mã nguồn do `andrey_jef` đóng góp. Tài liệu mô tả và demo notebook đã được cập nhật tương ứng.
+- Đưa `plotly` thành thư viện tùy chọn, chỉ phải import vào dự án nếu người dùng có nhu cầu sử dụng tính năng vẽ đồ thị. Việc này giúp vnstock chạy trên môi trường khác Google Colab không cần cài đặt thêm `plotly` theo mặc định. Mã nguồn được cập nhật lên bản beta trên Github, thay đổi sẽ được đẩy lên PyPI trong tuần tới.
+- Cập nhật tài liệu hướng dẫn cho nội dung lấy dữ liệu giá lịch sử.
+- Cập nhật tài liệu hướng dẫn cách cài đặt thư viện TA-Lib cho phân tích kỹ thuật trên máy tính Windows.
 
 ## 2-4-2024
 !!! "Cập nhật bản 0.2.9.0"
