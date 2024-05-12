@@ -27,7 +27,7 @@ setup(
         "requests",
         "beautifulsoup4",
         "pandas",
-        "vnai",
+        "vnai>=0.1.0",
         "openpyxl",
         "pydantic",
         "psutil",
