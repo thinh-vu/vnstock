@@ -21,7 +21,7 @@ class Trading:
         self.symbol = symbol.upper()
         self.asset_type = get_asset_type(self.symbol)
         self.base_url = _BASE_URL
-        self.headers = get_headers(data_source='TCBS', random_agent=random_agent)
+        self.headers = get_headers(data_source='VCI', random_agent=random_agent)
         
     def price_board (self, symbols_list: List[str], to_df:Optional[bool]=True, show_log:Optional[bool]=False):
         """

@@ -2,54 +2,61 @@ import importlib
 from typing import Optional
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.explorer.msn.const import _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
+from vnstock3.core.utils.parser import get_asset_type
 from functools import wraps
 
 logger = get_logger(__name__)
-
-# def property(func):
-#     @wraps(func)
-#     def wrapper(*args, **kwargs):
-#         try:
-#             result = func(*args, **kwargs)
-#             print(f"Completed property: {func.__name__}")
-#             return result
-#         except Exception as e:
-#             print(f"property failed: {func.__name__}, Error: {e}")
-#             raise
-#     return wrapper
 
 class Vnstock:
     """
     Class (lớp) chính quản lý các chức năng của thư viện Vnstock.
     """
+    
+    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN"]
+    msn_symbol_map = {**_CURRENCY_ID_MAP, **_GLOBAL_INDICES, **_CRYPTO_ID_MAP}
+
     def __init__(self, source:str="VCI"):
-        if source.upper() not in ["VCI", "TCBS", "VND"]:
-            raise ValueError("Hiện tại chỉ có nguồn dữ liệu từ VCI và TCBS được hỗ trợ.")
+        self.source = source.upper()
+        if self.source not in self.SUPPORTED_SOURCES:
+            raise ValueError(F"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
         self.source = source.upper()
         # self.utils = Utils(self)
 
-    def stock(self, symbol: Optional[str], source: Optional[str] = "VCI"):
-        return StockComponents(symbol, source)
+    def stock(self, symbol: Optional[str]=None, source: Optional[str] = "VCI"):
+        if symbol is None:
+            self.symbol = 'VN30F1M'
+            logger.info("Mã chứng khoán không được chỉ định, chương trình mặc định sử dụng VN30F1M")
+        else:
+            self.symbol = symbol
+        return StockComponents(self.symbol, source)
     
     def fx(self, symbol: Optional[str]='EURUSD', source: Optional[str] = "MSN"):
-        return MSNComponents(symbol, source)
+        if symbol:
+            self.symbol = self.msn_symbol_map[symbol]
+        return MSNComponents(self.symbol, source)
     
     def crypto(self, symbol: Optional[str]='BTC', source: Optional[str] = "MSN"):
-        return MSNComponents(symbol, source)
+        if symbol:
+            self.symbol = self.msn_symbol_map[symbol]
+        return MSNComponents(self.symbol, source)
     
     def world_index(self, symbol: Optional[str]='DJI', source: Optional[str] = "MSN"):
-        return MSNComponents(symbol, source)
+        if symbol:
+            self.symbol = self.msn_symbol_map[symbol]
+        return MSNComponents(self.symbol, source)
 
 
 class StockComponents:
     """
     Class (lớp) quản lý các chức năng của thư viện Vnstock liên quan đến cổ phiếu.
     """
+    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN"]
+
     def __init__(self, symbol: str, source: str = "VCI"):
         self.symbol = symbol.upper()
-        if source.upper() not in ["VCI", "TCBS", "VND"]:
-            raise ValueError("Hiện tại chỉ có nguồn dữ liệu từ VCI và TCBS được hỗ trợ.")
         self.source = source.upper()
+        if self.source not in self.SUPPORTED_SOURCES:
+            raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
         self._initialize_components()
 
     def _initialize_components(self):
@@ -64,10 +71,14 @@ class StockComponents:
             self.listing = Listing(source='VCI')
             self.trading = Trading(self.symbol, source=self.source)
             self.company = Company(self.symbol, source=self.source)
-            logger.warning("Thông tin niêm yết sẽ được truy xuất từ TCBS")
+            if get_asset_type(self.symbol) == "stock":
+                self.finance = Finance(self.symbol, source=self.source)
         else:
             self.listing = Listing(source=self.source)
             self.trading = Trading(self.symbol, source=self.source)
+            if get_asset_type(self.symbol) == "stock":
+                self.finance = Finance(self.symbol, source=self.source)
+            logger.warning("Thông tin niêm yết & giao dịch sẽ được truy xuất từ TCBS")
 
     def update_symbol(self, symbol: str):
         """
@@ -81,13 +92,15 @@ class Quote:
     """
     Class (lớp) quản lý các nguồn dữ liệu được tiêu chuẩn hoá cho dữ liệu đồ thị nến, dữ liệu trả về tuỳ thuộc vào nguồn dữ liệu sẵn có được chọn.
     """
+    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN"]
+
     def __init__(self, symbol: str, source: str = "VCI"):
         """
         Class (lớp) quản lý các nguồn dữ liệu được tiêu chuẩn hoá cho dữ liệu đồ thị nến, dữ liệu trả về tuỳ thuộc vào nguồn dữ liệu sẵn có được chọn.
         """
         self.source = source.upper()
-        if self.source not in ["VCI", "TCBS", "VND", "MSN"]:
-            raise ValueError("Hiện tại chỉ có nguồn dữ liệu từ VCI, TCBS, VND, và MSN được hỗ trợ.")
+        if self.source not in self.SUPPORTED_SOURCES:
+            raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
         self.symbol = symbol.upper()
         self.source_module = f"vnstock3.explorer.{source.lower()}"
         self.data_source = self._load_data_source()
@@ -112,42 +125,39 @@ class Quote:
                 self.data_source = self._load_data_source()
         else:
             self.data_source = self._load_data_source()
-
-    def history(self, symbol:Optional[str]='VN30F1M', **kwargs):
+        
+    def history(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất dữ liệu giá lịch sử từ nguồn dữ liệu được chọn.
         """
         if self.source == "MSN":
             symbol_map = {**_CURRENCY_ID_MAP, **_GLOBAL_INDICES, **_CRYPTO_ID_MAP}
-            if symbol is not None:
-                original_symbol = self.symbol
-                self.symbol = symbol_map[self.symbol]
+            if symbol:
+                self.symbol = symbol_map[symbol]
+                logger.info(f"Chuyển đổi mã chứng khoán {symbol} sang mã chứng khoán MSN: {self.symbol}")
                 self._update_data_source(symbol=self.symbol)
                 return self.data_source.history(**kwargs)
         else:
-            # if symbol is provided, override the symbol
-            if symbol is not None:
+            if symbol:
                 self.symbol = symbol.upper()
-            self._update_data_source(symbol)
+            self._update_data_source(self.symbol)
             return self.data_source.history(**kwargs)
+        
+        self._update_data_source(self.symbol)
+        return self.data_source.history(**kwargs)
     
-    def intraday(self, symbol:Optional[str], **kwargs):
+    def intraday(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất dữ liệu giao dịch trong ngày từ nguồn dữ liệu được chọn.
         """
         # if symbol is provided, override the symbol
-        if symbol is not None:
-            self.symbol = symbol.upper()
         self._update_data_source(symbol)
         return self.data_source.intraday(**kwargs)
     
-    def price_depth(self, symbol:Optional[str], **kwargs):
+    def price_depth(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất dữ liệu KLGD theo bước giá từ nguồn dữ liệu được chọn.
         """
-        # if symbol is provided, override the symbol
-        if symbol is not None:
-            self.symbol = symbol.upper()
         self._update_data_source(symbol)
         return self.data_source.price_depth(**kwargs)
     
@@ -155,14 +165,16 @@ class Listing:
     """
     Class (lớp) quản lý các nguồn dữ liệu được tiêu chuẩn hoá cho thông tin niêm yết, dữ liệu trả về tuỳ thuộc vào nguồn dữ liệu sẵn có được chọn.
     """
+    
+    SUPPORTED_SOURCES = ["VCI", "MSN"]
     def __init__(self, source: str = "VCI"):
         """
-        Initializes the DataExplorer with the specified source and symbol.
+        Khởi tạo lớp (class) với nguồn dữ liệu được chọn.
         """
-        # validate the source to only VCI are available so far
-        if source.upper() not in ["VCI", "MSN"]:
-            raise ValueError("Hiện tại chỉ có nguồn dữ liệu từ VCI được hỗ trợ.")
-        self.source_module = f"vnstock3.explorer.{source.lower()}"
+        self.source = source.upper()
+        if self.source not in self.SUPPORTED_SOURCES:
+            raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
+        self.source_module = f"vnstock3.explorer.{self.source.lower()}"
         self.data_source = self._load_data_source()
 
     def _load_data_source(self):
@@ -230,14 +242,15 @@ class Trading:
     """
     Class (lớp) quản lý các nguồn dữ liệu được tiêu chuẩn hoá cho thông tin giao dịch.
     """
+    SUPPORTED_SOURCES = ["VCI", "TCBS"]
     def __init__(self, symbol:Optional[str]='VN30F1M', source: str = "VCI"):
         """
-        Initializes the DataExplorer with the specified source and symbol.
+        Khởi tạo lớp (class) với nguồn dữ liệu được chọn.
         """
         self.symbol = symbol.upper()
-        # validate the source to only VCI are available so far
-        if source.upper() not in ["VCI", "TCBS"]:
-            raise ValueError("Hiện tại chỉ có nguồn dữ liệu từ VCI và TCBS được hỗ trợ.")
+        self.source = source.upper()
+        if self.source not in self.SUPPORTED_SOURCES:
+            raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
         self.source_module = f"vnstock3.explorer.{source.lower()}"
         self.data_source = self._load_data_source()
 
@@ -250,11 +263,11 @@ class Trading:
     
     def _update_data_source(self, symbol: Optional[str] = None):
         """
-        Update the data source if a new symbol is provided.
+        Cập nhật nguồn dữ liệu nếu mã chứng khoán mới được nhập.
         """
         if symbol:
             self.symbol = symbol.upper()
-            self.data_source = self._load_data_source()
+        self.data_source = self._load_data_source()
     
     def price_board(self, symbols_list:list, **kwargs):
         """
@@ -286,11 +299,17 @@ class Company:
     
     def _update_data_source(self, symbol: Optional[str] = None):
         """
-        Update the data source if a new symbol is provided.
+        Cập nhật nguồn dữ liệu nếu mã chứng khoán mới được nhập.
         """
         if symbol:
             self.symbol = symbol.upper()
             self.data_source = self._load_data_source()
+
+    def overview(self, **kwargs):
+        """
+        Truy xuất thông tin giới thiệu công ty.
+        """
+        return self.data_source.overview(**kwargs)
 
     def profile(self, **kwargs):
         """
@@ -344,13 +363,16 @@ class Finance:
     """
     Lớp quản lý các nguồn dữ liệu được tiêu chuẩn hoá cho thông tin tài chính doanh nghiệp.
     """
-    def __init__(self, symbol:str, period:Optional[str]='quarter', source:Optional[str]='TCBS', get_all:Optional[bool]=True):
+    SUPPORTED_SOURCES = ["TCBS", "VCI"]
+
+    def __init__(self, symbol: str, period: Optional[str] = 'quarter', source: Optional[str] = 'TCBS', get_all: Optional[bool] = True):
         self.symbol = symbol.upper()
         self.period = period
         self.get_all = get_all
-        if source.upper() not in ["TCBS" , "VCI"]:
-            raise ValueError("Hiện tại chỉ có nguồn dữ liệu từ TCBS và VCI được hỗ trợ thông tin báo cáo tài chính.")
-        self.source_module = f"vnstock3.explorer.{source.lower()}"
+        self.source = source.upper()
+        if self.source not in self.SUPPORTED_SOURCES:
+            raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ thông tin báo cáo tài chính.")
+        self.source_module = f"vnstock3.explorer.{self.source.lower()}"
         self.data_source = self._load_data_source()
 
     def _load_data_source(self):
@@ -362,7 +384,7 @@ class Finance:
     
     def _update_data_source(self, symbol: Optional[str] = None):
         """
-        Update the data source if a new symbol is provided.
+        Cập nhật nguồn dữ liệu nếu mã chứng khoán mới được nhập.
         """
         if symbol:
             self.symbol = symbol.upper()
@@ -373,6 +395,24 @@ class Finance:
         Truy xuất bảng cân đối kế toán.
         """
         return self.data_source.balance_sheet(**kwargs)
+    
+    def income_statement(self, **kwargs):
+        """
+        Truy xuất báo cáo doanh thu.
+        """
+        return self.data_source.income_statement(**kwargs)
+    
+    def cash_flow(self, **kwargs):
+        """
+        Truy xuất báo cáo dòng tiền.
+        """
+        return self.data_source.cash_flow(**kwargs)
+    
+    def ratio(self, **kwargs):
+        """
+        Truy xuất các chỉ số tài chính.
+        """
+        return self.data_source.ratio(**kwargs)
 
 class MSNComponents:
     """

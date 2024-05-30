@@ -17,15 +17,15 @@ logger = get_logger(__name__)
 
 class Quote:
     """
-    TCBS data source for fetching stock market data, accommodating requests with large date ranges.
+    MSN data source for fetching stock market data, accommodating requests with large date ranges.
     """
-    def __init__(self, symbol_id:str, random_agent:Optional[bool]=False):
+    def __init__(self, symbol_id:str, api_version='20240430', random_agent:Optional[bool]=False):
         self.data_source = 'MSN'
         self.symbol_id = symbol_id.lower()
         self.asset_type = get_asset_type(symbol_id)
         self.base_url = _BASE_URL
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
-        self.apikey = msn_apikey(self.headers)
+        self.apikey = msn_apikey(headers=self.headers, version=api_version)
 
     def _input_validation(self, start: str, end: str, interval: str):
         """
@@ -42,7 +42,7 @@ class Quote:
         Tham số:
             - start (bắt buộc): thời gian bắt đầu lấy dữ liệu, có thể là ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS".
             - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None, chương trình tự động lấy thời điểm hiện tại. Có thể nhập ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS". 
-            - interval (tùy chọn): Khung thời gian trích xuất dữ liệu giá lịch sử. Giá trị nhận: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M. Mặc định là "1D".
+            - interval (tùy chọn): Khung thời gian trích xuất dữ liệu giá lịch sử. Giá trị duy nhất được hỗ trợ là "1D".
             - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True. Đặt là False để trả về dữ liệu dạng JSON.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
             - count_back (tùy chọn): Số lượng dữ liệu trả về từ thời điểm cuối. Mặc định là 365.

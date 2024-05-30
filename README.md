@@ -23,7 +23,13 @@
 
 Vnstock sẽ luôn là giải pháp miễn phí để bạn tiếp cận dữ liệu chứng khoán, tài chính toàn diện, miễn phí với các nhu cầu thiết yếu và làm quen với bộ giải phép Python linh hoạt. Chúc mừng bạn là một phần của sự thay đổi trong hành trình chuyển đổi số thị trường chứng khoán tại Việt Nam.
 
-# II. 📔 Tài liệu hướng dẫn
+# II. ⏱️ Cập nhật đáng chú ý
+
+- 10-05-2024: Ra mắt phiên bản Vnstock `0.3.0.1` với tên gói cài đặt `vnstock3`
+
+Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban)
+
+# III. 📔 Tài liệu hướng dẫn
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
@@ -57,7 +63,7 @@ Chúc các bạn thành công và có nhiều trải nghiệm thú vị với Vn
 
 <!-- [![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_docs_home.png)](https://thinh-vu.github.io/vnstock) -->
 
-# III. 🙋‍♂️ Thông tin liên hệ
+# IV. 🙋‍♂️ Thông tin liên hệ
 
 Bạn có thể kết nối với tác giả qua các hình thức sau. Trong trường hợp cần hỗ trợ nhanh, bạn có thể chọn nhắn tin qua Messenger hoặc Linkedin, tôi sẽ phản hồi ngay lập tức nếu có thể trong hầu hết các trường hợp.
 
@@ -76,13 +82,13 @@ Bạn có thể kết nối với tác giả qua các hình thức sau. Trong tr
   </a>
 </div>
 
-# IV. 🔑 Giấy phép sử dụng (License)
+# V. 🔑 Giấy phép sử dụng (License)
 
 `Vnstock3` được phát hành theo giấy phép tuỳ chỉnh hướng đến cá nhân, không dành cho mục đích thương mại. Quyền sử dụng được quy định cụ thể trong [giấy phép](LICENSE.md) kèm theo. Nếu bạn hoặc tổ chức bạn đang làm việc muốn sử dụng Vnstock có thể liên hệ tác giả để hiểu rõ phạm vi sử dụng và được cấp phép chính thức.
 
 Khi sử dụng Vnstock trong dự án của mình, bạn cần trích dẫn thông tin về tác giả và dự án theo hướng dẫn của Vnstock.
 
-# V. Lịch sử lượt yêu thích
+# VI. Lịch sử lượt yêu thích
 
 Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Dưới đây là lịch sử lượt yêu thích của dự án.
 
