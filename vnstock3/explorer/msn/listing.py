@@ -5,7 +5,7 @@ from datetime import datetime
 import pandas as pd
 import requests
 import json
-from vnstock3.core.utils.parser import camel_to_snake
+# from vnstock3.core.utils.parser import camel_to_snake
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.core.utils.user_agent import get_headers
 from vnstock3.explorer.msn.helper import msn_apikey

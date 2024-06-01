@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import pandas as pd
-from vnstock3.common.data.data_explorer import Vnstock, StockComponents, Quote, Listing, Trading, Company, Finance, MSNComponents
+from vnstock3.common.data.data_explorer import StockComponents, Quote, Listing, Trading, Company, Finance, MSNComponents
+from vnstock3.common.vnstock import Vnstock
 from vnstock3.explorer.msn.const import _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
 msn_symbol_map = {**_CURRENCY_ID_MAP, **_GLOBAL_INDICES, **_CRYPTO_ID_MAP}
 

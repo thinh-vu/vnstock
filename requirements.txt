@@ -8,3 +8,4 @@ fake_useragent
 cryptography
 psutil
 fake_useragent
+# coverage # for testing
