@@ -149,7 +149,39 @@ class Chart:
             labels (str or list): Labels for the treemap slices.
             **kwargs: Additional arguments to pass to the plot function.
         """
-        return self.chart.treemap(values, labels, **kwargs)
+        """
+        Plot a pie chart.
+
+        Args:
+            labels (str, list, pd.Series, optional): Labels for each slice.
+                - If str, it should be a column name in the DataFrame.
+                - If list or pd.Series, it will be used directly as labels.
+            values (str, optional): A column name to use as values for each slice.
+                If you are plotting on a Series, this argument is not required,
+                instead the index is used.
+            **kwargs: Additional arguments to pass to the plot function.
+
+        Raises:
+            ValueError: If the data is not a pandas DataFrame or Series.
+        """
+        if isinstance(self.data, pd.DataFrame):
+            if values:
+                data = self.data[values]
+            else:
+                data = self.data.index
+        elif isinstance(self.data, pd.Series):
+            data = self.data
+        else:
+            raise ValueError("Data must be a pandas DataFrame or Series")
+
+        # Handle labels
+        if labels is not None:
+            if isinstance(labels, str) and isinstance(self.data, pd.DataFrame) and labels in self.data.columns:
+                labels = self.data[labels]
+            else:
+                labels = pd.Series(labels, index=data.index)
+
+        return self.chart.treemap(data, labels, **kwargs)
 
     def boxplot(self, **kwargs):
         """

@@ -17,10 +17,10 @@ class Listing:
     """
     Cấu hình truy cập dữ liệu lịch sử giá chứng khoán từ VCI.
     """
-    def __init__(self, random_agent=False):
+    def __init__(self, api_version='20240530', random_agent=False):
         self.data_source = 'MSN'
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
-        self.apikey = msn_apikey(self.headers)
+        self.apikey = msn_apikey(self.headers, version=api_version)
     
     def search_symbol_id (self, query:str, locale:Optional[str]=None, limit:Optional[int]=10, show_log:Optional[bool]=False, to_df: bool =True) -> Dict:
         """
