@@ -6,7 +6,7 @@ from setuptools.command.install import install
 
 setup(
     name="vnstock3",
-    version="0.3.0.3",
+    version="0.3.0.4",
     description="A comprehensive and transparent solution for Vietnamese stock market analysis.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
@@ -31,7 +31,8 @@ setup(
         "openpyxl",
         "pydantic",
         "psutil",
-        "fake_useragent"
+        "fake_useragent",
+        "vnstock_ezchart"
      ],
     extras_require={
         "dev": ["flake8"],
