@@ -35,6 +35,44 @@ class Quote:
         ticker = TickerModel(symbol=self.symbol, start=start, end=end, interval=interval)
         return ticker
     
+    def _long_history(self, start: str, end: Optional[str], show_log: bool =False, asset_type: Optional[str] = None) -> pd.DataFrame:
+        """
+        Truy xuất dữ liệu lịch sử dài hạn từ TCBS cho khung thời gian ngày
+        """
+
+        # calculate days between start and end
+        start_date = datetime.strptime(start, "%Y-%m-%d")
+        end_date = datetime.strptime(end, "%Y-%m-%d")
+        days = (end_date - start_date).days
+
+        # divide days by 365 to get the number of years
+        years = days // 365
+        # get the remaining days
+        remaining_days = days % 365
+
+        # fetch data for each year from end_date to start_date backward
+        combined_data = []
+        for i in range(years, -1, -1):
+            # calculate the start and end date for each year
+            year_start = end_date.replace(year=end_date.year - i)
+            year_end = end_date.replace(year=end_date.year - i + 1) - pd.Timedelta(days=1)
+            # convert the date to string format
+            year_start_str = year_start.strftime("%Y-%m-%d")
+            year_end_str = year_end.strftime("%Y-%m-%d")
+
+            # fetch data for each year
+            try:
+                data = self.history(start=year_start_str, end=year_end_str, interval="1D", to_df=True, show_log=show_log, asset_type=asset_type)
+                combined_data.append(data)
+            except Exception as e:
+                logger.error(f"Dữ liệu không tồn tại từ {year_start_str} đến {year_end_str}: {e}")
+
+        # combine data for all years
+        df = pd.concat(combined_data, ignore_index=True)
+        # select data from start to end
+        df = df[(df['time'] >= start) & (df['time'] <= end)]
+        return df
+
     def history(self, start: str, end: Optional[str], interval: Optional[str] = "1D", to_df: bool =True, show_log: bool =False, count_back: Optional[int]=365, asset_type: Optional[str] = None) -> Dict:
         """
         Tham số:
@@ -54,44 +92,57 @@ class Quote:
         if asset_type is None:
             asset_type = self.asset_type
 
-        if end is None:
-            end_stamp = int(datetime.now().timestamp())
+        # calculate days between start and end
+        start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
+        end_time = datetime.strptime(ticker.end, "%Y-%m-%d")
+
+        # validate if the end date is not earlier than the start date
+        if end_time < start_time:
+            raise ValueError("Thời gian kết thúc không thể sớm hơn thời gian bắt đầu.")
+
+        days = (end_time - start_time).days
+
+        if days > 365:
+            return self._long_history(start, end, show_log, asset_type)
         else:
-            end_stamp = int(datetime.strptime(ticker.end, "%Y-%m-%d").timestamp())
+            if end is None:
+                end_stamp = int(datetime.now().timestamp())
+            else:
+                end_stamp = int(end_time.timestamp())
 
-        if interval in ["1D", "1W", "1M"]:
-            end_point = "bars-long-term"
-        elif interval in ["1m", "5m", "15m", "30m", "1H"]:
-            end_point = "bars"
+            if interval in ["1D", "1W", "1M"]:
+                end_point = "bars-long-term"
+            elif interval in ["1m", "5m", "15m", "30m", "1H"]:
+                end_point = "bars"
 
-        # translate the interval to TCBS format
-        interval = self.interval_map[ticker.interval]
+            # translate the interval to TCBS format
+            interval = self.interval_map[ticker.interval]
 
-        # Construct the URL for fetching data
-        if asset_type == "derivative":
-            url = f"{self.base_url}/{_FUTURE_URL}/v2/stock/{end_point}?resolution={interval}&ticker={self.symbol}&type={asset_type}&to={end_stamp}&countBack={count_back}"
-        else:
-            url = f"{self.base_url}/{_STOCKS_URL}/v2/stock/{end_point}?resolution={interval}&ticker={self.symbol}&type={asset_type}&to={end_stamp}&countBack={count_back}"
+            # Construct the URL for fetching data
+            if asset_type == "derivative":
+                url = f"{self.base_url}/{_FUTURE_URL}/v2/stock/{end_point}?resolution={interval}&ticker={self.symbol}&type={asset_type}&to={end_stamp}&countBack={count_back}"
+            else:
+                url = f"{self.base_url}/{_STOCKS_URL}/v2/stock/{end_point}?resolution={interval}&ticker={self.symbol}&type={asset_type}&to={end_stamp}&countBack={count_back}"
 
-        if interval in ["1m", "5m", "15m", "30m", "1H"]:
-            # replace 'bars' with 'bars-long-term' in the url
-            url = url.replace("bars-long-term", "bars")
+            if interval in ["1m", "5m", "15m", "30m", "1H"]:
+                # replace 'bars' with 'bars-long-term' in the url
+                url = url.replace("bars-long-term", "bars")
 
-        if show_log:
-            logger.info(f"Tải dữ liệu từ {url}")
+            if show_log:
+                logger.info(f"Tải dữ liệu từ {url}")
 
-        # Send a GET request to fetch the data
-        response = requests.get(url, headers=self.headers)
+            # Send a GET request to fetch the data
+            response = requests.get(url, headers=self.headers)
 
-        if response.status_code != 200:
-            raise ConnectionError(f"Tải dữ liệu không thành công: {response.status_code} - {response.reason}")
+            if response.status_code != 200:
+                raise ConnectionError(f"Tải dữ liệu không thành công: {response.status_code} - {response.reason}")
 
-        json_data = response.json()['data']
+            json_data = response.json()['data']
 
-        if show_log:
-            logger.info(f'Truy xuất thành công dữ liệu {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}.')
+            if show_log:
+                logger.info(f'Truy xuất thành công dữ liệu {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}.')
 
-        df = self._as_df(json_data, asset_type)
+            df = self._as_df(json_data, asset_type)
 
         df.attrs['symbol'] = self.symbol
         df.category = self.asset_type

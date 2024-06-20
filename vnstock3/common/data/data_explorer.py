@@ -30,7 +30,10 @@ class StockComponents:
         elif self.source == "TCBS":
             self.listing = Listing(source='VCI')
             self.trading = Trading(self.symbol, source=self.source)
-            self.company = Company(self.symbol, source=self.source)
+            try:
+                self.company = Company(self.symbol, source=self.source)
+            except:
+                logger.warning("Nguồn TCBS hiện tại chỉ hỗ trợ các thông tin về giá và giao dịch, không hỗ trợ thông tin công ty.")
             if get_asset_type(self.symbol) == "stock":
                 self.finance = Finance(self.symbol, source=self.source)
         else:
@@ -235,7 +238,6 @@ class Trading:
         """
         return self.data_source.price_board(symbols_list, **kwargs)
     
-    
 class Company:
     """
     Class (lớp) quản lý các nguồn dữ liệu được tiêu chuẩn hoá cho thông tin giao dịch.
@@ -320,8 +322,6 @@ class Company:
         """
         return self.data_source.dividends(**kwargs)
 
-
-
 class Finance:
     """
     Lớp quản lý các nguồn dữ liệu được tiêu chuẩn hoá cho thông tin tài chính doanh nghiệp.
@@ -353,31 +353,29 @@ class Finance:
             self.symbol = symbol.upper()
             self.data_source = self._load_data_source()
 
-    def balance_sheet(self, **kwargs):
+    def balance_sheet(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất bảng cân đối kế toán.
         """
         return self.data_source.balance_sheet(**kwargs)
     
-    def income_statement(self, **kwargs):
+    def income_statement(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất báo cáo doanh thu.
         """
         return self.data_source.income_statement(**kwargs)
     
-    def cash_flow(self, **kwargs):
+    def cash_flow(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất báo cáo dòng tiền.
         """
         return self.data_source.cash_flow(**kwargs)
     
-    def ratio(self, **kwargs):
+    def ratio(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất các chỉ số tài chính.
         """
         return self.data_source.ratio(**kwargs)
-
-
 
 class MSNComponents:
     """

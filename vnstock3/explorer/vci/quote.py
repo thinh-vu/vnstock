@@ -55,13 +55,19 @@ class Quote:
         # Validate inputs
         ticker = self._input_validation(start, end, interval)
 
+        start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
+        end_time = datetime.strptime(ticker.end, "%Y-%m-%d")
+
+        if start_time > end_time:
+            raise ValueError("Thời gian bắt đầu không thể lớn hơn thời gian kết thúc.")
+
         # convert start and end date to timestamp
         if end is None:
             end_stamp = int(datetime.now().timestamp())
         else:
-            end_stamp = int(datetime.strptime(ticker.end, "%Y-%m-%d").timestamp())
+            end_stamp = int(end_time.timestamp())
 
-        start_stamp = int(datetime.strptime(ticker.start, "%Y-%m-%d").timestamp())        
+        start_stamp = int(start_time.timestamp())        
         
         interval = self.interval_map[ticker.interval]
 
@@ -226,6 +232,9 @@ class Quote:
         
         # Ensure 'time' column data are numeric (integers), then convert to datetime
         df['time'] = pd.to_datetime(df['time'].astype(int), unit='s')
+        # localize time to Asia/Ho_Chi_Minh by adding 7 hours
+        if interval in ['1m', '5m', '15m', '30m', '1H']:
+            df['time'] = df['time'] + pd.Timedelta(hours=7)
 
         if asset_type not in ["index", "derivative"]:            
             # divide open, high, low, close, volume by 1000
