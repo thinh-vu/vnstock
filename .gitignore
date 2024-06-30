@@ -6,3 +6,4 @@ assets/.DS_Store
 docs/.DS_Store
 vnstock3/.DS_Store
 tests/common/test_data_explorer.py
+tests/test_notebook.ipynb
