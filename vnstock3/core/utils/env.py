@@ -4,7 +4,7 @@ import sys
 
 def get_platform():
     """
-    Truy xuất tên hệ điều hành đang chạy
+    Get the platform of the current system
     """
     import platform
     PLATFORM = platform.system()
@@ -12,14 +12,14 @@ def get_platform():
 
 def get_package_path(package='vnstock'):
     """
-    Truy xuất đường dẫn của 1 gói Python bất kỳ
+    Get the path to the package directory
     """
     from importlib.util import find_spec
     spec = find_spec(package)
     if spec and spec.origin:
-        package_path = spec.origin  # Path to the package's main file
+        package_path = spec.origin 
     elif spec and spec.submodule_search_locations:
-        package_path = spec.submodule_search_locations[0]  # Path to the package directory
+        package_path = spec.submodule_search_locations[0]
     else:
         package_path = None
     return package_path
