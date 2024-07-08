@@ -53,7 +53,11 @@ class Company:
                 'shortName', 'website', 'industryID', 'industryIDv2']]
         df.columns = [camel_to_snake(col) for col in df.columns]
         df.rename(columns={'industry_i_dv2':'industry_id_v2'}, inplace=True)
-        df.drop(columns='ticker', inplace=True)
+        
+        try:
+            df.drop(columns='ticker', inplace=True)
+        except:
+            pass
 
         df.name = self.symbol
         df.source = 'TCBS'
@@ -85,7 +89,12 @@ class Company:
             except:
                 pass
         df['ticker'] = self.symbol
-        df.drop(columns=['id', 'ticker'], inplace=True)
+        
+        try:
+            df.drop(columns=['id', 'ticker'], inplace=True)
+        except:
+            pass
+
         df.columns = [camel_to_snake(col) for col in df.columns]
 
         df.name = self.symbol
@@ -112,7 +121,12 @@ class Company:
             logger.error(f"Error fetching large shareholders data for {self.symbol}. Details: {response.text}")
         df = json_normalize(response.json()['listShareHolder'])
         df.rename(columns={'name': 'shareHolder', 'ownPercent': 'shareOwnPercent'}, inplace=True)
-        df.drop(columns=['no', 'ticker'], inplace=True)
+
+        try:
+            df.drop(columns=['no', 'ticker'], inplace=True)
+        except:
+            pass
+
         df.columns = [camel_to_snake(col) for col in df.columns]
 
         df.name = self.symbol
@@ -138,7 +152,12 @@ class Company:
         if response.status_code != 200:
             logger.error(f"Error fetching insider deals data for {self.symbol}. Details: {response.text}")  
         df = json_normalize(response.json()['listInsiderDealing'])
-        df.drop(columns=['no', 'ticker'], inplace=True)
+
+        try:
+            df.drop(columns=['no', 'ticker'], inplace=True)
+        except:
+            pass
+
         df.rename(columns={'anDate': 'dealAnnounceDate', 'dealingMethod': 'dealMethod', 'dealingAction': 'dealAction', 'quantity': 'dealQuantity', 'price': 'dealPrice', 'ratio': 'dealRatio'}, inplace=True)
         df['dealAnnounceDate'] = pd.to_datetime(df['dealAnnounceDate'], format='%d/%m/%y')
         df.sort_values(by='dealAnnounceDate', ascending=False, inplace=True)
@@ -186,7 +205,10 @@ class Company:
             df = json_normalize(response.json()['listSubCompany'])
             df_ls.append(df)
         df = pd.concat(df_ls, ignore_index=True)
-        df.drop(columns=['no', 'ticker'], inplace=True)
+        try:
+            df.drop(columns=['no', 'ticker'], inplace=True)
+        except:
+            pass
         df.rename(columns={'companyName': 'subCompanyName', 'ownPercent': 'subOwnPercent'}, inplace=True)
         df.columns = [camel_to_snake(col) for col in df.columns]
 
@@ -211,7 +233,12 @@ class Company:
         if response.status_code != 200:
             logger.error(f"Error fetching officers data for {self.symbol}. Details: {response.text}")
         df = json_normalize(response.json()['listKeyOfficer'])
-        df.drop(columns=['no', 'ticker'], inplace=True)
+        
+        try:
+            df.drop(columns=['no', 'ticker'], inplace=True)
+        except:
+            pass
+
         df.rename(columns={'name': 'officerName', 'position': 'officerPosition', 'ownPercent':'officerOwnPercent'}, inplace=True)
         df.sort_values(by=['officerOwnPercent', 'officerPosition'], ascending=False, inplace=True)
         df.columns = [camel_to_snake(col) for col in df.columns]
@@ -238,11 +265,13 @@ class Company:
             logger.error(f"Error fetching company events data for {self.symbol}. Details: {response.text}")
         df = pd.DataFrame(response.json()['listEventNews'])
         df.columns = [camel_to_snake(col) for col in df.columns]
-        df.rename(columns={'price_change_ratio1_m':'price_change_ratio_1m', 'ex_rigth_date':'exer_right_date'}, inplace=True)
-        df.drop(columns=['ticker'], inplace=True)
-        df['event_desc'] = df['event_desc'].apply(lambda x: BeautifulSoup(x, 'html.parser').get_text())
-        df['event_desc'] = df['event_desc'].str.replace('\n', ' ')
-
+        try:
+            df.rename(columns={'price_change_ratio1_m':'price_change_ratio_1m', 'ex_rigth_date':'exer_right_date'}, inplace=True)
+            df.drop(columns=['ticker'], inplace=True)
+            df['event_desc'] = df['event_desc'].apply(lambda x: BeautifulSoup(x, 'html.parser').get_text())
+            df['event_desc'] = df['event_desc'].str.replace('\n', ' ')
+        except:
+            pass
         df.name = self.symbol
         df.source = 'TCBS'
 
@@ -264,7 +293,10 @@ class Company:
         if response.status_code != 200:
             logger.error(f"Error fetching company news data for {self.symbol}. Details: {response.text}")
         df = pd.DataFrame(response.json()['listActivityNews'])
-        df.drop(columns=['ticker'], inplace=True)
+        try:
+            df.drop(columns=['ticker'], inplace=True)
+        except:
+            pass
         df.columns = [camel_to_snake(col) for col in df.columns]
         df.rename(columns={'price_change_ratio1_m':'price_change_ratio_1m'}, inplace=True)
 
@@ -283,7 +315,10 @@ class Company:
         url = f'{_BASE_URL}/{_ANALYSIS_URL}/v1/company/{self.symbol}/dividend-payment-histories?page={page}&size={page_size}'
         response = requests.get(url, headers=self.headers)
         df = json_normalize(response.json()['listDividendPaymentHis'])
-        df.drop(columns=['no', 'ticker'], inplace=True)
+        try:
+            df.drop(columns=['no', 'ticker'], inplace=True)
+        except:
+            pass
         df.columns = [camel_to_snake(col) for col in df.columns]
         df.name = self.symbol
         df.source = 'TCBS'

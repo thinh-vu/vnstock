@@ -152,9 +152,9 @@ class Quote:
         df['match_type'] = df['match_type'].replace({'b': 'Buy', 's': 'Sell', 'unknown': 'ATO/ATC'})
 
         # convert time to datetime
-        df['time'] = pd.to_datetime(df['time'].astype(int), unit='s')
-        # localize time to Asia/Ho_Chi_Minh by adding 7 hours
-        df['time'] = df['time'] + pd.Timedelta(hours=7)
+        df['time'] = pd.to_datetime(df['time'].astype(int), unit='s').dt.tz_localize('UTC')
+        # convert UTC time to Asia/Ho_Chi_Minh timezone
+        df['time'] = df['time'].dt.tz_convert('Asia/Ho_Chi_Minh')
 
         # sort by time
         df = df.sort_values(by='time')
@@ -231,10 +231,9 @@ class Quote:
         df = df[['time', 'open', 'high', 'low', 'close', 'volume']]
         
         # Ensure 'time' column data are numeric (integers), then convert to datetime
-        df['time'] = pd.to_datetime(df['time'].astype(int), unit='s')
-        # localize time to Asia/Ho_Chi_Minh by adding 7 hours
-        if interval in ['1m', '5m', '15m', '30m', '1H']:
-            df['time'] = df['time'] + pd.Timedelta(hours=7)
+        df['time'] = pd.to_datetime(df['time'].astype(int), unit='s').dt.tz_localize('UTC') # Localize the original time to UTC
+        # Convert UTC time to Asia/Ho_Chi_Minh timezone, make sure time is correct for minute and hour interval
+        df['time'] = df['time'].dt.tz_convert('Asia/Ho_Chi_Minh')
 
         if asset_type not in ["index", "derivative"]:            
             # divide open, high, low, close, volume by 1000
