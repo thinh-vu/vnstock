@@ -152,9 +152,9 @@ class Quote:
         df['match_type'] = df['match_type'].replace({'b': 'Buy', 's': 'Sell', 'unknown': 'ATO/ATC'})
 
         # convert time to datetime
-        df['time'] = pd.to_datetime(df['time'].astype(int), unit='s').dt.tz_localize('UTC')
-        # convert UTC time to Asia/Ho_Chi_Minh timezone
-        df['time'] = df['time'].dt.tz_convert('Asia/Ho_Chi_Minh')
+        df['time'] = pd.to_datetime(df['time'].astype(int), unit='s')
+        # convert UTC time to Asia/Ho_Chi_Minh timezone by adding 7 hours
+        df['time'] = df['time'] + pd.Timedelta(hours=7)
 
         # sort by time
         df = df.sort_values(by='time')
