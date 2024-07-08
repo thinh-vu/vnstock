@@ -1,11 +1,12 @@
 # Refactor the original code from https://github.com/andrey-jef contributed to the Vnstock Legacy project. Reference: https://github.com/thinh-vu/vnstock/blob/legacy/vnstock/funds.py
 # Shoutout to andrey_jef for the contribution.
 
+import json
+import requests
 import pandas as pd
 from pandas import json_normalize
-import requests
-import json
 from typing import Union, List
+from datetime import datetime
 from vnstock3.explorer.fmarket.const import _BASE_URL, _FUND_TYPE_MAPPING, _FUND_LIST_COLUMNS, _FUND_LIST_MAPPING
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.core.utils.user_agent import get_headers
@@ -32,6 +33,7 @@ class Fund:
         self.data_source = "fmarket"
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.base_url = _BASE_URL
+        self.fund_list = self.listing()['short_name'].to_list()
 
     def listing(self, fund_type="") -> pd.DataFrame:
         """
@@ -102,8 +104,7 @@ class Fund:
                 f"Error in API response: {response.status_code} - {response.text}"
             )
 
-
-    def details(self, symbol="SSISCA", section="top_holding_list") -> pd.DataFrame:
+    def details(self, symbol="SSISCA", section="top_holding") -> pd.DataFrame:
         """
         Retrieve fund details for a specific fund. Live data is retrieved from the Fmarket API.
 
@@ -112,7 +113,7 @@ class Fund:
             symbol : str
                 ticker of a fund. A.k.a fund short name
             section : str
-                section of data to retrieve. Options: 'top_holding_list' (default), 'industry_holding_list', 'nav_report', 'asset_holding_list'
+                section of data to retrieve. Options: 'top_holding' (default), 'industry_holding', 'nav_report', 'asset_holding'
 
         Returns
         -------
@@ -122,10 +123,16 @@ class Fund:
 
         # validate "symbol" param input
         symbol = symbol.upper()
+        if symbol not in self.fund_list:
+            print(
+                f"Error: {symbol} is not a valid input.\n"
+                f"Call the listing() method for the list of valid Fund short_name."
+            )
+            raise ValueError(f"Invalid symbol: {symbol}")
         try:
             # Lookup a valid "fundID" related to "symbol"
             # invalid symbol exception will be handled in fund_filter()
-            fundID = int(self.fund_filter(symbol)["id"][0])
+            fundID = int(self.filter(symbol)["id"][0])
             print(f"Retrieving data for {symbol}")
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
@@ -133,15 +140,15 @@ class Fund:
 
         # validate "type" param input
         section_mapping = {
-            "top_holding_list": self.top_holding,
-            "industry_holding_list": self.industry_holding,
+            "top_holding": self.top_holding,
+            "industry_holding": self.industry_holding,
             "nav_report": self.nav_report,
-            "asset_holding_list": self.asset_holding,
+            "asset_holding": self.asset_holding,
         }
 
         if section in section_mapping:
             # Match with appropriate function
-            df = section_mapping[section](fundId=fundID, headers=self.headers)
+            df = section_mapping[section](fundId=fundID)
             df["short_name"] = symbol
             return df
         else:
@@ -198,7 +205,6 @@ class Fund:
             raise requests.exceptions.HTTPError(
                 f"Error in API response: {response.status_code} - {response.text}"
             )
-
 
     def top_holding(self, fundId=23) -> pd.DataFrame:
         """
@@ -277,7 +283,6 @@ class Fund:
                 f"Error in API response: {response.status_code} - {response.text}"
             )
 
-
     def industry_holding(self, fundId=23) -> pd.DataFrame:
         """Retrieve list of industries and fund distribution for specific fundID. Live data is retrieved from the Fmarket API.
 
@@ -320,7 +325,6 @@ class Fund:
             raise requests.exceptions.HTTPError(
                 f"Error in API response: {response.status_code} - {response.text}"
             )
-
 
     def nav_report(self, fundId=23) -> pd.DataFrame:
         """Retrieve all available daily NAV data point of the specified fund. Live data is retrieved from the Fmarket API.
@@ -371,7 +375,6 @@ class Fund:
             raise requests.exceptions.HTTPError(
                 f"Error in API response: {response.status_code} - {response.text}"
             )
-
 
     def asset_holding(self, fundId=23) -> pd.DataFrame:
         """Retrieve list of assets holding allocation for specific fundID. Live data is retrieved from the Fmarket API.
