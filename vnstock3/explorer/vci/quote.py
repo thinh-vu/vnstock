@@ -254,6 +254,8 @@ class Quote:
 
         # set datatype for each column using _OHLC_DTYPE
         for col, dtype in _OHLC_DTYPE.items():
+            if dtype == "datetime64[ns]":
+                df[col] = df[col].dt.tz_localize(None)  # Remove timezone information
             df[col] = df[col].astype(dtype)
 
         # Set metadata attributes
@@ -262,5 +264,6 @@ class Quote:
         df.source = "VCI"
 
         return df
+
 
 
