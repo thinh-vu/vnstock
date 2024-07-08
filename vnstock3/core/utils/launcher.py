@@ -16,7 +16,6 @@ def change_dir(path: str) -> None:
     os.chdir(path)
     print(f'Changed directory to {path}')
 
-
 def execute_command(command: Optional[List[str]] = None) -> None:
     """
     Thực thi một lệnh trên hệ thống.

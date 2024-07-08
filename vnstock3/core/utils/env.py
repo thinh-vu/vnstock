@@ -1,14 +1,16 @@
 from vnstock3.core.config.const import ID_DIR
-import json
 import sys
+import json
+import os
+import platform
 
 def get_platform():
     """
     Truy xuất tên hệ điều hành đang chạy
     """
-    import platform
     PLATFORM = platform.system()
     return PLATFORM
+
 
 def get_package_path(package='vnstock'):
     """
@@ -36,4 +38,30 @@ def id_valid():
         raise SystemExit('Bạn cần chấp thuận điều khoản, điều kiện để sử dụng Vnstock!')
 
     
+def get_username():
+    """
+    Get the current username of the system.
+    """
+    try:
+        username = os.getlogin()
+        return username
+    except OSError as e:
+        print(f"Error: {e}")
+        return None
 
+
+def get_cwd():
+    """Return current working directory"""
+    try:
+        cwd = os.getcwd()
+        return cwd
+    except OSError as e:
+        print(f"Error: {e}")
+        return None
+
+
+def get_path_delimiter():
+    """
+    Detect the running OS and return the appropriate file path delimiter.
+    """
+    return '\\' if os.name == 'nt' else '/'

@@ -1,0 +1,56 @@
+_BASE_URL = 'https://api.fmarket.vn/res/products'
+
+_FUND_TYPE_MAPPING = {
+    "": [],
+    "BALANCED": ["BALANCED"],
+    "BOND": ["BOND"],
+    "STOCK": ["STOCK"],
+}
+
+_FUND_LIST_COLUMNS = [
+                "shortName",
+                "name",
+                "dataFundAssetType.name",
+                "owner.name",
+                "managementFee",
+                "firstIssueAt",
+                "nav",
+                "productNavChange.navToPrevious",
+                "productNavChange.navToLastYear",
+                "productNavChange.navToBeginning",
+                "productNavChange.navTo1Months",
+                "productNavChange.navTo3Months",
+                "productNavChange.navTo6Months",
+                "productNavChange.navTo12Months",
+                "productNavChange.navTo24Months",
+                "productNavChange.navTo36Months",
+                "productNavChange.annualizedReturn36Months",
+                "productNavChange.updateAt",
+                "id",
+                "code",
+                "vsdFeeId",
+            ]
+
+_FUND_LIST_MAPPING = {
+                "shortName": "short_name",
+                "name": "name",
+                "dataFundAssetType.name": "fund_type",
+                "owner.name": "fund_owner_name",
+                "managementFee": "management_fee",
+                "firstIssueAt": "inception_date",
+                "nav": "nav",
+                "productNavChange.navToPrevious": "nav_change_previous",
+                "productNavChange.navToLastYear": "nav_change_last_year",
+                "productNavChange.navToBeginning": "nav_change_inception",
+                "productNavChange.navTo1Months": "nav_change_1m",
+                "productNavChange.navTo3Months": "nav_change_3m",
+                "productNavChange.navTo6Months": "nav_change_6m",
+                "productNavChange.navTo12Months": "nav_change_12m",
+                "productNavChange.navTo24Months": "nav_change_24m",
+                "productNavChange.navTo36Months": "nav_change_36m",
+                "productNavChange.annualizedReturn36Months": "nav_change_36m_annualized",
+                "productNavChange.updateAt": "nav_update_at",
+                "id": "fund_id_fmarket",
+                "code": "fund_code",
+                "vsdFeeId": "vsd_fee_id",
+            }

