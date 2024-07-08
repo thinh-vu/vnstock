@@ -14,8 +14,16 @@ class Vnstock:
     SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN"]
     msn_symbol_map = {**_CURRENCY_ID_MAP, **_GLOBAL_INDICES, **_CRYPTO_ID_MAP}
 
-    def __init__(self, source:str="VCI"):
+    def __init__(self, source:str="VCI", show_log:bool=True):
+        """
+        Hàm khởi tạo của lớp Vnstock.
+        
+        Tham số:
+            - source (str): Nguồn dữ liệu chứng khoán. Mặc định là 'VCI' (Vietstock). Các giá trị hợp lệ là 'VCI', 'TCBS', 'MSN'.
+            - show_log (bool): Hiển thị log hoạt động của chương trình. Mặc định là True.
+        """
         self.source = source.upper()
+        self.show_log = show_log
         if self.source not in self.SUPPORTED_SOURCES:
             raise ValueError(F"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
         self.source = source.upper()
@@ -27,7 +35,7 @@ class Vnstock:
             logger.info("Mã chứng khoán không được chỉ định, chương trình mặc định sử dụng VN30F1M")
         else:
             self.symbol = symbol
-        return StockComponents(self.symbol, source)
+        return StockComponents(self.symbol, source, show_log=self.show_log)
     
     def fx(self, symbol: Optional[str]='EURUSD', source: Optional[str] = "MSN"):
         if symbol:

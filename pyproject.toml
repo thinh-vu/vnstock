@@ -27,7 +27,7 @@ dependencies = [
     "requests",
     "beautifulsoup4",
     "pandas",
-    "vnai>=0.1.0",
+    "vnai>=0.1.3",
     "openpyxl",
     "pydantic",
     "psutil",

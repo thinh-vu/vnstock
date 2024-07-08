@@ -6,7 +6,7 @@ from setuptools.command.install import install
 
 setup(
     name="vnstock3",
-    version="0.3.0.5",
+    version="0.3.0.6",
     description="A comprehensive and transparent solution for Vietnamese stock market analysis.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
@@ -15,6 +15,9 @@ setup(
     url="https://github.com/thinh-vu/vnstock",
     classifiers=[
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
@@ -27,7 +30,7 @@ setup(
         "requests",
         "beautifulsoup4",
         "pandas",
-        "vnai>=0.1.0",
+        "vnai>=0.1.3",
         "openpyxl",
         "pydantic",
         "psutil",

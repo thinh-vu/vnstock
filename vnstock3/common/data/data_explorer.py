@@ -12,9 +12,18 @@ class StockComponents:
     """
     SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN"]
 
-    def __init__(self, symbol: str, source: str = "VCI"):
+    def __init__(self, symbol: str, source: str = "VCI", show_log:bool=True):
+        """
+        Khởi tạo lớp (class) với mã chứng khoán và nguồn dữ liệu được chọn.
+
+        Tham số:
+            - symbol (str): Mã chứng khoán cần truy xuất thông tin.
+            - source (str): Nguồn dữ liệu cần truy xuất thông tin. Mặc định là 'VCI'.
+            - show_log (bool): mặc định là True để hiển thị đầy đủ cảnh báo, đặt False nếu muốn tắt logger.
+        """
         self.symbol = symbol.upper()
         self.source = source.upper()
+        self.show_log = show_log
         if self.source not in self.SUPPORTED_SOURCES:
             raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
         self._initialize_components()
@@ -26,7 +35,8 @@ class StockComponents:
         if self.source not in ["VCI", "TCBS"]:
             self.listing = Listing(source='VCI')
             self.trading = Trading(self.symbol, source='VCI')
-            logger.warning("Thông tin niêm yết & giao dịch sẽ được truy xuất từ VCI")
+            if self.show_log:
+                logger.warning("Thông tin niêm yết & giao dịch sẽ được truy xuất từ VCI")
         elif self.source == "TCBS":
             self.listing = Listing(source='VCI')
             self.trading = Trading(self.symbol, source=self.source)
@@ -41,7 +51,8 @@ class StockComponents:
             self.trading = Trading(self.symbol, source=self.source)
             if get_asset_type(self.symbol) == "stock":
                 self.finance = Finance(self.symbol, source=self.source)
-            logger.warning("Thông tin niêm yết & giao dịch sẽ được truy xuất từ TCBS")
+            if self.show_log:
+                logger.warning("Thông tin niêm yết & giao dịch sẽ được truy xuất từ TCBS")
 
     def update_symbol(self, symbol: str):
         """
