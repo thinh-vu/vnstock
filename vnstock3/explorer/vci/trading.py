@@ -77,7 +77,9 @@ class Trading:
         drop_columns = [('bid_ask', 'code'), ('bid_ask', 'symbol'), ('bid_ask', 'session'), ('bid_ask', 'received_time'), ('bid_ask', 'message_type'), ('bid_ask', 'time'), ('bid_ask', 'bid_prices'), ('bid_ask', 'ask_prices'),
                 ('listing', 'code'), ('listing', 'exercise_price'), ('listing', 'exercise_ratio'), ('listing', 'maturity_date'), ('listing', 'underlying_symbol'), ('listing', 'issuer_name'), ('listing', 'received_time'), ('listing', 'message_type'), ('listing', 'en_organ_name'), ('listing', 'en_organ_short_name'), ('listing', 'organ_short_name'), ('listing', 'ticker'),
                 ('match', 'code'), ('match', 'symbol'), ('match', 'received_time'), ('match', 'message_type'), ('match', 'time'), ('match', 'session')]
-        combine_df = combine_df.drop(columns=drop_columns)
+        
+        # Drop columns only if they exist in the DataFrame
+        combine_df = combine_df.drop(columns=[col for col in drop_columns if col in combine_df.columns])
 
         # rename column for board inside listing to exchange
         combine_df = combine_df.rename(columns={'board': 'exchange'}, level=1)
