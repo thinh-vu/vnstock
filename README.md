@@ -41,27 +41,16 @@ Cài đặt thư viện với câu lệnh sau:
 pip install -U vnstock3
 ```
 
-Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstock.site](https://vnstock.site). 
+Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstocks.com](https://vnstocks.com/docs/category/s%E1%BB%95-tay-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn). 
 
-Bạn cần mở Vnstock3 từ Terminal hoặc Jupyter Notebook và nạp thư viện lần đầu cài đặt để chấp nhận điều khoản & điều kiện sử dụng trước khi tiếp tục.
+Bạn cần nạp thư viện vào môi trường Python thông qua giao diện Jupyter Notebook hoặc Terminal để có thể gọi và sử dụng các hàm được cung cấp.
 
 ```
 from vnstock3 import Vnstock
 ```
-Thông báo hiện ra, bạn chỉ cần ấn phím Enter để đồng ý. Lời nhắc này chỉ hỏi 1 lần duy nhất khi bạn cài đặt trên thiết bị lần đầu tiên.
 
-Để bỏ qua lời nhắc và tự động chấp nhận điều khoản, bạn có thể chèn đoạn code sau vào đầu dự án của mình khi thực thi.
-
-```
-import os
-if "ACCEPT_TC" not in os.environ:
-    os.environ["ACCEPT_TC"] = "tôi đồng ý"
-```
 Chúc các bạn thành công và có nhiều trải nghiệm thú vị với Vnstock3!
 
-<!-- [![vnstock docs - Xem Thêm](https://img.shields.io/badge/vnstock_docs-Xem_Thêm-2ea44f?style=for-the-badge&logo=Github)](https://thinh-vu.github.io/vnstock) -->
-
-<!-- [![vnstock_docs_home](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/vnstock_docs_home.png)](https://thinh-vu.github.io/vnstock) -->
 
 # IV. 🙋‍♂️ Thông tin liên hệ
 
