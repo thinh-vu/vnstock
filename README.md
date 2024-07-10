@@ -1,6 +1,6 @@
 <div align="center">
 
-[![python_course_6](https://raw.githubusercontent.com/thinh-vu/vnstock/legacy/docs/docs/assets/images/Python%20Course%206%20-%20Phan%20tich%20du%20lieu%20va%20giao%20dich%20chung%20khoan.png)](https://docs.vnstock.site/course/#khoa-hoc-ang-trien-khai)
+[![python_course_6](https://course.learn-anything.vn/wp-content/uploads/2024/06/Python-Course-7-Phan-tich-du-lieu-va-giao-dich-chung-khoan.png)
 
 </div>
 
