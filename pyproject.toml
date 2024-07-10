@@ -9,11 +9,11 @@ build-backend = "setuptools.build_meta"
 # Metadata Information
 [project]
 name = "vnstock3"
-version = "0.3.0.6"
+version = "0.3.0.7"
 description = "A comprehensive and transparent solution for Vietnamese stock market analysis."
 authors = [
-    { name = "Thinh Vu", email = "mrthinh@live.com" },
-    ]
+    { name = "Thinh Vu", email = "vnstock.hq@gmail.com" },
+]
 license = { file = "LICENSE.md" }
 requires-python = ">=3.10"
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -32,12 +32,14 @@ dependencies = [
     "pydantic",
     "psutil",
     "fake_useragent",
-    "vnstock_ezchart"
+    "vnstock_ezchart",
+    "click"
 ]
 
 # Dependency Management
 [project.optional-dependencies]
 dev = ["flake8"]
+docs = ["sphinx", "sphinx_rtd_theme"]
 test = ["unittest"]
 
 [tool.poetry]
@@ -45,3 +47,5 @@ packages = [
     { include = "vnstock3" },
 ]
 
+[project.scripts]
+vnstock = "vnstock3.common.cli:cli"

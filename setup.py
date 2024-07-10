@@ -6,12 +6,12 @@ from setuptools.command.install import install
 
 setup(
     name="vnstock3",
-    version="0.3.0.6",
+    version="0.3.0.7",
     description="A comprehensive and transparent solution for Vietnamese stock market analysis.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     author="Thinh Vu",
-    author_email="mrthinh@live.com",
+    author_email="vnstock.hq@gmail.com",
     url="https://github.com/thinh-vu/vnstock",
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -35,7 +35,8 @@ setup(
         "pydantic",
         "psutil",
         "fake_useragent",
-        "vnstock_ezchart"
+        "vnstock_ezchart",
+        "click"
      ],
     extras_require={
         "dev": ["flake8"],
@@ -46,4 +47,9 @@ setup(
         "setuptools>=42",
         "wheel",
     ],
+    entry_points={
+        'console_scripts': [
+            'vnstock=vnstock3.common.cli:cli',
+        ],
+    },
 )

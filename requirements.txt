@@ -8,4 +8,6 @@ fake_useragent
 cryptography
 psutil
 fake_useragent
+click
+click-repl
 # coverage # for testing
