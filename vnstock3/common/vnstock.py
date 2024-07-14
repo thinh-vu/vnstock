@@ -1,7 +1,7 @@
 import importlib
 from typing import Optional
 from vnstock3.core.utils.logger import get_logger
-from vnstock3.common.data.data_explorer import StockComponents, MSNComponents
+from vnstock3.common.data.data_explorer import StockComponents, MSNComponents, Fund
 from vnstock3.explorer.msn.const import _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
 
 logger = get_logger(__name__)
@@ -29,10 +29,13 @@ class Vnstock:
         self.source = source.upper()
         # self.utils = Utils(self)
 
-    def stock(self, symbol: Optional[str]=None, source: Optional[str] = "VCI"):
+    def stock(self, symbol: Optional[str]=None, source: Optional[str] = None):
         if symbol is None:
             self.symbol = 'VN30F1M'
             logger.info("Mã chứng khoán không được chỉ định, chương trình mặc định sử dụng VN30F1M")
+
+        if source is None:
+            source = self.source
         else:
             self.symbol = symbol
         return StockComponents(self.symbol, source, show_log=self.show_log)
@@ -51,3 +54,6 @@ class Vnstock:
         if symbol:
             self.symbol = self.msn_symbol_map[symbol]
         return MSNComponents(self.symbol, source)
+    
+    def fund(self, source: Optional[str] = "FMARKET"):
+        return Fund(source)

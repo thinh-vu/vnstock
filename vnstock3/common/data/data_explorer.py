@@ -1,3 +1,4 @@
+import pandas as pd
 import importlib
 from typing import Optional
 from vnstock3.core.utils.logger import get_logger
@@ -387,6 +388,56 @@ class Finance:
         Truy xuất các chỉ số tài chính.
         """
         return self.data_source.ratio(**kwargs)
+
+
+class Fund:
+    def __init__(self, source: str = "FMARKET", random_agent:bool=False):
+        """
+        Class (lớp) quản lý các nguồn dữ liệu được tiêu chuẩn hoá cho dữ liệu đồ thị nến, dữ liệu trả về tuỳ thuộc vào nguồn dữ liệu sẵn có được chọn.
+        """
+        self.source = source.upper()
+        self.supported_sources = ["FMARKET"]
+        if self.source not in self.supported_sources:
+            raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.supported_sources)} được hỗ trợ.")
+        self.random_agent = random_agent
+        self.source_module = f"vnstock3.explorer.{source.lower()}"
+        self.data_source = self._load_data_source(random_agent)
+        self.details = self.data_source.details
+
+    def _load_data_source(self, random_agent:bool):
+        """
+        Điều hướng lớp (class) nguồn dữ liệu được lựa chọn.
+        """
+        module = importlib.import_module(self.source_module)
+        return module.Fund(random_agent)
+    
+    def listing(self, fund_type:str="") -> pd.DataFrame:
+        """
+        Truy xuất danh sách tất cả các quỹ mở hiện có trên Fmarket thông qua API. Xem trực tiếp tại https://fmarket.vn
+
+        Tham số:
+        ----------
+            fund_type (str): Loại quỹ cần lọc. Mặc định là rỗng để lấy tất cả các quỹ. Các loại quỹ hợp lệ bao gồm: 'BALANCED', 'BOND', 'STOCK'
+        
+        Trả về:
+        -------
+            pd.DataFrame: DataFrame chứa thông tin của tất cả các quỹ mở hiện có trên Fmarket. 
+        """
+        return self.data_source.listing(fund_type)
+    
+    def filter(self, symbol:str="") -> pd.DataFrame:
+        """
+        Truy xuất danh sách quỹ theo tên viết tắt (short_name) và mã id của quỹ. Mặc định là rỗng để liệt kê tất cả các quỹ.
+
+        Tham số:
+        ----------
+            symbol (str): Tên viết tắt của quỹ cần tìm kiếm. Mặc định là rỗng để lấy tất cả các quỹ.
+
+        Trả về:
+        -------
+            pd.DataFrame: DataFrame chứa thông tin của quỹ cần tìm kiếm.
+        """
+        return self.data_source.filter(symbol)
 
 class MSNComponents:
     """
