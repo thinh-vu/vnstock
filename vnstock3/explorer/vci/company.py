@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import requests
 from typing import Optional
-from .const import _BASE_URL, _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAPPING
+from .const import _BASE_URL, _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP
 from vnstock3.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.core.utils.user_agent import get_headers

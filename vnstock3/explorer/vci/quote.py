@@ -1,7 +1,7 @@
 """History module for VCI."""
 
 # Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê hành vi thị tường
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 from datetime import datetime
 from .const import _BASE_URL, _CHART_URL, _INTERVAL_MAP, _OHLC_MAP, _RESAMPLE_MAP, _OHLC_DTYPE, _INTRADAY_URL, _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP
 from .models import TickerModel
@@ -37,16 +37,16 @@ class Quote:
         # if interval is not in the interval_map, raise an error
         if ticker.interval not in self.interval_map:
             raise ValueError(f"Giá trị interval không hợp lệ: {ticker.interval}. Vui lòng chọn: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M")
-        
+
         return ticker
 
-    def history(self, start: str, end: Optional[str], interval: Optional[str] = "1D", to_df: Optional[bool]=True, show_log: Optional[bool]=False, count_back: Optional[int]=None) -> Dict:
+    def history(self, start: str, end: Optional[str]=None, interval: Optional[str] = "1D", to_df: Optional[bool]=True, show_log: Optional[bool]=False, count_back: Optional[int]=None) -> Dict:
         """
         Tải lịch sử giá của mã chứng khoán từ nguồn dữ liệu VN Direct.
 
         Tham số:
             - start (bắt buộc): thời gian bắt đầu lấy dữ liệu, có thể là ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS".
-            - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None, chương trình tự động lấy thời điểm hiện tại. Có thể nhập ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS". 
+            - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None, chương trình tự động lấy thời điểm hiện tại. Có thể nhập ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS".
             - interval (tùy chọn): Khung thời gian trích xuất dữ liệu giá lịch sử. Giá trị nhận: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M. Mặc định là "1D".
             - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True. Đặt là False để trả về dữ liệu dạng JSON.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
@@ -67,8 +67,8 @@ class Quote:
         else:
             end_stamp = int(end_time.timestamp())
 
-        start_stamp = int(start_time.timestamp())        
-        
+        start_stamp = int(start_time.timestamp())
+
         interval = self.interval_map[ticker.interval]
 
         # Construct the URL for fetching data
@@ -107,7 +107,7 @@ class Quote:
         else:
             json_data = df.to_json(orient='records')
             return json_data
-    
+
     def intraday(self, page_size: Optional[int]=100, last_time: Optional[str]=None, to_df: Optional[bool]=True, show_log: bool=False) -> Dict:
         """
         Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu VCI
@@ -121,7 +121,7 @@ class Quote:
         # if self.symbol is not defined, raise ValueError
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
-        
+
         # convert a string to timestamp
         if last_time is not None:
             last_time = int(datetime.strptime(last_time, "%Y-%m-%d %H:%M:%S").timestamp())
@@ -171,7 +171,7 @@ class Quote:
         else:
             json_data = df.to_json(orient='records')
             return json_data
-        
+
     def price_depth(self, to_df:Optional[bool]=True, show_log:Optional[bool]=False):
         """
         Truy xuất thống kê độ bước giá & khối lượng khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu VCI.
@@ -183,7 +183,7 @@ class Quote:
         # if self.symbol is not defined, raise ValueError
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
-        
+
         url = f'{self.base_url}{_INTRADAY_URL}/AccumulatedPriceStepVol/getSymbolData'
         payload = json.dumps({
             "symbol": self.symbol
@@ -203,7 +203,7 @@ class Quote:
         df = df[_PRICE_DEPTH_MAP.keys()]
         # rename columns
         df.rename(columns=_PRICE_DEPTH_MAP, inplace=True)
-        
+
         df.source = self.data_source
 
         if to_df:
@@ -229,13 +229,13 @@ class Quote:
         df = pd.DataFrame(history_data)[columns_of_interest.keys()].rename(columns=_OHLC_MAP)
         # rearrange columns by open, high, low, close, volume, time
         df = df[['time', 'open', 'high', 'low', 'close', 'volume']]
-        
+
         # Ensure 'time' column data are numeric (integers), then convert to datetime
         df['time'] = pd.to_datetime(df['time'].astype(int), unit='s').dt.tz_localize('UTC') # Localize the original time to UTC
         # Convert UTC time to Asia/Ho_Chi_Minh timezone, make sure time is correct for minute and hour interval
         df['time'] = df['time'].dt.tz_convert('Asia/Ho_Chi_Minh')
 
-        if asset_type not in ["index", "derivative"]:            
+        if asset_type not in ["index", "derivative"]:
             # divide open, high, low, close, volume by 1000
             df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].div(1000)
 
@@ -264,6 +264,3 @@ class Quote:
         df.source = "VCI"
 
         return df
-
-
-

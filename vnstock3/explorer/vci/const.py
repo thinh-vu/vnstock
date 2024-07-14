@@ -12,7 +12,7 @@ _INTERVAL_MAP = {'1m' : 'ONE_MINUTE',
             '1W' : 'ONE_DAY',
             '1M' : 'ONE_DAY'
             }
-        
+
 _RESAMPLE_MAP = {
             '5m' : '5min',
             '15m' : '15min',
@@ -28,7 +28,7 @@ _OHLC_MAP = {
     'l': 'low',
     'c': 'close',
     'v': 'volume',
-} 
+}
 
 
 # Pandas data type mapping for history price data
@@ -44,9 +44,9 @@ _OHLC_DTYPE = {
 _GROUP_CODE = ['HOSE', 'VN30', 'VNMidCap', 'VNSmallCap', 'VNAllShare', 'VN100', 'ETF', 'HNX', 'HNX30', 'HNXCon', 'HNXFin', 'HNXLCap', 'HNXMSCap', 'HNXMan', 'UPCOM', 'FU_INDEX', 'FU_BOND', 'BOND', 'CW']
 
 _INTRADAY_MAP = {
-                'truncTime':'time',                
-                'matchPrice':'price', 
-                'matchVol':'volume', 
+                'truncTime':'time',
+                'matchPrice':'price',
+                'matchVol':'volume',
                 'matchType':'match_type',
                 'id':'id'
                 }
@@ -60,17 +60,17 @@ _INTRADAY_DTYPE = {
                 }
 
 _PRICE_DEPTH_MAP = {
-                    'priceStep':'price', 
+                    'priceStep':'price',
                     'accumulatedVolume': 'acc_volume',
-                    'accumulatedBuyVolume' : 'acc_buy_volume', 
+                    'accumulatedBuyVolume' : 'acc_buy_volume',
                     'accumulatedSellVolume' : 'acc_sell_volume',
                     'accumulatedUndefinedVolume': 'acc_undefined_volume',
                     }
 
-_FINANCIAL_REPORT_MAP = {'balance_sheet': 'balancesheet', 
-                            'income_statement': 'incomestatement', 
+_FINANCIAL_REPORT_MAP = {'balance_sheet': 'balancesheet',
+                            'income_statement': 'incomestatement',
                             'cash_flow': 'cashflow'}
 
 _FINANCIAL_REPORT_PERIOD_MAP = {'year': 'Y', 'quarter': 'Q'}
 
-_UNIT_MAPPING = {'BILLION':'tỷ', 'PERCENT':'%', 'INDEX':'index', 'MILLION':'triệu'}
+_UNIT_MAP = {'BILLION':'tỷ', 'PERCENT':'%', 'INDEX':'index', 'MILLION':'triệu'}

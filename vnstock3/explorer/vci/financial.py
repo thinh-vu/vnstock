@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import requests
 from typing import Optional
-from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAPPING
+from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP
 from vnstock3.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.core.utils.user_agent import get_headers
@@ -79,7 +79,7 @@ class Finance ():
             target_col_name = 'en_name'
 
         # Create a dictionary to map field_name to report type
-        mapping_df = self._get_ratio_dict(get_all=False)          
+        mapping_df = self._get_ratio_dict(get_all=False)
 
         type_mapping = dict(zip(mapping_df[target_col_name], mapping_df['type']))
         # add a translation layer mapping for name and en_name
@@ -114,8 +114,8 @@ class Finance ():
 
         # Define the primary report types
         primary_reports = [
-            'Chỉ tiêu cân đối kế toán', 
-            'Chỉ tiêu lưu chuyển tiền tệ', 
+            'Chỉ tiêu cân đối kế toán',
+            'Chỉ tiêu lưu chuyển tiền tệ',
             'Chỉ tiêu kết quả kinh doanh'
         ]
 
@@ -146,7 +146,7 @@ class Finance ():
             )
 
         return primary_dfs, merged_other_reports\
-        
+
     def _process_report (self, report_key:str , period:Optional[str]=None, lang:Optional[str]='en', dropna:Optional[bool]=False, show_log:Optional[bool]=False):
         # validate report_key should be in 'Chỉ tiêu kết quả kinh doanh', 'Chỉ tiêu cân đối kế toán', 'Chỉ tiêu lưu chuyển tiền tệ'
         if report_key not in ['Chỉ tiêu kết quả kinh doanh', 'Chỉ tiêu cân đối kế toán', 'Chỉ tiêu lưu chuyển tiền tệ']:
@@ -154,7 +154,7 @@ class Finance ():
 
         effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
         primary_reports = self._get_report(period=effective_period, lang=lang, show_log=show_log)[0]
-        
+
         balance_sheet_df = primary_reports[report_key]
         if dropna:
             # fill NaN values with 0
@@ -168,16 +168,16 @@ class Finance ():
             elif lang == 'vi':
                 balance_sheet_df = balance_sheet_df.drop(columns='Kỳ')
         return balance_sheet_df
-    
+
     def balance_sheet(self, period:Optional[str]=None, lang:Optional[str]='en', dropna:Optional[bool]=False, show_log:Optional[bool]=False):
         return self._process_report('Chỉ tiêu cân đối kế toán', period=period, lang=lang, dropna=dropna, show_log=show_log)
-    
+
     def income_statement(self, period:Optional[str]=None, lang:Optional[str]='en', dropna:Optional[bool]=False, show_log:Optional[bool]=False):
         return self._process_report('Chỉ tiêu kết quả kinh doanh', period=period, lang=lang, dropna=dropna, show_log=show_log)
-    
+
     def cash_flow(self, period:Optional[str]=None, lang:Optional[str]='en', dropna:Optional[bool]=False, show_log:Optional[bool]=False):
         return self._process_report('Chỉ tiêu lưu chuyển tiền tệ', period=period, lang=lang, dropna=dropna, show_log=show_log)
- 
+
     def ratio(self, period:Optional[str]=None, lang:Optional[str]='en', dropna:Optional[bool]=True, show_log:Optional[bool]=False):
         effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
         financial_report = self._get_report(period=effective_period, lang=lang, show_log=show_log)[1]

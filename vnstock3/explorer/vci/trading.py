@@ -17,7 +17,7 @@ class Trading:
     """
     Truy xuất dữ liệu giao dịch của mã chứng khoán từ nguồn dữ liệu VCI.
     """
-    def __init__(self, symbol:Optional[str], random_agent=False):
+    def __init__(self, symbol:Optional[str]='VCI', random_agent=False):
         self.symbol = symbol.upper()
         self.asset_type = get_asset_type(self.symbol)
         self.base_url = _BASE_URL
@@ -54,15 +54,18 @@ class Trading:
             # Flatten the nested dictionary while preserving the hierarchy in the keys
             row = flatten_data(item_data)
 
-            # Add bid and ask prices and volumes dynamically with hierarchical keys
-            for i, bid in enumerate(item['bidAsk']['bidPrices'], start=1):
-                row[f'bidAsk_bid_{i}_price'] = bid['price']
-                row[f'bidAsk_bid_{i}_volume'] = bid['volume']
+            try:
+                # Add bid and ask prices and volumes dynamically with hierarchical keys
+                for i, bid in enumerate(item['bidAsk']['bidPrices'], start=1):
+                    row[f'bidAsk_bid_{i}_price'] = bid['price']
+                    row[f'bidAsk_bid_{i}_volume'] = bid['volume']
 
-            for i, ask in enumerate(item['bidAsk']['askPrices'], start=1):
-                row[f'bidAsk_ask_{i}_price'] = ask['price']
-                row[f'bidAsk_ask_{i}_volume'] = ask['volume']
-
+                for i, ask in enumerate(item['bidAsk']['askPrices'], start=1):
+                    row[f'bidAsk_ask_{i}_price'] = ask['price']
+                    row[f'bidAsk_ask_{i}_volume'] = ask['volume']
+            except:
+                pass
+            
             # Append the row dictionary to the list
             rows.append(row)
 
