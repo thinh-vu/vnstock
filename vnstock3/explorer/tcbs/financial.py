@@ -167,7 +167,7 @@ class Finance ():
             df.drop(columns='quarter', inplace=True)
             df.rename(columns={'year':'period'}, inplace=True)
         elif period == 'quarter':
-            df['period'] = df['year'] + '-Q' + df['quarter']
+            df['period'] = f"{df['year']}-Q{df['quarter']}"
             # rearrange columns to make period the first column
             cols = df.columns.tolist()
             cols = cols[-1:] + cols[:-1]
