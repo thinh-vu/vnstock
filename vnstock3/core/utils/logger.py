@@ -9,8 +9,10 @@ def get_logger(name):
         handler = logging.StreamHandler()
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
+        handler.setLevel(logging.DEBUG)  # Set the level for the handler
         logger.addHandler(handler)
         logger.setLevel(logging.DEBUG)  # You might want to make the level configurable
+        logger.propagate = False  # Prevent log messages from being passed to the handlers of ancestor loggers
     return logger
 
 def advanced_logger(name, 

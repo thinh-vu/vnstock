@@ -43,7 +43,7 @@ class Finance ():
         df.columns = [camel_to_snake(col) for col in df.columns]
         effective_get_all = get_all if get_all is not None else self.get_all
         selected_columns = ['field_name', 'name', 'en__name', 'type', 'order', 'unit']
-        df['unit'] = df['unit'].map(_UNIT_MAPPING)
+        df['unit'] = df['unit'].map(_UNIT_MAP)
         if effective_get_all is False:
             df = df[selected_columns]
         df.columns = [col.replace('__', '_') for col in df.columns]
