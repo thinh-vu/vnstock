@@ -4,7 +4,7 @@ from typing import Union, Dict
 from vnstock3.core.utils.env import get_path_delimiter
 
 class Messenger:
-     def __init__(self, platform:str, channel:Union[str, None], token_key:Union[str, int]):
+    def __init__(self, platform:str, channel:Union[str, None], token_key:Union[str, int]):
         """
         Initialize a Messenger object with the platform, channel, and token key.
 
@@ -52,6 +52,7 @@ class Messenger:
         elif self.platform == 'lark':
             if self.channel is not None:
                 raise ValueError('Channel name is not required for Lark messaging!')
+
 
     def send_message(self, message:str, file_path:Union[str, None]=None, title:Union[str, None]=None):
         """
