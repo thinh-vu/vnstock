@@ -155,14 +155,26 @@ class Company:
 
         try:
             df.drop(columns=['no', 'ticker'], inplace=True)
-        except:
-            pass
+        except KeyError as e:
+            logger.warning(f"Columns to drop not found: {e}")
 
-        df.rename(columns={'anDate': 'dealAnnounceDate', 'dealingMethod': 'dealMethod', 'dealingAction': 'dealAction', 'quantity': 'dealQuantity', 'price': 'dealPrice', 'ratio': 'dealRatio'}, inplace=True)
-        df['dealAnnounceDate'] = pd.to_datetime(df['dealAnnounceDate'], format='%d/%m/%y')
-        df.sort_values(by='dealAnnounceDate', ascending=False, inplace=True)
-        df['dealMethod'] = df['dealMethod'].copy().replace({1: 'Cổ đông lớn', 2: 'Cổ đông sáng lập', 0: 'Cổ đông nội bộ'}, inplace=True)
-        df['dealAction'] = df['dealAction'].copy().replace({'1': 'Bán', '0': 'Mua'})
+        try:
+            df.rename(columns={'anDate': 'dealAnnounceDate', 'dealingMethod': 'dealMethod', 'dealingAction': 'dealAction', 'quantity': 'dealQuantity', 'price': 'dealPrice', 'ratio': 'dealRatio'}, inplace=True)
+        except KeyError as e:
+            logger.error(f"Error renaming columns: {e}")
+
+        if 'dealAnnounceDate' in df.columns:
+            df['dealAnnounceDate'] = pd.to_datetime(df['dealAnnounceDate'], format='%d/%m/%y')
+            df.sort_values(by='dealAnnounceDate', ascending=False, inplace=True)
+        else:
+            logger.error(f"'dealAnnounceDate' column not found in DataFrame for {self.symbol}. Columns: {df.columns.tolist()}")
+            return {}
+
+        if 'dealMethod' in df.columns:
+            df['dealMethod'] = df['dealMethod'].copy().replace({1: 'Cổ đông lớn', 2: 'Cổ đông sáng lập', 0: 'Cổ đông nội bộ'}, inplace=True)
+        if 'dealAction' in df.columns:
+            df['dealAction'] = df['dealAction'].copy().replace({'1': 'Bán', '0': 'Mua'})
+
         df.columns = [camel_to_snake(col) for col in df.columns]
 
         df.name = self.symbol
@@ -268,8 +280,11 @@ class Company:
         try:
             df.rename(columns={'price_change_ratio1_m':'price_change_ratio_1m', 'ex_rigth_date':'exer_right_date'}, inplace=True)
             df.drop(columns=['ticker'], inplace=True)
-            df['event_desc'] = df['event_desc'].apply(lambda x: BeautifulSoup(x, 'html.parser').get_text())
-            df['event_desc'] = df['event_desc'].str.replace('\n', ' ')
+            try:
+                df['event_desc'] = df['event_desc'].apply(lambda x: BeautifulSoup(x, 'html.parser').get_text())
+                df['event_desc'] = df['event_desc'].str.replace('\n', ' ')
+            except Exception as e:
+                logger.warning(f"Error parsing HTML for event_desc: {e}")
         except:
             pass
         df.name = self.symbol

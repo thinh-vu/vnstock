@@ -33,7 +33,8 @@ dependencies = [
     "psutil",
     "fake_useragent",
     "vnstock_ezchart",
-    "click"
+    "click",
+    "seaborn"
 ]
 
 # Dependency Management

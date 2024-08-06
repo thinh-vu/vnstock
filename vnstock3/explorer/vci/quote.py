@@ -10,6 +10,7 @@ import requests
 import json
 from vnstock3.core.utils.parser import get_asset_type
 from vnstock3.core.utils.logger import get_logger
+from vnstock3.core.utils.env import get_hosting_service
 from vnstock3.core.utils.user_agent import get_headers
 
 logger = get_logger(__name__)
@@ -56,14 +57,18 @@ class Quote:
         ticker = self._input_validation(start, end, interval)
 
         start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
-        end_time = datetime.strptime(ticker.end, "%Y-%m-%d")
-
+        
+        # add one more day to end_time if end is not None
+        if end is not None:
+            end_time = datetime.strptime(ticker.end, "%Y-%m-%d") + pd.Timedelta(days=1)
+        
         if start_time > end_time:
             raise ValueError("Thời gian bắt đầu không thể lớn hơn thời gian kết thúc.")
 
         # convert start and end date to timestamp
         if end is None:
-            end_stamp = int(datetime.now().timestamp())
+            # get tomorrow end time
+            end_stamp = int((datetime.now() + pd.Timedelta(days=1)).timestamp())
         else:
             end_stamp = int(end_time.timestamp())
 
@@ -256,6 +261,8 @@ class Quote:
         for col, dtype in _OHLC_DTYPE.items():
             if dtype == "datetime64[ns]":
                 df[col] = df[col].dt.tz_localize(None)  # Remove timezone information
+                if interval == "1D":
+                    df[col] = df[col].dt.date
             df[col] = df[col].astype(dtype)
 
         # Set metadata attributes

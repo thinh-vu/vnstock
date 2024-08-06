@@ -10,4 +10,5 @@ psutil
 fake_useragent
 click
 click-repl
+seaborn
 # coverage # for testing

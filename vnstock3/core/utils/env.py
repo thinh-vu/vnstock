@@ -11,6 +11,26 @@ def get_platform():
     PLATFORM = platform.system()
     return PLATFORM
 
+def get_hosting_service():
+    """
+    Xác định dịch vụ đám mây đang chạy hoặc môi trường phát triển
+    """
+    try:
+        if 'google.colab' in sys.modules:
+            hosting_service = "Google Colab"
+        elif 'CODESPACE_NAME' in os.environ:
+            hosting_service = "Github Codespace"
+        elif 'GITPOD_WORKSPACE_CLUSTER_HOST' in os.environ:
+            hosting_service = "Gitpod"
+        elif 'REPLIT_USER' in os.environ:
+            hosting_service = "Replit"
+        elif 'KAGGLE_CONTAINER_NAME' in os.environ:
+            hosting_service = "Kaggle"
+        elif '.hf.space' in os.environ['SPACE_HOST']:
+            hosting_service = "Hugging Face Spaces"
+    except:
+        hosting_service = "Local or Unknown"
+    return hosting_service
 
 def get_package_path(package='vnstock'):
     """
