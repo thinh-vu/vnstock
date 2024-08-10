@@ -4,7 +4,7 @@ site_description: >-
   Vnstock Docs
 theme:
   name: material
-  # custom_dir: docs/material/overrides
+  custom_dir: docs/material/overrides
   icon:
     repo: fontawesome/brands/github
   logo: assets/images/vnstock_logo_bw.png
