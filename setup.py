@@ -36,7 +36,9 @@ setup(
         "psutil",
         "fake_useragent",
         "vnstock_ezchart",
-        "click"
+        "click",
+        "packaging>=20.0",
+        "importlib-metadata>=1.0",
      ],
     extras_require={
         "dev": ["flake8"],
