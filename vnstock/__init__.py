@@ -14,3 +14,6 @@ from .utils import *
 from .integration import *
 from .funds import *
 # from .ocr import *
+
+update_notice()
+

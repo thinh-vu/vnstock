@@ -5,7 +5,10 @@ requires = [
     "requests",
     "bs4",
     "pandas",
-    "openpyxl"
+    "openpyxl",
+    "packaging>=20.0",
+    "importlib-metadata>=1.0",
+    "ipython>=7.0"
 ]
 build-backend = "setuptools.build_meta"
 # dependencies = []

@@ -1,6 +1,9 @@
 <div align="center">
 
-[![python_course_6](https://course.learn-anything.vn/wp-content/uploads/2024/06/Python-Course-7-Phan-tich-du-lieu-va-giao-dich-chung-khoan.png)
+<!-- [![python_course_8](https://github.com/thinh-vu/vnstock/blob/legacy/docs/docs/assets/images/Python_course_8_Phan_tich_du_lieu_bot_chung_khoan.png?raw=true) -->
+
+[![migrate_to_vnstock3](https://github.com/thinh-vu/vnstock/blob/legacy/docs/docs/assets/images/vnstock3-migration-notice.png?raw=true)](https://vnstocks.com/docs/tai-lieu/migration-chuyen-doi-sang-vnstock3)
+
 
 </div>
 
