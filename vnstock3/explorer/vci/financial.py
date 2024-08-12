@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 import requests
-from typing import Optional
+from typing import Optional, List
 from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP
 from vnstock3.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock3.core.utils.logger import get_logger
@@ -32,62 +32,35 @@ class Finance ():
         self.get_all = get_all
 
     # @staticmethod
-    def _rename_duplicates (self, df: pd.DataFrame) -> pd.DataFrame:
+    def handle_duplicate_columns(self, original_columns: List[str], ratio_df: pd.DataFrame) -> pd.DataFrame:
         """
-        Renames duplicate values in the 'name' and 'en_name' columns of the provided DataFrame
-        by appending the corresponding 'field_name' in the format 'name - field_name' or 
-        'en_name - field_name'. This ensures all names and en_names are unique without repeating 
-        the field_name suffix. Duplicate checks are case-insensitive.
+        Handles duplicate column names in a DataFrame by appending the original column name
+        as a suffix to the duplicate column names.
 
-        Parameters
-        ----------
-        df : pd.DataFrame
-            A DataFrame containing the columns 'field_name', 'name', and 'en_name' among others. 
-            The function checks for duplicate values in the 'name' and 'en_name' columns.
+        Parameters:
+        - original_columns (List[str]): A list of the original column names before renaming.
+        - ratio_df (pd.DataFrame): The DataFrame with potentially duplicated column names after renaming.
 
-        Returns
-        -------
-        pd.DataFrame
-            The original DataFrame with renamed 'name' and 'en_name' values where duplicates were found.
-
-        Example
-        -------
-        field_name                        name                                 en_name                       type  order unit
-        0      BSA1        TỔNG TÀI SẢN NGẮN HẠN                        CURRENT ASSETS  Chỉ tiêu cân đối kế toán     12   tỷ
-        1      BSA2        Tiền và tương đương tiền         Cash and cash equivalents  Chỉ tiêu cân đối kế toán     13   tỷ
-        2      BSA5  Giá trị thuần đầu tư ngắn hạn           Net Short-term investment  Chỉ tiêu cân đối kế toán     14   tỷ
-        3      BSA8               Các khoản phải thu               Accounts Receivables  Chỉ tiêu cân đối kế toán     15   tỷ
-        4     BSA15               Hàng tồn kho ròng                    Net Inventories  Chỉ tiêu cân đối kế toán     16   tỷ
-        5      BSA2   Tiền và tương đương tiền - BSA2     Cash and cash equivalents - BSA2  Chỉ tiêu cân đối kế toán     17   tỷ
-        6      BSA5  Giá trị thuần đầu tư ngắn hạn - BSA5  Net Short-term investment - BSA5  Chỉ tiêu cân đối kế toán     18   tỷ
+        Returns:
+        - pd.DataFrame: The DataFrame with resolved column names.
         """
-        # Dictionary to keep track of name and en_name occurrences (case-insensitive)
-        name_count = {}
-        en_name_count = {}
+        seen_columns = {}
+        renamed_columns = []
 
-        # Iterate over rows to check for duplicates and rename accordingly
-        for index, row in df.iterrows():
-            name_lower = row['name'].lower()
-            en_name_lower = row['en_name'].lower()
-            field_name = row['field_name']
-            
-            # Handle duplicates in the 'name' column (case-insensitive check)
-            if name_lower in name_count:
-                # Append field_name only if it's not already appended
-                if not row['name'].endswith(f" - {field_name}"):
-                    df.at[index, 'name'] = f"{row['name']} - {field_name}"
+        for i, col in enumerate(ratio_df.columns):
+            original_col = original_columns[i]
+            if col in seen_columns:
+                # If duplicate, append the original column name as a suffix
+                new_col_name = f"{col} - {original_col}"
+                renamed_columns.append(new_col_name)
             else:
-                name_count[name_lower] = 0
-            
-            # Handle duplicates in the 'en_name' column (case-insensitive check)
-            if en_name_lower in en_name_count:
-                # Append field_name only if it's not already appended
-                if not row['en_name'].endswith(f" - {field_name}"):
-                    df.at[index, 'en_name'] = f"{row['en_name']} - {field_name}"
-            else:
-                en_name_count[en_name_lower] = 0
+                seen_columns[col] = 1
+                renamed_columns.append(col)
 
-        return df
+        # Apply the new column names to the DataFrame
+        ratio_df.columns = renamed_columns
+        
+        return ratio_df
     
     # @staticmethod
     def _get_ratio_dict(self, show_log:Optional[bool]=False, get_all:Optional[bool]=False):
@@ -117,113 +90,122 @@ class Finance ():
         df.columns = [col.replace('__', '_') for col in df.columns]
         return df
 
-    # def _get_report (self, period:Optional[str]=None, lang:Optional[str]='en', show_log:Optional[bool]=False):
-    #     """
-    #     Get the financial report data for a company from VCI source.
+    def _get_report (self, period:Optional[str]=None, lang:Optional[str]='en', show_log:Optional[bool]=False):
+        """
+        Get the financial report data for a company from VCI source.
         
-    #     Parameters:
-    #         - period (str): The period of the financial report. Default is None.
-    #         - lang (str): The language of the report. Default is 'en'.
-    #         - show_log (bool): Whether to show log messages. Default is False.
-    #     """
-    #     # if lange not in ['vi', 'en'] then raise error
-    #     if lang not in ['vi', 'en']:
-    #         raise ValueError("Ngôn ngữ không hợp lệ. Chỉ chấp nhận 'vi' hoặc 'en'.")
-    #     effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
-    #     payload = "{\"query\":\"fragment Ratios on CompanyFinancialRatio {\\n  ticker\\n  yearReport\\n  lengthReport\\n  updateDate\\n  revenue\\n  revenueGrowth\\n  netProfit\\n  netProfitGrowth\\n  ebitMargin\\n  roe\\n  roic\\n  roa\\n  pe\\n  pb\\n  eps\\n  currentRatio\\n  cashRatio\\n  quickRatio\\n  interestCoverage\\n  ae\\n  netProfitMargin\\n  grossMargin\\n  ev\\n  issueShare\\n  ps\\n  pcf\\n  bvps\\n  evPerEbitda\\n  BSA1\\n  BSA2\\n  BSA5\\n  BSA8\\n  BSA10\\n  BSA159\\n  BSA16\\n  BSA22\\n  BSA23\\n  BSA24\\n  BSA162\\n  BSA27\\n  BSA29\\n  BSA43\\n  BSA46\\n  BSA50\\n  BSA209\\n  BSA53\\n  BSA54\\n  BSA55\\n  BSA56\\n  BSA58\\n  BSA67\\n  BSA71\\n  BSA173\\n  BSA78\\n  BSA79\\n  BSA80\\n  BSA175\\n  BSA86\\n  BSA90\\n  BSA96\\n  CFA21\\n  CFA22\\n  at\\n  fat\\n  acp\\n  dso\\n  dpo\\n  ccc\\n  de\\n  le\\n  ebitda\\n  ebit\\n  dividend\\n  RTQ10\\n  charterCapitalRatio\\n  RTQ4\\n  epsTTM\\n  charterCapital\\n  fae\\n  RTQ17\\n  CFA26\\n  CFA6\\n  CFA9\\n  BSA85\\n  CFA36\\n  BSB98\\n  BSB101\\n  BSA89\\n  CFA34\\n  CFA14\\n  ISB34\\n  ISB27\\n  ISA23\\n  ISS152\\n  ISA102\\n  CFA27\\n  CFA12\\n  CFA28\\n  BSA18\\n  BSB102\\n  BSB110\\n  BSB108\\n  CFA23\\n  ISB41\\n  BSB103\\n  BSA40\\n  BSB99\\n  CFA16\\n  CFA18\\n  CFA3\\n  ISB30\\n  BSA33\\n  ISB29\\n  CFS200\\n  ISA2\\n  CFA24\\n  BSB105\\n  CFA37\\n  ISS141\\n  BSA95\\n  CFA10\\n  ISA4\\n  BSA82\\n  CFA25\\n  BSB111\\n  ISI64\\n  BSB117\\n  ISA20\\n  CFA19\\n  ISA6\\n  ISA3\\n  BSB100\\n  ISB31\\n  ISB38\\n  ISB26\\n  BSA210\\n  CFA20\\n  CFA35\\n  ISA17\\n  ISS148\\n  BSB115\\n  ISA9\\n  CFA4\\n  ISA7\\n  CFA5\\n  ISA22\\n  CFA8\\n  CFA33\\n  CFA29\\n  BSA30\\n  BSA84\\n  BSA44\\n  BSB107\\n  ISB37\\n  ISA8\\n  BSB109\\n  ISA19\\n  ISB36\\n  ISA13\\n  ISA1\\n  BSB121\\n  ISA14\\n  BSB112\\n  ISA21\\n  ISA10\\n  CFA11\\n  ISA12\\n  BSA15\\n  BSB104\\n  BSA92\\n  BSB106\\n  BSA94\\n  ISA18\\n  CFA17\\n  ISI87\\n  BSB114\\n  ISA15\\n  BSB116\\n  ISB28\\n  BSB97\\n  CFA15\\n  ISA11\\n  ISB33\\n  BSA47\\n  ISB40\\n  ISB39\\n  CFA7\\n  CFA13\\n  ISS146\\n  ISB25\\n  BSA45\\n  BSB118\\n  CFA1\\n  CFS191\\n  ISB35\\n  CFB65\\n  CFA31\\n  BSB113\\n  ISB32\\n  ISA16\\n  CFS210\\n  BSA48\\n  BSA36\\n  ISI97\\n  CFA30\\n  CFA2\\n  CFB80\\n  CFA38\\n  CFA32\\n  ISA5\\n  BSA49\\n  CFB64\\n  __typename\\n}\\n\\nquery Query($ticker: String!, $period: String!) {\\n  CompanyFinancialRatio(ticker: $ticker, period: $period) {\\n    ratio {\\n      ...Ratios\\n      __typename\\n    }\\n    period\\n    __typename\\n  }\\n}\\n\",\"variables\":{\"ticker\":\"VCI\",\"period\":\"Q\"}}"
-    #     payload_json = json.loads(payload)
-    #     payload_json['variables']['ticker'] = self.symbol
-    #     payload_json['variables']['period'] = effective_period
-    #     # convert payload_json to string
-    #     payload_json = json.dumps(payload_json)
+        Parameters:
+            - period (str): The period of the financial report. Default is None.
+            - lang (str): The language of the report. Default is 'en'.
+            - show_log (bool): Whether to show log messages. Default is False.
+        """
+        # if lange not in ['vi', 'en'] then raise error
+        if lang not in ['vi', 'en']:
+            raise ValueError("Ngôn ngữ không hợp lệ. Chỉ chấp nhận 'vi' hoặc 'en'.")
+        effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
+        payload = "{\"query\":\"fragment Ratios on CompanyFinancialRatio {\\n  ticker\\n  yearReport\\n  lengthReport\\n  updateDate\\n  revenue\\n  revenueGrowth\\n  netProfit\\n  netProfitGrowth\\n  ebitMargin\\n  roe\\n  roic\\n  roa\\n  pe\\n  pb\\n  eps\\n  currentRatio\\n  cashRatio\\n  quickRatio\\n  interestCoverage\\n  ae\\n  netProfitMargin\\n  grossMargin\\n  ev\\n  issueShare\\n  ps\\n  pcf\\n  bvps\\n  evPerEbitda\\n  BSA1\\n  BSA2\\n  BSA5\\n  BSA8\\n  BSA10\\n  BSA159\\n  BSA16\\n  BSA22\\n  BSA23\\n  BSA24\\n  BSA162\\n  BSA27\\n  BSA29\\n  BSA43\\n  BSA46\\n  BSA50\\n  BSA209\\n  BSA53\\n  BSA54\\n  BSA55\\n  BSA56\\n  BSA58\\n  BSA67\\n  BSA71\\n  BSA173\\n  BSA78\\n  BSA79\\n  BSA80\\n  BSA175\\n  BSA86\\n  BSA90\\n  BSA96\\n  CFA21\\n  CFA22\\n  at\\n  fat\\n  acp\\n  dso\\n  dpo\\n  ccc\\n  de\\n  le\\n  ebitda\\n  ebit\\n  dividend\\n  RTQ10\\n  charterCapitalRatio\\n  RTQ4\\n  epsTTM\\n  charterCapital\\n  fae\\n  RTQ17\\n  CFA26\\n  CFA6\\n  CFA9\\n  BSA85\\n  CFA36\\n  BSB98\\n  BSB101\\n  BSA89\\n  CFA34\\n  CFA14\\n  ISB34\\n  ISB27\\n  ISA23\\n  ISS152\\n  ISA102\\n  CFA27\\n  CFA12\\n  CFA28\\n  BSA18\\n  BSB102\\n  BSB110\\n  BSB108\\n  CFA23\\n  ISB41\\n  BSB103\\n  BSA40\\n  BSB99\\n  CFA16\\n  CFA18\\n  CFA3\\n  ISB30\\n  BSA33\\n  ISB29\\n  CFS200\\n  ISA2\\n  CFA24\\n  BSB105\\n  CFA37\\n  ISS141\\n  BSA95\\n  CFA10\\n  ISA4\\n  BSA82\\n  CFA25\\n  BSB111\\n  ISI64\\n  BSB117\\n  ISA20\\n  CFA19\\n  ISA6\\n  ISA3\\n  BSB100\\n  ISB31\\n  ISB38\\n  ISB26\\n  BSA210\\n  CFA20\\n  CFA35\\n  ISA17\\n  ISS148\\n  BSB115\\n  ISA9\\n  CFA4\\n  ISA7\\n  CFA5\\n  ISA22\\n  CFA8\\n  CFA33\\n  CFA29\\n  BSA30\\n  BSA84\\n  BSA44\\n  BSB107\\n  ISB37\\n  ISA8\\n  BSB109\\n  ISA19\\n  ISB36\\n  ISA13\\n  ISA1\\n  BSB121\\n  ISA14\\n  BSB112\\n  ISA21\\n  ISA10\\n  CFA11\\n  ISA12\\n  BSA15\\n  BSB104\\n  BSA92\\n  BSB106\\n  BSA94\\n  ISA18\\n  CFA17\\n  ISI87\\n  BSB114\\n  ISA15\\n  BSB116\\n  ISB28\\n  BSB97\\n  CFA15\\n  ISA11\\n  ISB33\\n  BSA47\\n  ISB40\\n  ISB39\\n  CFA7\\n  CFA13\\n  ISS146\\n  ISB25\\n  BSA45\\n  BSB118\\n  CFA1\\n  CFS191\\n  ISB35\\n  CFB65\\n  CFA31\\n  BSB113\\n  ISB32\\n  ISA16\\n  CFS210\\n  BSA48\\n  BSA36\\n  ISI97\\n  CFA30\\n  CFA2\\n  CFB80\\n  CFA38\\n  CFA32\\n  ISA5\\n  BSA49\\n  CFB64\\n  __typename\\n}\\n\\nquery Query($ticker: String!, $period: String!) {\\n  CompanyFinancialRatio(ticker: $ticker, period: $period) {\\n    ratio {\\n      ...Ratios\\n      __typename\\n    }\\n    period\\n    __typename\\n  }\\n}\\n\",\"variables\":{\"ticker\":\"VCI\",\"period\":\"Q\"}}"
+        payload_json = json.loads(payload)
+        payload_json['variables']['ticker'] = self.symbol
+        payload_json['variables']['period'] = effective_period
+        # convert payload_json to string
+        payload_json = json.dumps(payload_json)
 
-    #     response = requests.post(_GRAPHQL_URL, data=payload_json, headers=self.headers)
-    #     if show_log:
-    #         logger.debug(f"Requesting financial report data from {_GRAPHQL_URL}. payload: {payload_json}")
-    #     if response.status_code != 200:
-    #         logger.error(f"Request failed with status code {response.status_code}. Details: {response.text}")
+        response = requests.post(_GRAPHQL_URL, data=payload_json, headers=self.headers)
+        if show_log:
+            logger.debug(f"Requesting financial report data from {_GRAPHQL_URL}. payload: {payload_json}")
+        if response.status_code != 200:
+            logger.error(f"Request failed with status code {response.status_code}. Details: {response.text}")
 
-    #     data = response.json()['data']['CompanyFinancialRatio']['ratio']
-    #     ratio_df = pd.DataFrame(data)
+        data = response.json()['data']['CompanyFinancialRatio']['ratio']
+        ratio_df = pd.DataFrame(data)
+        # copy the original columns before renaming
+        # original_columns = ratio_df.columns.to_list()
 
-    #     if lang == 'vi':
-    #         ratio_df = ratio_df.rename(columns={'ticker': 'CP', 'yearReport': 'Năm', 'lengthReport': 'Kỳ'})
-    #         index_part = ratio_df[['CP', 'Năm', 'Kỳ']]
-    #         target_col_name = 'name'
-    #     elif lang == 'en':
-    #         index_part = ratio_df[['ticker', 'yearReport', 'lengthReport']]
-    #         target_col_name = 'en_name'
+        if lang == 'vi':
+            ratio_df = ratio_df.rename(columns={'ticker': 'CP', 'yearReport': 'Năm', 'lengthReport': 'Kỳ'})
+            index_part = ratio_df[['CP', 'Năm', 'Kỳ']]
+            target_col_name = 'name'
+        elif lang == 'en':
+            index_part = ratio_df[['ticker', 'yearReport', 'lengthReport']]
+            target_col_name = 'en_name'
 
-    #     # Create a dictionary to map field_name to report type
-    #     mapping_df = self._get_ratio_dict(get_all=False)
+        # Create a dictionary to map field_name to report type
+        mapping_df = self._get_ratio_dict(get_all=False)
 
-    #     type_mapping = dict(zip(mapping_df[target_col_name], mapping_df['type']))
-    #     # add a translation layer mapping for name and en_name
-    #     columns_translate = dict(zip(mapping_df['name'], mapping_df['en_name']))
+        type_mapping = dict(zip(mapping_df[target_col_name], mapping_df['type']))
+        # add a translation layer mapping for name and en_name
+        columns_translate = dict(zip(mapping_df['name'], mapping_df['en_name']))
+        # get column order mapping
+        column_order = dict(zip(mapping_df['name'], mapping_df['order']))
 
-    #     if show_log:
-    #         logger.debug(f"Type mapping: {type_mapping}")
+        if show_log:
+            logger.debug(f"Type mapping: {type_mapping}")
 
-    #     # Organize columns in ratio_df into different reports based on type
-    #     reports = {}
-    #     for field, report_type in type_mapping.items():
-    #         if report_type not in reports:
-    #             reports[report_type] = [field]
-    #         else:
-    #             reports[report_type].append(field)
+        # Organize columns in ratio_df into different reports based on type
+        reports = {}
+        for field, report_type in type_mapping.items():
+            if report_type not in reports:
+                reports[report_type] = [field]
+            else:
+                reports[report_type].append(field)
 
-    #     # Rename columns in ratio_df based on mapping_df's 'name'
-    #     name_mapping = dict(zip(mapping_df['field_name'], mapping_df[target_col_name]))
-    #     if show_log:
-    #         logger.debug(f"Name mapping: {name_mapping}")
-    #     ratio_df.rename(columns=name_mapping, inplace=True)
+        # Rename columns in ratio_df based on mapping_df's 'name'
+        name_mapping = dict(zip(mapping_df['field_name'], mapping_df[target_col_name]))
+        if show_log:
+            logger.debug(f"Name mapping: {name_mapping}")
+        ratio_df.rename(columns=name_mapping, inplace=True)
+        # Reorder columns based on 'order' in mapping_df
+        ratio_df = ratio_df[sorted(ratio_df.columns, key=lambda x: int(column_order.get(x, 0)))]
 
-    #     # Create DataFrames for each report type with exception handling
-    #     report_dfs = {}
-    #     for report_type, columns in reports.items():
-    #         try:
-    #             # Filter the DataFrame only for columns that exist in ratio_df
-    #             filtered_columns = [col for col in columns if col in ratio_df.columns]
-    #             report_dfs[report_type] = ratio_df[filtered_columns]
-    #         except KeyError as e:
-    #             print(f"Failed to create DataFrame for {report_type} due to missing columns: {e}")
+        ## Handle duplicate columns
+        # ratio_df = self.handle_duplicate_columns(original_columns, ratio_df)
 
-    #     # Define the primary report types
-    #     primary_reports = [
-    #         'Chỉ tiêu cân đối kế toán',
-    #         'Chỉ tiêu lưu chuyển tiền tệ',
-    #         'Chỉ tiêu kết quả kinh doanh'
-    #     ]
+        # Create DataFrames for each report type with exception handling
+        report_dfs = {}
+        for report_type, columns in reports.items():
+            try:
+                # Filter the DataFrame only for columns that exist in ratio_df
+                filtered_columns = [col for col in columns if col in ratio_df.columns]
+                report_dfs[report_type] = ratio_df[filtered_columns]
+            except KeyError as e:
+                print(f"Failed to create DataFrame for {report_type} due to missing columns: {e}")
 
-    #     # Splitting the reports
-    #     primary_dfs = {key: report_dfs[key] for key in primary_reports}
-    #     other_reports = {key: report_dfs[key] for key in report_dfs if key not in primary_reports}
+        # Define the primary report types
+        primary_reports = [
+            'Chỉ tiêu cân đối kế toán',
+            'Chỉ tiêu lưu chuyển tiền tệ',
+            'Chỉ tiêu kết quả kinh doanh'
+        ]
 
-    #     # Merge all other reports into a single DataFrame with MultiIndex columns
-    #     merged_other_reports = pd.concat(other_reports.values(), axis=1, keys=other_reports.keys())
+        # Splitting the reports
+        primary_dfs = {key: report_dfs[key] for key in primary_reports}
+        other_reports = {key: report_dfs[key] for key in report_dfs if key not in primary_reports}
 
-    #     primary_dfs = {key: pd.concat([index_part, value], axis=1) for key, value in primary_dfs.items()}
+        # Merge all other reports into a single DataFrame with MultiIndex columns
+        merged_other_reports = pd.concat(other_reports.values(), axis=1, keys=other_reports.keys())
 
-    #     # Convert 'index_part' to MultiIndex with blank top level
-    #     index_part.columns = pd.MultiIndex.from_tuples([('Meta', col) for col in index_part.columns])
-    #     merged_other_reports = pd.concat([index_part, merged_other_reports], axis=1)
+        primary_dfs = {key: pd.concat([index_part, value], axis=1) for key, value in primary_dfs.items()}
 
-    #     def multi_level_columns_translate(col, translation_dict):
-    #         # Modify the lowest level while keeping the upper level(s) the same
-    #         upper_levels = col[:-1]
-    #         lowest_level = col[-1]
-    #         new_lowest_level = translation_dict.get(lowest_level, lowest_level)  # Apply translation or use the original
-    #         return upper_levels + (new_lowest_level,)
+        # Convert 'index_part' to MultiIndex with blank top level
+        index_part.columns = pd.MultiIndex.from_tuples([('Meta', col) for col in index_part.columns])
+        merged_other_reports = pd.concat([index_part, merged_other_reports], axis=1)
 
-    #     if lang == 'en':
-    #         # Apply the columns_translate function to all columns
-    #         merged_other_reports.columns = pd.MultiIndex.from_tuples(
-    #             [multi_level_columns_translate(col, columns_translate) for col in merged_other_reports.columns]
-    #         )
+        def multi_level_columns_translate(col, translation_dict):
+            # Modify the lowest level while keeping the upper level(s) the same
+            upper_levels = col[:-1]
+            lowest_level = col[-1]
+            new_lowest_level = translation_dict.get(lowest_level, lowest_level)  # Apply translation or use the original
+            return upper_levels + (new_lowest_level,)
 
-    #     return primary_dfs, merged_other_reports
+        if lang == 'en':
+            # Apply the columns_translate function to all columns
+            merged_other_reports.columns = pd.MultiIndex.from_tuples(
+                [multi_level_columns_translate(col, columns_translate) for col in merged_other_reports.columns]
+            )
 
-    def _process_report (self, report_key:str , period:Optional[str]=None, lang:Optional[str]='en', dropna:Optional[bool]=True, show_log:Optional[bool]=False):
+        return primary_dfs, merged_other_reports
+
+    def _process_report (self, report_key:str , period:Optional[str]=None, lang:Optional[str]='en', dropna:Optional[bool]=False, show_log:Optional[bool]=False):
         """
         Process the financial report data for a company from VCI source from a single downloaded data in _get_report method.
 
@@ -308,7 +290,12 @@ class Finance ():
             - show_log (bool): Whether to show log messages. Default is False.
         """
         effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
-        financial_report = self._get_report(period=effective_period, lang=lang, show_log=show_log, dropna=dropna)[1]
+        financial_report = self._get_report(period=effective_period, lang=lang, show_log=show_log)[1]
+        if dropna:
+            # fill NaN values with 0
+            financial_report = financial_report.fillna(0)
+            # drop columns with all 0 values
+            financial_report = financial_report.loc[:, (financial_report != 0).any(axis=0)]
 
         # if effective_period == 'Y':
         #     if lang == 'en':
