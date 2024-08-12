@@ -30,6 +30,7 @@ setup(
         "requests",
         "beautifulsoup4",
         "pandas",
+        "seaborn",
         "vnai>=0.1.3",
         "openpyxl",
         "pydantic",

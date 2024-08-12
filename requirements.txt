@@ -1,14 +1,13 @@
-pandas
-requests
-bs4
+pandas==2.2.1
+requests==2.31.0
+bs4==0.0.2
 vnai>=0.1.0
-openpyxl
-vnstock_ezchart
-fake_useragent
-cryptography
-psutil
-fake_useragent
-click
-click-repl
-seaborn
+openpyxl==3.1.2
+vnstock_ezchart==0.0.2
+fake_useragent==1.5.1
+cryptography==42.0.5
+psutil==6.0.0
+click==8.1.7
+click-repl==0.3.0
+seaborn==0.13.2
 # coverage # for testing
