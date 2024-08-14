@@ -18,7 +18,7 @@ _RESAMPLE_MAP = {
             '15m' : '15min',
             '30m' : '30min',
             '1W' : '1W',
-            '1M' : 'ME'
+            '1M' : 'M'
             }
 
 _OHLC_MAP = {
