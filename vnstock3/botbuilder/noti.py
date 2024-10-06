@@ -155,7 +155,7 @@ class Messenger:
         response = requests.post(url)
         return response.json()
 
-    def _lark_message(self, message:Union(str), payload:Union(Dict, None)=None):
+    def _lark_message(self, message:str, payload:Union[Dict, None]=None):
         """
         Send a message to a Lark Botbuilder Webhook.
 
