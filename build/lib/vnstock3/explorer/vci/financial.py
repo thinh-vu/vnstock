@@ -119,7 +119,7 @@ class Finance ():
         data = response.json()
         # if data is empty, raise error
         if not data:
-            raise ValueError("Không tìm thấy dữ liệu báo cáo tài chính. Vui lòng kiểm tra lại mã chứng khoán hoặc thử lại sau.")
+            raise ValueError("Không tìm thấy dữ liệu báo cáo tài chính.")
         else:
             selected_data = data['data']['CompanyFinancialRatio']['ratio']
             ratio_df = pd.DataFrame(selected_data)

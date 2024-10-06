@@ -1,0 +1,2 @@
+[console_scripts]
+vnstock = vnstock3.common.cli:cli
