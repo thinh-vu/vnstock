@@ -117,6 +117,7 @@ def update_notice():
                 "**Từ 1/1/2025, vnstock3 sẽ được cài đặt khi sử dụng cú pháp** `pip install vnstock` **thay cho Vnstock Legacy** hiện tại.\n"
                 "Xem chi tiết [chuyển đổi sang vnstock3](https://vnstocks.com/docs/tai-lieu/migration-chuyen-doi-sang-vnstock3).\n"
                 f"Phiên bản **Vnstock Legacy ({installed_version})** bạn đang sử dụng **sẽ không được nâng cấp thêm.**\n"
+                "Từ 7/10/2024 Vnstock giới thiệu nhóm Facebook Cộng đồng Vnstock, tham gia thảo luận tại đây: https://www.facebook.com/groups/vnstock.official"
             )
 
             environment = detect_environment()
