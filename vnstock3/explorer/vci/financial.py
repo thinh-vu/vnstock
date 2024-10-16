@@ -2,7 +2,8 @@ import pandas as pd
 import json
 import requests
 from typing import Optional, List
-from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP
+from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP, _ICB4_COMTYPE_CODE_MAP
+from vnstock3.explorer.vci import Company
 from vnstock3.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.core.utils.user_agent import get_headers
@@ -30,6 +31,23 @@ class Finance ():
             raise ValueError("Mã chứng khoán không hợp lệ. Chỉ cổ phiếu mới có thông tin.")
         self.period = _FINANCIAL_REPORT_PERIOD_MAP.get(period)
         self.get_all = get_all
+        self.com_type_code = self._get_company_type()
+    
+    def _get_company_type(self):
+        """
+        Get the company type code from ICB4_COMTYPE_CODE_MAP based on the company's ICB4 industry classification for report mapping.
+
+        Returns:
+        - str: The company type code. Possible values:
+            'CT': Công ty (Company)
+            'CK': Chứng khoán (Securities)
+            'NH': Ngân hàng (Bank)
+            'BH': Bảo hiểm (Insurance)
+        """
+        # Get the company's ICB4 industry classification
+        listing_info = Company(symbol=self.symbol)._fetch_data()['CompanyListingInfo']
+        com_type_code = _ICB4_COMTYPE_CODE_MAP[listing_info['icbName4']]
+        return com_type_code
 
     # @staticmethod
     def handle_duplicate_columns(self, original_columns: List[str], ratio_df: pd.DataFrame) -> pd.DataFrame:
@@ -81,16 +99,16 @@ class Finance ():
             logger.error(f"Request failed with status code {response.status_code}. Details: {response.text}")
         data = response.json()['data']['ListFinancialRatio']
         df = pd.DataFrame(data)
-        df.columns = [camel_to_snake(col) for col in df.columns]
+        df.columns = [camel_to_snake(col).replace('__', '_') for col in df.columns]
         effective_get_all = get_all if get_all is not None else self.get_all
-        selected_columns = ['field_name', 'name', 'en__name', 'type', 'order', 'unit']
+        selected_columns = ['field_name', 'name', 'en_name', 'type', 'order', 'unit', 'com_type_code']
         df['unit'] = df['unit'].map(_UNIT_MAP)
         if effective_get_all is False:
             df = df[selected_columns]
         df.columns = [col.replace('__', '_') for col in df.columns]
         return df
 
-    def _get_report (self, period:Optional[str]=None, lang:Optional[str]='en', show_log:Optional[bool]=False):
+    def _get_report (self, period:Optional[str]=None, lang:Optional[str]='en', show_log:Optional[bool]=False, mode:Optional[str]='final'):
         """
         Get the financial report data for a company from VCI source.
         
@@ -98,6 +116,7 @@ class Finance ():
             - period (str): The period of the financial report. Default is None.
             - lang (str): The language of the report. Default is 'en'.
             - show_log (bool): Whether to show log messages. Default is False.
+            - mode (str): The mode of the report. Default is 'final' which return polish data after the mapping process. Other mode is 'raw' which return the raw data which contains code names for all fields.
         """
         # if lange not in ['vi', 'en'] then raise error
         if lang not in ['vi', 'en']:
@@ -123,92 +142,111 @@ class Finance ():
         else:
             selected_data = data['data']['CompanyFinancialRatio']['ratio']
             ratio_df = pd.DataFrame(selected_data)
-            # copy the original columns before renaming
-            # original_columns = ratio_df.columns.to_list()
+            if mode == 'final':
+                primary_dfs, other_reports = self._ratio_mapping(ratio_df, lang=lang, show_log=show_log)
+                return primary_dfs, other_reports
+            elif mode == 'raw':
+                return ratio_df
+        
+    def _ratio_mapping (self, ratio_df:pd.DataFrame, lang:Optional[str]='en', show_log:Optional[bool]=False):
+        """
+        A dedicated method to map the financial ratio DataFrame to different reports based on the company type code.
 
-            if lang == 'vi':
-                ratio_df = ratio_df.rename(columns={'ticker': 'CP', 'yearReport': 'Năm', 'lengthReport': 'Kỳ'})
-                index_part = ratio_df[['CP', 'Năm', 'Kỳ']]
-                target_col_name = 'name'
-            elif lang == 'en':
-                index_part = ratio_df[['ticker', 'yearReport', 'lengthReport']]
-                target_col_name = 'en_name'
+        Parameters:
+            - ratio_df (pd.DataFrame): The DataFrame containing the financial ratio from the function _get_report().
+            - lang (str): The language of the report. Default is 'en'.
+            - show_log (bool): Whether to show log messages. Default is False.
+        """
 
-            # Create a dictionary to map field_name to report type
-            mapping_df = self._get_ratio_dict(get_all=False)
+        if lang == 'vi':
+            ratio_df = ratio_df.rename(columns={'ticker': 'CP', 'yearReport': 'Năm', 'lengthReport': 'Kỳ'})
+            index_part = ratio_df[['CP', 'Năm', 'Kỳ']]
+            target_col_name = 'name'
+        elif lang == 'en':
+            index_part = ratio_df[['ticker', 'yearReport', 'lengthReport']]
+            target_col_name = 'en_name'
 
-            type_mapping = dict(zip(mapping_df[target_col_name], mapping_df['type']))
-            # add a translation layer mapping for name and en_name
-            columns_translate = dict(zip(mapping_df['name'], mapping_df['en_name']))
-            # get column order mapping
-            column_order = dict(zip(mapping_df['name'], mapping_df['order']))
+        # Create a dictionary to map field_name to report type
+        mapping_df = self._get_ratio_dict(get_all=False)
+        # Filter the mapping DataFrame based on the company type code
+        mapping_df = mapping_df[mapping_df['com_type_code'] == self.com_type_code]
 
-            if show_log:
-                logger.debug(f"Type mapping: {type_mapping}")
+        # select only the columns from ratio_df that are in the mapping_df
+        original_columns = ratio_df.columns
+        ratio_df = ratio_df.copy()[[col for col in original_columns if col in mapping_df['field_name'].values]]
 
-            # Organize columns in ratio_df into different reports based on type
-            reports = {}
-            for field, report_type in type_mapping.items():
-                if report_type not in reports:
-                    reports[report_type] = [field]
-                else:
-                    reports[report_type].append(field)
+        type_mapping = dict(zip(mapping_df[target_col_name], mapping_df['type']))
+        # add a translation layer mapping for name and en_name
+        columns_translate = dict(zip(mapping_df['name'], mapping_df['en_name']))
+        # get column order mapping
+        column_order = dict(zip(mapping_df['name'], mapping_df['order']))
 
-            # Rename columns in ratio_df based on mapping_df's 'name'
-            name_mapping = dict(zip(mapping_df['field_name'], mapping_df[target_col_name]))
-            if show_log:
-                logger.debug(f"Name mapping: {name_mapping}")
-            ratio_df.rename(columns=name_mapping, inplace=True)
-            # Reorder columns based on 'order' in mapping_df
-            ratio_df = ratio_df[sorted(ratio_df.columns, key=lambda x: int(column_order.get(x, 0)))]
+        if show_log:
+            logger.debug(f"Type mapping: {type_mapping}")
 
-            ## Handle duplicate columns
-            # ratio_df = self.handle_duplicate_columns(original_columns, ratio_df)
+        # Organize columns in ratio_df into different reports based on type
+        reports = {}
+        for field, report_type in type_mapping.items():
+            if report_type not in reports:
+                reports[report_type] = [field]
+            else:
+                reports[report_type].append(field)
 
-            # Create DataFrames for each report type with exception handling
-            report_dfs = {}
-            for report_type, columns in reports.items():
-                try:
-                    # Filter the DataFrame only for columns that exist in ratio_df
-                    filtered_columns = [col for col in columns if col in ratio_df.columns]
-                    report_dfs[report_type] = ratio_df[filtered_columns]
-                except KeyError as e:
-                    print(f"Failed to create DataFrame for {report_type} due to missing columns: {e}")
+        # Rename columns in ratio_df based on mapping_df's 'name'
+        name_mapping = dict(zip(mapping_df['field_name'], mapping_df[target_col_name]))
+        if show_log:
+            logger.debug(f"Name mapping: {name_mapping}")
+        ratio_df.rename(columns=name_mapping, inplace=True)
+        # Reorder columns based on 'order' in mapping_df
+        ratio_df = ratio_df[sorted(ratio_df.columns, key=lambda x: int(column_order.get(x, 0)))]
 
-            # Define the primary report types
-            primary_reports = [
-                'Chỉ tiêu cân đối kế toán',
-                'Chỉ tiêu lưu chuyển tiền tệ',
-                'Chỉ tiêu kết quả kinh doanh'
-            ]
+        ## Handle duplicate columns
+        # ratio_df = self.handle_duplicate_columns(original_columns, ratio_df)
 
-            # Splitting the reports
-            primary_dfs = {key: report_dfs[key] for key in primary_reports}
-            other_reports = {key: report_dfs[key] for key in report_dfs if key not in primary_reports}
+        # Create DataFrames for each report type with exception handling
+        report_dfs = {}
+        for report_type, columns in reports.items():
+            try:
+                # Filter the DataFrame only for columns that exist in ratio_df
+                filtered_columns = [col for col in columns if col in ratio_df.columns]
+                report_dfs[report_type] = ratio_df[filtered_columns]
+            except KeyError as e:
+                print(f"Failed to create DataFrame for {report_type} due to missing columns: {e}")
 
-            # Merge all other reports into a single DataFrame with MultiIndex columns
-            merged_other_reports = pd.concat(other_reports.values(), axis=1, keys=other_reports.keys())
+        # Define the primary report types
+        primary_reports = [
+            'Chỉ tiêu cân đối kế toán',
+            'Chỉ tiêu lưu chuyển tiền tệ',
+            'Chỉ tiêu kết quả kinh doanh'
+        ]
 
-            primary_dfs = {key: pd.concat([index_part, value], axis=1) for key, value in primary_dfs.items()}
+        # Splitting the reports
+        primary_dfs = {key: report_dfs[key] for key in primary_reports}
+        other_reports = {key: report_dfs[key] for key in report_dfs if key not in primary_reports}
 
-            # Convert 'index_part' to MultiIndex with blank top level
-            index_part.columns = pd.MultiIndex.from_tuples([('Meta', col) for col in index_part.columns])
-            merged_other_reports = pd.concat([index_part, merged_other_reports], axis=1)
+        # Merge all other reports into a single DataFrame with MultiIndex columns
+        merged_other_reports = pd.concat(other_reports.values(), axis=1, keys=other_reports.keys())
 
-            def multi_level_columns_translate(col, translation_dict):
-                # Modify the lowest level while keeping the upper level(s) the same
-                upper_levels = col[:-1]
-                lowest_level = col[-1]
-                new_lowest_level = translation_dict.get(lowest_level, lowest_level)  # Apply translation or use the original
-                return upper_levels + (new_lowest_level,)
+        primary_dfs = {key: pd.concat([index_part, value], axis=1) for key, value in primary_dfs.items()}
 
-            if lang == 'en':
-                # Apply the columns_translate function to all columns
-                merged_other_reports.columns = pd.MultiIndex.from_tuples(
-                    [multi_level_columns_translate(col, columns_translate) for col in merged_other_reports.columns]
-                )
+        # Convert 'index_part' to MultiIndex with blank top level
+        index_part.columns = pd.MultiIndex.from_tuples([('Meta', col) for col in index_part.columns])
+        merged_other_reports = pd.concat([index_part, merged_other_reports], axis=1)
 
-            return primary_dfs, merged_other_reports
+        def multi_level_columns_translate(col, translation_dict):
+            # Modify the lowest level while keeping the upper level(s) the same
+            upper_levels = col[:-1]
+            lowest_level = col[-1]
+            new_lowest_level = translation_dict.get(lowest_level, lowest_level)  # Apply translation or use the original
+            return upper_levels + (new_lowest_level,)
+
+        if lang == 'en':
+            # Apply the columns_translate function to all columns
+            merged_other_reports.columns = pd.MultiIndex.from_tuples(
+                [multi_level_columns_translate(col, columns_translate) for col in merged_other_reports.columns]
+            )
+
+        return primary_dfs, merged_other_reports
 
     def _process_report (self, report_key:str , period:Optional[str]=None, lang:Optional[str]='en', dropna:Optional[bool]=False, show_log:Optional[bool]=False):
         """
@@ -228,19 +266,19 @@ class Finance ():
         effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
         primary_reports = self._get_report(period=effective_period, lang=lang, show_log=show_log)[0]
 
-        balance_sheet_df = primary_reports[report_key]
+        target_report_df = primary_reports[report_key]
         if dropna:
             # fill NaN values with 0
-            balance_sheet_df = balance_sheet_df.fillna(0)
+            target_report_df = target_report_df.fillna(0)
             # drop columns with all 0 values
-            balance_sheet_df = balance_sheet_df.loc[:, (balance_sheet_df != 0).any(axis=0)]
+            target_report_df = target_report_df.loc[:, (target_report_df != 0).any(axis=0)]
 
         if effective_period == 'Y':
             if lang == 'en':
-                balance_sheet_df = balance_sheet_df.drop(columns='lengthReport')
+                target_report_df = target_report_df.drop(columns='lengthReport')
             elif lang == 'vi':
-                balance_sheet_df = balance_sheet_df.drop(columns='Kỳ')
-        return balance_sheet_df
+                target_report_df = target_report_df.drop(columns='Kỳ')
+        return target_report_df
 
     def balance_sheet(self, period:Optional[str]=None, lang:Optional[str]='en', dropna:Optional[bool]=True, show_log:Optional[bool]=False):
         """
