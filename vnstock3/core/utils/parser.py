@@ -1,8 +1,12 @@
 import re
+import logging
+import requests
 from typing import Dict
-from datetime import datetime, timedelta
 from pytz import timezone
+from datetime import datetime, timedelta
 from vnstock3.core.config.const import UA
+
+logger = get_logger(__name__)
 
 def parse_timestamp(time_value):
     """
@@ -93,6 +97,37 @@ def json_cleaning(json_data: Dict, map_dict: Dict[str, str]) -> Dict:
                     map_dict[key]: value for key, value in json_data.items() if key in map_dict
                     }
     return cleaned_dict
+
+def api_response_check(response: requests.Response) -> dict:
+    """
+    Xử lý các lỗi thường gặp khi lấy dữ liệu từ API.
+
+    Tham số:
+    - response (requests.Response): Đối tượng phản hồi HTTP từ yêu cầu dữ liệu.
+
+    Trả về:
+    - dict: Dữ liệu JSON từ phản hồi nếu thành công.
+
+    Ngoại lệ:
+    - ValueError: Nếu phản hồi chứa lỗi hoặc JSON không hợp lệ.
+    """
+    # Kiểm tra mã trạng thái không phải 200
+    if response.status_code != 200:
+        logger.error(f"Yêu cầu thất bại với mã trạng thái {response.status_code}. Chi tiết: {response.text}")
+        raise ValueError(f"Lỗi khi lấy dữ liệu: {response.status_code} - {response.text}")
+    
+    # Thử phân tích phản hồi dưới dạng JSON
+    try:
+        data = response.json()
+    except ValueError as e:
+        logger.error("Phản hồi JSON không hợp lệ.")
+        raise ValueError("Không thể phân tích phản hồi JSON.") from e
+    
+    # Kiểm tra xem dữ liệu có rỗng không
+    if not data:
+        raise ValueError("Không tìm thấy dữ liệu trong phản hồi. Vui lòng kiểm tra lại yêu cầu hoặc thử lại sau.")
+    
+    return data
 
 def flatten_data(json_data, parent_key='', sep='_'):
     """

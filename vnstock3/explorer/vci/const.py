@@ -30,7 +30,6 @@ _OHLC_MAP = {
     'v': 'volume',
 }
 
-
 # Pandas data type mapping for history price data
 _OHLC_DTYPE = {
     "time": "datetime64[ns]",  # Convert timestamps to datetime
@@ -75,6 +74,7 @@ _FINANCIAL_REPORT_PERIOD_MAP = {'year': 'Y', 'quarter': 'Q'}
 
 _UNIT_MAP = {'BILLION':'tỷ', 'PERCENT':'%', 'INDEX':'index', 'MILLION':'triệu'}
 
+SUPPORTED_LANGUAGES = ['vi', 'en']
 
 _ICB4_COMTYPE_CODE_MAP = {'Bán lẻ phức hợp': 'CT',
  'Bảo hiểm nhân thọ': 'BH',

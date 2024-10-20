@@ -2,9 +2,9 @@ import pandas as pd
 import json
 import requests
 from typing import Optional, List
-from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP, _ICB4_COMTYPE_CODE_MAP
+from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP, _ICB4_COMTYPE_CODE_MAP, SUPPORTED_LANGUAGES
 from vnstock3.explorer.vci import Company
-from vnstock3.core.utils.parser import get_asset_type, camel_to_snake
+from vnstock3.core.utils.parser import get_asset_type, camel_to_snake, api_response_check
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.core.utils.user_agent import get_headers
 
@@ -118,8 +118,8 @@ class Finance ():
             - show_log (bool): Whether to show log messages. Default is False.
             - mode (str): The mode of the report. Default is 'final' which return polish data after the mapping process. Other mode is 'raw' which return the raw data which contains code names for all fields.
         """
-        # if lange not in ['vi', 'en'] then raise error
-        if lang not in ['vi', 'en']:
+        # if lange not in SUPPORTED_LANGUAGES then raise error
+        if lang not in SUPPORTED_LANGUAGES:
             raise ValueError("Ngôn ngữ không hợp lệ. Chỉ chấp nhận 'vi' hoặc 'en'.")
         effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
         payload = "{\"query\":\"fragment Ratios on CompanyFinancialRatio {\\n  ticker\\n  yearReport\\n  lengthReport\\n  updateDate\\n  revenue\\n  revenueGrowth\\n  netProfit\\n  netProfitGrowth\\n  ebitMargin\\n  roe\\n  roic\\n  roa\\n  pe\\n  pb\\n  eps\\n  currentRatio\\n  cashRatio\\n  quickRatio\\n  interestCoverage\\n  ae\\n  netProfitMargin\\n  grossMargin\\n  ev\\n  issueShare\\n  ps\\n  pcf\\n  bvps\\n  evPerEbitda\\n  BSA1\\n  BSA2\\n  BSA5\\n  BSA8\\n  BSA10\\n  BSA159\\n  BSA16\\n  BSA22\\n  BSA23\\n  BSA24\\n  BSA162\\n  BSA27\\n  BSA29\\n  BSA43\\n  BSA46\\n  BSA50\\n  BSA209\\n  BSA53\\n  BSA54\\n  BSA55\\n  BSA56\\n  BSA58\\n  BSA67\\n  BSA71\\n  BSA173\\n  BSA78\\n  BSA79\\n  BSA80\\n  BSA175\\n  BSA86\\n  BSA90\\n  BSA96\\n  CFA21\\n  CFA22\\n  at\\n  fat\\n  acp\\n  dso\\n  dpo\\n  ccc\\n  de\\n  le\\n  ebitda\\n  ebit\\n  dividend\\n  RTQ10\\n  charterCapitalRatio\\n  RTQ4\\n  epsTTM\\n  charterCapital\\n  fae\\n  RTQ17\\n  CFA26\\n  CFA6\\n  CFA9\\n  BSA85\\n  CFA36\\n  BSB98\\n  BSB101\\n  BSA89\\n  CFA34\\n  CFA14\\n  ISB34\\n  ISB27\\n  ISA23\\n  ISS152\\n  ISA102\\n  CFA27\\n  CFA12\\n  CFA28\\n  BSA18\\n  BSB102\\n  BSB110\\n  BSB108\\n  CFA23\\n  ISB41\\n  BSB103\\n  BSA40\\n  BSB99\\n  CFA16\\n  CFA18\\n  CFA3\\n  ISB30\\n  BSA33\\n  ISB29\\n  CFS200\\n  ISA2\\n  CFA24\\n  BSB105\\n  CFA37\\n  ISS141\\n  BSA95\\n  CFA10\\n  ISA4\\n  BSA82\\n  CFA25\\n  BSB111\\n  ISI64\\n  BSB117\\n  ISA20\\n  CFA19\\n  ISA6\\n  ISA3\\n  BSB100\\n  ISB31\\n  ISB38\\n  ISB26\\n  BSA210\\n  CFA20\\n  CFA35\\n  ISA17\\n  ISS148\\n  BSB115\\n  ISA9\\n  CFA4\\n  ISA7\\n  CFA5\\n  ISA22\\n  CFA8\\n  CFA33\\n  CFA29\\n  BSA30\\n  BSA84\\n  BSA44\\n  BSB107\\n  ISB37\\n  ISA8\\n  BSB109\\n  ISA19\\n  ISB36\\n  ISA13\\n  ISA1\\n  BSB121\\n  ISA14\\n  BSB112\\n  ISA21\\n  ISA10\\n  CFA11\\n  ISA12\\n  BSA15\\n  BSB104\\n  BSA92\\n  BSB106\\n  BSA94\\n  ISA18\\n  CFA17\\n  ISI87\\n  BSB114\\n  ISA15\\n  BSB116\\n  ISB28\\n  BSB97\\n  CFA15\\n  ISA11\\n  ISB33\\n  BSA47\\n  ISB40\\n  ISB39\\n  CFA7\\n  CFA13\\n  ISS146\\n  ISB25\\n  BSA45\\n  BSB118\\n  CFA1\\n  CFS191\\n  ISB35\\n  CFB65\\n  CFA31\\n  BSB113\\n  ISB32\\n  ISA16\\n  CFS210\\n  BSA48\\n  BSA36\\n  ISI97\\n  CFA30\\n  CFA2\\n  CFB80\\n  CFA38\\n  CFA32\\n  ISA5\\n  BSA49\\n  CFB64\\n  __typename\\n}\\n\\nquery Query($ticker: String!, $period: String!) {\\n  CompanyFinancialRatio(ticker: $ticker, period: $period) {\\n    ratio {\\n      ...Ratios\\n      __typename\\n    }\\n    period\\n    __typename\\n  }\\n}\\n\",\"variables\":{\"ticker\":\"VCI\",\"period\":\"Q\"}}"
@@ -128,25 +128,21 @@ class Finance ():
         payload_json['variables']['period'] = effective_period
         # convert payload_json to string
         payload_json = json.dumps(payload_json)
-
         response = requests.post(_GRAPHQL_URL, data=payload_json, headers=self.headers)
+
         if show_log:
             logger.debug(f"Requesting financial report data from {_GRAPHQL_URL}. payload: {payload_json}")
         if response.status_code != 200:
             logger.error(f"Request failed with status code {response.status_code}. Details: {response.text}")
 
-        data = response.json()
-        # if data is empty, raise error
-        if not data:
-            raise ValueError("Không tìm thấy dữ liệu báo cáo tài chính. Vui lòng kiểm tra lại mã chứng khoán hoặc thử lại sau.")
-        else:
-            selected_data = data['data']['CompanyFinancialRatio']['ratio']
-            ratio_df = pd.DataFrame(selected_data)
-            if mode == 'final':
-                primary_dfs, other_reports = self._ratio_mapping(ratio_df, lang=lang, show_log=show_log)
-                return primary_dfs, other_reports
-            elif mode == 'raw':
-                return ratio_df
+        data = api_response_check(response)
+        selected_data = data['data']['CompanyFinancialRatio']['ratio']
+        ratio_df = pd.DataFrame(selected_data)
+        if mode == 'final':
+            primary_dfs, other_reports = self._ratio_mapping(ratio_df, lang=lang, show_log=show_log)
+            return primary_dfs, other_reports
+        elif mode == 'raw':
+            return ratio_df
         
     def _ratio_mapping (self, ratio_df:pd.DataFrame, lang:Optional[str]='en', show_log:Optional[bool]=False):
         """
