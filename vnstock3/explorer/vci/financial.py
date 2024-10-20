@@ -120,7 +120,8 @@ class Finance ():
         """
         # if lange not in SUPPORTED_LANGUAGES then raise error
         if lang not in SUPPORTED_LANGUAGES:
-            raise ValueError("Ngôn ngữ không hợp lệ. Chỉ chấp nhận 'vi' hoặc 'en'.")
+            supported_languages_str = ", ".join(SUPPORTED_LANGUAGES)
+            raise ValueError(f"Invalid language specified: '{lang}'. Supported languages are: {supported_languages_str}.")
         effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
         payload = "{\"query\":\"fragment Ratios on CompanyFinancialRatio {\\n  ticker\\n  yearReport\\n  lengthReport\\n  updateDate\\n  revenue\\n  revenueGrowth\\n  netProfit\\n  netProfitGrowth\\n  ebitMargin\\n  roe\\n  roic\\n  roa\\n  pe\\n  pb\\n  eps\\n  currentRatio\\n  cashRatio\\n  quickRatio\\n  interestCoverage\\n  ae\\n  netProfitMargin\\n  grossMargin\\n  ev\\n  issueShare\\n  ps\\n  pcf\\n  bvps\\n  evPerEbitda\\n  BSA1\\n  BSA2\\n  BSA5\\n  BSA8\\n  BSA10\\n  BSA159\\n  BSA16\\n  BSA22\\n  BSA23\\n  BSA24\\n  BSA162\\n  BSA27\\n  BSA29\\n  BSA43\\n  BSA46\\n  BSA50\\n  BSA209\\n  BSA53\\n  BSA54\\n  BSA55\\n  BSA56\\n  BSA58\\n  BSA67\\n  BSA71\\n  BSA173\\n  BSA78\\n  BSA79\\n  BSA80\\n  BSA175\\n  BSA86\\n  BSA90\\n  BSA96\\n  CFA21\\n  CFA22\\n  at\\n  fat\\n  acp\\n  dso\\n  dpo\\n  ccc\\n  de\\n  le\\n  ebitda\\n  ebit\\n  dividend\\n  RTQ10\\n  charterCapitalRatio\\n  RTQ4\\n  epsTTM\\n  charterCapital\\n  fae\\n  RTQ17\\n  CFA26\\n  CFA6\\n  CFA9\\n  BSA85\\n  CFA36\\n  BSB98\\n  BSB101\\n  BSA89\\n  CFA34\\n  CFA14\\n  ISB34\\n  ISB27\\n  ISA23\\n  ISS152\\n  ISA102\\n  CFA27\\n  CFA12\\n  CFA28\\n  BSA18\\n  BSB102\\n  BSB110\\n  BSB108\\n  CFA23\\n  ISB41\\n  BSB103\\n  BSA40\\n  BSB99\\n  CFA16\\n  CFA18\\n  CFA3\\n  ISB30\\n  BSA33\\n  ISB29\\n  CFS200\\n  ISA2\\n  CFA24\\n  BSB105\\n  CFA37\\n  ISS141\\n  BSA95\\n  CFA10\\n  ISA4\\n  BSA82\\n  CFA25\\n  BSB111\\n  ISI64\\n  BSB117\\n  ISA20\\n  CFA19\\n  ISA6\\n  ISA3\\n  BSB100\\n  ISB31\\n  ISB38\\n  ISB26\\n  BSA210\\n  CFA20\\n  CFA35\\n  ISA17\\n  ISS148\\n  BSB115\\n  ISA9\\n  CFA4\\n  ISA7\\n  CFA5\\n  ISA22\\n  CFA8\\n  CFA33\\n  CFA29\\n  BSA30\\n  BSA84\\n  BSA44\\n  BSB107\\n  ISB37\\n  ISA8\\n  BSB109\\n  ISA19\\n  ISB36\\n  ISA13\\n  ISA1\\n  BSB121\\n  ISA14\\n  BSB112\\n  ISA21\\n  ISA10\\n  CFA11\\n  ISA12\\n  BSA15\\n  BSB104\\n  BSA92\\n  BSB106\\n  BSA94\\n  ISA18\\n  CFA17\\n  ISI87\\n  BSB114\\n  ISA15\\n  BSB116\\n  ISB28\\n  BSB97\\n  CFA15\\n  ISA11\\n  ISB33\\n  BSA47\\n  ISB40\\n  ISB39\\n  CFA7\\n  CFA13\\n  ISS146\\n  ISB25\\n  BSA45\\n  BSB118\\n  CFA1\\n  CFS191\\n  ISB35\\n  CFB65\\n  CFA31\\n  BSB113\\n  ISB32\\n  ISA16\\n  CFS210\\n  BSA48\\n  BSA36\\n  ISI97\\n  CFA30\\n  CFA2\\n  CFB80\\n  CFA38\\n  CFA32\\n  ISA5\\n  BSA49\\n  CFB64\\n  __typename\\n}\\n\\nquery Query($ticker: String!, $period: String!) {\\n  CompanyFinancialRatio(ticker: $ticker, period: $period) {\\n    ratio {\\n      ...Ratios\\n      __typename\\n    }\\n    period\\n    __typename\\n  }\\n}\\n\",\"variables\":{\"ticker\":\"VCI\",\"period\":\"Q\"}}"
         payload_json = json.loads(payload)
@@ -164,21 +165,63 @@ class Finance ():
 
         # Create a dictionary to map field_name to report type
         mapping_df = self._get_ratio_dict(get_all=False)
-        # Filter the mapping DataFrame based on the company type code
-        mapping_df = mapping_df[mapping_df['com_type_code'] == self.com_type_code]
+        # Filter the mapping DataFrame based on company type code. Split mapping into two parts: 'CT' and company-specific mapping
+        mapping_ct = mapping_df[mapping_df['com_type_code'] == 'CT']
+        mapping_specific = mapping_df[mapping_df['com_type_code'] == self.com_type_code]
 
-        # select only the columns from ratio_df that are in the mapping_df
+        # Get the mutual columns and distinct columns based on their company type code
         original_columns = ratio_df.columns
-        ratio_df = ratio_df.copy()[[col for col in original_columns if col in mapping_df['field_name'].values]]
+        mutual_columns = [col for col in original_columns if col in mapping_ct['field_name'].values]
+        distinct_columns = [col for col in original_columns if col in mapping_specific['field_name'].values]
 
-        type_mapping = dict(zip(mapping_df[target_col_name], mapping_df['type']))
-        # add a translation layer mapping for name and en_name
-        columns_translate = dict(zip(mapping_df['name'], mapping_df['en_name']))
-        # get column order mapping
+        # Translate column names to human-readable names
+        # First, create translation mappings for both 'mutual' and 'distinct' columns
+        mutual_columns_translation = dict(zip(mapping_ct['field_name'], mapping_ct[target_col_name]))
+        distinct_columns_translation = dict(zip(mapping_specific['field_name'], mapping_specific[target_col_name]))
+
+        # log the translation mappings
+        if show_log:
+            logger.debug(f"Mutual columns translation: {mutual_columns_translation}")
+            logger.debug(f"Distinct columns translation: {distinct_columns_translation}")
+
+        # Apply translations to convert the column names to human-readable names
+        translated_mutual_columns = [mutual_columns_translation.get(col, col) for col in mutual_columns]
+        translated_distinct_columns = [distinct_columns_translation.get(col, col) for col in distinct_columns]
+
+        if show_log:
+            logger.debug(f"Translated mutual columns: {translated_mutual_columns}")
+            logger.debug(f"Translated distinct columns: {translated_distinct_columns}")
+
+        # Combine mutual and distinct columns, preserving the translated names
+        final_translated_columns = translated_mutual_columns + translated_distinct_columns
+
+        if show_log:
+            logger.debug(f"Final translated columns: {final_translated_columns}")
+
+        # Create mapping for ordering columns
         column_order = dict(zip(mapping_df['name'], mapping_df['order']))
 
         if show_log:
-            logger.debug(f"Type mapping: {type_mapping}")
+            logger.debug(f"Column order mapping: {column_order}")
+
+        # Create a new DataFrame with the final column order
+        translated_ratio_df = ratio_df[mutual_columns + distinct_columns].copy()
+        translated_ratio_df.columns = final_translated_columns
+
+        # Add back the index part to the final DataFrame
+        translated_ratio_df = pd.concat([index_part, translated_ratio_df], axis=1)
+
+
+        # ratio_df = ratio_df.copy()[[col for col in original_columns if col in mapping_df['field_name'].values]]
+
+        type_mapping = dict(zip(mapping_df[target_col_name], mapping_df['type']))
+        # # add a translation layer mapping for name and en_name
+        columns_translate = dict(zip(mapping_df['name'], mapping_df['en_name']))
+        # # get column order mapping
+        column_order = dict(zip(mapping_df['name'], mapping_df['order']))
+
+        if show_log:
+            logger.debug(f"Type mapping:\n- Mutual columns: {mutual_columns_translation}\n- Distinct columns: {distinct_columns_translation}")
 
         # Organize columns in ratio_df into different reports based on type
         reports = {}

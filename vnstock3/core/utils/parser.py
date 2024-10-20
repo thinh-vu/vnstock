@@ -1,10 +1,10 @@
 import re
-import logging
 import requests
 from typing import Dict
 from pytz import timezone
 from datetime import datetime, timedelta
 from vnstock3.core.config.const import UA
+from vnstock3.core.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -100,32 +100,32 @@ def json_cleaning(json_data: Dict, map_dict: Dict[str, str]) -> Dict:
 
 def api_response_check(response: requests.Response) -> dict:
     """
-    Xử lý các lỗi thường gặp khi lấy dữ liệu từ API.
+    Handle common errors when fetching data from an API.
 
-    Tham số:
-    - response (requests.Response): Đối tượng phản hồi HTTP từ yêu cầu dữ liệu.
+    Parameters:
+    - response (requests.Response): The HTTP response object from the data fetch request.
 
-    Trả về:
-    - dict: Dữ liệu JSON từ phản hồi nếu thành công.
+    Returns:
+    - dict: The JSON data from the response if successful.
 
-    Ngoại lệ:
-    - ValueError: Nếu phản hồi chứa lỗi hoặc JSON không hợp lệ.
+    Raises:
+    - ValueError: If the response contains an error or invalid JSON.
     """
-    # Kiểm tra mã trạng thái không phải 200
+    # Check for non-200 status codes
     if response.status_code != 200:
-        logger.error(f"Yêu cầu thất bại với mã trạng thái {response.status_code}. Chi tiết: {response.text}")
-        raise ValueError(f"Lỗi khi lấy dữ liệu: {response.status_code} - {response.text}")
+        logger.error(f"Request failed with status code {response.status_code}. Details: {response.text}")
+        raise ValueError(f"Error fetching data: {response.status_code} - {response.text}")
     
-    # Thử phân tích phản hồi dưới dạng JSON
+    # Attempt to parse the response as JSON
     try:
         data = response.json()
     except ValueError as e:
-        logger.error("Phản hồi JSON không hợp lệ.")
-        raise ValueError("Không thể phân tích phản hồi JSON.") from e
+        logger.error("Invalid JSON response received.")
+        raise ValueError("Failed to parse JSON response.") from e
     
-    # Kiểm tra xem dữ liệu có rỗng không
+    # Check if the data is empty
     if not data:
-        raise ValueError("Không tìm thấy dữ liệu trong phản hồi. Vui lòng kiểm tra lại yêu cầu hoặc thử lại sau.")
+        raise ValueError("No data found in the response. Please check the request or try again later.")
     
     return data
 

@@ -2,49 +2,30 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 
-def get_logger(name):
-    """Configure and return a logger with a specified name."""
-    logger = logging.getLogger(name)
-    if not logger.handlers:  # Check if the logger already has handlers to prevent duplicate logs
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        handler.setLevel(logging.DEBUG)  # Set the level for the handler
-        logger.addHandler(handler)
-        logger.setLevel(logging.DEBUG)  # You might want to make the level configurable
-        logger.propagate = False  # Prevent log messages from being passed to the handlers of ancestor loggers
-    return logger
-
 def advanced_logger(name, 
-                        level='DEBUG', 
-                        handler_type='stream', 
-                        filename=None, 
-                        log_format=None, 
-                        date_format=None, 
-                        max_bytes=10485760, 
-                        backup_count=5):
+                    level='DEBUG', 
+                    handler_type='stream', 
+                    filename=None, 
+                    log_format=None, 
+                    date_format=None, 
+                    max_bytes=10485760, 
+                    backup_count=5):
     """
     Configure and return a customizable logger with various options.
 
     Parameters:
-    - name: str - the logger's name.
-    - level: str - logging level ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL').
-    - handler_type: str - type of handler ('stream', 'file', 'rotating'). stream will print to console, file will write to a file, rotating will write to a file with a max size and backup files.
-    - filename: str - path to log file. Defaults to current directory if None provided.
-    - log_format: str - format of the log messages.
-    - date_format: str - format of the timestamp in log messages.
-    - max_bytes: int - maximum log file size in bytes (for 'rotating' handler).
-    - backup_count: int - number of backup files to keep (for 'rotating' handler).
-    
+    - name: str - the logger's name. Example: 'api_logger'.
+    - level: str - logging level ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'). Example: 'INFO'.
+    - handler_type: str - type of handler ('stream', 'file', 'rotating').
+      'stream' will print to console, 'file' will write to a file, 'rotating' will write to a file with a max size and backup files. Example: 'rotating'.
+    - filename: str - path to log file. Defaults to current directory if None provided. Example: '/var/logs/api.log'.
+    - log_format: str - format of the log messages. Example: '%(asctime)s - %(levelname)s - %(message)s'.
+    - date_format: str - format of the timestamp in log messages. Example: '%Y-%m-%d %H:%M:%S'.
+    - max_bytes: int - maximum log file size in bytes (for 'rotating' handler). Example: 10485760 (10MB).
+    - backup_count: int - number of backup files to keep (for 'rotating' handler). Example: 5.
+
     Returns:
     - logger: logging.Logger instance.
-
-    Examples:
-    - Set up a logger: logger = get_advanced_logger('api_data_fetcher', level='INFO', handler_type='stream')
-    - Log info: logger.info(f"Starting to fetch data from {api_url}")
-    - Log error: 
-                except requests.HTTPError as e:
-                    logger.error(f"Failed to fetch data: {e}")
     """
     logger = logging.getLogger(name)
     if logger.hasHandlers():  # Prevent adding multiple handlers if already configured
@@ -77,3 +58,30 @@ def advanced_logger(name,
     logger.setLevel(getattr(logging, level.upper()))
 
     return logger
+
+def get_logger(name, 
+               level='DEBUG', 
+               handler_type='stream', 
+               filename=None, 
+               log_format=None, 
+               date_format=None, 
+               max_bytes=10485760, 
+               backup_count=5):
+    """
+    Wrapper for advanced_logger that allows custom logging configurations.
+    Provides backward compatibility while allowing advanced customizations.
+
+    Parameters:
+    - All parameters are inherited from advanced_logger.
+
+    Returns:
+    - logger: logging.Logger instance.
+    """
+    return advanced_logger(name=name, 
+                           level=level, 
+                           handler_type=handler_type, 
+                           filename=filename, 
+                           log_format=log_format, 
+                           date_format=date_format, 
+                           max_bytes=max_bytes, 
+                           backup_count=backup_count)
