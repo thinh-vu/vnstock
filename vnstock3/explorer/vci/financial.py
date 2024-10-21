@@ -50,35 +50,58 @@ class Finance ():
         return com_type_code
 
     # @staticmethod
-    def handle_duplicate_columns(self, original_columns: List[str], ratio_df: pd.DataFrame) -> pd.DataFrame:
+    # def handle_duplicate_columns(self, original_columns: List[str], ratio_df: pd.DataFrame) -> pd.DataFrame:
+    #     """
+    #     Handles duplicate column names in a DataFrame by appending the original column name
+    #     as a suffix to the duplicate column names.
+
+    #     Parameters:
+    #     - original_columns (List[str]): A list of the original column names before renaming.
+    #     - ratio_df (pd.DataFrame): The DataFrame with potentially duplicated column names after renaming.
+
+    #     Returns:
+    #     - pd.DataFrame: The DataFrame with resolved column names.
+    #     """
+    #     seen_columns = {}
+    #     renamed_columns = []
+
+    #     for i, col in enumerate(ratio_df.columns):
+    #         original_col = original_columns[i]
+    #         if col in seen_columns:
+    #             # If duplicate, append the original column name as a suffix
+    #             new_col_name = f"{col} - {original_col}"
+    #             renamed_columns.append(new_col_name)
+    #         else:
+    #             seen_columns[col] = 1
+    #             renamed_columns.append(col)
+
+    #     # Apply the new column names to the DataFrame
+    #     ratio_df.columns = renamed_columns
+        
+    #     return ratio_df
+    
+    @staticmethod
+    def duplicated_columns_handling (all_columns_mapping, target_col_name='name'):
         """
         Handles duplicate column names in a DataFrame by appending the original column name
         as a suffix to the duplicate column names.
 
         Parameters:
-        - original_columns (List[str]): A list of the original column names before renaming.
-        - ratio_df (pd.DataFrame): The DataFrame with potentially duplicated column names after renaming.
+        - all_columns_mapping (pd.DataFrame): The DataFrame with potentially duplicated column names after renaming.
+        - target_col_name (str): The column name to check for duplicates. Default is 'name', other possible values are 'en_name'.
 
         Returns:
         - pd.DataFrame: The DataFrame with resolved column names.
         """
-        seen_columns = {}
-        renamed_columns = []
-
-        for i, col in enumerate(ratio_df.columns):
-            original_col = original_columns[i]
-            if col in seen_columns:
-                # If duplicate, append the original column name as a suffix
-                new_col_name = f"{col} - {original_col}"
-                renamed_columns.append(new_col_name)
-            else:
-                seen_columns[col] = 1
-                renamed_columns.append(col)
-
-        # Apply the new column names to the DataFrame
-        ratio_df.columns = renamed_columns
-        
-        return ratio_df
+        # duplicated subset
+        duplicated_subset = all_columns_mapping[all_columns_mapping[target_col_name].duplicated()].copy()
+        # non-duplicated subset
+        non_duplicated_subset = all_columns_mapping[~all_columns_mapping[target_col_name].duplicated()].copy()
+        # replace values the duplicated columns by appending the field_name
+        duplicated_subset[target_col_name] = all_columns_mapping['name'] + ' - ' + all_columns_mapping['field_name']
+        # combine the two subsets
+        all_columns_mapping = pd.concat([non_duplicated_subset, duplicated_subset])
+        return all_columns_mapping
     
     # @staticmethod
     def _get_ratio_dict(self, show_log:Optional[bool]=False, get_all:Optional[bool]=False):
@@ -166,62 +189,36 @@ class Finance ():
         # Create a dictionary to map field_name to report type
         mapping_df = self._get_ratio_dict(get_all=False)
         # Filter the mapping DataFrame based on company type code. Split mapping into two parts: 'CT' and company-specific mapping
-        mapping_ct = mapping_df[mapping_df['com_type_code'] == 'CT']
         mapping_specific = mapping_df[mapping_df['com_type_code'] == self.com_type_code]
+        mapping_ct = mapping_df[mapping_df['com_type_code'] == 'CT']
+        all_columns_mapping = pd.concat([mapping_specific, mapping_ct]).drop_duplicates(subset='field_name', keep='first')
+        all_columns_mapping = self.duplicated_columns_handling(all_columns_mapping, target_col_name=target_col_name)
 
-        # Get the mutual columns and distinct columns based on their company type code
+        # # Filter the mapping DataFrame based on company type code. Split mapping into two parts: 'CT' and company-specific mapping
+        # mapping_specific = mapping_df[mapping_df['com_type_code'] == self.com_type_code]
+        # mapping_ct = mapping_df[mapping_df['com_type_code']  != self.com_type_code]
+        # all_columns_mapping = pd.concat([mapping_specific, mapping_ct]).drop_duplicates(subset='field_name', keep='first')
+
         original_columns = ratio_df.columns
-        mutual_columns = [col for col in original_columns if col in mapping_ct['field_name'].values]
-        distinct_columns = [col for col in original_columns if col in mapping_specific['field_name'].values]
-
-        # Translate column names to human-readable names
-        # First, create translation mappings for both 'mutual' and 'distinct' columns
-        mutual_columns_translation = dict(zip(mapping_ct['field_name'], mapping_ct[target_col_name]))
-        distinct_columns_translation = dict(zip(mapping_specific['field_name'], mapping_specific[target_col_name]))
-
-        # log the translation mappings
+        # There are many columns in ratio_df that are not in mapping_df, they are not tied to the company specific mapping or the 'CT' mapping
+        orphan_columns = [col for col in original_columns if col not in mapping_df['field_name'].values and col not in index_part.columns]
         if show_log:
-            logger.debug(f"Mutual columns translation: {mutual_columns_translation}")
-            logger.debug(f"Distinct columns translation: {distinct_columns_translation}")
+            logger.debug(f"Orphan columns will be dropped: {orphan_columns}")
 
-        # Apply translations to convert the column names to human-readable names
-        translated_mutual_columns = [mutual_columns_translation.get(col, col) for col in mutual_columns]
-        translated_distinct_columns = [distinct_columns_translation.get(col, col) for col in distinct_columns]
+        columns_translation = all_columns_mapping.set_index('field_name')[target_col_name].to_dict()
+        # Create a dictionary to map field_name to order
+        column_order = all_columns_mapping.set_index(target_col_name)['order'].to_dict()
 
-        if show_log:
-            logger.debug(f"Translated mutual columns: {translated_mutual_columns}")
-            logger.debug(f"Translated distinct columns: {translated_distinct_columns}")
+        translated_ratio_df = ratio_df.copy()
+        # look up the value in translated_ratio_df and replace it with the value in column_translation
+        translated_ratio_df = translated_ratio_df.rename(columns=columns_translation)
+        # Remove orphan columns
+        translated_ratio_df = translated_ratio_df.drop(columns=orphan_columns)
 
-        # Combine mutual and distinct columns, preserving the translated names
-        final_translated_columns = translated_mutual_columns + translated_distinct_columns
-
-        if show_log:
-            logger.debug(f"Final translated columns: {final_translated_columns}")
-
-        # Create mapping for ordering columns
-        column_order = dict(zip(mapping_df['name'], mapping_df['order']))
-
-        if show_log:
-            logger.debug(f"Column order mapping: {column_order}")
-
-        # Create a new DataFrame with the final column order
-        translated_ratio_df = ratio_df[mutual_columns + distinct_columns].copy()
-        translated_ratio_df.columns = final_translated_columns
-
-        # Add back the index part to the final DataFrame
-        translated_ratio_df = pd.concat([index_part, translated_ratio_df], axis=1)
-
-
-        # ratio_df = ratio_df.copy()[[col for col in original_columns if col in mapping_df['field_name'].values]]
+        # # Get the list of duplicated columns names in translated_ratio_df.columns
+        # duplicated_columns = translated_ratio_df.columns[translated_ratio_df.columns.duplicated()].tolist()    
 
         type_mapping = dict(zip(mapping_df[target_col_name], mapping_df['type']))
-        # # add a translation layer mapping for name and en_name
-        columns_translate = dict(zip(mapping_df['name'], mapping_df['en_name']))
-        # # get column order mapping
-        column_order = dict(zip(mapping_df['name'], mapping_df['order']))
-
-        if show_log:
-            logger.debug(f"Type mapping:\n- Mutual columns: {mutual_columns_translation}\n- Distinct columns: {distinct_columns_translation}")
 
         # Organize columns in ratio_df into different reports based on type
         reports = {}
