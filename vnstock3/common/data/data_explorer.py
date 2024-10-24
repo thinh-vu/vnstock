@@ -369,24 +369,28 @@ class Finance:
         """
         Truy xuất bảng cân đối kế toán.
         """
+        self._update_data_source(symbol)
         return self.data_source.balance_sheet(**kwargs)
     
     def income_statement(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất báo cáo doanh thu.
         """
+        self._update_data_source(symbol)
         return self.data_source.income_statement(**kwargs)
     
     def cash_flow(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất báo cáo dòng tiền.
         """
+        self._update_data_source(symbol)
         return self.data_source.cash_flow(**kwargs)
     
     def ratio(self, symbol: Optional[str] = None, **kwargs):
         """
         Truy xuất các chỉ số tài chính.
         """
+        self._update_data_source(symbol)
         return self.data_source.ratio(**kwargs)
 
 
