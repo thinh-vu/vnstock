@@ -1,7 +1,7 @@
 # Thông tin tài chính, chỉ số tài chính
+import requests
 import pandas as pd
 from pandas import json_normalize
-import requests
 from typing import Optional
 from vnstock3.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock3.core.utils.logger import get_logger
@@ -20,7 +20,7 @@ class Finance ():
         - period (str): Chu kỳ báo cáo tài chính cần truy xuất. Mặc định là 'quarterly'.
     """
 
-    def __init__(self, symbol, report_type:Optional[str]='income_statement', period:Optional[str]='quarter', get_all:Optional[bool]=True):
+    def __init__(self, symbol, report_type:Optional[str]='income_statement', period:Optional[str]='quarter', get_all:Optional[bool]=True, show_log:Optional[bool]=True):
         self.symbol = symbol.upper()
         self.asset_type = get_asset_type(self.symbol)
         self.headers = get_headers(data_source='TCBS')
@@ -36,6 +36,9 @@ class Finance ():
         self.report_type = _FINANCIAL_REPORT_MAP.get(report_type)
         self.period = _FINANCIAL_REPORT_PERIOD_MAP.get(period)
         self.get_all = get_all
+
+        if not show_log:
+            logger.setLevel('CRITICAL')
 
     def _get_report (self, report_type:Optional[str]='balance_sheet', period:Optional[str]='quarter', dropna:Optional[bool]=True, get_all:Optional[bool]=True, show_log:Optional[bool]=False):
         """

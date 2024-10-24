@@ -1,8 +1,8 @@
 """History module for tcbs."""
 
 # Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê hành vi thị tường
-import pandas as pd
 import requests
+import pandas as pd
 from datetime import datetime
 from typing import Optional, Dict
 from vnstock3.core.utils.parser import get_asset_type
@@ -17,15 +17,19 @@ class Quote:
     """
     TCBS data source for fetching stock market data, accommodating requests with large date ranges.
     """
-    def __init__(self, symbol, random_agent=False):
+    def __init__(self, symbol, random_agent=False, show_log=True):
         self.symbol = symbol.upper()
         self.data_source = 'TCBS'
+        self.show_log = show_log
         self._history = None  # Cache for historical data
         self.asset_type = get_asset_type(self.symbol)
         self.base_url = _BASE_URL
         # self.headers = _TCBS_HEADERS
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.interval_map = _INTERVAL_MAP
+
+        if not self.show_log:
+            logger.setLevel('CRITICAL')
 
     def _input_validation(self, start: str, end: str, interval: str):
         """

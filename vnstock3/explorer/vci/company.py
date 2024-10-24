@@ -1,6 +1,6 @@
-import pandas as pd
 import json
 import requests
+import pandas as pd
 from typing import Optional
 from .const import _BASE_URL, _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP
 from vnstock3.core.utils.parser import get_asset_type, camel_to_snake
@@ -27,6 +27,8 @@ class Company:
         self.show_log = show_log
         self.to_df = to_df
         # self.finance = Finance(self.symbol)
+        if not show_log:
+            logger.setLevel('CRITICAL')
 
     def _fetch_data(self):
         url = "https://api.vietcap.com.vn/data-mt/graphql"

@@ -17,11 +17,15 @@ class Trading:
     """
     Truy xuất dữ liệu giao dịch của mã chứng khoán từ nguồn dữ liệu VCI.
     """
-    def __init__(self, symbol:Optional[str]='VCI', random_agent=False):
+    def __init__(self, symbol:Optional[str]='VCI', random_agent=False, show_log:Optional[bool]=True):
         self.symbol = symbol.upper()
         self.asset_type = get_asset_type(self.symbol)
         self.base_url = _BASE_URL
         self.headers = get_headers(data_source='VCI', random_agent=random_agent)
+        self.show_log = show_log
+
+        if not show_log:
+            logger.setLevel('CRITICAL')
         
     def price_board (self, symbols_list: List[str], to_df:Optional[bool]=True, show_log:Optional[bool]=False):
         """

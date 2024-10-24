@@ -1,6 +1,6 @@
-import pandas as pd
 import json
 import requests
+import pandas as pd
 from typing import Optional, List
 from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP, _ICB4_COMTYPE_CODE_MAP, SUPPORTED_LANGUAGES
 from vnstock3.explorer.vci import Company
@@ -19,10 +19,15 @@ class Finance ():
         - period (str): Chu kỳ báo cáo tài chính cần truy xuất. Mặc định là 'quarterly'.
     """
 
-    def __init__(self, symbol, period:Optional[str]='quarter', get_all:Optional[bool]=True):
+    def __init__(self, symbol, period:Optional[str]='quarter', get_all:Optional[bool]=True, show_log:Optional[bool]=True):
         self.symbol = symbol.upper()
         self.asset_type = get_asset_type(self.symbol)
         self.headers = get_headers(data_source='VCI')
+        self.show_log = show_log
+
+        if not show_log:
+            logger.setLevel('CRITICAL')
+
         # validate input for period
         if period not in ['year', 'quarter']:
             raise ValueError("Kỳ báo cáo tài chính không hợp lệ. Chỉ chấp nhận 'year' hoặc 'quarter'.")

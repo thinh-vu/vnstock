@@ -1,5 +1,6 @@
-import pandas as pd
+import logging
 import importlib
+import pandas as pd
 from typing import Optional
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.explorer.msn.const import _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
@@ -27,6 +28,8 @@ class StockComponents:
         self.show_log = show_log
         if self.source not in self.SUPPORTED_SOURCES:
             raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
+        if not show_log:
+            logger.setLevel(logging.CRITICAL)
         self._initialize_components()
 
     def _initialize_components(self):

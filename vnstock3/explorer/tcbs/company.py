@@ -1,6 +1,6 @@
+import requests
 import pandas as pd
 from pandas import json_normalize
-import requests
 from bs4 import BeautifulSoup
 from typing import Dict, Optional
 from .const import _BASE_URL, _ANALYSIS_URL
@@ -18,6 +18,8 @@ class Company:
     Tham số:
         - symbol (str): Mã chứng khoán của công ty cần truy xuất thông tin.
         - random_agent (bool): Sử dụng user-agent ngẫu nhiên hoặc không. Mặc định là False.
+        - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
+        - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
     """
     def __init__(self, symbol, random_agent=False, to_df:Optional[bool]=True, show_log:Optional[bool]=False):
         self.symbol = symbol.upper()
@@ -31,12 +33,12 @@ class Company:
         self.to_df = to_df
         self.finance = Finance(self.symbol)
 
+        if not self.show_log:
+            logger.setLevel('CRITICAL')
+
     def overview (self) -> Dict:
         """
-        Truy xuất thông tin tổng quan của mã chứng khoán từ nguồn dữ liệu TCBS.
-
-        Tham số:
-            - symbol: Mã chứng khoán cần truy xuất thông tin tổng quan.
+        Truy xuất thông tin tổng quan của mã chứng khoán từ nguồn dữ liệu TCBS với các thông số cài đặt khi khởi tạo class.
         """
         url = f'{_BASE_URL}/{_ANALYSIS_URL}/v1/ticker/{self.symbol}/overview'
         if self.show_log:
@@ -70,10 +72,6 @@ class Company:
     def profile (self) -> Dict:
         """
         Truy xuất thông tin mô tả công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
-        
-        Tham số:
-            - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
-            - show_log (bool): Hiển thị log hoặc không. Mặc định là False.
         """
         url = f"{_BASE_URL}/{_ANALYSIS_URL}/v1/company/{self.symbol}/overview"
         if self.show_log:
@@ -108,10 +106,6 @@ class Company:
     def shareholders (self) -> Dict:
         """
         Truy xuất thông tin cổ đông lớn của công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
-
-        Tham số:
-            - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
-            - show_log (bool): Hiển thị log hoặc không. Mặc định là False.
         """
         url = f"{_BASE_URL}/{_ANALYSIS_URL}/v1/company/{self.symbol}/large-share-holders"
         if self.show_log:
@@ -144,8 +138,6 @@ class Company:
         Tham số:
             - page_size (int): Số lượng giao dịch trên mỗi trang. Mặc định là 20.
             - page (int): Trang cần truy xuất thông tin. Mặc định là 0.
-            - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
-            - show_log (bool): Hiển thị log hoặc không. Mặc định là False.
         """
         url = f"{_BASE_URL}/{_ANALYSIS_URL}/v1/company/{self.symbol}/insider-dealing?page={page}&size={page_size}"
         response = requests.request("GET", url, headers=self.headers)

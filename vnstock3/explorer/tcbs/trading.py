@@ -1,10 +1,10 @@
 # Các thông tin về giao dịch, sở hữu của các bên (đối tượng tham gia thị trường)
 
+import requests
+import pandas as pd
 from typing import Optional
 # from datetime import datetime
 from .const import _BASE_URL, _STOCKS_URL, _PRICE_BOARD_COLS_MAP, _PRICE_BOARD_STD_COLS, _PRICE_BOARD_EXT_COLS
-import pandas as pd
-import requests
 from vnstock3.core.utils.parser import get_asset_type
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.core.utils.user_agent import get_headers
@@ -16,11 +16,15 @@ class Trading:
     """
     Truy xuất dữ liệu giao dịch của mã chứng khoán từ nguồn dữ liệu TCBS.
     """
-    def __init__(self, symbol:Optional[str], random_agent=False):
+    def __init__(self, symbol:Optional[str], random_agent=False, show_log:Optional[bool]=True):
         self.symbol = symbol.upper()
         self.asset_type = get_asset_type(self.symbol)
+        self.show_log = show_log
         self.base_url = _BASE_URL
         self.headers = get_headers(data_source='TCBS', random_agent=random_agent)
+
+        if not show_log:
+            logger.setLevel('CRITICAL')
         
     def price_board (self, symbol_ls:list, std_columns: Optional[bool]=True, to_df: Optional[bool]=True, show_log: bool=False):
         """

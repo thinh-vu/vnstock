@@ -1,5 +1,6 @@
 import importlib
 from typing import Optional
+import logging
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.common.data.data_explorer import StockComponents, MSNComponents, Fund
 from vnstock3.explorer.msn.const import _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
@@ -27,6 +28,9 @@ class Vnstock:
         if self.source not in self.SUPPORTED_SOURCES:
             raise ValueError(F"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
         self.source = source.upper()
+        # if show_log is False, disable logging
+        if not show_log:
+            logger.setLevel(logging.CRITICAL)
         # self.utils = Utils(self)
 
     def stock(self, symbol: Optional[str]=None, source: Optional[str] = None):
