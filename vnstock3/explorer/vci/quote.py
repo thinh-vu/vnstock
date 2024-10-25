@@ -3,7 +3,7 @@
 # Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê hành vi thị tường
 from typing import Dict, Optional, Union
 from datetime import datetime
-from .const import _BASE_URL, _CHART_URL, _INTERVAL_MAP, _OHLC_MAP, _RESAMPLE_MAP, _OHLC_DTYPE, _INTRADAY_URL, _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP
+from .const import _BASE_URL, _CHART_URL, _INTERVAL_MAP, _OHLC_MAP, _RESAMPLE_MAP, _OHLC_DTYPE, _INTRADAY_URL, _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
 from .models import TickerModel
 import pandas as pd
 import requests
@@ -31,6 +31,18 @@ class Quote:
 
         if not show_log:
             logger.setLevel('CRITICAL')
+
+        if 'INDEX' in self.symbol:
+            self.symbol = self._index_validation()
+
+    def _index_validation(self) -> str:
+        """
+        If symbol contains 'INDEX' substring, validate it with _INDEX_MAPPING.
+        """
+        if self.symbol not in _INDEX_MAPPING.keys():
+            raise ValueError(f"Không tìm thấy mã chứng khoán {self.symbol}. Các giá trị hợp lệ: {', '.join(_INDEX_MAPPING.keys())}")
+        # return mapped symbol
+        return _INDEX_MAPPING[self.symbol]
 
     def _input_validation(self, start: str, end: str, interval: str):
         """

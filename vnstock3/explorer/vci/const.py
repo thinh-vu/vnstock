@@ -76,6 +76,8 @@ _UNIT_MAP = {'BILLION':'tỷ', 'PERCENT':'%', 'INDEX':'index', 'MILLION':'triệ
 
 SUPPORTED_LANGUAGES = ['vi', 'en']
 
+_INDEX_MAPPING = {'VNINDEX': 'VNINDEX', 'HNXINDEX': 'HNXIndex', 'UPCOMINDEX': 'HNXUpcomIndex'}
+
 _ICB4_COMTYPE_CODE_MAP = {'Bán lẻ phức hợp': 'CT',
  'Bảo hiểm nhân thọ': 'BH',
  'Bảo hiểm phi nhân thọ': 'BH',
