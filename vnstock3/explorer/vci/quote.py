@@ -32,7 +32,7 @@ class Quote:
         if not show_log:
             logger.setLevel('CRITICAL')
 
-        if 'INDEX' in self.symbol:
+        if 'INDEX' in self.symbol or 'UPCOM' in self.symbol:
             self.symbol = self._index_validation()
 
     def _index_validation(self) -> str:
