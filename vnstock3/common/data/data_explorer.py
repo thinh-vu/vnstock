@@ -23,8 +23,13 @@ class StockComponents:
             - source (str): Nguồn dữ liệu cần truy xuất thông tin. Mặc định là 'VCI'.
             - show_log (bool): mặc định là True để hiển thị đầy đủ cảnh báo, đặt False nếu muốn tắt logger.
         """
-        self.symbol = symbol.upper()
-        self.source = source.upper()
+        if symbol is not None:
+            self.symbol = symbol.upper()
+        else:
+            self.symbol = 'VN30F1M'
+            logger.info("Mã chứng khoán không được chỉ định, chương trình mặc định sử dụng VN30F1M")
+        if source is not None:
+            self.source = source.upper()
         self.show_log = show_log
         if self.source not in self.SUPPORTED_SOURCES:
             raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
@@ -395,7 +400,6 @@ class Finance:
         """
         self._update_data_source(symbol)
         return self.data_source.ratio(**kwargs)
-
 
 class Fund:
     def __init__(self, source: str = "FMARKET", random_agent:bool=False):

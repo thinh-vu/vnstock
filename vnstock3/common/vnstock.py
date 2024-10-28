@@ -15,7 +15,7 @@ class Vnstock:
     SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN"]
     msn_symbol_map = {**_CURRENCY_ID_MAP, **_GLOBAL_INDICES, **_CRYPTO_ID_MAP}
 
-    def __init__(self, source:str="VCI", show_log:bool=True):
+    def __init__(self, symbol:str=None, source:str="VCI", show_log:bool=True):
         """
         Hàm khởi tạo của lớp Vnstock.
         
@@ -23,6 +23,7 @@ class Vnstock:
             - source (str): Nguồn dữ liệu chứng khoán. Mặc định là 'VCI' (Vietstock). Các giá trị hợp lệ là 'VCI', 'TCBS', 'MSN'.
             - show_log (bool): Hiển thị log hoạt động của chương trình. Mặc định là True.
         """
+        self.symbol = symbol
         self.source = source.upper()
         self.show_log = show_log
         if self.source not in self.SUPPORTED_SOURCES:
