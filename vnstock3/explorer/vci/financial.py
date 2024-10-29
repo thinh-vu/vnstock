@@ -194,10 +194,16 @@ class Finance ():
         # Create a dictionary to map field_name to report type
         mapping_df = self._get_ratio_dict(get_all=False)
         # Filter the mapping DataFrame based on company type code. Split mapping into two parts: 'CT' and company-specific mapping
-        mapping_specific = mapping_df[mapping_df['com_type_code'] == self.com_type_code]
+        if self.com_type_code != 'CT':
+            mapping_specific = mapping_df[mapping_df['com_type_code'] == self.com_type_code]
+        else:
+            mapping_specific = pd.DataFrame()
         mapping_ct = mapping_df[mapping_df['com_type_code'] == 'CT']
         all_columns_mapping = pd.concat([mapping_specific, mapping_ct]).drop_duplicates(subset='field_name', keep='first')
         all_columns_mapping = self.duplicated_columns_handling(all_columns_mapping, target_col_name=target_col_name)
+
+        # remove all values that com_type_code is not 'CT' or self.com_type_code
+        all_columns_mapping = all_columns_mapping[all_columns_mapping['com_type_code'].isin(['CT', self.com_type_code])].copy()
 
         # # Filter the mapping DataFrame based on company type code. Split mapping into two parts: 'CT' and company-specific mapping
         # mapping_specific = mapping_df[mapping_df['com_type_code'] == self.com_type_code]
