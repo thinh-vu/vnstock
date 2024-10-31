@@ -7,7 +7,6 @@ from vnstock3.explorer.vci import Company
 from vnstock3.core.utils.parser import get_asset_type, camel_to_snake, api_response_check
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.core.utils.user_agent import get_headers
-pd.set_option('future.no_silent_downcasting', True)
 
 logger = get_logger(__name__)
 
