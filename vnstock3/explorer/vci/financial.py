@@ -1,7 +1,7 @@
 import json
 import requests
 import pandas as pd
-from typing import Optional, List
+from typing import Optional, List, Dict
 from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP, _ICB4_COMTYPE_CODE_MAP, SUPPORTED_LANGUAGES
 from vnstock3.explorer.vci import Company
 from vnstock3.core.utils.parser import get_asset_type, camel_to_snake, api_response_check
@@ -173,14 +173,22 @@ class Finance ():
         elif mode == 'raw':
             return ratio_df
         
-    def _ratio_mapping (self, ratio_df:pd.DataFrame, lang:Optional[str]='en', show_log:Optional[bool]=False):
+    def _ratio_mapping (self, ratio_df:pd.DataFrame, lang:Optional[str]='en', mode:str='final', show_log:Optional[bool]=False):
         """
         A dedicated method to map the financial ratio DataFrame to different reports based on the company type code.
 
         Parameters:
             - ratio_df (pd.DataFrame): The DataFrame containing the financial ratio from the function _get_report().
             - lang (str): The language of the report. Default is 'en'.
+            - mode (str): The mode of the report. Default is 'final' which return polish data after the mapping process & translation. Other mode is 'raw' which return the raw data which contains code names for all fields.
             - show_log (bool): Whether to show log messages. Default is False.
+
+        Returns:
+            - pd.DataFrame: A DataFrame containing the financial ratio data.
+
+        Attributes: (only available when show_log is True)
+            - type_field_dict (dict): A dictionary mapping the report type to the list of field names.
+            - raw_ratio_df (pd.DataFrame): The raw DataFrame containing the financial ratio data with code name columns such as isa, isb, etc.
         """
 
         if lang == 'vi':
@@ -220,13 +228,16 @@ class Finance ():
         ratio_df = ratio_df.drop(columns=orphan_columns)
         # apply sorting to the columns of ratio_df by the order in the column_order dictionary
         ratio_df = ratio_df[sorted(ratio_df.columns, key=lambda x: column_order.get(x, 0))]    
+        type_field_dict = all_columns_mapping.groupby('type')['field_name'].apply(list).to_dict()
 
-        report_type_field_dict = all_columns_mapping.groupby('type')['field_name'].apply(list).to_dict()
-        
+        # Assign attributes to the class in the case of debugging
+        self.raw_ratio_df = ratio_df.copy()
+        self.columns_mapping = columns_translation
+
         # Create DataFrames for each report type, using columns name as code names without translation
         report_dfs = {}
-        for report_type, fields in report_type_field_dict.items():
-            report_dfs[report_type] = ratio_df[index_cols + fields]
+        for report_type, fields in type_field_dict.items():
+            report_dfs[report_type] = ratio_df[fields]
 
         # Define the primary report types
         primary_reports = [

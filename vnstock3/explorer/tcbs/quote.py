@@ -9,7 +9,7 @@ from vnstock3.core.utils.parser import get_asset_type
 from vnstock3.core.utils.logger import get_logger
 from vnstock3.core.utils.user_agent import get_headers
 from .models import TickerModel
-from .const import _BASE_URL, _STOCKS_URL, _FUTURE_URL, _INTERVAL_MAP, _OHLC_MAP, _OHLC_DTYPE, _INTRADAY_MAP, _INTRADAY_DTYPE
+from .const import _BASE_URL, _STOCKS_URL, _FUTURE_URL, _INTERVAL_MAP, _OHLC_MAP, _OHLC_DTYPE, _INTRADAY_MAP, _INTRADAY_DTYPE, _INDEX_MAPPING
 
 logger = get_logger(__name__)
 
@@ -30,6 +30,18 @@ class Quote:
 
         if not self.show_log:
             logger.setLevel('CRITICAL')
+
+        if 'INDEX' in self.symbol:
+            self.symbol = self._index_validation()
+
+    def _index_validation(self) -> str:
+        """
+        If symbol contains 'INDEX' substring, validate it with _INDEX_MAPPING.
+        """
+        if self.symbol not in _INDEX_MAPPING.keys():
+            raise ValueError(f"Không tìm thấy mã chứng khoán {self.symbol}. Các giá trị hợp lệ: {', '.join(_INDEX_MAPPING.keys())}")
+        # return mapped symbol
+        return _INDEX_MAPPING[self.symbol]
 
     def _input_validation(self, start: str, end: str, interval: str):
         """

@@ -49,15 +49,18 @@ def get_asset_type(symbol: str) -> str:
         - 'coveredWarr' nếu mã chứng khoán là mã chứng quyền.
     """
     symbol = symbol.upper()
-    if symbol in ['VN30', 'HNX30', 'VNINDEX', 'HNXINDEX', 'UPCOM']:
+    if symbol in ['VN30', 'HNX30', 'VNINDEX', 'HNXINDEX', 'UPCOMINDEX']:
         return 'index'
     elif len(symbol) == 3:
         return 'stock'
     elif len(symbol) in [7, 9]:
         fm_pattern = re.compile(r'VN30F\d{1,2}M')
         ym_pattern = re.compile(r'VN30F\d{4}')
-        gb_pattern = re.compile(r'GB\d{2}F\d{4}')
-        if fm_pattern.match(symbol) or ym_pattern.match(symbol) or gb_pattern.match(symbol):
+        gb_pattern = re.compile(r'[A-Z]{3}\d{5}')
+        bond_pattern = re.compile(r'[A-Z]{3}\d{6}')
+        if bond_pattern.match(symbol) or gb_pattern.match(symbol):
+            return 'bond'
+        elif fm_pattern.match(symbol) or ym_pattern.match(symbol):
             return 'derivative'
         else:
             raise ValueError('Invalid derivative symbol. Symbol must be in format of VN30F1M, VN30F2024, GB10F2024')

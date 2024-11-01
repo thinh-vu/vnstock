@@ -85,3 +85,5 @@ _FINANCIAL_REPORT_MAP = {'balance_sheet': 'balancesheet',
                             'cash_flow': 'cashflow'}
 
 _FINANCIAL_REPORT_PERIOD_MAP = {'year': 1, 'quarter': 0}
+
+_INDEX_MAPPING = {'VNINDEX': 'VNINDEX', 'HNXINDEX': 'HNXIndex', 'UPCOMINDEX': 'UPCOM'}

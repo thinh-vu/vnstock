@@ -3,7 +3,7 @@
 # Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê hành vi thị tường
 from typing import Dict, Optional, Union
 from datetime import datetime
-from .const import _BASE_URL, _CHART_URL, _INTERVAL_MAP, _OHLC_MAP, _RESAMPLE_MAP, _OHLC_DTYPE, _INTRADAY_URL, _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
+from .const import _BASE_URL, _TRADING_URL, _CHART_URL, _INTERVAL_MAP, _OHLC_MAP, _RESAMPLE_MAP, _OHLC_DTYPE, _INTRADAY_URL, _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
 from .models import TickerModel
 import pandas as pd
 import requests
@@ -24,7 +24,7 @@ class Quote:
         self.data_source = 'VCI'
         self._history = None  # Cache for historical data
         self.asset_type = get_asset_type(self.symbol)
-        self.base_url = _BASE_URL
+        self.base_url = _TRADING_URL
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.interval_map = _INTERVAL_MAP
         self.show_log = show_log
@@ -32,7 +32,7 @@ class Quote:
         if not show_log:
             logger.setLevel('CRITICAL')
 
-        if 'INDEX' in self.symbol or 'UPCOM' in self.symbol:
+        if 'INDEX' in self.symbol:
             self.symbol = self._index_validation()
 
     def _index_validation(self) -> str:

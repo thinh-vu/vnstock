@@ -2,7 +2,7 @@
 
 from typing import List, Dict, Optional
 from datetime import datetime
-from .const import _BASE_URL
+from .const import _BASE_URL, _TRADING_URL
 import pandas as pd
 import requests
 import json
@@ -20,7 +20,7 @@ class Trading:
     def __init__(self, symbol:Optional[str]='VCI', random_agent=False, show_log:Optional[bool]=True):
         self.symbol = symbol.upper()
         self.asset_type = get_asset_type(self.symbol)
-        self.base_url = _BASE_URL
+        self.base_url = _TRADING_URL
         self.headers = get_headers(data_source='VCI', random_agent=random_agent)
         self.show_log = show_log
 
