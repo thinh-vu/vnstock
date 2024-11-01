@@ -2,15 +2,23 @@
 
 <div id="logo" align="center">
     <a href="http://vnstock.site?utm_source=github&utm_medium=vnstock&utm_content=readme">
-        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/main/assets/images/vnstock_bw_logo_trans_rec.png" alt="vnstock_logo"/>
+        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/main/assets/images/vnstock_bw_logo_trans_rec.png" alt="vnstock_logo" width="300px"/>
     </a>
 </div>
 
 <div id="badges" align="center">
-<img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=plastic" alt= "Version"/>
-<img src="https://img.shields.io/pypi/dm/vnstock" alt="Download Badge"/>
-<img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock" alt="Commit Badge"/>
-<img src="https://img.shields.io/github/license/thinh-vu/vnstock?color=red" alt="License Badge"/>
+    <img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=for-the-badge" alt="Version"/>
+    <img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock?style=for-the-badge" alt="Commit Badge"/>
+    <img src="https://img.shields.io/badge/license-Custom%20License-red?style=for-the-badge" alt="Custom License Badge"/>
+</div>
+
+<div id="badges" align="center">
+    <a href="https://pypi.org/project/vnstock/">
+        <img src="https://img.shields.io/pypi/dm/vnstock?label=vnstock%20download&style=for-the-badge" alt="vnstock download badge"/>
+    </a>
+    <a href="https://pypi.org/project/vnstock3/">
+        <img src="https://img.shields.io/pypi/dm/vnstock3?label=vnstock3%20download&style=for-the-badge" alt="vnstock3 download badge"/>
+    </a>
 </div>
 
 ---
@@ -23,9 +31,17 @@
 
 Vnstock sẽ luôn là giải pháp miễn phí để bạn tiếp cận dữ liệu chứng khoán, tài chính toàn diện, miễn phí với các nhu cầu thiết yếu và làm quen với bộ giải phép Python linh hoạt. Chúc mừng bạn là một phần của sự thay đổi trong hành trình chuyển đổi số thị trường chứng khoán tại Việt Nam.
 
+<div id="badges" align="center">
+
+[![Tham gia cộng đồng Vnstock](https://img.shields.io/badge/Tham%20gia%20cộng%20đồng-Vnstock-blue?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock.official)
+
+</div>
+
+
 # II. ⏱️ Cập nhật đáng chú ý
 
-- 10-05-2024: Ra mắt phiên bản Vnstock `0.3.0.1` với tên gói cài đặt `vnstock3`
+- 02-11-2024: Ra mắt Vnstock3 phiên bản 3.0.9. Chi tiết: [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban#02-11-2024)
+- 10-05-2024: Ra mắt phiên bản Vnstock `3.0.1` với tên gói cài đặt `vnstock3`
 
 Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban)
 
@@ -48,6 +64,14 @@ Bạn cần nạp thư viện vào môi trường Python thông qua giao diện 
 ```
 from vnstock3 import Vnstock
 ```
+
+<div id="badges" align="center">
+
+<a href="https://vnstocks.com/docs/tai-lieu/huong-dan-nhanh">
+  <img src="https://img.shields.io/badge/Tài%20liệu%20hướng%20dẫn-Vnstock-green?style=for-the-badge&logo=book" alt="Tài liệu hướng dẫn Badge"/>
+</a>
+
+</div>
 
 Chúc các bạn thành công và có nhiều trải nghiệm thú vị với Vnstock3!
 
