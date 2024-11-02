@@ -46,7 +46,7 @@ Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnst
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
-[![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)]
+![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
 
 Cài đặt thư viện với câu lệnh sau:
 
