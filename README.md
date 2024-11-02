@@ -1,6 +1,6 @@
 # Vnstock3 - Giải pháp phân tích chứng khoán mở cho người Việt
 
-![Vnstock Homepage](assets/images/vnstock-hero-banner.png)
+[![Vnstock Homepage](assets/images/vnstock-hero-banner.png)](https://vnstocks.com/)
 
 <div id="badges" align="center">
     <img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=flat" alt="Version"/>
@@ -46,7 +46,7 @@ Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnst
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
-[![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)](https://vnstocks.com/)
+[![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)]
 
 Cài đặt thư viện với câu lệnh sau:
 
@@ -114,4 +114,4 @@ Khi sử dụng Vnstock trong dự án của mình, bạn cần trích dẫn th�
 
 Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Dưới đây là lịch sử lượt yêu thích của dự án.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=thinh-vu/vnstock&type=Date)](https://star-history.com/#thinh-vu/vnstock&Date)
+![Star History Chart](https://api.star-history.com/svg?repos=thinh-vu/vnstock&type=Date)](https://star-history.com/#thinh-vu/vnstock&Date)
