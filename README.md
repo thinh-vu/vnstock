@@ -1,23 +1,197 @@
+<style>
+  .button {
+  background-color: #4CAF50;
+  color: #ffffff;
+  display: inline-block;
+  padding: 15px 30px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 10px;
+  transition: background-color 0.3s, transform 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);ligh
+  }
+
+  .button:hover {
+    background-color: #ffffff;
+    color: #4CAF50;
+  }
+
+.hero-banner {
+  position: relative;
+  width: 100%;
+  max-width: 1200px; /* Adjust max-width as needed */
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.hero-banner a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.hero-banner:hover .hero-image {
+  transform: scale(1.05); /* Zoom effect on hover */
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* Initial dark overlay */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: background 0.3s ease, opacity 0.3s ease, color 0.3s ease;
+  padding: 20px;
+  text-align: center;
+  color: white; /* Default text color */
+}
+
+.hero-banner:hover .hero-overlay {
+  background: linear-gradient(135deg, #4CAF50 30%, #007BFF 100%); /* Green to blue gradient */
+  opacity: 1;
+  color: white; /* White text for better contrast on gradient */
+}
+
+.hero-overlay h1 {
+  font-size: 2.5em;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: color 0.3s ease;
+  color: white; /* Ensures header text stays white */
+}
+
+.hero-overlay p {
+  font-size: 1.2em;
+  margin-top: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: color 0.3s ease;
+  color: white; /* Ensures paragraph text stays white */
+}
+
+.cta-hero {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.cta-hero a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.cta-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.cta-hero:hover .cta-image {
+  transform: scale(1.05); /* Zoom effect on hover */
+}
+
+.cta-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #4CAF50 30%, #007BFF 100%); /* Green to blue gradient */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+
+.cta-hero:hover .cta-overlay {
+  opacity: 1;
+}
+
+.cta-overlay h1 {
+  font-size: 2em;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.cta-overlay p {
+  font-size: 1.2em;
+  margin-top: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  max-width: 80%;
+}
+
+.cta-button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #DD390D; /* Energetic Red for CTA button */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #B12E0B; /* Slightly darker red on hover */
+}
+
+</style>
+
 # Vnstock3 - Giải pháp phân tích chứng khoán mở cho người Việt
 
-<div id="logo" align="center">
-    <a href="http://vnstock.site?utm_source=github&utm_medium=vnstock&utm_content=readme">
-        <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/main/assets/images/vnstock_bw_logo_trans_rec.png" alt="vnstock_logo" width="300px"/>
-    </a>
+<div class="hero-banner">
+  <a href="https://vnstocks.com/" target="_blank" rel="noopener noreferrer">
+    <img src="assets/images/vnstock-hero-banner.png" alt="Vnstock Homepage" class="hero-image"/>
+    <div class="hero-overlay">
+      <h1>Vnstock - Giải pháp phân tích & giao dịch chứng khoán toàn diện</h1>
+      <p>Khám phá giải pháp thế hệ mới cho lĩnh vực đầu tư ngay hôm nay!</p>
+    </div>
+  </a>
 </div>
 
+---
+
 <div id="badges" align="center">
-    <img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=for-the-badge" alt="Version"/>
-    <img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock?style=for-the-badge" alt="Commit Badge"/>
-    <img src="https://img.shields.io/badge/license-Custom%20License-red?style=for-the-badge" alt="Custom License Badge"/>
+    <img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=flat" alt="Version"/>
+    <img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock?style=flat" alt="Commit Badge"/>
+    <img src="https://img.shields.io/badge/license-Custom%20License-red?style=flat" alt="Custom License Badge"/>
 </div>
 
 <div id="badges" align="center">
     <a href="https://pypi.org/project/vnstock/">
-        <img src="https://img.shields.io/pypi/dm/vnstock?label=vnstock%20download&style=for-the-badge" alt="vnstock download badge"/>
+        <img src="https://img.shields.io/pypi/dm/vnstock?label=vnstock%20download&style=flat" alt="vnstock download badge"/>
     </a>
     <a href="https://pypi.org/project/vnstock3/">
-        <img src="https://img.shields.io/pypi/dm/vnstock3?label=vnstock3%20download&style=for-the-badge" alt="vnstock3 download badge"/>
+        <img src="https://img.shields.io/pypi/dm/vnstock3?label=vnstock3%20download&style=flat" alt="vnstock3 download badge"/>
     </a>
 </div>
 
@@ -31,10 +205,12 @@
 
 Vnstock sẽ luôn là giải pháp miễn phí để bạn tiếp cận dữ liệu chứng khoán, tài chính toàn diện, miễn phí với các nhu cầu thiết yếu và làm quen với bộ giải phép Python linh hoạt. Chúc mừng bạn là một phần của sự thay đổi trong hành trình chuyển đổi số thị trường chứng khoán tại Việt Nam.
 
+Tham gia cộng đồng Vnstock để chia sẻ, thảo luận và giao lưu cùng chúng tôi!
+
 <div id="badges" align="center">
-
-[![Tham gia cộng đồng Vnstock](https://img.shields.io/badge/Tham%20gia%20cộng%20đồng-Vnstock-blue?style=for-the-badge&logo=facebook)](https://www.facebook.com/groups/vnstock.official)
-
+  <a href="https://www.facebook.com/groups/vnstock.official" class="button">
+    💬 Tham gia cộng đồng Vnstock
+  </a>
 </div>
 
 
@@ -49,7 +225,16 @@ Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnst
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
-![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
+<div class="cta-hero">
+  <a href="https://github.com/thinh-vu/vnstock" target="_blank" rel="noopener noreferrer">
+    <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png" alt="Star and Fork Vnstock" class="cta-image"/>
+    <div class="cta-overlay">
+      <h1>⭐ Hãy Star và Fork Vnstock! ⭐</h1>
+      <p>Hỗ trợ dự án bằng cách Star và Fork để Vnstock tiếp cận với nhiều người hơn!</p>
+      <button class="cta-button">Tham gia trên GitHub</button>
+    </div>
+  </a>
+</div>
 
 Cài đặt thư viện với câu lệnh sau:
 
@@ -63,20 +248,33 @@ Bạn cần nạp thư viện vào môi trường Python thông qua giao diện 
 
 ```
 from vnstock3 import Vnstock
+stock = Vnstock().stock(symbol='VCI', source='VCI')
+stock.quote.history(start='2020-01-01', end='2024-05-25')
 ```
 
 <div id="badges" align="center">
-
-<a href="https://vnstocks.com/docs/tai-lieu/huong-dan-nhanh">
-  <img src="https://img.shields.io/badge/Tài%20liệu%20hướng%20dẫn-Vnstock-green?style=for-the-badge&logo=book" alt="Tài liệu hướng dẫn Badge"/>
-</a>
-
+  <a href="https://vnstocks.com/docs/tai-lieu/huong-dan-nhanh" class="button">
+    📘 Tài liệu hướng dẫn Vnstock
+  </a>
+  <br></br>
 </div>
 
-Chúc các bạn thành công và có nhiều trải nghiệm thú vị với Vnstock3!
+# IV. Tính năng nổi bật
 
+> `Vnstock3` cung cấp bộ dữ liệu phong phú cho nhà đầu tư, nhà phân tích và nhà nghiên cứu tài chính, giúp tiếp cận thị trường Việt Nam & Thế Giới một cách toàn diện và nhanh chóng:
 
-# IV. 🙋‍♂️ Thông tin liên hệ
+1. **Dữ liệu cổ phiếu**: Giá thời gian thực, lịch sử và các chỉ số tài chính của cổ phiếu niêm yết.
+2. **Chỉ số Index**: Theo dõi hiệu suất các chỉ số chính của thị trường.
+3. **Chứng quyền**: Thông tin giá cả, ngày đáo hạn và nhà phát hành.
+4. **Kim loại quý**: Dữ liệu giá vàng.
+5. **Hợp đồng tương lai**: Giá và thông tin về hợp đồng tương lai.
+6. **Quỹ đầu tư**: Thông tin quỹ mở, ETF và các quỹ đầu tư khác.
+7. **Trái phiếu**: Thông tin & dữ liệu giao dịch Trái phiếu chính phủ, doanh nghiệp.
+8.  **Forex**: Tỷ giá ngoại hối theo thời gian thực.
+10. **Crypto**: Giá cả và giao dịch tiền điện tử.
+11. **Tin tức & sự kiện**: Cập nhật tin tức tài chính và các sự kiện quan trọng.
+
+# V. 🙋‍♂️ Thông tin liên hệ
 
 Bạn có thể kết nối với tác giả qua các hình thức sau. Trong trường hợp cần hỗ trợ nhanh, bạn có thể chọn nhắn tin qua Messenger hoặc Linkedin, tôi sẽ phản hồi ngay lập tức nếu có thể trong hầu hết các trường hợp.
 
@@ -95,7 +293,7 @@ Bạn có thể kết nối với tác giả qua các hình thức sau. Trong tr
   </a>
 </div>
 
-# V. 🔑 Giấy phép sử dụng (License)
+# VI. 🔑 Giấy phép sử dụng (License)
 
 `Vnstock3` được phát hành theo giấy phép tuỳ chỉnh hướng đến cá nhân, không dành cho mục đích thương mại. Quyền sử dụng được quy định cụ thể trong [giấy phép](LICENSE.md) kèm theo. Nếu bạn hoặc tổ chức bạn đang làm việc muốn sử dụng Vnstock có thể liên hệ tác giả để hiểu rõ phạm vi sử dụng và được cấp phép chính thức.
 
