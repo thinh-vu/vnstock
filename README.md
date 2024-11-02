@@ -1,179 +1,11 @@
-<style>
-  .button {
-  background-color: #4CAF50;
-  color: #ffffff;
-  display: inline-block;
-  padding: 15px 30px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-size: 1.2em;
-  font-weight: bold;
-  margin: 10px;
-  transition: background-color 0.3s, transform 0.3s;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);ligh
-  }
-
-  .button:hover {
-    background-color: #ffffff;
-    color: #4CAF50;
-  }
-
-.hero-banner {
-  position: relative;
-  width: 100%;
-  max-width: 1200px; /* Adjust max-width as needed */
-  margin: 0 auto;
-  overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-}
-
-.hero-banner a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.hero-image {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.3s ease;
-}
-
-.hero-banner:hover .hero-image {
-  transform: scale(1.05); /* Zoom effect on hover */
-}
-
-.hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4); /* Initial dark overlay */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  transition: background 0.3s ease, opacity 0.3s ease, color 0.3s ease;
-  padding: 20px;
-  text-align: center;
-  color: white; /* Default text color */
-}
-
-.hero-banner:hover .hero-overlay {
-  background: linear-gradient(135deg, #4CAF50 30%, #007BFF 100%); /* Green to blue gradient */
-  opacity: 1;
-  color: white; /* White text for better contrast on gradient */
-}
-
-.hero-overlay h1 {
-  font-size: 2.5em;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  transition: color 0.3s ease;
-  color: white; /* Ensures header text stays white */
-}
-
-.hero-overlay p {
-  font-size: 1.2em;
-  margin-top: 10px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  transition: color 0.3s ease;
-  color: white; /* Ensures paragraph text stays white */
-}
-
-.cta-hero {
-  position: relative;
-  width: 100%;
-  max-width: 1200px;
-  margin: 20px auto;
-  overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-}
-
-.cta-hero a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.cta-image {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.3s ease;
-}
-
-.cta-hero:hover .cta-image {
-  transform: scale(1.05); /* Zoom effect on hover */
-}
-
-.cta-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #4CAF50 30%, #007BFF 100%); /* Green to blue gradient */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  padding: 20px;
-  color: white;
-  text-align: center;
-}
-
-.cta-hero:hover .cta-overlay {
-  opacity: 1;
-}
-
-.cta-overlay h1 {
-  font-size: 2em;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.cta-overlay p {
-  font-size: 1.2em;
-  margin-top: 10px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  max-width: 80%;
-}
-
-.cta-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  font-size: 1em;
-  font-weight: bold;
-  color: #ffffff;
-  background-color: #DD390D; /* Energetic Red for CTA button */
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.cta-button:hover {
-  background-color: #B12E0B; /* Slightly darker red on hover */
-}
-
-</style>
-
 # Vnstock3 - Giải pháp phân tích chứng khoán mở cho người Việt
 
-<div class="hero-banner">
-  <a href="https://vnstocks.com/" target="_blank" rel="noopener noreferrer">
-    <img src="assets/images/vnstock-hero-banner.png" alt="Vnstock Homepage" class="hero-image"/>
-    <div class="hero-overlay">
-      <h1>Vnstock - Giải pháp phân tích & giao dịch chứng khoán toàn diện</h1>
-      <p>Khám phá giải pháp thế hệ mới cho lĩnh vực đầu tư ngay hôm nay!</p>
+<div style="position: relative; max-width: 1200px; margin: 20px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
+  <a href="https://vnstocks.com/" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+    <img src="assets/images/vnstock-hero-banner.png" alt="Vnstock Homepage" style="width: 100%; height: auto; display: block; transition: transform 0.3s ease;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #4CAF50 30%, #007BFF 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; padding: 20px; text-align: center;">
+      <h1 style="font-size: 2em; color: white; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); margin: 0;">Vnstock - Giải pháp phân tích & giao dịch chứng khoán toàn diện</h1>
+      <p style="font-size: 1.2em; color: white; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); margin-top: 10px;">Khám phá giải pháp thế hệ mới cho lĩnh vực đầu tư ngay hôm nay!</p>
     </div>
   </a>
 </div>
@@ -225,13 +57,12 @@ Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnst
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
-<div class="cta-hero">
-  <a href="https://github.com/thinh-vu/vnstock" target="_blank" rel="noopener noreferrer">
-    <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png" alt="Star and Fork Vnstock" class="cta-image"/>
-    <div class="cta-overlay">
-      <h1>⭐ Hãy Star và Fork Vnstock! ⭐</h1>
-      <p>Hỗ trợ dự án bằng cách Star và Fork để Vnstock tiếp cận với nhiều người hơn!</p>
-      <button class="cta-button">Tham gia trên GitHub</button>
+<div align="center" style="position: relative; max-width: 1200px; margin: 20px auto; overflow: hidden; border-radius: 15px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
+  <a href="https://github.com/thinh-vu/vnstock" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+    <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png" alt="Star and Fork Vnstock" style="width: 100%; height: auto; display: block; transition: transform 0.3s ease;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #4CAF50 30%, #007BFF 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; padding: 20px; color: white; text-align: center;">
+      <h1 style="font-size: 2em; margin: 0; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); color: white;">⭐ Hãy Star và Fork Vnstock! ⭐</h1>
+      <p style="font-size: 1.2em; margin-top: 10px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); max-width: 80%; color: white;">Hỗ trợ dự án bằng cách Star và Fork để Vnstock tiếp cận với nhiều người hơn!</p>
     </div>
   </a>
 </div>
