@@ -1,16 +1,6 @@
 # Vnstock3 - Giải pháp phân tích chứng khoán mở cho người Việt
 
-<div style="position: relative; max-width: 1200px; margin: 20px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
-  <a href="https://vnstocks.com/" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
-    <img src="assets/images/vnstock-hero-banner.png" alt="Vnstock Homepage" style="width: 100%; height: auto; display: block; transition: transform 0.3s ease;">
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #4CAF50 30%, #007BFF 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; padding: 20px; text-align: center;">
-      <h1 style="font-size: 2em; color: white; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); margin: 0;">Vnstock - Giải pháp phân tích & giao dịch chứng khoán toàn diện</h1>
-      <p style="font-size: 1.2em; color: white; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); margin-top: 10px;">Khám phá giải pháp thế hệ mới cho lĩnh vực đầu tư ngay hôm nay!</p>
-    </div>
-  </a>
-</div>
-
----
+![Vnstock Homepage](assets/images/vnstock-hero-banner.png)
 
 <div id="badges" align="center">
     <img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=flat" alt="Version"/>
@@ -40,11 +30,10 @@ Vnstock sẽ luôn là giải pháp miễn phí để bạn tiếp cận dữ li
 Tham gia cộng đồng Vnstock để chia sẻ, thảo luận và giao lưu cùng chúng tôi!
 
 <div id="badges" align="center">
-  <a href="https://www.facebook.com/groups/vnstock.official" class="button">
-    💬 Tham gia cộng đồng Vnstock
+  <a href="https://www.facebook.com/groups/vnstock.official" target="_blank">
+    <img src="https://img.shields.io/badge/Tham%20gia%20cộng%20đồng-Vnstock-blue?style=for-the-badge&logo=facebook" alt="Tham gia cộng đồng Vnstock Badge"/>
   </a>
 </div>
-
 
 # II. ⏱️ Cập nhật đáng chú ý
 
@@ -57,15 +46,7 @@ Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnst
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
-<div align="center" style="position: relative; max-width: 1200px; margin: 20px auto; overflow: hidden; border-radius: 15px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);">
-  <a href="https://github.com/thinh-vu/vnstock" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
-    <img src="https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png" alt="Star and Fork Vnstock" style="width: 100%; height: auto; display: block; transition: transform 0.3s ease;">
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #4CAF50 30%, #007BFF 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; padding: 20px; color: white; text-align: center;">
-      <h1 style="font-size: 2em; margin: 0; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); color: white;">⭐ Hãy Star và Fork Vnstock! ⭐</h1>
-      <p style="font-size: 1.2em; margin-top: 10px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); max-width: 80%; color: white;">Hỗ trợ dự án bằng cách Star và Fork để Vnstock tiếp cận với nhiều người hơn!</p>
-    </div>
-  </a>
-</div>
+![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
 
 Cài đặt thư viện với câu lệnh sau:
 
@@ -84,10 +65,9 @@ stock.quote.history(start='2020-01-01', end='2024-05-25')
 ```
 
 <div id="badges" align="center">
-  <a href="https://vnstocks.com/docs/tai-lieu/huong-dan-nhanh" class="button">
-    📘 Tài liệu hướng dẫn Vnstock
+  <a href="https://vnstocks.com/docs/tai-lieu/huong-dan-nhanh" target="_blank">
+    <img src="https://img.shields.io/badge/Tài%20liệu%20hướng%20dẫn-Vnstock-blue?style=for-the-badge&logo=book" alt="Tài liệu hướng dẫn Vnstock Badge"/>
   </a>
-  <br></br>
 </div>
 
 # IV. Tính năng nổi bật
