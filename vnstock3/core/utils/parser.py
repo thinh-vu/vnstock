@@ -49,7 +49,7 @@ def get_asset_type(symbol: str) -> str:
         - 'coveredWarr' nếu mã chứng khoán là mã chứng quyền.
     """
     symbol = symbol.upper()
-    if symbol in ['VN30', 'HNX30', 'VNINDEX', 'HNXINDEX', 'UPCOMINDEX']:
+    if symbol in ['VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'VN30', 'VN100', 'HNX30', 'VNSML', 'VNMID', 'VNALL', 'VNREAL', 'VNMAT', 'VNIT', 'VNHEAL', 'VNFINSELECT', 'VNFIN', 'VNENE', 'VNDIAMOND', 'VNCONS', 'VNCOND']:
         return 'index'
     elif len(symbol) == 3:
         return 'stock'
