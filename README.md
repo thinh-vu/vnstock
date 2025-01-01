@@ -1,6 +1,6 @@
 # Vnstock3 - Giải pháp phân tích chứng khoán mở cho người Việt
 
-[![Vnstock Homepage](assets/images/vnstock-hero-banner.png)](https://vnstocks.com/)
+[![Vnstock Homepage](https://raw.githubusercontent.com/thinh-vu/vnstock/refs/heads/main/assets/images/vnstock-hero-banner.png)](https://vnstocks.com/)
 
 <div id="badges" align="center">
     <img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=flat" alt="Version"/>
@@ -36,7 +36,7 @@ Tham gia cộng đồng Vnstock để chia sẻ, thảo luận và giao lưu cù
 </div>
 
 # II. ⏱️ Cập nhật đáng chú ý
-
+- 02-01-2024: Vnstock3 chính thức sử dụng tên nhận diện gói thư viện là vnstock tại trang phân phối chính thức pypi.org. Chi tiết [tại đây](https://vnstocks.com/blog/chuyen-doi-sang-vnstock3-truoc-2025)
 - 02-11-2024: Ra mắt Vnstock3 phiên bản 3.0.9. Chi tiết: [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban#02-11-2024)
 - 10-05-2024: Ra mắt phiên bản Vnstock `3.0.1` với tên gói cài đặt `vnstock3`
 
@@ -51,7 +51,7 @@ Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án c�
 Cài đặt thư viện với câu lệnh sau:
 
 ```
-pip install -U vnstock3
+pip install -U vnstock
 ```
 
 Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstocks.com](https://vnstocks.com/docs/category/s%E1%BB%95-tay-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn). 
@@ -59,7 +59,7 @@ pip install -U vnstock3
 Bạn cần nạp thư viện vào môi trường Python thông qua giao diện Jupyter Notebook hoặc Terminal để có thể gọi và sử dụng các hàm được cung cấp.
 
 ```
-from vnstock3 import Vnstock
+from vnstock import Vnstock
 stock = Vnstock().stock(symbol='VCI', source='VCI')
 stock.quote.history(start='2020-01-01', end='2024-05-25')
 ```

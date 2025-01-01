@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import pandas as pd
-from vnstock3.common.data.data_explorer import StockComponents, Quote, Listing, Trading, Company, Finance, MSNComponents
-from vnstock3.common.vnstock import Vnstock
-from vnstock3.explorer.msn.const import _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
+from vnstock.common.data.data_explorer import StockComponents, Quote, Listing, Trading, Company, Finance, MSNComponents
+from vnstock.common.vnstock import Vnstock
+from vnstock.explorer.msn.const import _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
 msn_symbol_map = {**_CURRENCY_ID_MAP, **_GLOBAL_INDICES, **_CRYPTO_ID_MAP}
 
 class TestVnstock(unittest.TestCase):
@@ -75,7 +75,7 @@ class TestQuote(unittest.TestCase):
         with self.assertRaises(ValueError):
             Quote(symbol="VN30F1M", source="INVALID")
 
-    @patch('vnstock3.common.data.data_explorer.Quote._load_data_source')
+    @patch('vnstock.common.data.data_explorer.Quote._load_data_source')
     def test_quote_history(self, mock_load_data_source):
         # Mock the data source's history method
         mock_data_source = MagicMock()

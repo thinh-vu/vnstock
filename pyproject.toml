@@ -8,8 +8,8 @@ build-backend = "setuptools.build_meta"
 
 # Metadata Information
 [project]
-name = "vnstock3"
-version = "3.1.0"
+name = "vnstock"
+version = "3.1.0.1"
 description = "A comprehensive and transparent solution for Vietnamese stock market analysis."
 authors = [
     { name = "Thinh Vu", email = "vnstock.hq@gmail.com" },
@@ -45,8 +45,8 @@ test = ["unittest"]
 
 [tool.poetry]
 packages = [
-    { include = "vnstock3" },
+    { include = "vnstock" },
 ]
 
 [project.scripts]
-vnstock = "vnstock3.common.cli:cli"
+vnstock = "vnstock.common.cli:cli"

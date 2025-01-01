@@ -5,8 +5,8 @@ from setuptools import setup, find_packages, Command
 from setuptools.command.install import install
 
 setup(
-    name="vnstock3",
-    version="3.1.0",
+    name="vnstock",
+    version="3.1.0.1",
     description="A comprehensive and transparent solution for Vietnamese stock market analysis.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
@@ -24,7 +24,7 @@ setup(
     python_requires=">=3.10",
     packages=find_packages(),
     package_data={
-        "vnstock3": ["docs/*.txt", "docs/*.csv"],
+        "vnstock": ["docs/*.txt", "docs/*.csv"],
     },
     install_requires=[
         "requests",
@@ -52,7 +52,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'vnstock=vnstock3.common.cli:cli',
+            'vnstock=vnstock.common.cli:cli',
         ],
     },
 )

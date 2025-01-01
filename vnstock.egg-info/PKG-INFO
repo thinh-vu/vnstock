@@ -1,0 +1,237 @@
+Metadata-Version: 2.1
+Name: vnstock
+Version: 3.1.0.1
+Summary: A comprehensive and transparent solution for Vietnamese stock market analysis.
+Home-page: https://github.com/thinh-vu/vnstock
+Author: Thinh Vu
+Author-email: Thinh Vu <vnstock.hq@gmail.com>
+License: **GIẤY PHÉP SỬ DỤNG PHẦN MỀM VNSTOCK3**
+        -----------------------------------
+        
+        > _(*) Gói thư viện Python Vnstock thế hệ thứ 3 được phát hành vào tháng 5 năm 2024, được đề cập đến trong giấy phép này với tên gọi tắt là Vnstock3._
+        
+        Khi bạn truy cập, sử dụng nội dung mã nguồn Vnstock3, hoặc cài đặt Vnstock3 trên thiết bị của mình, bạn xác nhận rằng mình đã đọc, hiểu rõ, và chấp nhận điều khoản sử dụng phần mềm như mô tả dưới đây. Bạn cần xác nhận điều khoản & điều kiện trong lần đầu tiên chạy thư viện Vnstock để có thể sử dụng.
+        
+        
+        
+        **I. ĐIỀU KHOẢN CHUNG**
+        
+        - **Cấp Phép**: Thư viện này chỉ dành cho mục đích cá nhân và không được phân phối lại hoặc sử dụng cho mục đích thương mại mà không có sự đồng ý bằng văn bản chính thức từ tác giả. Tất cả bản quyền và sở hữu trí tuệ thuộc về tác giả. Bất kỳ hành vi vi phạm bản quyền hoặc sở hữu trí tuệ sẽ chịu trách nhiệm trước pháp luật.
+        
+        - **Hạn Chế Sử Dụng Thương Mại**: Sử dụng Vnstock3 cho mục đích thương mại bởi bất kỳ tổ chức nào là nghiêm cấm. Điều này bao gồm, nhưng không giới hạn, các hoạt động mà Vnstock3 trực tiếp hoặc gián tiếp góp phần tạo ra doanh thu hoặc dòng tiền cho một tổ chức mà không có sự chấp thuận bằng văn bản từ tác giả. Tuy nhiên, việc sử dụng Vnstock3 cho mục đích cá nhân, bao gồm nghiên cứu và chỉnh sửa, vẫn được phép miễn phí.
+        
+        - **Các Mục Đích Sử Dụng Bị Cấm**: Bạn không được sử dụng Vnstock cho các mục đích bất hợp pháp, phi đạo đức, hoặc trái với quy định pháp luật hiện hành.
+        
+        - **Từ Chối Trách Nhiệm**: Tác giả không chịu trách nhiệm cho bất kỳ thiệt hại, mất mát, hoặc hậu quả nào phát sinh từ việc sử dụng thư viện này, đặc biệt trong hoạt động đầu tư hoặc bất kỳ hoạt động nào có rủi ro. Bạn tự chịu trách nhiệm cho các quyết định đầu tư của mình.
+        
+        - **Tuân Thủ Luật Pháp**: Bạn đồng ý tuân thủ mọi luật pháp, quy định, và hướng dẫn liên quan khi sử dụng thư viện này.
+        
+        - **Bảo Mật Dữ Liệu**: Vnstock có thể lưu trữ dữ liệu ẩn danh của thiết bị để tối ưu tính năng và cải thiện hiệu năng phần mềm. Thông tin này sẽ được bảo mật và không được chia sẻ với bên thứ ba mà không có sự đồng ý của bạn.
+        
+        
+        
+        **II. BẢN QUYỀN VÀ SỞ HỮU**
+        
+        Bản quyền (c) 2024 Thinh Vu @ Vnstock. Tất cả các quyền được bảo lưu.
+        
+        **Sử Dụng và Phân Phối Không Được Phép**: Việc sao chép, phân phối, hoặc khai thác thương mại Vnstock3, hoặc bất kỳ phần nào của nó là không được phép. Giới hạn này bao gồm bất kỳ hình thức tạo ra doanh thu hoặc sử dụng cho tổ chức mà không được sự cho phép rõ ràng của tác giả. Tuy nhiên, việc sử dụng cá nhân, chỉnh sửa, và nghiên cứu học thuật không liên quan đến lợi ích thương mại vẫn được duy trì. Người dùng tham gia vào các hoạt động được cho phép nên tôn trọng mục đích của phần mềm này như một công cụ cho việc thúc đẩy phát triển cá nhân và mục đích giáo dục, chứ không phải để lợi dụng tính chất mở của phần mềm cho mục đích sinh lợi trong khi tổ chức vốn có nguồn tiềm lực về tài chính và con người nhưng không chia sẻ với tác giả và đội ngũ phát triển. Vi phạm các điều khoản này tương đương với việc đánh cắp quyền sở hữu trí tuệ và phi đạo đức, có thể dẫn đến các rắc rối pháp lý kèm theo.
+        
+        
+        
+        **III. CHẤM DỨT**
+        
+        Thỏa thuận này có hiệu lực cho đến khi được chấm dứt. Nó sẽ tự động chấm dứt ngay lập tức mà không cần thông báo từ tác giả nếu bạn không tuân thủ bất kỳ điều khoản nào của thỏa thuận này. Sau khi chấm dứt, bạn phải hủy bỏ tất cả các bản sao của Vnstock3 và tất cả các bộ phận thành phần của nó.
+        
+        
+        
+        **IV. ĐIỀU KHOẢN THI HÀNH**
+        
+        Thỏa thuận này sẽ được điều chỉnh và giải thích theo luật pháp của quốc gia mà tác giả cư trú, không kể đến các quy định xung đột của pháp luật.
+        
+        Bằng cách sử dụng Vnstock3, bạn đồng ý rằng mình sẽ bị ràng buộc bởi các điều khoản của Thỏa thuận này. Nếu bạn không đồng ý với các điều khoản của Thỏa thuận này, vui lòng không cài đặt hoặc sử dụng Vnstock3.
+        
+        
+        
+        ---
+        
+        **SOFTWARE LICENSE AGREEMENT FOR VNSTOCK3**
+        
+        > *This License Agreement ("Agreement") is made for the Python library package known as "Vnstock3," released in May 2024.*
+        
+        
+        
+        **I. GENERAL TERMS**
+        
+        **1. Grant of License:** This library is intended for personal use only and may not be redistributed or used for commercial purposes without the express written consent of the author. All copyrights and intellectual property rights belong to the author. Any infringement of copyright or intellectual property will be prosecuted according to the law.
+        
+        **2. Restriction on Commercial Use:** The use of Vnstock3 for commercial purposes by any organization is prohibited. This includes, but is not limited to, activities where Vnstock3 directly or indirectly contributes to generating revenue or cash flow for an organization without written approval from the author. However, the use of Vnstock3 for personal purposes, including research and editing, is still permitted free of charge.
+        
+        **3. Prohibited Uses:** You may not use Vnstock for any illegal, unethical, or unlawful purposes.
+        
+        **4. Disclaimer of Liability:** The author is not responsible for any damage, loss, or consequences arising from the use of this library, especially in investment activities or any risky activities. You are responsible for your own investment decisions.
+        
+        **5. Compliance with Laws:** You agree to comply with all applicable laws, regulations, and guidelines when using this library.
+        
+        **6. Data Privacy:** Vnstock may store anonymous device data to optimize features and improve software performance. This information will be kept confidential and will not be shared with third parties without your consent.
+        
+        **II. COPYRIGHT AND OWNERSHIP**
+        
+        Copyright (c) 2024 Thinh Vu @ Vnstock. All rights reserved.
+        
+        **Unauthorized Use and Distribution:** Copying, distributing, or commercially exploiting Vnstock3, or any part thereof, is not permitted. This limitation includes any form of generating revenue or using for an organization without the express permission of the author. However, personal use, editing, and academic research not related to commercial gain is still maintained. Users involved in permitted activities should respect the purpose of this software as a tool for promoting personal development and educational purposes, and not to exploit the open nature of the software for profit while the organization has the potential for financial and human resources but does not share with the author and the development team. Violating these terms is equivalent to intellectual property theft and is unethical, which can lead to legal trouble.
+        
+        **III. TERMINATION**
+        
+        This agreement is effective until terminated. It will automatically terminate immediately without notice from the author if you fail to comply with any of the terms of this agreement. Upon termination, you must destroy all copies of Vnstock3 and all of its components.
+        
+        **IV. ENFORCEMENT**
+        
+        This agreement shall be governed by and construed in accordance with the laws of the country in which the author resides, without regard to its conflict of laws provisions.
+        
+        
+        
+        > **By using Vnstock3, you agree that you will be bound by the terms of this Agreement. If you do not agree to the terms of this Agreement, please do not install or use Vnstock3.**
+        
+Project-URL: Homepage, https://github.com/thinh-vu/vnstock
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE.md
+Requires-Dist: requests
+Requires-Dist: beautifulsoup4
+Requires-Dist: pandas
+Requires-Dist: vnai>=0.1.3
+Requires-Dist: openpyxl
+Requires-Dist: pydantic
+Requires-Dist: psutil
+Requires-Dist: fake_useragent
+Requires-Dist: vnstock_ezchart
+Requires-Dist: click
+Requires-Dist: seaborn
+Provides-Extra: dev
+Requires-Dist: flake8; extra == "dev"
+Provides-Extra: docs
+Requires-Dist: sphinx; extra == "docs"
+Requires-Dist: sphinx_rtd_theme; extra == "docs"
+Provides-Extra: test
+Requires-Dist: unittest; extra == "test"
+
+# Vnstock3 - Giải pháp phân tích chứng khoán mở cho người Việt
+
+[![Vnstock Homepage](https://raw.githubusercontent.com/thinh-vu/vnstock/refs/heads/main/assets/images/vnstock-hero-banner.png)](https://vnstocks.com/)
+
+<div id="badges" align="center">
+    <img src="https://img.shields.io/pypi/pyversions/vnstock?logoColor=brown&style=flat" alt="Version"/>
+    <img src="https://img.shields.io/github/last-commit/thinh-vu/vnstock?style=flat" alt="Commit Badge"/>
+    <img src="https://img.shields.io/badge/license-Custom%20License-red?style=flat" alt="Custom License Badge"/>
+</div>
+
+<div id="badges" align="center">
+    <a href="https://pypi.org/project/vnstock/">
+        <img src="https://img.shields.io/pypi/dm/vnstock?label=vnstock%20download&style=flat" alt="vnstock download badge"/>
+    </a>
+    <a href="https://pypi.org/project/vnstock3/">
+        <img src="https://img.shields.io/pypi/dm/vnstock3?label=vnstock3%20download&style=flat" alt="vnstock3 download badge"/>
+    </a>
+</div>
+
+---
+
+
+# I. 🎤 Giới thiệu
+
+`Vnstock3` là phiên bản phần mềm Vnstock thế hệ thứ 3 được giới thiệu công khai vào 10/5/2024. 
+Đây là thế hệ Vnstock với nhiều nâng cấp giá trị, chia sẻ tầm nhìn rõ ràng hơn về Vnstock với vai trò một giải pháp phân tích thị trường chứng khoán mã nguồn mở mang nhiều dấu ấn của tương lai công nghệ.
+
+Vnstock sẽ luôn là giải pháp miễn phí để bạn tiếp cận dữ liệu chứng khoán, tài chính toàn diện, miễn phí với các nhu cầu thiết yếu và làm quen với bộ giải phép Python linh hoạt. Chúc mừng bạn là một phần của sự thay đổi trong hành trình chuyển đổi số thị trường chứng khoán tại Việt Nam.
+
+Tham gia cộng đồng Vnstock để chia sẻ, thảo luận và giao lưu cùng chúng tôi!
+
+<div id="badges" align="center">
+  <a href="https://www.facebook.com/groups/vnstock.official" target="_blank">
+    <img src="https://img.shields.io/badge/Tham%20gia%20cộng%20đồng-Vnstock-blue?style=for-the-badge&logo=facebook" alt="Tham gia cộng đồng Vnstock Badge"/>
+  </a>
+</div>
+
+# II. ⏱️ Cập nhật đáng chú ý
+- 02-01-2024: Vnstock3 chính thức sử dụng tên nhận diện gói thư viện là vnstock tại trang phân phối chính thức pypi.org. Chi tiết [tại đây](https://vnstocks.com/blog/chuyen-doi-sang-vnstock3-truoc-2025)
+- 02-11-2024: Ra mắt Vnstock3 phiên bản 3.0.9. Chi tiết: [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban#02-11-2024)
+- 10-05-2024: Ra mắt phiên bản Vnstock `3.0.1` với tên gói cài đặt `vnstock3`
+
+Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban)
+
+# III. 📔 Tài liệu hướng dẫn
+
+Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
+
+![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
+
+Cài đặt thư viện với câu lệnh sau:
+
+```
+pip install -U vnstock
+```
+
+Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstocks.com](https://vnstocks.com/docs/category/s%E1%BB%95-tay-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn). 
+
+Bạn cần nạp thư viện vào môi trường Python thông qua giao diện Jupyter Notebook hoặc Terminal để có thể gọi và sử dụng các hàm được cung cấp.
+
+```
+from vnstock import Vnstock
+stock = Vnstock().stock(symbol='VCI', source='VCI')
+stock.quote.history(start='2020-01-01', end='2024-05-25')
+```
+
+<div id="badges" align="center">
+  <a href="https://vnstocks.com/docs/tai-lieu/huong-dan-nhanh" target="_blank">
+    <img src="https://img.shields.io/badge/Tài%20liệu%20hướng%20dẫn-Vnstock-blue?style=for-the-badge&logo=book" alt="Tài liệu hướng dẫn Vnstock Badge"/>
+  </a>
+</div>
+
+# IV. Tính năng nổi bật
+
+> `Vnstock3` cung cấp bộ dữ liệu phong phú cho nhà đầu tư, nhà phân tích và nhà nghiên cứu tài chính, giúp tiếp cận thị trường Việt Nam & Thế Giới một cách toàn diện và nhanh chóng:
+
+1. **Dữ liệu cổ phiếu**: Giá thời gian thực, lịch sử và các chỉ số tài chính của cổ phiếu niêm yết.
+2. **Chỉ số Index**: Theo dõi hiệu suất các chỉ số chính của thị trường.
+3. **Chứng quyền**: Thông tin giá cả, ngày đáo hạn và nhà phát hành.
+4. **Kim loại quý**: Dữ liệu giá vàng.
+5. **Hợp đồng tương lai**: Giá và thông tin về hợp đồng tương lai.
+6. **Quỹ đầu tư**: Thông tin quỹ mở, ETF và các quỹ đầu tư khác.
+7. **Trái phiếu**: Thông tin & dữ liệu giao dịch Trái phiếu chính phủ, doanh nghiệp.
+8.  **Forex**: Tỷ giá ngoại hối theo thời gian thực.
+10. **Crypto**: Giá cả và giao dịch tiền điện tử.
+11. **Tin tức & sự kiện**: Cập nhật tin tức tài chính và các sự kiện quan trọng.
+
+# V. 🙋‍♂️ Thông tin liên hệ
+
+Bạn có thể kết nối với tác giả qua các hình thức sau. Trong trường hợp cần hỗ trợ nhanh, bạn có thể chọn nhắn tin qua Messenger hoặc Linkedin, tôi sẽ phản hồi ngay lập tức nếu có thể trong hầu hết các trường hợp.
+
+<div id="badges" align="center">
+  <a href="https://www.linkedin.com/in/thinh-vu">
+    <img src="https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Badge"/>
+  </a>
+  <a href="https://www.messenger.com/t/mr.thinh.ueh">
+    <img src="https://img.shields.io/badge/Messenger-00B2FF?style=for-the-badge&logo=messenger&logoColor=white" alt="Messenger Badge"/>
+  <a href="https://www.youtube.com/@learn_anything_az?sub_confirmation=1">
+    <img src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="Youtube Badge"/>
+  </a>
+  </a>
+    <a href="https://github.com/thinh-vu">
+    <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="Github Badge"/>
+  </a>
+</div>
+
+# VI. 🔑 Giấy phép sử dụng (License)
+
+`Vnstock3` được phát hành theo giấy phép tuỳ chỉnh hướng đến cá nhân, không dành cho mục đích thương mại. Quyền sử dụng được quy định cụ thể trong [giấy phép](LICENSE.md) kèm theo. Nếu bạn hoặc tổ chức bạn đang làm việc muốn sử dụng Vnstock có thể liên hệ tác giả để hiểu rõ phạm vi sử dụng và được cấp phép chính thức.
+
+Khi sử dụng Vnstock trong dự án của mình, bạn cần trích dẫn thông tin về tác giả và dự án theo hướng dẫn của Vnstock.
+
+# VI. Lịch sử lượt yêu thích
+
+Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Dưới đây là lịch sử lượt yêu thích của dự án.
+
+![Star History Chart](https://api.star-history.com/svg?repos=thinh-vu/vnstock&type=Date)](https://star-history.com/#thinh-vu/vnstock&Date)
