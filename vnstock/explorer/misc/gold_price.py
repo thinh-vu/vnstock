@@ -26,18 +26,17 @@ def sjc_gold_price(date=None):
 
     # Convert date to required format DD/MM/YYYY
     if date is None:
-        current_date = datetime.now()
-        formatted_date = current_date.strftime("%d/%m/%Y")
-        query_date = current_date.strftime("%Y-%m-%d")
+        input_date = datetime.now()
     else:
         try:
             input_date = datetime.strptime(date, "%Y-%m-%d")
             if input_date < min_date:
                 raise ValueError("Ngày tra cứu phải từ 2/1/2016 trở đi.")
-            formatted_date = input_date.strftime("%d/%m/%Y")
-            query_date = input_date.strftime("%Y-%m-%d")
         except ValueError:
             raise ValueError("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng YYYY-mm-dd.")
+
+    # Format date for the API request
+    formatted_date = input_date.strftime("%d/%m/%Y")
 
     # Prepare request payload and headers
     payload = f"method=GetSJCGoldPriceByDate&toDate={formatted_date}"
@@ -63,8 +62,8 @@ def sjc_gold_price(date=None):
         df = df[["TypeName", "BranchName", "BuyValue", "SellValue"]]
         df.columns = ["name", "branch", "buy_price", "sell_price"]
 
-        # Add date column
-        df["date"] = query_date
+        # Add date column as datetime type
+        df["date"] = input_date
 
         # Ensure numerical columns are correctly formatted
         df["buy_price"] = df["buy_price"].astype(float)
