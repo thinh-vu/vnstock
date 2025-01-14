@@ -21,6 +21,7 @@ HEADERS_MAPPING_SOURCE =    {
                             'VCI': {'Referer': 'https://trading.vietcap.com.vn/', 'Origin': 'https://trading.vietcap.com.vn/'},
                             'MSN': {'Referer': 'https://www.msn.com/', 'Origin': 'https://www.msn.com/'},
                             'FMARKET': {'Referer': 'https://fmarket.vn/', 'Origin': 'https://fmarket.vn/'},
+                            'SJC': {'Referer': 'https://sjc.com.vn/bieu-do-gia-vang', 'Origin': 'https://sjc.com.vn'},
                             }
 
 

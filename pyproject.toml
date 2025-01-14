@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 # Metadata Information
 [project]
 name = "vnstock"
-version = "3.1.0.1"
+version = "3.1.0.2"
 description = "A comprehensive and transparent solution for Vietnamese stock market analysis."
 authors = [
     { name = "Thinh Vu", email = "vnstock.hq@gmail.com" },

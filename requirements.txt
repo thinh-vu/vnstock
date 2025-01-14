@@ -3,7 +3,7 @@ requests==2.31.0
 bs4==0.0.2
 vnai>=0.1.0
 openpyxl==3.1.2
-vnstock_ezchart==0.0.2
+vnstock_ezchart>=0.0.2
 fake_useragent==1.5.1
 cryptography==42.0.5
 psutil==6.0.0

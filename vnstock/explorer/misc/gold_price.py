@@ -1,42 +1,78 @@
 import requests
 import json
-from bs4 import BeautifulSoup
 import pandas as pd
+from datetime import datetime
+from bs4 import BeautifulSoup
+from vnstock.core.utils.user_agent import get_headers
 
 
-def sjc_gold_price(url='https://sjc.com.vn/giavang/textContent.php'):
-    response = requests.get(url)
+def sjc_gold_price(date=None):
+    """
+    Truy xuất giá vàng từ trang chủ SJC.
 
-    if response.status_code == 200:
-        html_content = response.text
-        soup = BeautifulSoup(html_content, 'html.parser')
-        update_time = soup.find('div', class_='w350').get_text(strip=True)
-        currency_unit = soup.find('div', class_='float_left ylo_text', style='font-size:26px').get_text(strip=True)
+    Args:
+        - date: Ngày tra cứu, mặc định là None để lấy ngày hiện tại. 
+                Nhập giá trị tùy chọn, định dạng YYYY-mm-dd, ví dụ 2025-01-15.
+                Dữ liệu có sẵn từ ngày 2/1/2016.
 
-        print("Cập nhật lúc:", update_time)
-        print("Đơn vị tính:", currency_unit)
+    Returns:
+        - Pandas DataFrame chứa thông tin giá vàng nếu thành công, ngược lại trả về None.
+    """
+    # Set URL
+    url = "https://sjc.com.vn/GoldPrice/Services/PriceService.ashx"
 
-        table = soup.find('div', class_='bx1').find('table')
+    # Define the minimum allowed date
+    min_date = datetime(2016, 1, 2)
 
-        data = []
-        headers = []
-        for row in table.find_all('tr'):
-            row_data = []
-            for cell in row.find_all(['td', 'th']):
-                row_data.append(cell.get_text(strip=True))
-            if not headers:
-                headers = row_data
-            else:
-                data.append(row_data)
-
-        df = pd.DataFrame(data, columns=headers)
-        df = df.query("`Loại vàng` != ''")
-        df = df.rename(columns={"Loại vàng": "name", "Mua": "buy_price", "Bán": "sell_price"})
-        df['name'] = df['name'].str.replace('SJC 99,99', 'SJC 99,99 | ')
-        return df
-
+    # Convert date to required format DD/MM/YYYY
+    if date is None:
+        current_date = datetime.now()
+        formatted_date = current_date.strftime("%d/%m/%Y")
+        query_date = current_date.strftime("%Y-%m-%d")
     else:
-        print(f"Failed to retrieve content. Status code: {response.status_code}")
+        try:
+            input_date = datetime.strptime(date, "%Y-%m-%d")
+            if input_date < min_date:
+                raise ValueError("Ngày tra cứu phải từ 2/1/2016 trở đi.")
+            formatted_date = input_date.strftime("%d/%m/%Y")
+            query_date = input_date.strftime("%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng YYYY-mm-dd.")
+
+    # Prepare request payload and headers
+    payload = f"method=GetSJCGoldPriceByDate&toDate={formatted_date}"
+    headers = get_headers(data_source='SJC', random_agent=False)
+
+    # Send request
+    response = requests.post(url, headers=headers, data=payload)
+
+    # Handle response
+    if response.status_code == 200:
+        data = response.json()
+        if not data.get("success"):
+            print("Lỗi: Không thể truy xuất dữ liệu từ API.")
+            return None
+
+        gold_data = data.get("data", [])
+        if not gold_data:
+            print("Lỗi: Không có dữ liệu trả về từ API.")
+            return None
+
+        # Convert to DataFrame
+        df = pd.DataFrame(gold_data)
+        df = df[["TypeName", "BranchName", "BuyValue", "SellValue"]]
+        df.columns = ["name", "branch", "buy_price", "sell_price"]
+
+        # Add date column
+        df["date"] = query_date
+
+        # Ensure numerical columns are correctly formatted
+        df["buy_price"] = df["buy_price"].astype(float)
+        df["sell_price"] = df["sell_price"].astype(float)
+
+        return df
+    else:
+        print(f"Lỗi: Không thể kết nối đến API. Mã trạng thái: {response.status_code}")
         return None
     
 
