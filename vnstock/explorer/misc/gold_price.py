@@ -26,7 +26,7 @@ def sjc_gold_price(date=None):
 
     # Convert date to required format DD/MM/YYYY
     if date is None:
-        input_date = datetime.now()
+        input_date = datetime.now().date()
     else:
         try:
             input_date = datetime.strptime(date, "%Y-%m-%d")
