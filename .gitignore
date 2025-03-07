@@ -30,3 +30,5 @@ dev/MSN_quarter_reports_df.xlsx
 dev/vci_financial_test_notebook_Nov_1.ipynb
 vnstock/.DS_Store
 .DS_Store
+
+*.pyc
