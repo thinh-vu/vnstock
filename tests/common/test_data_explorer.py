@@ -21,6 +21,21 @@ class TestVnstock(unittest.TestCase):
         stock = vnstock.stock(symbol="ACB")
         self.assertIsInstance(stock, StockComponents)
         self.assertEqual(stock.symbol, "ACB")
+    
+    def test_stock_with_none_source(self):
+        """Test that the stock method correctly sets symbol when source is None"""
+        vnstock = Vnstock()
+        # Test with symbol provided and source=None
+        stock_comp = vnstock.stock(symbol="VNM", source=None)
+        self.assertEqual(stock_comp.symbol, "VNM")
+        
+        # Test with default symbol and source=None
+        stock_comp = vnstock.stock(symbol=None, source=None)
+        self.assertEqual(stock_comp.symbol, "VN30F1M")
+        
+        # Test with symbol provided and source provided
+        stock_comp = vnstock.stock(symbol="VNM", source="VCI")
+        self.assertEqual(stock_comp.symbol, "VNM")
 
     def test_vnstock_fx(self):
         vnstock = Vnstock(source="MSN")

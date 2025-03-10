@@ -38,11 +38,12 @@ class Vnstock:
         if symbol is None:
             self.symbol = 'VN30F1M'
             logger.info("Mã chứng khoán không được chỉ định, chương trình mặc định sử dụng VN30F1M")
+        else:
+            self.symbol = symbol
 
         if source is None:
             source = self.source
-        else:
-            self.symbol = symbol
+        
         return StockComponents(self.symbol, source, show_log=self.show_log)
     
     def fx(self, symbol: Optional[str]='EURUSD', source: Optional[str] = "MSN"):
