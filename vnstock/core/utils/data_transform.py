@@ -4,6 +4,7 @@ import pandas as pd
 import pytz
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta, time
+from vnstock.core.utils.parser import localize_timestamp
 
 # Vietnam timezone
 vietnam_tz = pytz.timezone('Asia/Ho_Chi_Minh')
@@ -30,20 +31,6 @@ def get_trading_date() -> datetime.date:
     else:
         # Regular trading day
         return now.date()
-
-def convert_to_vietnam_time(timestamp_series, unit='s'):
-    """
-    Convert timestamp values to Vietnam timezone.
-    
-    Parameters:
-        - timestamp_series: Series of timestamp values
-        - unit: Unit for timestamp conversion ('s' for seconds, 'ms' for milliseconds)
-        
-    Returns:
-        - Series of datetime objects in Vietnam timezone
-    """
-    dt_series = pd.to_datetime(timestamp_series, unit=unit)
-    return dt_series.dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
 
 def process_match_types(df, asset_type, source):
     """
@@ -79,12 +66,12 @@ def process_match_types(df, asset_type, source):
             unknown_indices = df[unknown_mask].index
             
             if len(unknown_indices) > 0:
-                # Morning session: Find transactions around 9:15 AM (9:10-9:20)
-                morning_mask = unknown_mask & (df['time'].dt.hour == 9) & (df['time'].dt.minute >= 10) & (df['time'].dt.minute <= 20)
+                # Morning session: Find transactions around 9:15 AM (9:13-9:17)
+                morning_mask = unknown_mask & (df['time'].dt.hour == 9) & (df['time'].dt.minute >= 13) & (df['time'].dt.minute <= 17)
                 morning_indices = df[morning_mask].index
                 
-                # Afternoon session: Find transactions around 2:45 PM (14:40-14:50)
-                afternoon_mask = unknown_mask & (df['time'].dt.hour == 14) & (df['time'].dt.minute >= 40) & (df['time'].dt.minute <= 50)
+                # Afternoon session: Find transactions around 2:45 PM (14:43-14:47)
+                afternoon_mask = unknown_mask & (df['time'].dt.hour == 14) & (df['time'].dt.minute >= 43) & (df['time'].dt.minute <= 47)
                 afternoon_indices = df[afternoon_mask].index
                 
                 # Label ATO for first morning session transaction
@@ -176,7 +163,20 @@ def ohlc_to_df(data: Dict[str, Any], column_map: Dict[str, str], dtype_map: Dict
 def intraday_to_df(data: List[Dict[str, Any]], column_map: Dict[str, str], 
                   dtype_map: Dict[str, str], symbol: str, asset_type: str, 
                   source: str) -> pd.DataFrame:
-    """Convert intraday trading data to standardized DataFrame format."""
+    """
+    Convert intraday trading data to standardized DataFrame format.
+    
+    Parameters:
+        data: List of dictionary data from API
+        column_map: Mapping from source columns to standard column names
+        dtype_map: Data types for each column
+        symbol: Trading symbol
+        asset_type: Asset type (stock, derivative, etc.)
+        source: Data source identifier (VCI, TCBS, etc.)
+        
+    Returns:
+        DataFrame with standardized format and timezone-aware timestamps
+    """
     # Early exit if no data
     if not data:
         empty_df = pd.DataFrame(columns=list(column_map.values()))
@@ -201,8 +201,8 @@ def intraday_to_df(data: List[Dict[str, Any]], column_map: Dict[str, str],
         trading_date = get_trading_date()
         
         if source == 'VCI':
-            # VCI provides timestamps
-            df['time'] = convert_to_vietnam_time(df['time'].astype(int))
+            # VCI provides timestamps - use localize_timestamp directly
+            df['time'] = localize_timestamp(df['time'].astype(int), unit='s')
         else:  # TCBS
             # Check if we have just time values (HH:MM:SS)
             sample_time = str(df['time'].iloc[0]) if not df.empty else ''
@@ -213,13 +213,14 @@ def intraday_to_df(data: List[Dict[str, Any]], column_map: Dict[str, str],
                     lambda x: datetime.combine(trading_date, datetime.strptime(x, '%H:%M:%S').time())
                     if isinstance(x, str) and ':' in x else pd.NaT
                 )
-                # Localize to Vietnam timezone
-                df['time'] = df['time'].dt.tz_localize('Asia/Ho_Chi_Minh', ambiguous='NaT')
+                # Use localize_timestamp to handle timezone
+                df['time'] = localize_timestamp(df['time'], return_string=False)
             else:
-                # Parse as full datetime
+                # Parse as full datetime, then localize
                 df['time'] = pd.to_datetime(df['time'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
+                # Use localize_timestamp instead of manual localization
                 if df['time'].dt.tz is None:
-                    df['time'] = df['time'].dt.tz_localize('Asia/Ho_Chi_Minh', ambiguous='NaT')
+                    df['time'] = localize_timestamp(df['time'], return_string=False)
     
     # Process match types
     if 'match_type' in df.columns:

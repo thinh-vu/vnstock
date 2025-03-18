@@ -3,9 +3,10 @@
 from typing import List, Dict, Optional
 from datetime import datetime
 from .const import _BASE_URL, _TRADING_URL
-import pandas as pd
-import requests
 import json
+import requests
+import pandas as pd
+from vnai import optimize_execution
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake, flatten_data
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
@@ -26,7 +27,8 @@ class Trading:
 
         if not show_log:
             logger.setLevel('CRITICAL')
-        
+
+    @optimize_execution("VCI")
     def price_board (self, symbols_list: List[str], to_df:Optional[bool]=True, show_log:Optional[bool]=False):
         """
         Truy xuất thông tin bảng giá của các mã chứng khoán tuỳ chọn từ nguồn dữ liệu VCI.

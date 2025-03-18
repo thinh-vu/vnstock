@@ -9,7 +9,7 @@ import requests
 from vnstock.core.utils.parser import camel_to_snake
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
-
+from vnai import optimize_execution
 logger = get_logger(__name__)
 
 class Listing:
@@ -23,7 +23,7 @@ class Listing:
         if not show_log:
             logger.setLevel('CRITICAL')
 
-    
+    @optimize_execution("VCI")
     def all_symbols (self, show_log:Optional[bool]=False, to_df:Optional[bool]=True) -> Dict:
         """
         Truy xuất danh sách toàn. bộ mã và tên các cổ phiếu trên thị trường Việt Nam.
@@ -55,6 +55,7 @@ class Listing:
             json_data = df.to_json(orient='records')
             return json_data
         
+    @optimize_execution("VCI")
     def symbols_by_industries (self, show_log:Optional[bool]=False, to_df:Optional[bool]=True):
         """
         Truy xuất thông tin niêm yết theo ngành (icb) của các mã cổ phiếu trên thị trường Việt Nam.
@@ -92,7 +93,8 @@ class Listing:
         else:
             json_data = df.to_json(orient='records')
             return json_data
-        
+
+    @optimize_execution("VCI")
     def symbols_by_exchange(self, show_log:Optional[bool]=False, to_df:Optional[bool]=True):
         """
         Truy xuất thông tin niêm yết theo sàn của các mã cổ phiếu trên thị trường Việt Nam.
@@ -135,7 +137,8 @@ class Listing:
         else:
             json_data = df.to_json(orient='records')
             return json_data
-        
+
+    @optimize_execution("VCI")
     def industries_icb (self, show_log:Optional[bool]=False, to_df:Optional[bool]=True):
         """
         Truy xuất thông tin phân ngành icb của các mã cổ phiếu trên thị trường Việt Nam.
@@ -172,7 +175,8 @@ class Listing:
         else:
             json_data = df.to_json(orient='records')
             return json_data
-        
+
+    @optimize_execution("VCI")
     def symbols_by_group (self, group: str ='VN30', show_log:Optional[bool]=False, to_df:Optional[bool]=True):
         """
         Truy xuất danh sách các mã cổ phiếu theo tên nhóm trên thị trường Việt Nam.
@@ -208,15 +212,19 @@ class Listing:
             json_data = df.to_json(orient='records')
             return json_data
 
+    @optimize_execution("VCI")
     def all_future_indices (self, show_log:Optional[bool]=False, to_df:Optional[bool]=True):
         return self.symbols_by_group(group='FU_INDEX', show_log=show_log, to_df=to_df)
-    
+
+    @optimize_execution("VCI")
     def all_government_bonds (self, show_log:Optional[bool]=False, to_df:Optional[bool]=True):
         return self.symbols_by_group(group='FU_BOND', show_log=show_log, to_df=to_df)
-    
+
+    @optimize_execution("VCI")
     def all_covered_warrant (self, show_log:Optional[bool]=False, to_df:Optional[bool]=True):
         return self.symbols_by_group(group='CW', show_log=show_log, to_df=to_df)
-    
+
+    @optimize_execution("VCI")
     def all_bonds (self, show_log:Optional[bool]=False, to_df:Optional[bool]=True):
         return self.symbols_by_group(group='BOND', show_log=show_log, to_df=to_df)
 

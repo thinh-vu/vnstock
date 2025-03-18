@@ -1,8 +1,10 @@
 import re
 import requests
-from typing import Dict
+import pandas as pd
+import numpy as np
 from pytz import timezone
 from datetime import datetime, timedelta
+from typing import Dict, Union, Literal, Any, Optional
 from vnstock.core.config.const import UA
 from vnstock.core.utils.logger import get_logger
 
@@ -34,6 +36,76 @@ def parse_timestamp(time_value):
     except ValueError:
         print("Invalid timestamp format")
         return None
+
+# Utility to convert timestamps to Vietnam timezone
+def localize_timestamp (
+    timestamp: Union[pd.Series, int, float, list, np.ndarray, pd.Timestamp, Any], 
+    unit: Literal['s', 'ms', 'us', 'ns'] = 's',
+    return_scalar: bool = False,
+    return_string: bool = False,
+    string_format: str = '%Y-%m-%d %H:%M:%S'
+) -> Union[pd.Series, pd.Timestamp, str]:
+    """
+    Convert timestamp values to Vietnam timezone (UTC+7).
+    
+    Parameters:
+        timestamp: Timestamp value(s) - can be Series, list, array, or scalar
+        unit: Unit for timestamp conversion ('s' for seconds, 'ms' for milliseconds, etc.)
+        return_scalar: If True and input can be treated as scalar, return a single value
+        return_string: If True, return string representation(s) instead of datetime objects
+        string_format: Format for datetime strings if return_string=True
+        
+    Returns:
+        - Series of datetime objects (default)
+        - Series of formatted strings (if return_string=True)
+        - Single Timestamp (if return_scalar=True and input is scalar-like)
+        - Formatted string (if return_scalar=True, return_string=True and input is scalar-like)
+        
+    Examples:
+        # Convert a single timestamp (returns Series by default)
+        convert_to_vietnam_time(1647851234)
+        
+        # Convert a single timestamp (return scalar Timestamp)
+        convert_to_vietnam_time(1647851234, return_scalar=True)
+        
+        # Convert a single timestamp (return string)
+        convert_to_vietnam_time(1647851234, return_string=True)
+        
+        # Convert multiple timestamps to string Series
+        convert_to_vietnam_time([1647851234, 1647851235], return_string=True)
+    """
+    # Determine if input should be treated as a scalar value
+    treat_as_scalar = False
+    
+    # Direct scalar types
+    if np.isscalar(timestamp) or isinstance(timestamp, (pd.Timestamp, datetime)):
+        treat_as_scalar = True
+        timestamp_series = pd.Series([timestamp])
+    # Series with one element
+    elif isinstance(timestamp, pd.Series) and len(timestamp) == 1:
+        treat_as_scalar = True
+        timestamp_series = timestamp
+    # List, array, etc. with one element
+    elif hasattr(timestamp, '__len__') and len(timestamp) == 1:
+        treat_as_scalar = True
+        timestamp_series = pd.Series(timestamp)
+    # Other cases - treat as non-scalar
+    else:
+        timestamp_series = pd.Series(timestamp) if not isinstance(timestamp, pd.Series) else timestamp
+    
+    # Convert to datetime with timezone
+    dt_series = pd.to_datetime(timestamp_series, unit=unit)
+    vietnam_series = dt_series.dt.tz_localize('UTC').dt.tz_convert('Asia/Ho_Chi_Minh')
+    
+    # Apply string formatting if requested
+    if return_string:
+        vietnam_series = vietnam_series.dt.strftime(string_format)
+    
+    # Return scalar if requested and input was scalar-like
+    if return_scalar and treat_as_scalar:
+        return vietnam_series.iloc[0]
+    
+    return vietnam_series
 
 def get_asset_type(symbol: str) -> str:
     """

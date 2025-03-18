@@ -232,6 +232,10 @@ class Quote:
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
         
+        # warning if page_size is greater than 30_000
+        if page_size > 30_000:
+            logger.warning("Bạn đang yêu cầu truy xuất quá nhiều dữ liệu, điều này có thể gây lỗi quá tải.")
+        
         # Fetch data
         combined_data = []
         total_pages = (page_size // 100) + (1 if page_size % 100 != 0 else 0)

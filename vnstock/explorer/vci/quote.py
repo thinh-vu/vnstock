@@ -1,17 +1,20 @@
 """History module for VCI."""
 
-# Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê hành vi thị tường
 from typing import Dict, Optional, Union
 from datetime import datetime
-from .const import _BASE_URL, _TRADING_URL, _CHART_URL, _INTERVAL_MAP, _OHLC_MAP, _RESAMPLE_MAP, _OHLC_DTYPE, _INTRADAY_URL, _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
-from .models import TickerModel
 import pandas as pd
-import requests
-import json
+from vnai import optimize_execution
+from .const import (
+    _BASE_URL, _TRADING_URL, _CHART_URL, _INTERVAL_MAP, 
+    _OHLC_MAP, _RESAMPLE_MAP, _OHLC_DTYPE, _INTRADAY_URL, 
+    _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
+)
+from .models import TickerModel
 from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.logger import get_logger
-from vnstock.core.utils.env import get_hosting_service
 from vnstock.core.utils.user_agent import get_headers
+from vnstock.core.utils.api_client import send_request
+from vnstock.core.utils.data_transform import ohlc_to_df, intraday_to_df
 
 logger = get_logger(__name__)
 
@@ -41,253 +44,184 @@ class Quote:
         """
         if self.symbol not in _INDEX_MAPPING.keys():
             raise ValueError(f"Không tìm thấy mã chứng khoán {self.symbol}. Các giá trị hợp lệ: {', '.join(_INDEX_MAPPING.keys())}")
-        # return mapped symbol
         return _INDEX_MAPPING[self.symbol]
 
     def _input_validation(self, start: str, end: str, interval: str):
         """
         Validate input data
         """
-        # Validate input data
         ticker = TickerModel(symbol=self.symbol, start=start, end=end, interval=interval)
 
-        # if interval is not in the interval_map, raise an error
         if ticker.interval not in self.interval_map:
             raise ValueError(f"Giá trị interval không hợp lệ: {ticker.interval}. Vui lòng chọn: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M")
 
         return ticker
 
-    def history(self, start: str, end: Optional[str]=None, interval: Optional[str] = "1D", to_df: Optional[bool]=True, show_log: Optional[bool]=False, count_back: Optional[int]=None) -> Dict:
+    @optimize_execution("VCI")
+    def history(self, start: str, end: Optional[str]=None, interval: Optional[str]="1D", 
+                to_df: Optional[bool]=True, show_log: Optional[bool]=False, 
+                count_back: Optional[int]=None, floating: Optional[int]=2) -> Union[pd.DataFrame, str]:
         """
-        Tải lịch sử giá của mã chứng khoán từ nguồn dữ liệu VN Direct.
+        Tải lịch sử giá của mã chứng khoán từ nguồn dữ liệu VCI.
 
         Tham số:
             - start (bắt buộc): thời gian bắt đầu lấy dữ liệu, có thể là ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS".
-            - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None, chương trình tự động lấy thời điểm hiện tại. Có thể nhập ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS".
+            - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None, chương trình tự động lấy thời điểm hiện tại.
             - interval (tùy chọn): Khung thời gian trích xuất dữ liệu giá lịch sử. Giá trị nhận: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M. Mặc định là "1D".
-            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True. Đặt là False để trả về dữ liệu dạng JSON.
+            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True. Đặt là False để trả về dạng JSON.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
-            - count_back (tùy chọn): Số lượng dữ liệu trả về từ thời điểm cuối. Mặc định là 365.
+            - count_back (tùy chọn): Số lượng dữ liệu trả về từ thời điểm cuối.
+            - floating (tùy chọn): Số chữ số thập phân cho giá. Mặc định là 2.
         """
         # Validate inputs
         ticker = self._input_validation(start, end, interval)
 
         start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
         
-        # add one more day to end_time if end is not None
+        # Calculate end timestamp
         if end is not None:
             end_time = datetime.strptime(ticker.end, "%Y-%m-%d") + pd.Timedelta(days=1)
-        
-        if start_time > end_time:
-            raise ValueError("Thời gian bắt đầu không thể lớn hơn thời gian kết thúc.")
-
-        # convert start and end date to timestamp
-        if end is None:
-            # get tomorrow end time
-            end_stamp = int((datetime.now() + pd.Timedelta(days=1)).timestamp())
-        else:
+            if start_time > end_time:
+                raise ValueError("Thời gian bắt đầu không thể lớn hơn thời gian kết thúc.")
             end_stamp = int(end_time.timestamp())
+        else:
+            end_stamp = int((datetime.now() + pd.Timedelta(days=1)).timestamp())
 
         start_stamp = int(start_time.timestamp())
+        interval_value = self.interval_map[ticker.interval]
 
-        interval = self.interval_map[ticker.interval]
-
-        # Construct the URL for fetching data
+        # Prepare request
         url = self.base_url + _CHART_URL
+        payload = {
+            "timeFrame": interval_value,
+            "symbols": [self.symbol],
+            "from": start_stamp,
+            "to": end_stamp
+        }
 
-        payload = json.dumps({
-        "timeFrame": interval,
-        "symbols": [
-            self.symbol
-        ],
-        "from": start_stamp,
-        "to": end_stamp
-        })
+        # Use the send_request utility from api_client
+        json_data = send_request(
+            url=url, 
+            headers=self.headers, 
+            method="POST", 
+            payload=payload, 
+            show_log=show_log
+        )
 
-        if show_log:
-            logger.info(f"Tải dữ liệu từ {url}\npayload: {payload}")
-
-        # Send a GET request to fetch the data
-        response = requests.post(url, headers=self.headers, data=payload)
-
-        if response.status_code != 200:
-            raise ConnectionError(f"Failed to fetch data: {response.status_code} - {response.reason}")
-
-        json_data = response.json()
-
-        if show_log:
-            logger.info(f'Truy xuất thành công dữ liệu {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}.')
-
-        # if json_data is empty, raise an error
         if not json_data:
             raise ValueError("Không tìm thấy dữ liệu. Vui lòng kiểm tra lại mã chứng khoán hoặc thời gian truy xuất.")
+        
+        # Use the ohlc_to_df utility from data_transform
+        df = ohlc_to_df(
+            data=json_data[0], 
+            column_map=_OHLC_MAP, 
+            dtype_map=_OHLC_DTYPE, 
+            asset_type=self.asset_type, 
+            symbol=self.symbol, 
+            source=self.data_source, 
+            interval=ticker.interval, 
+            floating=floating,
+            resample_map=_RESAMPLE_MAP
+        )
+
+        if count_back is not None:
+            df = df.tail(count_back)
+
+        if to_df:
+            return df
         else:
-            df = self._as_df(history_data=json_data[0], asset_type=self.asset_type, interval=ticker.interval)
+            return df.to_json(orient='records')
 
-            if count_back is not None:
-                df = df.tail(count_back)
-
-            if to_df:
-                return df
-            else:
-                json_data = df.to_json(orient='records')
-                return json_data
-
-    def intraday(self, page_size: Optional[int]=100, last_time: Optional[str]=None, to_df: Optional[bool]=True, show_log: bool=False) -> Dict:
+    @optimize_execution("VCI")
+    def intraday(self, page_size: Optional[int]=100, last_time: Optional[str]=None, 
+                to_df: Optional[bool]=True, show_log: bool=False) -> Union[pd.DataFrame, str]:
         """
         Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu VCI
 
         Tham số:
-            - page_size (tùy chọn): Số lượng dữ liệu trả về trong một lần request. Mặc định là 100. Không giới hạn số lượng tối đa. Tăng số này lên để lấy toàn bộ dữ liêu, ví dụ 10_000.
-            - trunc_time (tùy chọn): Thời gian cắt dữ liệu, dùng để lấy dữ liệu sau thời gian cắt. Mặc định là None.
-            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True. Đặt là False để trả về dữ liệu dạng JSON.
+            - page_size (tùy chọn): Số lượng dữ liệu trả về trong một lần request. Mặc định là 100. 
+            - last_time (tùy chọn): Thời gian cắt dữ liệu, dùng để lấy dữ liệu sau thời gian cắt. Mặc định là None.
+            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
         """
-        # if self.symbol is not defined, raise ValueError
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
 
-        # convert a string to timestamp
+        if page_size > 30_000:
+            logger.warning("Bạn đang yêu cầu truy xuất quá nhiều dữ liệu, điều này có thể gây lỗi quá tải.")
+
+        # Convert string to timestamp if provided
+        trunc_time = None
         if last_time is not None:
-            last_time = int(datetime.strptime(last_time, "%Y-%m-%d %H:%M:%S").timestamp())
+            trunc_time = int(datetime.strptime(last_time, "%Y-%m-%d %H:%M:%S").timestamp())
 
         url = f'{self.base_url}{_INTRADAY_URL}/LEData/getAll'
+        payload = {
+            "symbol": self.symbol,
+            "limit": page_size,
+            "truncTime": trunc_time
+        }
 
-        payload = json.dumps({
-        "symbol": self.symbol,
-        "limit": page_size,
-        "truncTime": last_time
-        })
+        # Fetch data using the send_request utility
+        data = send_request(
+            url=url, 
+            headers=self.headers, 
+            method="POST", 
+            payload=payload, 
+            show_log=show_log
+        )
 
-        if show_log:
-            logger.info(f'Requested URL: {url} with query payload: {payload}')
-        response = requests.post(url, headers=self.headers, data=payload)
-
-        if response.status_code != 200:
-            raise ConnectionError(f"Tải dữ liệu không thành công: {response.status_code} - {response.reason}")
-
-        data = response.json()
-        df = pd.DataFrame(data)
-
-        # select columns in _INTRADAY_MAP values
-        df = df[_INTRADAY_MAP.keys()]
-        # rename columns
-        df.rename(columns=_INTRADAY_MAP, inplace=True)
-        # replace b with Buy, s with Sell, unknown with ATO/ATC in match_type column
-        df['match_type'] = df['match_type'].replace({'b': 'Buy', 's': 'Sell', 'unknown': 'ATO/ATC'})
-
-        # convert time to datetime
-        df['time'] = pd.to_datetime(df['time'].astype(int), unit='s')
-        # convert UTC time to Asia/Ho_Chi_Minh timezone by adding 7 hours
-        df['time'] = df['time'] + pd.Timedelta(hours=7)
-
-        # sort by time
-        df = df.sort_values(by='time')
-
-        # apply _INTRADAY_DTYPE to columns
-        df = df.astype(_INTRADAY_DTYPE)
-
-        df.name = self.symbol
-        df.category = self.asset_type
-        df.source = self.data_source
+        # Transform data using intraday_to_df utility
+        df = intraday_to_df(
+            data=data, 
+            column_map=_INTRADAY_MAP, 
+            dtype_map=_INTRADAY_DTYPE, 
+            symbol=self.symbol, 
+            asset_type=self.asset_type, 
+            source=self.data_source
+        )
 
         if to_df:
             return df
         else:
-            json_data = df.to_json(orient='records')
-            return json_data
+            return df.to_json(orient='records')
 
-    def price_depth(self, to_df:Optional[bool]=True, show_log:Optional[bool]=False):
+    @optimize_execution("VCI")
+    def price_depth(self, to_df: Optional[bool]=True, show_log: Optional[bool]=False) -> Union[pd.DataFrame, str]:
         """
         Truy xuất thống kê độ bước giá & khối lượng khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu VCI.
 
         Tham số:
-            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True. Đặt là False để trả về dữ liệu dạng JSON.
+            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
         """
-        # if self.symbol is not defined, raise ValueError
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
 
         url = f'{self.base_url}{_INTRADAY_URL}/AccumulatedPriceStepVol/getSymbolData'
-        payload = json.dumps({
+        payload = {
             "symbol": self.symbol
-        })
+        }
 
-        if show_log:
-            logger.info(f'Requested URL: {url} with query payload: {payload}')
-        response = requests.post(url, headers=self.headers, data=payload)
+        # Fetch data using the send_request utility
+        data = send_request(
+            url=url, 
+            headers=self.headers, 
+            method="POST", 
+            payload=payload, 
+            show_log=show_log
+        )
 
-        if response.status_code != 200:
-            raise ConnectionError(f"Tải dữ liệu không thành công: {response.status_code} - {response.reason}")
-
-        data = response.json()
+        # Process the data to DataFrame
         df = pd.DataFrame(data)
-
-        # select columns in _INTRADAY_MAP values
+        
+        # Select columns in _PRICE_DEPTH_MAP values and rename them
         df = df[_PRICE_DEPTH_MAP.keys()]
-        # rename columns
         df.rename(columns=_PRICE_DEPTH_MAP, inplace=True)
-
+        
         df.source = self.data_source
 
         if to_df:
             return df
         else:
-            json_data = df.to_json(orient='records')
-            return json_data
-
-    def _as_df(self, history_data: Dict, asset_type: str, interval: str, floating: Optional[int] = 2) -> pd.DataFrame:
-        """
-        Converts stock price history data from JSON format to DataFrame.
-
-        Parameters:
-            - history_data: Stock price history data in JSON format.
-        Returns:
-            - DataFrame: Stock price history data as a DataFrame.
-        """
-        if not history_data:
-            raise ValueError("Input data is empty or not provided.")
-
-        # Select and rename columns directly using a dictionary comprehension
-        columns_of_interest = {key: _OHLC_MAP[key] for key in _OHLC_MAP.keys() & history_data.keys()}
-        df = pd.DataFrame(history_data)[columns_of_interest.keys()].rename(columns=_OHLC_MAP)
-        # rearrange columns by open, high, low, close, volume, time
-        df = df[['time', 'open', 'high', 'low', 'close', 'volume']]
-
-        # Ensure 'time' column data are numeric (integers), then convert to datetime
-        df['time'] = pd.to_datetime(df['time'].astype(int), unit='s').dt.tz_localize('UTC') # Localize the original time to UTC
-        # Convert UTC time to Asia/Ho_Chi_Minh timezone, make sure time is correct for minute and hour interval
-        df['time'] = df['time'].dt.tz_convert('Asia/Ho_Chi_Minh')
-
-        if asset_type not in ["index", "derivative"]:
-            # divide open, high, low, close, volume by 1000
-            df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].div(1000)
-
-        # round open, high, low, close to 2 decimal places
-        df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].round(floating)
-
-        # if self.resolution is not in 1m, 1H, 1D, resample the data
-        if interval not in ["1m", "1H", "1D"]:
-            df = df.set_index('time').resample(_RESAMPLE_MAP[interval]).agg({
-                'open': 'first',
-                'high': 'max',
-                'low': 'min',
-                'close': 'last',
-                'volume': 'sum'
-            }).reset_index()
-
-        # set datatype for each column using _OHLC_DTYPE
-        for col, dtype in _OHLC_DTYPE.items():
-            if dtype == "datetime64[ns]":
-                df[col] = df[col].dt.tz_localize(None)  # Remove timezone information
-                if interval == "1D":
-                    df[col] = df[col].dt.date
-            df[col] = df[col].astype(dtype)
-
-        # Set metadata attributes
-        df.name = self.symbol
-        df.category = self.asset_type
-        df.source = "VCI"
-
-        return df
+            return df.to_json(orient='records')
