@@ -19,7 +19,6 @@ history_price_dtype = {
     "volume": "int64",
 }
 
-
 class PaginationModel(BaseModel):
     page: int # Trang bắt đầu lấy dữ liệu
     size: int # Số kết quả trong 1 trang
