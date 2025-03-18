@@ -4,10 +4,12 @@ import pandas as pd
 import base64
 import datetime
 import warnings
+from vnai import optimize_execution
 warnings.filterwarnings("ignore", message="Workbook contains no default style, apply openpyxl's default")
 from vnstock.core.utils.parser import camel_to_snake
 
 
+@optimize_execution('MISC')
 def vcb_exchange_rate(date='2023-12-26'):
     """
     Get exchange rate from Vietcombank for a specific date.

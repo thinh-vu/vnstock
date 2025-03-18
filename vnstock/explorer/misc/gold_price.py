@@ -4,8 +4,9 @@ import pandas as pd
 from datetime import datetime
 from bs4 import BeautifulSoup
 from vnstock.core.utils.user_agent import get_headers
+from vnai import optimize_execution
 
-
+@optimize_execution('MISC')
 def sjc_gold_price(date=None):
     """
     Truy xuất giá vàng từ trang chủ SJC.
@@ -75,6 +76,7 @@ def sjc_gold_price(date=None):
         return None
     
 
+@optimize_execution('MISC')
 def btmc_goldprice(url='http://api.btmc.vn/api/BTMCAPI/getpricebtmc?key=3kd8ub1llcg9t45hnoh8hmn7t5kc2v'):
     """Parse dữ liệu giá vàng từ API JSON Bảo Tín Minh Châu.
 

@@ -4,7 +4,7 @@ Module quản lý các thông tin về giao dịch chứng khoán từ nguồn d
 
 import pandas as pd
 from typing import List, Dict, Optional, Union
-from vnstock.core.utils import api_client
+from vnstock.core.utils import client
 from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
@@ -57,7 +57,7 @@ class Trading:
         
         # Use centralized API client instead of direct requests
         try:
-            response_data = api_client.send_request(
+            response_data = client.send_request(
                 url=url,
                 headers=self.headers,
                 method="GET",

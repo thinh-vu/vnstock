@@ -7,10 +7,11 @@ import pandas as pd
 from typing import Optional, List, Dict, Tuple, Union
 from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP, _ICB4_COMTYPE_CODE_MAP, SUPPORTED_LANGUAGES
 from vnstock.explorer.vci import Company
-from vnstock.core.utils import api_client
-from vnstock.core.utils.parser import get_asset_type, camel_to_snake, api_response_check
+from vnstock.core.utils import client
+from vnstock.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
+from vnstock.core.utils.transform import replace_in_column_names, flatten_hierarchical_index
 from vnai import optimize_execution
 
 logger = get_logger(__name__)
@@ -111,7 +112,7 @@ class Finance:
             logger.debug(f"Requesting financial ratio data from {_GRAPHQL_URL}. payload: {payload}")
         
         # Use api_client.send_request instead of direct requests
-        response_data = api_client.send_request(
+        response_data = client.send_request(
             url=_GRAPHQL_URL,
             headers=self.headers,
             method="POST",
@@ -168,7 +169,7 @@ class Finance:
             logger.debug(f"Requesting financial report data from {_GRAPHQL_URL}. payload: {payload}")
         
         # Use api_client.send_request instead of direct requests
-        response_data = api_client.send_request(
+        response_data = client.send_request(
             url=_GRAPHQL_URL,
             headers=self.headers,
             method="POST",
@@ -304,8 +305,8 @@ class Finance:
         return primary_dfs, merged_other_reports
 
     def _process_report(self, report_key: str, period: Optional[str] = None, 
-                        lang: Optional[str] = 'en', dropna: Optional[bool] = False, 
-                        show_log: Optional[bool] = False) -> pd.DataFrame:
+                    lang: Optional[str] = 'en', dropna: Optional[bool] = False, 
+                    show_log: Optional[bool] = False) -> pd.DataFrame:
         """
         Xử lý dữ liệu báo cáo tài chính cho một công ty từ nguồn VCI từ một dữ liệu được tải xuống duy nhất trong phương thức _get_report.
 
@@ -323,7 +324,7 @@ class Finance:
         valid_report_keys = ['Chỉ tiêu kết quả kinh doanh', 'Chỉ tiêu cân đối kế toán', 'Chỉ tiêu lưu chuyển tiền tệ']
         if report_key not in valid_report_keys:
             raise ValueError(f"Báo cáo không hợp lệ. Chỉ chấp nhận {', '.join(valid_report_keys)}.")
-
+        
         effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
         
         try:
@@ -348,6 +349,22 @@ class Finance:
                     target_report_df = target_report_df.drop(columns='lengthReport', errors='ignore')
                 elif lang == 'vi':
                     target_report_df = target_report_df.drop(columns='Kỳ', errors='ignore')
+            
+            # Replace "(Tỷ đồng)" with "(đồng)" in column names
+            target_report_df = replace_in_column_names(target_report_df, "(Tỷ đồng)", "(đồng)")
+            
+            # Handle duplicated column names by adding '_' prefix to later occurrences
+            duplicated_cols = target_report_df.columns[target_report_df.columns.duplicated()].tolist()
+            if duplicated_cols:
+                for col in duplicated_cols:
+                    # Find all occurrences of the duplicated column
+                    col_indices = [i for i, x in enumerate(target_report_df.columns) if x == col]
+                    # Keep the first occurrence unchanged, prefix others with '_'
+                    for idx in col_indices[1:]:
+                        # Create a new column name with '_' prefix
+                        new_col_name = f"_{target_report_df.columns[idx]}"
+                        # Rename the column in-place
+                        target_report_df.rename(columns={target_report_df.columns[idx]: new_col_name}, inplace=True)
                     
             return target_report_df
             
@@ -355,9 +372,10 @@ class Finance:
             logger.error(f"Error processing report '{report_key}': {e}")
             raise
 
+
     @optimize_execution("VCI")
     def balance_sheet(self, period: Optional[str] = None, lang: Optional[str] = 'en', 
-                     dropna: Optional[bool] = True, show_log: Optional[bool] = False) -> pd.DataFrame:
+                    dropna: Optional[bool] = True, show_log: Optional[bool] = False) -> pd.DataFrame:
         """
         Trích xuất dữ liệu bảng cân đối kế toán cho một công ty từ nguồn VCI.
 
@@ -370,27 +388,16 @@ class Finance:
         Returns:
             pd.DataFrame: DataFrame chứa dữ liệu bảng cân đối kế toán.
         """
+        # validate supported lang values
+        if lang not in SUPPORTED_LANGUAGES:
+            raise ValueError(f"Ngôn ngữ không hợp lệ: '{lang}'. Các ngôn ngữ được hỗ trợ: {', '.join(SUPPORTED_LANGUAGES)}.")
+
         try:
-            df = self._process_report('Chỉ tiêu cân đối kế toán', period=period, lang=lang, dropna=dropna, show_log=show_log)
-            
-            # Specifically handle duplicated columns in balance sheet with '_' prefix
-            duplicated_cols = df.columns[df.columns.duplicated()].tolist()
-            if duplicated_cols:
-                for col in duplicated_cols:
-                    # Find all occurrences of the duplicated column
-                    col_indices = [i for i, x in enumerate(df.columns) if x == col]
-                    # Keep the first occurrence unchanged, prefix others with '_'
-                    for idx in col_indices[1:]:
-                        # Create a new column name with '_' prefix
-                        new_col_name = f"_{df.columns[idx]}"
-                        # Rename the column in-place
-                        df.rename(columns={df.columns[idx]: new_col_name}, inplace=True)
-            
-            return df
-            
+            return self._process_report('Chỉ tiêu cân đối kế toán', period=period, lang=lang, dropna=dropna, show_log=show_log)
         except Exception as e:
             logger.error(f"Error retrieving balance sheet: {e}")
             raise
+
 
     @optimize_execution("VCI")
     def income_statement(self, period: Optional[str] = None, lang: Optional[str] = 'en', 
@@ -426,9 +433,12 @@ class Finance:
         """
         return self._process_report('Chỉ tiêu lưu chuyển tiền tệ', period=period, lang=lang, dropna=dropna, show_log=show_log)
 
+
     @optimize_execution("VCI")
     def ratio(self, period: Optional[str] = None, lang: Optional[str] = 'en', 
-             dropna: Optional[bool] = True, show_log: Optional[bool] = False) -> pd.DataFrame:
+            dropna: Optional[bool] = True, show_log: Optional[bool] = False,
+            flatten_columns: Optional[bool] = False, separator: Optional[str] = "_",
+            drop_levels: Optional[Union[int, List[int]]] = None) -> pd.DataFrame:
         """
         Trích xuất dữ liệu tỷ lệ tài chính cho một công ty từ nguồn VCI.
 
@@ -437,10 +447,14 @@ class Finance:
             - lang (str): Ngôn ngữ của báo cáo. Mặc định là 'en'.
             - dropna (bool): Có loại bỏ các cột với tất cả giá trị 0 hay không. Mặc định là True.
             - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
+            - flatten_columns (bool): Làm phẳng cấu trúc cột phân cấp để dễ dàng xuất sang Excel. Mặc định là False.
+            - separator (str): Ký tự phân cách được sử dụng khi làm phẳng cột phân cấp. Mặc định là "_".
+            - drop_levels (int or list): Các cấp phân cấp cần loại bỏ khi làm phẳng. Để loại bỏ cấp cao nhất, sử dụng drop_levels=0.
             
         Returns:
             pd.DataFrame: DataFrame chứa dữ liệu tỷ lệ tài chính.
         """
+        
         effective_period = _FINANCIAL_REPORT_PERIOD_MAP.get(period, period) if period else self.period
         
         try:
@@ -451,6 +465,17 @@ class Finance:
                 financial_report = financial_report.fillna(0)
                 # Drop columns with all 0 values
                 financial_report = financial_report.loc[:, (financial_report != 0).any(axis=0)]
+
+            # Use the enhanced utility function to flatten columns if requested
+            if flatten_columns:
+                text_replacements = {"(Tỷ đồng)": "(đồng)"}
+                financial_report = flatten_hierarchical_index(
+                    financial_report, 
+                    separator=separator,
+                    text_replacements=text_replacements,
+                    handle_duplicates=True,
+                    drop_levels=drop_levels
+                )
 
             return financial_report
             

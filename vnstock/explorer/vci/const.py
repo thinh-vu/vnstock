@@ -79,6 +79,35 @@ SUPPORTED_LANGUAGES = ['vi', 'en']
 
 _INDEX_MAPPING = {'VNINDEX': 'VNINDEX', 'HNXINDEX': 'HNXIndex', 'UPCOMINDEX': 'HNXUpcomIndex'}
 
+_PRICE_INFO_MAP = {
+    'ev': 'ev', # Enterprise Value
+    'ticker': 'symbol',
+    # Price-related columns
+    'open_price': 'open',
+    'ceiling_price': 'ceiling',
+    'floor_price': 'floor',
+    'reference_price': 'ref_price',
+    'highest_price': 'high',
+    'lowest_price': 'low',
+    'price_change': 'price_change',
+    'percent_price_change': 'price_change_pct',
+    
+    # Year-based metrics
+    'highest_price1_year': 'high_price_1y',
+    'lowest_price1_year': 'low_price_1y',
+    'percent_lowest_price_change1_year': 'pct_low_change_1y',
+    'percent_highest_price_change1_year': 'pct_high_change_1y',
+    
+    # Foreign ownership related
+    'foreign_total_volume': 'foreign_volume',
+    'foreign_total_room': 'foreign_room',
+    'foreign_holding_room': 'foreign_holding_room',
+    
+    # Other metrics
+    'average_match_volume2_week': 'avg_match_volume_2w',
+}
+
+
 _ICB4_COMTYPE_CODE_MAP = {'Bán lẻ phức hợp': 'CT',
  'Bảo hiểm nhân thọ': 'BH',
  'Bảo hiểm phi nhân thọ': 'BH',

@@ -8,14 +8,14 @@ from typing import Dict, Any, Optional
 
 # Setup logging
 logger = logging.getLogger(__name__)
-
-def check_market_hours(market: str = "HOSE", custom_time: Optional[datetime.datetime] = None, 
-                       enable_log: bool = False, language: str = "en") -> Dict[str, Any]:
+def trading_hours(market: str = "HOSE", custom_time: Optional[datetime.datetime] = None, 
+                 enable_log: bool = False, language: str = "en") -> Dict[str, Any]:
     """
     Check if current time is within trading hours with data availability context.
     
     Args:
-        market (str): Market to check ('HOSE', 'HNX', 'UPCOM', 'Futures')
+        market (str): Market to check ('HOSE', 'HNX', 'UPCOM', 'Futures', or None)
+                     If None, returns simplified data based on common market hours
         custom_time (datetime.datetime, optional): Custom time for testing
         enable_log (bool): Whether to enable funny log messages
         language (str): Language for messages ('en' for English, 'vi' for Vietnamese)
@@ -26,8 +26,13 @@ def check_market_hours(market: str = "HOSE", custom_time: Optional[datetime.date
             - trading_session (str): Current trading session type
             - data_status (str): Data availability status
             - time (str): Current time in HH:MM:SS format
-            - market (str): Market being checked
+            - market (str): Market being checked or "general" if market is None
     """
+    # Validate market parameter
+    valid_markets = ["HOSE", "HNX", "UPCOM", "Futures", None]
+    if market is not None and market not in ["HOSE", "HNX", "UPCOM", "Futures"]:
+        raise ValueError(f"Unknown market: {market}. Valid markets: HOSE, HNX, UPCOM, Futures, None")
+    
     # Validate language parameter
     if language not in ["en", "vi"]:
         language = "en"  # Default to English if invalid language
@@ -124,15 +129,16 @@ def check_market_hours(market: str = "HOSE", custom_time: Optional[datetime.date
             "trading_session": "weekend",
             "data_status": "historical_only",
             "time": now.strftime("%H:%M:%S"),
-            "market": market
+            "market": "general" if market is None else market
         }
     
-    # Get market schedule
-    if market not in market_schedules:
-        valid_markets = ", ".join(market_schedules.keys())
-        raise ValueError(f"Unknown market: {market}. Valid markets: {valid_markets}")
-    
-    schedule = market_schedules[market]
+    # Handle market=None case - use HOSE as reference for general market hours
+    if market is None:
+        schedule = market_schedules["HOSE"]
+        market_display = "general"
+    else:
+        schedule = market_schedules[market]
+        market_display = market
     
     # Parse times from schedule
     trading_start = datetime.datetime.strptime(schedule["trading_start"], "%H:%M").time()
@@ -236,8 +242,9 @@ def check_market_hours(market: str = "HOSE", custom_time: Optional[datetime.date
         "trading_session": trading_session,
         "data_status": data_status,
         "time": now.strftime("%H:%M:%S"),
-        "market": market
+        "market": market_display
     }
+
 
 
 # # Example usage

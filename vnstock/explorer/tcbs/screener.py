@@ -15,7 +15,7 @@ from vnai import optimize_execution
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.parser import camel_to_snake
-from vnstock.core.utils import api_client
+from vnstock.core.utils import client
 
 logger = get_logger(__name__)
 
@@ -103,7 +103,7 @@ class Screener:
         
         try:
             # Send request to get response using the API client
-            response = api_client.send_request(
+            response = client.send_request(
                 url=url,
                 headers=self.headers,
                 method="POST",

@@ -157,53 +157,6 @@ def camel_to_snake(name):
     output = output.replace('.', '_')
     return output
 
-def json_cleaning(json_data: Dict, map_dict: Dict[str, str]) -> Dict:
-    """
-    Chuẩn hóa dữ liệu JSON trả về từ API theo định dạng tiêu chuẩn.
-
-    Tham số:
-        - json_data: Dữ liệu JSON trả về từ API.
-        - map_dict: Bản đồ ánh xạ tên cột cũ sang tên cột mới. Mặc định là _OHLC_MAP.
-    Trả về:
-        - Dict: Dữ liệu JSON đã được chuẩn hóa.
-    """
-    # Filter and rename keys based on the map_dict
-    cleaned_dict = {
-                    map_dict[key]: value for key, value in json_data.items() if key in map_dict
-                    }
-    return cleaned_dict
-
-def api_response_check(response: requests.Response) -> dict:
-    """
-    Handle common errors when fetching data from an API.
-
-    Parameters:
-    - response (requests.Response): The HTTP response object from the data fetch request.
-
-    Returns:
-    - dict: The JSON data from the response if successful.
-
-    Raises:
-    - ValueError: If the response contains an error or invalid JSON.
-    """
-    # Check for non-200 status codes
-    if response.status_code != 200:
-        logger.error(f"Request failed with status code {response.status_code}. Details: {response.text}")
-        raise ValueError(f"Error fetching data: {response.status_code} - {response.text}")
-    
-    # Attempt to parse the response as JSON
-    try:
-        data = response.json()
-    except ValueError as e:
-        logger.error("Invalid JSON response received.")
-        raise ValueError("Failed to parse JSON response.") from e
-    
-    # Check if the data is empty
-    if not data:
-        raise ValueError("No data found in the response. Please check the request or try again later.")
-    
-    return data
-
 def flatten_data(json_data, parent_key='', sep='_'):
     """
     Làm phẳng dữ liệu JSON thành dạng dict tiêu chuẩn.
@@ -228,27 +181,6 @@ def last_n_days(n):
     """
     date_value = (datetime.today() - timedelta(days=n)).strftime('%Y-%m-%d')
     return date_value
-
-def time_in_date_string(time_string, print_errors=True):
-    """
-    Check if a time component is present in the input string.
-    """
-    try:
-        date_part, time_part = time_string.split(' ')
-        if ':' in time_part:
-            hours, minutes, *seconds = map(int, time_part.split(':'))
-            if 0 <= hours <= 23 and 0 <= minutes <= 59 and all(0 <= s <= 59 for s in seconds):
-                return True
-            else:
-                if print_errors:
-                    print("Invalid time components.")
-                return False
-        else:
-            return False
-    except ValueError:
-        if print_errors:
-            print("Unable to split into date and time components. Assuming it's a date only.")
-        return False
     
 def decd(byte_data):
     from cryptography.fernet import Fernet

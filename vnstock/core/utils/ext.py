@@ -25,7 +25,6 @@ def load_extensions(target_instance, module_name, function_names):
             func = getattr(module, func_name)
             setattr(target_instance, func_name, MethodType(func, target_instance))
 
-
 def check_plugins_installed(plugins):
     """
     Check whether a list of vnstock plugins package are installed, return installed package names as a list.

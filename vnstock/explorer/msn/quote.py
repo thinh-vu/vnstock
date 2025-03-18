@@ -5,13 +5,14 @@ import pandas as pd
 import requests
 from datetime import datetime
 from typing import Optional, Dict
+from vnai import optimize_execution
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
-from vnstock.explorer.msn.helper import msn_apikey
-from vnstock.explorer.msn.helper import get_asset_type
 from vnstock.explorer.msn.listing import Listing
+from vnstock.explorer.msn.helper import msn_apikey
+from vnstock.explorer.msn.models import TickerModel 
+from vnstock.explorer.msn.helper import get_asset_type
 from .const import _BASE_URL, _RESAMPLE_MAP, _OHLC_MAP, _OHLC_DTYPE
-from .models import TickerModel
 
 logger = get_logger(__name__)
 
@@ -36,7 +37,7 @@ class Quote:
         return ticker
     
 
-    # def history_data(self, start: str, end: Optional[str], interval: Optional[str] = "1D") -> Dict:
+    @optimize_execution('MSN')
     def history(self, start: str, end: Optional[str], interval: Optional[str] = "1D", to_df: bool =True, show_log: bool =False, count_back: Optional[int]=365, asset_type: Optional[str] = None) -> Dict:
         """
         Tham số:

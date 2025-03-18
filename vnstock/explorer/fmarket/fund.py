@@ -1,8 +1,8 @@
-# Refactor the original code from https://github.com/andrey-jef contributed to the Vnstock Legacy project. Reference: https://github.com/thinh-vu/vnstock/blob/legacy/vnstock/funds.py
+# Refactor the original code from https://github.com/andrey-jef contributed to the Vnstock Legacy project.
+# Reference: https://github.com/thinh-vu/vnstock/blob/legacy/vnstock/funds.py
 # Shoutout to andrey_jef for the contribution.
 
 import json
-import requests
 import pandas as pd
 from pandas import json_normalize
 from typing import Union, List
@@ -10,6 +10,10 @@ from datetime import datetime
 from vnstock.explorer.fmarket.const import _BASE_URL, _FUND_TYPE_MAPPING, _FUND_LIST_COLUMNS, _FUND_LIST_MAPPING
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
+from vnstock.core.utils import client
+from vnai import optimize_execution
+
+logger = get_logger(__name__)
 
 def convert_unix_to_datetime(df_to_convert: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
     """Converts all the specified columns of a dataframe to date format and fill NaN for negative values."""
@@ -31,6 +35,7 @@ class Fund:
         self.fund_list = self.listing()['short_name'].to_list()
         self.details = self.FundDetails(self)
 
+    @optimize_execution("fmarket")
     def listing(self, fund_type:str="") -> pd.DataFrame:
         """
         Truy xuất danh sách tất cả các quỹ mở hiện có trên Fmarket thông qua API. Xem trực tiếp tại https://fmarket.vn
@@ -47,7 +52,7 @@ class Fund:
         fundAssetTypes = _FUND_TYPE_MAPPING.get(fund_type, [])
 
         if fund_type not in {"", "BALANCED", "BOND", "STOCK"}:
-            print(f"Warning: Unsupported fund type: '{fund_type}'. Please choose from: '' to get all funds or specify one of 'BALANCED', 'BOND', or 'STOCK'.")
+            logger.warning(f"Unsupported fund type: '{fund_type}'. Please choose from: '' to get all funds or specify one of 'BALANCED', 'BOND', or 'STOCK'.")
 
         # API call
         payload = {
@@ -65,11 +70,18 @@ class Fund:
             "thirdAppIds": [],
         }
         url = f"{_BASE_URL}/filter"
-        response = requests.post(url, json=payload, headers=self.headers)
-        status = response.status_code
-        if status == 200:
-            data = response.json()
-            print("Total number of funds currently listed on Fmarket: ", data["data"]["total"])
+        
+        try:
+            response_data = client.send_request(
+                url=url,
+                method="POST",
+                headers=self.headers,
+                payload=payload,
+                show_log=False
+            )
+            
+            data = response_data
+            logger.info(f"Total number of funds currently listed on Fmarket: {data['data']['total']}")
             df = json_normalize(data, record_path=["data", "rows"])
 
             # select columns to display
@@ -88,21 +100,27 @@ class Fund:
             df = df.reset_index(drop=True)
 
             return df
-        else:
-            raise requests.exceptions.HTTPError(f"Error in API response: {response.status_code} - {response.text}")
+        except Exception as e:
+            logger.error(f"Error in API response: {str(e)}")
+            raise
+
     class FundDetails:
         def __init__(self, parent):
             self.parent = parent
 
+        @optimize_execution("fmarket")
         def top_holding(self, symbol="SSISCA") -> pd.DataFrame:
             return self._get_fund_details(symbol, 'top_holding')
 
+        @optimize_execution("fmarket")
         def industry_holding(self, symbol="SSISCA") -> pd.DataFrame:
             return self._get_fund_details(symbol, 'industry_holding')
 
+        @optimize_execution("fmarket")
         def nav_report(self, symbol="SSISCA") -> pd.DataFrame:
             return self._get_fund_details(symbol, 'nav_report')
 
+        @optimize_execution("fmarket")
         def asset_holding(self, symbol="SSISCA") -> pd.DataFrame:
             return self._get_fund_details(symbol, 'asset_holding')
 
@@ -122,22 +140,20 @@ class Fund:
                 df : pd.DataFrame
                     DataFrame of the current top holdings of the selected fund.
             """
-
             # validate "symbol" param input
             symbol = symbol.upper()
             if symbol not in self.parent.fund_list:
-                print(f"Error: {symbol} is not a valid input.\nCall the listing() method for the list of valid Fund short_name.")
+                logger.error(f"Error: {symbol} is not a valid input. Call the listing() method for the list of valid Fund short_name.")
                 raise ValueError(f"Invalid symbol: {symbol}")
             try:
                 # Lookup a valid "fundID" related to "symbol"
-                # invalid symbol exception will be handled in fund_filter()
                 fundID = int(self.parent.filter(symbol)["id"][0])
-                print(f"Retrieving data for {symbol}")
+                logger.info(f"Retrieving data for {symbol}")
             except Exception as e:
-                print(f"An unexpected error occurred: {e}")
-                raise e
+                logger.error(f"An unexpected error occurred: {str(e)}")
+                raise
 
-            # validate "type" param input
+            # validate "section" param input
             section_mapping = {
                 "top_holding": self.parent.top_holding,
                 "industry_holding": self.parent.industry_holding,
@@ -150,14 +166,15 @@ class Fund:
                 try:
                     df = section_mapping[section](fundId=fundID)
                 except KeyError as e:
-                    print(f"Error: Missing expected columns in the response data - {str(e)}")
+                    logger.error(f"Error: Missing expected columns in the response data - {str(e)}")
                     raise ValueError(f"Missing expected columns in the response data - {str(e)}")
                 df["short_name"] = symbol
                 return df
             else:
-                print(f"Error: {section} is not a valid input.\n4 current options are:\ntop_holding\nindustry_holding\nnav_report\nasset_holding")
-                raise ValueError
+                logger.error(f"Error: {section} is not a valid input. 4 current options are: top_holding, industry_holding, nav_report, asset_holding")
+                raise ValueError(f"Invalid section: {section}")
 
+    @optimize_execution("fmarket")
     def filter(self, symbol:str="") -> pd.DataFrame:
         """
         Truy xuất danh sách quỹ theo tên viết tắt (short_name) và mã id của quỹ. Mặc định là rỗng để liệt kê tất cả các quỹ.
@@ -170,7 +187,6 @@ class Fund:
         -------
             pd.DataFrame: DataFrame chứa thông tin của quỹ cần tìm kiếm.
         """
-
         symbol = symbol.upper()
 
         payload = {
@@ -179,22 +195,31 @@ class Fund:
             "pageSize": 100,
         }
         url = f"{_BASE_URL}/filter"
-        payload = json.dumps(payload)
-        response = requests.post(url, data=payload, headers=self.headers)
-
-        if response.status_code == 200:
-            data = response.json()
+        
+        try:
+            response_data = client.send_request(
+                url=url,
+                method="POST",
+                headers=self.headers,
+                payload=payload,
+                show_log=False
+            )
+            
+            data = response_data
             df = json_normalize(data, record_path=["data", "rows"])
+            
             if not df.empty:
                 # retrieve only column_subset
                 column_subset = ["id", "shortName"]
                 df = df[column_subset]
                 return df
             else:
-                raise ValueError(f"No fund found with this symbol {symbol}.\nSee funds_listing() for the list of valid Fund short names.")
-        else:
-            raise requests.exceptions.HTTPError(f"Error in API response: {response.status_code} - {response.text}")
+                raise ValueError(f"No fund found with this symbol {symbol}. See funds_listing() for the list of valid Fund short names.")
+        except Exception as e:
+            logger.error(f"Error in API response: {str(e)}")
+            raise
 
+    @optimize_execution("fmarket")
     def top_holding(self, fundId:int=23) -> pd.DataFrame:
         """
         Retrieve list of top 10 holdings in the specified fund. Live data is retrieved from the Fmarket API.
@@ -208,14 +233,18 @@ class Fund:
             df : pd.DataFrame
                 DataFrame of the current top 10 holdings of the selected fund.
         """
-
-        # API call
-        # Logic: there are funds which allocate to either equities or fixed income securities, or both
+        # API call - Logic: there are funds which allocate to either equities or fixed income securities, or both
         url = f"{_BASE_URL}/{fundId}"
-        response = requests.get(url, headers=self.headers, cookies=None)
-        status = response.status_code
-        if status == 200:
-            data = response.json()
+        
+        try:
+            response_data = client.send_request(
+                url=url,
+                method="GET",
+                headers=self.headers,
+                show_log=False
+            )
+            
+            data = response_data
             df = pd.DataFrame()
 
             # Flatten top holding equities
@@ -257,17 +286,18 @@ class Fund:
                     "updateAt": "update_at",
                 }
                 # Only rename columns that exist in the DataFrame
-                existing_column_mapping = {k: v if k in df.columns else k for k, v in column_mapping.items()}
+                existing_column_mapping = {k: v for k, v in column_mapping.items() if k in df.columns}
                 df.rename(columns=existing_column_mapping, inplace=True)
 
                 return df
             else:
-                print(f"Warning: No data available for fundId {fundId}.")
+                logger.warning(f"No data available for fundId {fundId}.")
                 return pd.DataFrame()
-        else:
-            # invalid fundId error is 400 from api
-            raise requests.exceptions.HTTPError(f"Error in API response: {response.status_code} - {response.text}")
+        except Exception as e:
+            logger.error(f"Error in API response: {str(e)}")
+            raise
 
+    @optimize_execution("fmarket")
     def industry_holding(self, fundId:int=23) -> pd.DataFrame:
         """Retrieve list of industries and fund distribution for specific fundID. Live data is retrieved from the Fmarket API.
 
@@ -281,13 +311,17 @@ class Fund:
             df : pd.DataFrame
                 DataFrame of the current top industries in the selected fund.
         """
-
-        # API call
         url = f"{_BASE_URL}/{fundId}"
-        response = requests.get(url, headers=self.headers, cookies=None)
-
-        if response.status_code == 200:
-            data = response.json()
+        
+        try:
+            response_data = client.send_request(
+                url=url,
+                method="GET",
+                headers=self.headers,
+                show_log=False
+            )
+            
+            data = response_data
             df = json_normalize(data, record_path=["data", "productIndustriesHoldingList"])
 
             # rearrange columns to display
@@ -306,14 +340,15 @@ class Fund:
             }
 
             # Only rename columns that exist in the DataFrame
-            existing_column_mapping = {k: v if k in df.columns else k for k, v in column_mapping.items()}
+            existing_column_mapping = {k: v for k, v in column_mapping.items() if k in df.columns}
             df.rename(columns=existing_column_mapping, inplace=True)
 
             return df
-        else:
-            # invalid fundId error is 400 from api
-            raise requests.exceptions.HTTPError(f"Error in API response: {response.status_code} - {response.text}")
+        except Exception as e:
+            logger.error(f"Error in API response: {str(e)}")
+            raise
 
+    @optimize_execution("fmarket")
     def nav_report(self, fundId:int=23) -> pd.DataFrame:
         """Retrieve all available daily NAV data point of the specified fund. Live data is retrieved from the Fmarket API.
 
@@ -327,8 +362,6 @@ class Fund:
             df : pd.DataFrame
                 DataFrame of all avalaible daily NAV data points of the selected fund.
         """
-
-        # API call
         # Set the date range to the current date
         current_date = datetime.now().strftime("%Y%m%d")
         url = f"{_BASE_URL[:-1]}/get-nav-history"
@@ -338,10 +371,17 @@ class Fund:
             "fromDate": None,
             "toDate": current_date,
         }
-        response = requests.post(url, json=payload)
-        status = response.status_code
-        if status == 200:
-            data = response.json()
+        
+        try:
+            response_data = client.send_request(
+                url=url,
+                method="POST",
+                headers=self.headers,
+                payload=payload,
+                show_log=False
+            )
+            
+            data = response_data
             df = json_normalize(data, record_path=["data"])
 
             if not df.empty:
@@ -358,15 +398,17 @@ class Fund:
                 }
 
                 # Only rename columns that exist in the DataFrame
-                existing_column_mapping = {k: v if k in df.columns else k for k, v in column_mapping.items()}
+                existing_column_mapping = {k: v for k, v in column_mapping.items() if k in df.columns}
                 df.rename(columns=existing_column_mapping, inplace=True)
 
                 return df
             else:
                 raise ValueError(f"No data with this fund_id {fundId}")
-        else:
-            raise requests.exceptions.HTTPError(f"Error in API response: {response.status_code} - {response.text}")
+        except Exception as e:
+            logger.error(f"Error in API response: {str(e)}")
+            raise
 
+    @optimize_execution("fmarket")
     def asset_holding(self, fundId:int=23) -> pd.DataFrame:
         """Retrieve list of assets holding allocation for specific fundID. Live data is retrieved from the Fmarket API.
 
@@ -380,12 +422,17 @@ class Fund:
             df : pd.DataFrame
                 DataFrame of assets holding allocation of the selected fund.
         """
-
-        # API call
         url = f"{_BASE_URL}/{fundId}"
-        response = requests.get(url, headers=self.headers, cookies=None)
-        if response.status_code == 200:
-            data = response.json()
+        
+        try:
+            response_data = client.send_request(
+                url=url,
+                method="GET",
+                headers=self.headers,
+                show_log=False
+            )
+            
+            data = response_data
             df = json_normalize(data, record_path=["data", "productAssetHoldingList"])
 
             # rearrange columns to display
@@ -404,10 +451,10 @@ class Fund:
             }
 
             # Only rename columns that exist in the DataFrame
-            existing_column_mapping = {k: v if k in df.columns else k for k, v in column_mapping.items()}
+            existing_column_mapping = {k: v for k, v in column_mapping.items() if k in df.columns}
             df.rename(columns=existing_column_mapping, inplace=True)
 
             return df
-        else:
-            # invalid fundId error is 400 from api
-            raise requests.exceptions.HTTPError(f"Error in API response: {response.status_code} - {response.text}")
+        except Exception as e:
+            logger.error(f"Error in API response: {str(e)}")
+            raise

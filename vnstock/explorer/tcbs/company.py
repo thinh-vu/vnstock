@@ -6,7 +6,7 @@ import pandas as pd
 from pandas import json_normalize
 from bs4 import BeautifulSoup
 from typing import Dict, Optional, List, Union
-from vnstock.core.utils import api_client
+from vnstock.core.utils import client
 from vnstock.explorer.tcbs.const import _BASE_URL, _ANALYSIS_URL
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock.core.utils.logger import get_logger
@@ -89,7 +89,7 @@ class Company:
         url = f'{self.base_url}/{_ANALYSIS_URL}/v1/ticker/{self.symbol}/overview'
         
         # Use centralized request handler
-        data = api_client.send_request(
+        data = client.send_request(
             url=url,
             headers=self.headers,
             method="GET",
@@ -128,7 +128,7 @@ class Company:
         url = f"{self.base_url}/{_ANALYSIS_URL}/v1/company/{self.symbol}/overview"
         
         # Use centralized request handler
-        response_data = api_client.send_request(
+        response_data = client.send_request(
             url=url,
             headers=self.headers,
             method="GET",
@@ -174,7 +174,6 @@ class Company:
         else:
             return df.to_dict(orient='records')[0]
 
-    
     @optimize_execution("TCBS")
     def shareholders(self) -> Union[pd.DataFrame, Dict]:
         """
@@ -186,7 +185,7 @@ class Company:
         url = f"{self.base_url}/{_ANALYSIS_URL}/v1/company/{self.symbol}/large-share-holders"
         
         # Use centralized request handler
-        response_data = api_client.send_request(
+        response_data = client.send_request(
             url=url,
             headers=self.headers,
             method="GET",
@@ -219,7 +218,7 @@ class Company:
         url = f"{self.base_url}/{_ANALYSIS_URL}/v1/company/{self.symbol}/insider-dealing"
         
         # Use centralized request handler
-        response_data = api_client.send_request(
+        response_data = client.send_request(
             url=url,
             headers=self.headers,
             method="GET",
@@ -297,7 +296,7 @@ class Company:
             for current_page in range(page, page + max_pages):
                 try:
                     # Use centralized request handler for each page
-                    response_data = api_client.send_request(
+                    response_data = client.send_request(
                         url=url,
                         headers=self.headers,
                         method="GET",
@@ -312,7 +311,7 @@ class Company:
                     continue
         else:
             # Use centralized request handler for single page
-            response_data = api_client.send_request(
+            response_data = client.send_request(
                 url=url,
                 headers=self.headers,
                 method="GET",
@@ -351,7 +350,7 @@ class Company:
         url = f"{self.base_url}/{_ANALYSIS_URL}/v1/company/{self.symbol}/key-officers"
         
         # Use centralized request handler
-        response_data = api_client.send_request(
+        response_data = client.send_request(
             url=url,
             headers=self.headers,
             method="GET",
@@ -389,7 +388,7 @@ class Company:
         url = f"{self.base_url}/{_ANALYSIS_URL}/v1/ticker/{self.symbol}/events-news"
         
         # Use centralized request handler
-        response_data = api_client.send_request(
+        response_data = client.send_request(
             url=url,
             headers=self.headers,
             method="GET",
@@ -420,10 +419,21 @@ class Company:
         except Exception as e:
             logger.warning(f"Error processing event data: {e}")
 
-        return self._process_response(df, exclude_columns=['ticker'])
+        df = self._process_response(df, exclude_columns=['ticker'])
+        
+        # convert date columns from object to standard datetime string YYYY-mm-dd if they exist
+        date_columns = ['notify_date', 'exer_date', 'reg_final_date', 'exer_right_date']
+        for col in date_columns:
+            if col in df.columns:
+                try:
+                    df[col] = pd.to_datetime(df[col], format='%Y-%m-%d %H:%M:%S').dt.strftime('%Y-%m-%d')
+                except Exception as e:
+                    logger.warning(f"Không thể chuyển đổi cột {col}: {str(e)}")
+
+        return df
 
     @optimize_execution("TCBS")
-    def news(self, page_size: Optional[int] = 15, page: Optional[int] = 0) -> Union[pd.DataFrame, Dict]:
+    def news (self, page_size: Optional[int] = 15, page: Optional[int] = 0) -> Union[pd.DataFrame, Dict]:
         """
         Truy xuất thông tin tin tức liên quan đến công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
 
@@ -437,7 +447,7 @@ class Company:
         url = f"{self.base_url}/{_ANALYSIS_URL}/v1/ticker/{self.symbol}/activity-news"
         
         # Use centralized request handler
-        response_data = api_client.send_request(
+        response_data = client.send_request(
             url=url,
             headers=self.headers,
             method="GET",
@@ -473,7 +483,7 @@ class Company:
         url = f'{self.base_url}/{_ANALYSIS_URL}/v1/company/{self.symbol}/dividend-payment-histories'
         
         # Use centralized request handler
-        response_data = api_client.send_request(
+        response_data = client.send_request(
             url=url,
             headers=self.headers,
             method="GET",
@@ -484,4 +494,10 @@ class Company:
         # Process response data
         df = json_normalize(response_data['listDividendPaymentHis'])
 
-        return self._process_response(df, exclude_columns=['no', 'ticker'])
+        df = self._process_response(df, exclude_columns=['no', 'ticker'])
+
+        # convert df['exeexercise_date'] from object in dd/mm/YY to standard datetime string YYYY-mm-dd
+        df['exercise_date'] = pd.to_datetime(df['exercise_date'], format='%d/%m/%y').dt.strftime('%Y-%m-%d')
+
+        return df
+

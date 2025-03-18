@@ -4,7 +4,7 @@ Module quản lý thông tin báo cáo tài chính từ nguồn dữ liệu TCBS
 
 import pandas as pd
 from typing import Optional, Dict, Union
-from vnstock.core.utils import api_client
+from vnstock.core.utils import client
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
@@ -82,7 +82,7 @@ class Finance:
         
         try:
             # Use centralized API client instead of direct requests
-            response_data = api_client.send_request(
+            response_data = client.send_request(
                 url=url,
                 headers=self.headers,
                 method="GET",
@@ -228,7 +228,7 @@ class Finance:
         
         try:
             # Use centralized API client instead of direct requests
-            response_data = api_client.send_request(
+            response_data = client.send_request(
                 url=url,
                 headers=self.headers,
                 method="GET",

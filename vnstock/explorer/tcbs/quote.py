@@ -8,11 +8,11 @@ from .const import (_BASE_URL, _STOCKS_URL, _FUTURE_URL, _INTERVAL_MAP, _OHLC_MA
                     _OHLC_DTYPE, _INTRADAY_MAP, _INTRADAY_DTYPE, _INDEX_MAPPING)
 from .models import TickerModel
 from vnai import optimize_execution
-from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.logger import get_logger
+from vnstock.core.utils.market import trading_hours
+from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.user_agent import get_headers
-# Import shared utilities
-from vnstock.core.utils import validation, api_client, data_transform
+from vnstock.core.utils import client, transform, validation
 
 logger = get_logger(__name__)
 
@@ -209,10 +209,10 @@ class Quote:
         """
         Backward compatibility method that delegates to shared data_transform utility
         """
-        from vnstock.core.utils import data_transform
+        from vnstock.core.utils import transform
         
         # Use the shared transformation utility
-        return data_transform.ohlc_to_df(
+        return transform.ohlc_to_df(
             data=history_data,
             column_map=_OHLC_MAP,
             dtype_map=_OHLC_DTYPE,
@@ -228,6 +228,10 @@ class Quote:
         """
         Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu TCBS
         """
+        market_status = trading_hours(None)
+        if not market_status['is_trading_hour']:
+            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh chỉ có thể truy xuất trong giờ giao dịch. Vui lòng quay lại sau.")
+
         # Validate input
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
@@ -250,7 +254,7 @@ class Quote:
             }
             
             # Make request
-            response = api_client.send_request(
+            response = client.send_request(
                 url=url,
                 headers=self.headers,
                 method="GET",
@@ -262,7 +266,7 @@ class Quote:
             combined_data.extend(data)
         
         # Transform data using shared utility
-        df = data_transform.intraday_to_df(
+        df = transform.intraday_to_df(
             data=combined_data,
             column_map=_INTRADAY_MAP,
             dtype_map=_INTRADAY_DTYPE,

@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 import json
 # from vnstock.core.utils.parser import camel_to_snake
+from vnai import optimize_execution
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.explorer.msn.helper import msn_apikey
@@ -17,11 +18,13 @@ class Listing:
     """
     Cấu hình truy cập dữ liệu lịch sử giá chứng khoán từ VCI.
     """
-    def __init__(self, api_version='20240530', random_agent=False):
+    def __init__(self, api_version='20250317', random_agent=False):
         self.data_source = 'MSN'
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.apikey = msn_apikey(self.headers, version=api_version)
     
+    
+    @optimize_execution('MSN')
     def search_symbol_id (self, query:str, locale:Optional[str]=None, limit:Optional[int]=10, show_log:Optional[bool]=False, to_df: bool =True) -> Dict:
         """
         Truy xuất danh sách toàn. bộ mã và tên các cổ phiếu trên thị trường Việt Nam.

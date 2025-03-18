@@ -10,11 +10,12 @@ from .const import (
     _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
 )
 from .models import TickerModel
-from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.logger import get_logger
+from vnstock.core.utils.market import trading_hours
+from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.user_agent import get_headers
-from vnstock.core.utils.api_client import send_request
-from vnstock.core.utils.data_transform import ohlc_to_df, intraday_to_df
+from vnstock.core.utils.client import send_request
+from vnstock.core.utils.transform import ohlc_to_df, intraday_to_df
 
 logger = get_logger(__name__)
 
@@ -144,16 +145,19 @@ class Quote:
             - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
         """
+        market_status = trading_hours(None)
+        if not market_status['is_trading_hour']:
+            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh chỉ có thể truy xuất trong giờ giao dịch. Vui lòng quay lại sau.")
+
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
 
         if page_size > 30_000:
             logger.warning("Bạn đang yêu cầu truy xuất quá nhiều dữ liệu, điều này có thể gây lỗi quá tải.")
 
-        # Convert string to timestamp if provided
-        trunc_time = None
-        if last_time is not None:
-            trunc_time = int(datetime.strptime(last_time, "%Y-%m-%d %H:%M:%S").timestamp())
+        market_status = trading_hours(None)
+        if not market_status['is_trading_hour']:
+            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh chỉ có thể truy xuất trong giờ giao dịch. Vui lòng quay lại sau.")
 
         url = f'{self.base_url}{_INTRADAY_URL}/LEData/getAll'
         payload = {
@@ -195,6 +199,10 @@ class Quote:
             - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
         """
+        market_status = trading_hours(None)
+        if not market_status['is_trading_hour']:
+            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh chỉ có thể truy xuất trong giờ giao dịch. Vui lòng quay lại sau.")
+
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
 

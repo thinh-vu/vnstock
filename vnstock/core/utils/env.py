@@ -3,6 +3,7 @@ import sys
 import json
 import os
 import platform
+import vnai
 
 def get_platform():
     """
@@ -48,14 +49,24 @@ def get_package_path(package='vnstock'):
 
 
 def id_valid():
+    """
+    Check if license terms have been accepted.
+    """
+    from vnai.scope.profile import inspector
+    machine_id = inspector.fingerprint()
+    
     pkg_init = ID_DIR / "environment.json"
     try:
         with open(pkg_init, 'r') as f:
             env = json.load(f)
         if not env['accepted_agreement']:
-            raise SystemExit('Bạn cần chấp thuận điều khoản, điều kiện để sử dụng Vnstock!')
+            # Use vnai to accept terms
+            vnai.accept_license_terms()
     except:
-        raise SystemExit('Bạn cần chấp thuận điều khoản, điều kiện để sử dụng Vnstock!')
+        # Use vnai to accept terms
+        vnai.accept_license_terms()
+    
+    return True
 
     
 def get_username():
