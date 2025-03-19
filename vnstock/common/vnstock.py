@@ -41,10 +41,10 @@ class Vnstock:
         else:
              self.symbol = symbol
  
-         if source is None:
-             source = self.source
-         else:
-             self.symbol = symbol
+        if source is None:
+            source = self.source
+        else:
+            self.symbol = symbol
              
         return StockComponents(self.symbol, source, show_log=self.show_log)
     
