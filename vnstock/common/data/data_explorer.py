@@ -1,7 +1,7 @@
 import logging
 import importlib
 import pandas as pd
-from typing import Optional
+from typing import Optional, Any, Dict
 from vnstock.core.utils.logger import get_logger
 from vnstock.explorer.msn.const import _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
 from vnstock.core.utils.parser import get_asset_type
@@ -27,7 +27,9 @@ class StockComponents:
             self.symbol = symbol.upper()
         else:
             self.symbol = 'VN30F1M'
-            logger.info("Mã chứng khoán không được chỉ định, chương trình mặc định sử dụng VN30F1M")
+
+        self.asset_type = get_asset_type(self.symbol)
+
         if source is not None:
             self.source = source.upper()
         self.show_log = show_log
@@ -38,32 +40,31 @@ class StockComponents:
         self._initialize_components()
 
     def _initialize_components(self):
-        # Initialize each sub-component with the current symbol
-        self.quote = Quote(self.symbol, self.source)
-        self.company = Company(self.symbol, source=self.source)
-        
-        if self.source not in ["VCI", "TCBS"]:
-            self.listing = Listing(source='VCI')
-            self.trading = Trading(self.symbol, source='VCI')
+        if self.source not in self.SUPPORTED_SOURCES:
+            raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
 
-            if self.show_log:
-                logger.warning("Thông tin niêm yết sẽ được truy xuất từ VCI")
-        
-        elif self.source == "TCBS":
-            self.listing = Listing(source='VCI')
-            self.trading = Trading(self.symbol, source=self.source)
-            self.screener = Screener(source=self.source)
-            
-
-            if get_asset_type(self.symbol) == "stock":
-                self.finance = Finance(self.symbol, source=self.source)
+        if self.asset_type == "stock":
+            self.company = Company(self.symbol, source=self.source)
+            self.finance = Finance(self.symbol, source=self.source)
         else:
-            self.listing = Listing(source=self.source)
+            self.company = None
+            self.finance = None
+            logger.info("Mã chứng khoán không phải cổ phiếu, không thể truy xuất thông tin công ty và tài chính.")
+        
+        if self.source in ['VCI', 'TCBS']:
+            self.listing = Listing(source='VCI')
+            self.screener = Screener(source='TCBS')
+            self.quote = Quote(self.symbol, self.source)
             self.trading = Trading(self.symbol, source=self.source)
-            if get_asset_type(self.symbol) == "stock":
-                self.finance = Finance(self.symbol, source=self.source)
-            if self.show_log:
-                logger.warning("Thông tin niêm yết & giao dịch sẽ được truy xuất từ TCBS")
+        
+            if self.source == 'TCBS':
+                logger.info("Nguồn TCBS hiện không cung cấp thông tin niêm yết. Dữ liệu được tự động trả về từ VCI.")
+            
+            elif self.source == 'VCI':
+                logger.info("Nguồn VCI hiện không hỗ trợ tính năng bộ lọc cổ phiếu. Dữ liệu được tự động trả về từ TCBS.")
+        elif self.source == 'MSN':
+            self.quote = Quote(self.symbol, 'MSN')
+            self.listing = Listing(source='MSN')
 
     def update_symbol(self, symbol: str):
         """
@@ -347,22 +348,62 @@ class Company:
 class Finance:
     """
     Lớp quản lý các nguồn dữ liệu được tiêu chuẩn hoá cho thông tin tài chính doanh nghiệp.
+    
+    Attributes:
+        symbol (str): Mã chứng khoán
+        period (str): Kỳ báo cáo ('quarter' hoặc 'annual')
+        source (str): Nguồn dữ liệu ('TCBS' hoặc 'VCI')
+        get_all (bool): Lấy tất cả dữ liệu có sẵn
     """
     SUPPORTED_SOURCES = ["TCBS", "VCI"]
+    SUPPORTED_PERIODS = ["quarter", "annual"]
 
-    def __init__(self, symbol: str, period: Optional[str] = 'quarter', source: Optional[str] = 'TCBS', get_all: Optional[bool] = True):
+    def __init__(
+        self, 
+        symbol: str, 
+        period: str = 'quarter', 
+        source: str = 'TCBS', 
+        get_all: bool = True
+    ):
+        """
+        Khởi tạo đối tượng Finance.
+        
+        Args:
+            symbol: Mã chứng khoán
+            period: Kỳ báo cáo ('quarter' hoặc 'annual')
+            source: Nguồn dữ liệu ('TCBS' hoặc 'VCI')
+            get_all: Lấy tất cả dữ liệu có sẵn
+        """
         self.symbol = symbol.upper()
-        self.period = period
+        
+        # Validate period
+        self.period = period.lower()
+        if self.period not in self.SUPPORTED_PERIODS:
+            raise ValueError(f"Kỳ báo cáo phải là một trong {', '.join(self.SUPPORTED_PERIODS)}")
+        
         self.get_all = get_all
+        
+        # Validate source
         self.source = source.upper()
         if self.source not in self.SUPPORTED_SOURCES:
-            raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ thông tin báo cáo tài chính.")
+            raise ValueError(
+                f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} "
+                "được hỗ trợ thông tin báo cáo tài chính."
+            )
+        
         self.source_module = f"vnstock.explorer.{self.source.lower()}"
-        self.data_source = self._load_data_source()
+        try:
+            self.data_source = self._load_data_source()
+        except (ImportError, AttributeError) as e:
+            logger.error(f"Không thể tải module nguồn dữ liệu: {e}")
+            raise
 
     def _load_data_source(self):
         """
         Điều hướng lớp (class) nguồn dữ liệu được lựa chọn.
+        
+        Returns:
+            Object: Instance của lớp Finance từ module nguồn dữ liệu
         """
         module = importlib.import_module(self.source_module)
         return module.Finance(self.symbol)
@@ -370,38 +411,106 @@ class Finance:
     def _update_data_source(self, symbol: Optional[str] = None):
         """
         Cập nhật nguồn dữ liệu nếu mã chứng khoán mới được nhập.
+        
+        Args:
+            symbol: Mã chứng khoán mới (nếu có)
         """
         if symbol:
             self.symbol = symbol.upper()
-            self.data_source = self._load_data_source()
+            try:
+                self.data_source = self._load_data_source()
+            except (ImportError, AttributeError) as e:
+                logger.error(f"Không thể cập nhật nguồn dữ liệu: {e}")
+                raise
 
-    def balance_sheet(self, symbol: Optional[str] = None, **kwargs):
+    def _process_kwargs(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Xử lý tham số kwargs dựa trên nguồn dữ liệu.
+        
+        Args:
+            kwargs: Các tham số bổ sung
+            
+        Returns:
+            Dict: Các tham số đã được xử lý
+        """
+        allowed_kwargs = ['lang', 'dropna', 'period', 'dropna', 'show_log']
+        processed_kwargs = {k: v for k, v in kwargs.items() if k in allowed_kwargs}
+        
+        if self.source == 'TCBS':
+            if 'lang' in processed_kwargs:
+                logger.info('Nguồn TCBS chỉ hỗ trợ báo cáo tiếng Việt')
+                processed_kwargs.pop('lang')
+            if 'dropna' in processed_kwargs:
+                logger.info('Tham số dropna không được hỗ trợ cho nguồn dữ liệu TCBS')
+                processed_kwargs.pop('dropna')
+
+        # Add period and get_all to kwargs if not explicitly provided
+        if 'period' not in processed_kwargs:
+            processed_kwargs['period'] = self.period
+            
+        return processed_kwargs
+
+    def _get_financial_data(self, data_type: str, symbol: Optional[str] = None, **kwargs) -> Any:
+        """
+        Phương thức chung để lấy dữ liệu tài chính.
+        
+        Args:
+            data_type: Loại dữ liệu tài chính cần lấy
+            symbol: Mã chứng khoán (nếu khác với mã đã khởi tạo)
+            **kwargs: Các tham số bổ sung
+        """
+        self._update_data_source(symbol)
+        processed_kwargs = self._process_kwargs(kwargs)
+        
+        try:
+            method = getattr(self.data_source, data_type)
+            return method(**processed_kwargs)
+        except AttributeError:
+            logger.error(f"Nguồn dữ liệu {self.source} không hỗ trợ dữ liệu {data_type}")
+            raise
+        except Exception as e:
+            logger.error(f"Lỗi khi lấy dữ liệu {data_type}: {e}")
+            raise
+
+    def balance_sheet(self, symbol: Optional[str] = None, **kwargs) -> Any:
         """
         Truy xuất bảng cân đối kế toán.
+        
+        Args:
+            symbol: Mã chứng khoán (nếu khác với mã đã khởi tạo)
+            **kwargs: Các tham số bổ sung
         """
-        self._update_data_source(symbol)
-        return self.data_source.balance_sheet(**kwargs)
+        return self._get_financial_data('balance_sheet', symbol, **kwargs)
     
-    def income_statement(self, symbol: Optional[str] = None, **kwargs):
+    def income_statement(self, symbol: Optional[str] = None, **kwargs) -> Any:
         """
-        Truy xuất báo cáo doanh thu.
+        Truy xuất báo cáo kết quả kinh doanh.
+        
+        Args:
+            symbol: Mã chứng khoán (nếu khác với mã đã khởi tạo)
+            **kwargs: Các tham số bổ sung
         """
-        self._update_data_source(symbol)
-        return self.data_source.income_statement(**kwargs)
+        return self._get_financial_data('income_statement', symbol, **kwargs)
     
-    def cash_flow(self, symbol: Optional[str] = None, **kwargs):
+    def cash_flow(self, symbol: Optional[str] = None, **kwargs) -> Any:
         """
-        Truy xuất báo cáo dòng tiền.
+        Truy xuất báo cáo lưu chuyển tiền tệ.
+        
+        Args:
+            symbol: Mã chứng khoán (nếu khác với mã đã khởi tạo)
+            **kwargs: Các tham số bổ sung
         """
-        self._update_data_source(symbol)
-        return self.data_source.cash_flow(**kwargs)
+        return self._get_financial_data('cash_flow', symbol, **kwargs)
     
-    def ratio(self, symbol: Optional[str] = None, **kwargs):
+    def ratio(self, symbol: Optional[str] = None, **kwargs) -> Any:
         """
         Truy xuất các chỉ số tài chính.
+        
+        Args:
+            symbol: Mã chứng khoán (nếu khác với mã đã khởi tạo)
+            **kwargs: Các tham số bổ sung
         """
-        self._update_data_source(symbol)
-        return self.data_source.ratio(**kwargs)
+        return self._get_financial_data('ratio', symbol, **kwargs)
 
 class Screener: 
     """
@@ -426,7 +535,9 @@ class Screener:
         """
         Truy xuất danh sách cổ phiếu theo các tiêu chí được chỉ định.
         """
-        return self.data_source.stock(**kwargs)
+        allowed_kwargs = ['params', 'limit', 'lang']
+        processed_kwargs = {k: v for k, v in kwargs.items() if k in allowed_kwargs}
+        return self.data_source.stock(**processed_kwargs)
 
 class Fund:
     def __init__(self, source: str = "FMARKET", random_agent:bool=False):
