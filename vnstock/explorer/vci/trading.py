@@ -1,6 +1,6 @@
 # Các thông tin về giao dịch, sở hữu của các bên (đối tượng tham gia thị trường)
 
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 from datetime import datetime
 from .const import _BASE_URL, _TRADING_URL
 import json
@@ -10,7 +10,7 @@ from vnai import optimize_execution
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake, flatten_data
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
-
+from vnstock.core.utils.transform import flatten_hierarchical_index
 logger = get_logger(__name__)
 
 
@@ -29,7 +29,12 @@ class Trading:
             logger.setLevel('CRITICAL')
 
     @optimize_execution("VCI")
-    def price_board (self, symbols_list: List[str], to_df:Optional[bool]=True, show_log:Optional[bool]=False):
+    def price_board (self, symbols_list: List[str], 
+                     to_df:Optional[bool]=True, 
+                     show_log:Optional[bool]=False,
+                     flatten_columns:Optional[bool]=False,
+                     separator:Optional[str]='_',
+                     drop_levels:Optional[Union[int, List[int]]]=None):
         """
         Truy xuất thông tin bảng giá của các mã chứng khoán tuỳ chọn từ nguồn dữ liệu VCI.
         """
@@ -92,6 +97,15 @@ class Trading:
 
         # rename column for board inside listing to exchange
         combine_df = combine_df.rename(columns={'board': 'exchange'}, level=1)
+
+        if flatten_columns:
+            combine_df = flatten_hierarchical_index(
+                combine_df, 
+                separator=separator,
+                drop_levels=drop_levels,
+                handle_duplicates=True
+            )
+
         combine_df.attrs['source'] = 'VCI'
 
         if to_df:

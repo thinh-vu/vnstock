@@ -31,7 +31,7 @@ setup(
         "beautifulsoup4",
         "pandas",
         "seaborn",
-        "vnai>=2.0",
+        "vnai>=2.0.1",
         "openpyxl",
         "pydantic",
         "psutil",

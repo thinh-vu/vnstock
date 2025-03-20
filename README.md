@@ -25,7 +25,7 @@
 `Vnstock3` là phiên bản phần mềm Vnstock thế hệ thứ 3 được giới thiệu công khai vào 10/5/2024. 
 Đây là thế hệ Vnstock với nhiều nâng cấp giá trị, chia sẻ tầm nhìn rõ ràng hơn về Vnstock với vai trò một giải pháp phân tích thị trường chứng khoán mã nguồn mở mang nhiều dấu ấn của tương lai công nghệ.
 
-Vnstock sẽ luôn là giải pháp miễn phí để bạn tiếp cận dữ liệu chứng khoán, tài chính toàn diện, miễn phí với các nhu cầu thiết yếu và làm quen với bộ giải phép Python linh hoạt. Chúc mừng bạn là một phần của sự thay đổi trong hành trình chuyển đổi số thị trường chứng khoán tại Việt Nam.
+Vnstock sẽ luôn là giải pháp miễn phí để bạn tiếp cận dữ liệu chứng khoán, tài chính toàn diện, miễn phí với các nhu cầu thiết yếu và làm quen với bộ giải pháp Python linh hoạt. Chúc mừng bạn là một phần của sự thay đổi trong hành trình chuyển đổi số thị trường chứng khoán tại Việt Nam.
 
 Tham gia cộng đồng Vnstock để chia sẻ, thảo luận và giao lưu cùng chúng tôi!
 
@@ -35,14 +35,30 @@ Tham gia cộng đồng Vnstock để chia sẻ, thảo luận và giao lưu cù
   </a>
 </div>
 
-# II. ⏱️ Cập nhật đáng chú ý
-- 02-01-2024: Vnstock3 chính thức sử dụng tên nhận diện gói thư viện là vnstock tại trang phân phối chính thức pypi.org. Chi tiết [tại đây](https://vnstocks.com/blog/chuyen-doi-sang-vnstock3-truoc-2025)
+# II. Tính năng nổi bật
+
+> `Vnstock3` cung cấp bộ dữ liệu phong phú cho nhà đầu tư, nhà phân tích và nhà nghiên cứu tài chính, giúp tiếp cận thị trường Việt Nam & Thế Giới một cách toàn diện và nhanh chóng:
+
+1. **Dữ liệu cổ phiếu**: Giá thời gian thực, lịch sử và các chỉ số tài chính của cổ phiếu niêm yết.
+2. **Chỉ số Index**: Theo dõi hiệu suất các chỉ số chính của thị trường.
+3. **Chứng quyền**: Thông tin giá cả, ngày đáo hạn và nhà phát hành.
+4. **Kim loại quý**: Dữ liệu giá vàng.
+5. **Hợp đồng tương lai**: Giá và thông tin về hợp đồng tương lai.
+6. **Quỹ đầu tư**: Thông tin quỹ mở, ETF và các quỹ đầu tư khác.
+7. **Trái phiếu**: Thông tin & dữ liệu giao dịch Trái phiếu chính phủ, doanh nghiệp.
+8.  **Forex**: Tỷ giá ngoại hối theo thời gian thực.
+10. **Crypto**: Giá cả và giao dịch tiền điện tử.
+11. **Tin tức & sự kiện**: Cập nhật tin tức tài chính và các sự kiện quan trọng.
+
+# III. ⏱️ Cập nhật đáng chú ý
+- 20-03-2025: Ra mắt phiên bản Vnstock `3.2.0` bổ sung thêm tính năng truy xuất dữ liệu Bộ lọc cổ phiếu.
+- 02-01-2025: Vnstock3 chính thức sử dụng tên nhận diện gói thư viện là vnstock tại trang phân phối chính thức pypi.org. Chi tiết [tại đây](https://vnstocks.com/blog/chuyen-doi-sang-vnstock3-truoc-2025)
 - 02-11-2024: Ra mắt Vnstock3 phiên bản 3.0.9. Chi tiết: [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban#02-11-2024)
 - 10-05-2024: Ra mắt phiên bản Vnstock `3.0.1` với tên gói cài đặt `vnstock3`
 
-Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban)
+> Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban)
 
-# III. 📔 Tài liệu hướng dẫn
+# IV. 📔 Tài liệu hướng dẫn
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
@@ -69,21 +85,6 @@ stock.quote.history(start='2020-01-01', end='2024-05-25')
     <img src="https://img.shields.io/badge/Tài%20liệu%20hướng%20dẫn-Vnstock-blue?style=for-the-badge&logo=book" alt="Tài liệu hướng dẫn Vnstock Badge"/>
   </a>
 </div>
-
-# IV. Tính năng nổi bật
-
-> `Vnstock3` cung cấp bộ dữ liệu phong phú cho nhà đầu tư, nhà phân tích và nhà nghiên cứu tài chính, giúp tiếp cận thị trường Việt Nam & Thế Giới một cách toàn diện và nhanh chóng:
-
-1. **Dữ liệu cổ phiếu**: Giá thời gian thực, lịch sử và các chỉ số tài chính của cổ phiếu niêm yết.
-2. **Chỉ số Index**: Theo dõi hiệu suất các chỉ số chính của thị trường.
-3. **Chứng quyền**: Thông tin giá cả, ngày đáo hạn và nhà phát hành.
-4. **Kim loại quý**: Dữ liệu giá vàng.
-5. **Hợp đồng tương lai**: Giá và thông tin về hợp đồng tương lai.
-6. **Quỹ đầu tư**: Thông tin quỹ mở, ETF và các quỹ đầu tư khác.
-7. **Trái phiếu**: Thông tin & dữ liệu giao dịch Trái phiếu chính phủ, doanh nghiệp.
-8.  **Forex**: Tỷ giá ngoại hối theo thời gian thực.
-10. **Crypto**: Giá cả và giao dịch tiền điện tử.
-11. **Tin tức & sự kiện**: Cập nhật tin tức tài chính và các sự kiện quan trọng.
 
 # V. 🙋‍♂️ Thông tin liên hệ
 

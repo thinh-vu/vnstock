@@ -48,6 +48,16 @@ def get_package_path(package='vnstock'):
     return package_path
 
 
+# def id_valid():
+#     pkg_init = ID_DIR / "environment.json"
+#     try:
+#         with open(pkg_init, 'r') as f:
+#             env = json.load(f)
+#         if not env['accepted_agreement']:
+#             raise SystemExit('Bạn cần chấp thuận điều khoản, điều kiện để sử dụng Vnstock!')
+#     except:
+#         raise SystemExit('Bạn cần chấp thuận điều khoản, điều kiện để sử dụng Vnstock!')
+
 def id_valid():
     """
     Check if license terms have been accepted.

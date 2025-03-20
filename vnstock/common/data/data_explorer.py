@@ -40,19 +40,21 @@ class StockComponents:
     def _initialize_components(self):
         # Initialize each sub-component with the current symbol
         self.quote = Quote(self.symbol, self.source)
+        self.company = Company(self.symbol, source=self.source)
         
         if self.source not in ["VCI", "TCBS"]:
             self.listing = Listing(source='VCI')
             self.trading = Trading(self.symbol, source='VCI')
+
             if self.show_log:
-                logger.warning("Thông tin niêm yết & giao dịch sẽ được truy xuất từ VCI")
+                logger.warning("Thông tin niêm yết sẽ được truy xuất từ VCI")
+        
         elif self.source == "TCBS":
             self.listing = Listing(source='VCI')
             self.trading = Trading(self.symbol, source=self.source)
-            try:
-                self.company = Company(self.symbol, source=self.source)
-            except:
-                logger.warning("Nguồn TCBS hiện tại chỉ hỗ trợ các thông tin về giá và giao dịch, không hỗ trợ thông tin công ty.")
+            self.screener = Screener(source=self.source)
+            
+
             if get_asset_type(self.symbol) == "stock":
                 self.finance = Finance(self.symbol, source=self.source)
         else:
@@ -268,8 +270,8 @@ class Company:
         """
         self.symbol = symbol.upper()
         # validate the source to only VCI are available so far
-        if source.upper() not in ["TCBS"]:
-            raise ValueError("Hiện tại chỉ có nguồn dữ liệu từ TCBS được hỗ trợ.")
+        if source.upper() not in ["TCBS", "VCI"]:
+            raise ValueError("Hiện tại chỉ có nguồn dữ liệu từ TCBS & VCI được hỗ trợ.")
         self.source_module = f"vnstock.explorer.{source.lower()}"
         self.data_source = self._load_data_source()
 
@@ -401,6 +403,31 @@ class Finance:
         self._update_data_source(symbol)
         return self.data_source.ratio(**kwargs)
 
+class Screener: 
+    """
+    Class (lớp) quản lý dữ liệu bộ lọc cổ phiếu. Hiện tại chỉ hỗ trợ nguồn dữ liệu từ TCBS.
+    """
+    def __init__(self, source: str = "TCBS"):
+        self.source = source.upper()
+        self.source_module = f"vnstock.explorer.{source.lower()}"
+        self.data_source = self._load_data_source()
+
+        if self.source not in ['TCBS']:
+            raise ValueError(f"Hiện tại chỉ có nguồn dữ liệu từ {', '.join(self.SUPPORTED_SOURCES)} được hỗ trợ.")
+        
+    def _load_data_source(self, random_agent:bool=False):
+        """
+        Điều hướng lớp (class) nguồn dữ liệu được lựa chọn.
+        """
+        module = importlib.import_module(self.source_module)
+        return module.Screener(random_agent)
+    
+    def stock (self, **kwargs):
+        """
+        Truy xuất danh sách cổ phiếu theo các tiêu chí được chỉ định.
+        """
+        return self.data_source.stock(**kwargs)
+
 class Fund:
     def __init__(self, source: str = "FMARKET", random_agent:bool=False):
         """
@@ -415,7 +442,7 @@ class Fund:
         self.data_source = self._load_data_source(random_agent)
         self.details = self.data_source.details
 
-    def _load_data_source(self, random_agent:bool):
+    def _load_data_source(self, random_agent:bool=False):
         """
         Điều hướng lớp (class) nguồn dữ liệu được lựa chọn.
         """
