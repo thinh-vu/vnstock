@@ -117,7 +117,7 @@ from vnstock.explorer.vci import Listing, Quote, Company, Finance, Trading
 hoặc 
 
 ```python
-from vnstock.explorer.vci import Listing, Quote, Company, Finance, Trading, Screener
+from vnstock.explorer.tcbs import Listing, Quote, Company, Finance, Trading, Screener
 ```
 
 ## 4.3. Danh sách niêm yết
@@ -133,7 +133,8 @@ listing.all_symbols()
 ## 4.4. Giá lịch sử & thống kê giao dịch
 
 ### Giá lịch sử
-```
+
+```python
 from vnstock import Vnstock
 stock = Vnstock().stock(symbol='ACB', source='VCI')
 stock.quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
