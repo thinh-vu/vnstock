@@ -146,8 +146,8 @@ class Quote:
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
         """
         market_status = trading_hours(None)
-        if not market_status['is_trading_hour']:
-            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh chỉ có thể truy xuất trong giờ giao dịch. Vui lòng quay lại sau.")
+        if market_status['is_trading_hour'] is False and market_status['data_status'] == 'preparing':
+            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh không thể truy cập trong thời gian chuẩn bị phiên mới. Vui lòng quay lại sau.")
 
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
@@ -155,15 +155,11 @@ class Quote:
         if page_size > 30_000:
             logger.warning("Bạn đang yêu cầu truy xuất quá nhiều dữ liệu, điều này có thể gây lỗi quá tải.")
 
-        market_status = trading_hours(None)
-        if not market_status['is_trading_hour']:
-            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh chỉ có thể truy xuất trong giờ giao dịch. Vui lòng quay lại sau.")
-
         url = f'{self.base_url}{_INTRADAY_URL}/LEData/getAll'
         payload = {
             "symbol": self.symbol,
             "limit": page_size,
-            "truncTime": trunc_time
+            "truncTime": last_time
         }
 
         # Fetch data using the send_request utility
@@ -200,8 +196,8 @@ class Quote:
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
         """
         market_status = trading_hours(None)
-        if not market_status['is_trading_hour']:
-            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh chỉ có thể truy xuất trong giờ giao dịch. Vui lòng quay lại sau.")
+        if market_status['is_trading_hour'] is False and market_status['data_status'] == 'preparing':
+            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh không thể truy cập trong thời gian chuẩn bị phiên mới. Vui lòng quay lại sau.")
 
         if self.symbol is None:
             raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")

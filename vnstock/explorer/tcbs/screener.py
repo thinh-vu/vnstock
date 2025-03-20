@@ -23,7 +23,7 @@ logger = get_logger(__name__)
 class Screener:
     """Class for screening stocks based on various parameters."""
 
-    def __init__(self, random_agent: bool = False, show_log: bool = True):
+    def __init__(self, random_agent: bool = False, show_log: bool = False):
         """
         Initialize the Screener with configuration parameters.
 
