@@ -74,7 +74,7 @@ Xem minh hoạ các tính năng thông qua Colab Notebook sau:
   </a>
 </div>
 
-## Cài đặt 
+## 4.1. Cài đặt 
 
 Bạn có thể cài đặt thư viện với câu lệnh sau:
 
@@ -82,13 +82,13 @@ Bạn có thể cài đặt thư viện với câu lệnh sau:
 pip install -U vnstock
 ```
 
-## Nạp thư viện
+## 4.2. Nạp thư viện
 
 Bạn cần nạp thư viện vào môi trường Python thông qua giao diện Jupyter Notebook hoặc Terminal để có thể gọi và sử dụng các hàm được cung cấp.
 
 Có 4 cách nạp thư viện vào môi trường làm việc như sau:
 
-### 1. Nạp thông qua giao diện làm việc chính
+### 4.2.1. Nạp thông qua giao diện làm việc chính
 
 Giao diện làm việc chính cho phép chuyển đổi nguồn và chỉ cần khai báo tên mã khi khởi động. Cấu trúc này phù hợp khi phân tích xuyên suốt 1 mã chứng khoán và nguồn dữ liệu đồng thời giúp tăng độ ổn định của mã nguồn trong tương lai khi các nguồn dữ mới được bổ sung hoặc nguồn cũ hết hiệu lực, bạn chỉ cần đổi tên nguồn để tiếp tục sử dụng.
 
@@ -98,7 +98,7 @@ stock = Vnstock().stock(symbol='VCI', source='VCI')
 stock.quote.history(start='2020-01-01', end='2024-05-25')
 ```
 
-### 2. Nạp thông qua các class tổng hợp
+### 4.2.2. Nạp thông qua các class tổng hợp
 
 Bạn chọn nạp một trong các lớp chức năng chính. Các lớp chức năng này cho phép chuyển đổi dễ dàng nguồn dữ liệu được hỗ trợ trong khi giữ nguyên cấu trúc hàm. Cấu trúc này giúp tăng độ ổn định của mã nguồn trong tương lai khi các nguồn dữ mới được bổ sung hoặc nguồn cũ hết hiệu lực, bạn chỉ cần đổi tên nguồn để tiếp tục sử dụng.
 
@@ -106,7 +106,7 @@ Bạn chọn nạp một trong các lớp chức năng chính. Các lớp chức
 from vnstock import Listing, Quote, Company, Finance, Trading, Screener 
 ```
 
-### Nạp các lớp tính năng riêng lẻ theo nguồn dữ liệu cố định
+### 4.2.3. Nạp các lớp tính năng riêng lẻ theo nguồn dữ liệu cố định
 
 > Bạn cần tham khảo [mã nguồn](https://github.com/thinh-vu/vnstock/tree/main/vnstock/explorer) để sử dụng đúng các chức năng có sẵn trong thư viện.
 
@@ -120,7 +120,7 @@ hoặc
 from vnstock.explorer.vci import Listing, Quote, Company, Finance, Trading, Screener
 ```
 
-## Danh sách niêm yết
+## 4.3. Danh sách niêm yết
 
 > Danh sách các mã chứng khoán sử dụng trong việc thiết lập vòng lặp truy xuất dữ liệu từ các chức năng khác như Giá lịch sử, Thông tin công ty, Báo cáo tài chính, vv
 
@@ -130,7 +130,7 @@ listing = Listing()
 listing.all_symbols()
 ```
 
-## Giá lịch sử & thống kê giao dịch
+## 4.4. Giá lịch sử & thống kê giao dịch
 
 ### Giá lịch sử
 ```
@@ -147,7 +147,7 @@ quote = Quote(symbol='ACB', source='VCI')
 quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
 ```
 
-### Intraday
+### 4.5. Intraday
 
 > Dữ liệu giao dịch khớp lệnh theo từng tick
 
@@ -157,14 +157,14 @@ stock.quote.intraday(symbol='ACB', page_size=10_000, show_log=False)
 
 Chi tiết vui lòng tham khảo tài liệu và Demo Notebook.
 
-## Bảng giá giao dịch
+## 5.6. Bảng giá giao dịch
 
 ```python
 from vnstock import Trading
 Trading(source='VCI').price_board(['VCB','ACB','TCB','BID'])
 ```
 
-## Truy xuất thông tin công ty
+## 4.7. Truy xuất thông tin công ty
 
 ```python
 from vnstock import Vnstock
@@ -180,7 +180,7 @@ company = Company(symbol='ACB', source='VCI')
 company.overview()
 ```
 
-## Truy xuất báo cáo tài chính
+## 4.8. Truy xuất báo cáo tài chính
 
 ```python
 from vnstock import Vnstock
@@ -197,14 +197,43 @@ stock.finance.cash_flow(period='year', dropna=True)
 stock.finance.ratio(period='year', lang='vi', dropna=True)
 ```
 
-## Bộ lọc cổ phiếu
+## 4.9. Bộ lọc cổ phiếu
 
 ```python
 from vnstock import Screener
 stock.screener.stock(params={"exchangeName": "HOSE,HNX,UPCOM"}, limit=1700)
 ```
 
-## Xuất dữ liệu
+## 4.10. Dữ liệu quỹ mở
+
+```python
+from vnstock.explorer.fmarket.fund import Fund
+fund = Fund()
+fund.listing()
+```
+
+## 4.11. Dữ liệu thị trường quốc tế: Cổ phiếu, FX, Index
+
+```python
+from vnstock import Vnstock
+fx = Vnstock().fx(symbol='JPYVND', source='MSN')
+df = fx.quote.history(start='2025-01-02', end='2025-03-20', interval='1D')
+df
+```
+
+## 4.12. Tỷ giá & giá vàng
+
+```python
+from vnstock.explorer.misc import *
+
+# Tỷ giá ngoại tệ VCB
+vcb_exchange_rate(date='2024-03-21')
+
+# Giá vàng SJC
+sjc_gold_price()
+```
+
+## 4.13. Xuất dữ liệu
 
 > Tất cả dữ liệu trả về từ Vnstock đều là Pandas DataFrame hoặc Series, do đó, bạn có thể mô hình hoá các thao tác phân tích của mình với lệnh Python dễ dàng nhờ hỗ trợ của AI. Nếu cần xuất dữ liệu sang các định dạng truyền thống, bạn chỉ cần gán các hàm mô tả ở trên với 1 tên biến và thực hiện xuất dữ liệu như dưới đây:
 
