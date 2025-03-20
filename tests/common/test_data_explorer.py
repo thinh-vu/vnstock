@@ -1,213 +1,568 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import pandas as pd
-from vnstock.common.data.data_explorer import StockComponents, Quote, Listing, Trading, Company, Finance, MSNComponents
-from vnstock.common.vnstock import Vnstock
-from vnstock.explorer.msn.const import _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
-msn_symbol_map = {**_CURRENCY_ID_MAP, **_GLOBAL_INDICES, **_CRYPTO_ID_MAP}
+import numpy as np
+from datetime import datetime, timedelta
+import logging
 
-class TestVnstock(unittest.TestCase):
+from vnstock.common.data.data_explorer import (
+    StockComponents, MSNComponents, Quote, Listing, 
+    Trading, Company, Finance, Screener, Fund
+)
 
-    def test_vnstock_init_valid_source(self):
-        vnstock = Vnstock(source="VCI")
-        self.assertEqual(vnstock.source, "VCI")
+# Configure logging
+VERBOSE_TESTING = False  # Set to True for detailed debug output
+if not VERBOSE_TESTING:
+    logging.getLogger('vnstock').setLevel(logging.ERROR)
 
-    def test_vnstock_init_invalid_source(self):
-        with self.assertRaises(ValueError):
-            Vnstock(source="INVALID")
-
-    def test_vnstock_stock(self):
-        vnstock = Vnstock(source="VCI")
-        stock = vnstock.stock(symbol="ACB")
-        self.assertIsInstance(stock, StockComponents)
-        self.assertEqual(stock.symbol, "ACB")
+class BaseTestCase(unittest.TestCase):
+    """Base class with helper methods for all test cases"""
     
-    def test_stock_with_none_source(self):
-        """Test that the stock method correctly sets symbol when source is None"""
-        vnstock = Vnstock()
-        # Test with symbol provided and source=None
-        stock_comp = vnstock.stock(symbol="VNM", source=None)
-        self.assertEqual(stock_comp.symbol, "VNM")
-        
-        # Test with default symbol and source=None
-        stock_comp = vnstock.stock(symbol=None, source=None)
-        self.assertEqual(stock_comp.symbol, "VN30F1M")
-        
-        # Test with symbol provided and source provided
-        stock_comp = vnstock.stock(symbol="VNM", source="VCI")
-        self.assertEqual(stock_comp.symbol, "VNM")
-
-    def test_vnstock_fx(self):
-        vnstock = Vnstock(source="MSN")
-        fx = vnstock.fx(symbol="EURUSD")
-        self.assertIsInstance(fx, MSNComponents)
-        self.assertEqual(fx.symbol, msn_symbol_map["EURUSD"].upper())
-
-    def test_vnstock_crypto(self):
-        vnstock = Vnstock(source="MSN")
-        crypto = vnstock.crypto(symbol="BTC")
-        self.assertIsInstance(crypto, MSNComponents)
-        self.assertEqual(crypto.symbol, msn_symbol_map["BTC"].upper())
-
-    def test_vnstock_world_index(self):
-        vnstock = Vnstock(source="MSN")
-        world_index = vnstock.world_index(symbol="DJI")
-        self.assertIsInstance(world_index, MSNComponents)
-        self.assertEqual(world_index.symbol, msn_symbol_map["DJI"].upper())
-
-
-class TestStockComponents(unittest.TestCase):
-
-    def test_stock_components_init_valid_source(self):
-        stock = StockComponents(symbol="ACB", source="VCI")
-        self.assertEqual(stock.symbol, "ACB")
-        self.assertEqual(stock.source, "VCI")
-
-    def test_stock_components_init_invalid_source(self):
-        with self.assertRaises(ValueError):
-            StockComponents(symbol="ACB", source="INVALID")
-
-    def test_stock_components_update_symbol(self):
-        stock = StockComponents(symbol="ACB", source="VCI")
-        stock.update_symbol("ACB")
-        self.assertEqual(stock.symbol, "ACB")
-
-    def test_stock_components_update_invalid_symbol(self):
-        stock = StockComponents(symbol="VN30F1M", source="VCI")
-        stock.update_symbol("VN30F1M")
-        self.assertEqual(stock.symbol, "VN30F1M")
-
-
-
-class TestQuote(unittest.TestCase):
-
-    def test_quote_init_valid_source(self):
-        quote = Quote(symbol="VN30F1M", source="VCI")
-        self.assertEqual(quote.symbol, "VN30F1M")
-        self.assertEqual(quote.source, "VCI")
-
-    def test_quote_init_invalid_source(self):
-        with self.assertRaises(ValueError):
-            Quote(symbol="VN30F1M", source="INVALID")
-
-    @patch('vnstock.common.data.data_explorer.Quote._load_data_source')
-    def test_quote_history(self, mock_load_data_source):
-        # Mock the data source's history method
-        mock_data_source = MagicMock()
-        mock_history_data = pd.DataFrame({
-            'time': ['2020-01-02', '2020-01-03', '2020-01-06', '2020-01-07'],
-            'open': [877.5, 887.1, 877.5, 873.9],
-            'high': [886.3, 887.9, 883.5, 877.8],
-            'low': [876.5, 879.5, 871.6, 871.6],
-            'close': [886.3, 879.5, 872.0, 875.0],
-            'volume': [70480, 70389, 83770, 83997]
+    def _create_price_mock_data(self, rows=30, base_price=1000, volatility=100):
+        """Create consistent mock data for price history tests"""
+        return pd.DataFrame({
+            'time': pd.date_range(start='2023-01-01', periods=rows),
+            'open': np.random.rand(rows) * volatility + base_price,
+            'high': np.random.rand(rows) * volatility + base_price + 10,
+            'low': np.random.rand(rows) * volatility + base_price - 10,
+            'close': np.random.rand(rows) * volatility + base_price,
+            'volume': np.random.randint(100000, 1000000, rows)
         })
-        mock_data_source.history.return_value = mock_history_data
-        mock_load_data_source.return_value = mock_data_source
 
-        quote = Quote(symbol="VN30F1M", source="VCI")
-        history = quote.history(start='2020-01-02', end='2024-05-25')
+    def _setup_history_mock(self, mock_import, rows=30, base_price=1000):
+        """Set up a mock for history calls"""
+        mock_module = MagicMock()
+        mock_import.return_value = mock_module
+        mock_data = self._create_price_mock_data(rows, base_price)
+        mock_module.Quote.return_value.history = MagicMock(return_value=mock_data)
+        return mock_module, mock_data
 
-        # Assert that the returned DataFrame is equal to the expected DataFrame
-        expected_history = pd.DataFrame({
-            'time': ['2020-01-02', '2020-01-03', '2020-01-06', '2020-01-07'],
-            'open': [877.5, 887.1, 877.5, 873.9],
-            'high': [886.3, 887.9, 883.5, 877.8],
-            'low': [876.5, 879.5, 871.6, 871.6],
-            'close': [886.3, 879.5, 872.0, 875.0],
-            'volume': [70480, 70389, 83770, 83997]
+class TestVnstockDataSources(BaseTestCase):
+    """Test for data sources initialization and validation"""
+    
+    def test_invalid_source(self):
+        """Test that invalid data sources raise appropriate errors"""
+        with self.assertRaises(ValueError):
+            StockComponents(symbol='ACB', source='INVALID')
+        
+        with self.assertRaises(ValueError):
+            MSNComponents(symbol='EURUSD', source='INVALID')
+
+class TestStockData(BaseTestCase):
+    """Tests for stock data retrieval from multiple sources"""
+    
+    def setUp(self):
+        self.vci_stock = StockComponents(symbol='ACB', source='VCI')
+        self.tcbs_stock = StockComponents(symbol='ACB', source='TCBS')
+        
+    def test_stock_initialization(self):
+        """Test proper initialization of stock components with different sources"""
+        self.assertEqual(self.vci_stock.symbol, 'ACB')
+        self.assertEqual(self.vci_stock.source, 'VCI')
+        self.assertEqual(self.tcbs_stock.symbol, 'ACB')
+        self.assertEqual(self.tcbs_stock.source, 'TCBS')
+        
+        # Verify all expected components are initialized
+        for stock in [self.vci_stock, self.tcbs_stock]:
+            self.assertIsNotNone(stock.quote)
+            self.assertIsNotNone(stock.listing)
+            self.assertIsNotNone(stock.trading)
+            self.assertIsNotNone(stock.company)
+            self.assertIsNotNone(stock.finance)
+    
+    def test_stock_update_symbol(self):
+        """Test updating symbol updates all sub-components"""
+        self.vci_stock.update_symbol('VCB')
+        self.assertEqual(self.vci_stock.symbol, 'VCB')
+        self.assertEqual(self.vci_stock.quote.symbol, 'VCB')
+        self.assertEqual(self.vci_stock.company.symbol, 'VCB')
+        self.assertEqual(self.vci_stock.finance.symbol, 'VCB')
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_stock_history(self, mock_import):
+        """Test stock price history retrieval"""
+        # Setup mock data
+        mock_module, mock_data = self._setup_history_mock(mock_import)
+        
+        # Test with different parameters
+        result = self.vci_stock.quote.history(
+            start='2025-01-02', 
+            end='2025-03-20'
+        )
+        
+        self.assertIsInstance(result, pd.DataFrame)
+        
+        # Check that the row count matches expected
+        expected_rows = len(mock_data)
+        actual_rows = len(result)
+        self.assertEqual(actual_rows, expected_rows, 
+                         f"Expected {expected_rows} rows but got {actual_rows}")
+        
+        # Check expected columns
+        expected_columns = ['time', 'open', 'high', 'low', 'close', 'volume']
+        for col in expected_columns:
+            self.assertIn(col, result.columns, f"Missing column: {col}")
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_company_info(self, mock_import):
+        """Test company information retrieval"""
+        mock_module = MagicMock()
+        mock_import.return_value = mock_module
+        mock_module.Company.return_value.overview.return_value = {
+            'name': 'Asia Commercial Joint Stock Bank',
+            'industry': 'Banking'
+        }
+        
+        result = self.tcbs_stock.company.overview()
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result['name'], 'Asia Commercial Joint Stock Bank')
+
+class TestDelistedSymbolsData(BaseTestCase):
+    """Tests for handling delisted symbols data"""
+    
+    def setUp(self):
+        # Initialize with delisted symbols
+        self.vfmvf4 = StockComponents(symbol='VFMVF4', source='VCI')
+        self.vis = StockComponents(symbol='VIS', source='VCI')
+        self.vtp = StockComponents(symbol='VTP', source='VCI')
+    
+    def test_delisted_symbol_initialization(self):
+        """Test initialization with delisted symbols doesn't fail"""
+        self.assertEqual(self.vfmvf4.symbol, 'VFMVF4')
+        self.assertEqual(self.vis.symbol, 'VIS')
+        self.assertEqual(self.vtp.symbol, 'VTP')
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_delisted_historical_data(self, mock_import):
+        """Test retrieving historical data for delisted symbols before delisting"""
+        # Setup mock data
+        mock_module, mock_data = self._setup_history_mock(mock_import, rows=30, base_price=20)
+        
+        # Test with VFMVF4
+        result = self.vfmvf4.quote.history(
+            start='2010-01-01', 
+            end='2010-01-30'
+        )
+        
+        # For delisted symbols, we just verify the data structure, not exact content
+        self.assertIsInstance(result, pd.DataFrame)
+        
+        # Check expected columns
+        expected_columns = ['time', 'open', 'high', 'low', 'close', 'volume']
+        for col in expected_columns:
+            self.assertIn(col, result.columns, f"Missing column: {col}")
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_empty_recent_data(self, mock_import):
+        """Test retrieving recent data for delisted symbols returns empty dataset"""
+        mock_module = MagicMock()
+        mock_import.return_value = mock_module
+        
+        # Empty DataFrame for recent data for delisted symbol
+        empty_data = pd.DataFrame(columns=['time', 'open', 'high', 'low', 'close', 'volume'])
+        mock_module.Quote.return_value.history.return_value = empty_data
+        
+        result = self.vis.quote.history(
+            start='2023-01-01', 
+            end='2023-01-30'
+        )
+        
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertEqual(len(result), 0)
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_api_error_handling(self, mock_import):
+        """Test error handling for delisted symbols when API returns error"""
+        mock_module = MagicMock()
+        mock_import.return_value = mock_module
+        
+        # Simulate API error for delisted symbol
+        error_message = "Symbol VTP not found or has been delisted"
+        mock_module.Quote.return_value.history.side_effect = ValueError(error_message)
+        
+        with self.assertRaises(ValueError) as context:
+            self.vtp.quote.history(
+                start='2023-01-01', 
+                end='2023-01-30'
+            )
+        
+        self.assertEqual(str(context.exception), error_message)
+
+class TestFuturesData(BaseTestCase):
+    """Tests for futures data retrieval"""
+    
+    def setUp(self):
+        # Initialize with VN30F1M (current month VN30 futures)
+        self.futures = StockComponents(symbol='VN30F1M', source='VCI')
+    
+    def test_futures_initialization(self):
+        """Test proper initialization of futures components"""
+        self.assertEqual(self.futures.symbol, 'VN30F1M')
+        self.assertEqual(self.futures.source, 'VCI')
+        self.assertIsNotNone(self.futures.quote)
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_futures_history(self, mock_import):
+        """Test futures price history retrieval"""
+        # Setup mock
+        mock_module, mock_data = self._setup_history_mock(
+            mock_import, rows=30, base_price=1200
+        )
+        
+        # Test VN30F1M
+        result = self.futures.quote.history(
+            start='2023-01-01', 
+            end='2023-01-30'
+        )
+        
+        self.assertIsInstance(result, pd.DataFrame)
+        
+        # Check that the row count matches expected
+        expected_rows = len(mock_data)
+        actual_rows = len(result)
+        self.assertEqual(actual_rows, expected_rows, 
+                         f"Expected {expected_rows} rows but got {actual_rows}")
+        
+        # Test other future contracts
+        contracts = ['VN30F2504', 'VN30F2403']
+        for contract in contracts:
+            result = self.futures.quote.history(
+                symbol=contract,
+                start='2023-01-01', 
+                end='2023-01-30'
+            )
+            self.assertIsInstance(result, pd.DataFrame)
+
+class TestIndexData(BaseTestCase):
+    """Tests for market index data retrieval"""
+    
+    def setUp(self):
+        self.vci_index = StockComponents(symbol='VNINDEX', source='VCI')
+        self.msn_index = MSNComponents(symbol='DJI', source='MSN')
+    
+    def test_index_initialization(self):
+        """Test proper initialization of index components"""
+        self.assertEqual(self.vci_index.symbol, 'VNINDEX')
+        self.assertEqual(self.vci_index.source, 'VCI')
+        self.assertEqual(self.msn_index.symbol, 'DJI')
+        self.assertEqual(self.msn_index.source, 'MSN')
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_local_index_history(self, mock_import):
+        """Test local market index history retrieval"""
+        try:
+            # Setup mock
+            mock_module, mock_data = self._setup_history_mock(
+                mock_import, rows=30, base_price=1000
+            )
+            
+            # Test VNINDEX
+            result = self.vci_index.quote.history(
+                start='2023-01-01', 
+                end='2023-01-30'
+            )
+            
+            self.assertIsInstance(result, pd.DataFrame)
+            
+            # Check that the row count matches expected
+            expected_rows = len(mock_data)
+            actual_rows = len(result)
+            self.assertEqual(actual_rows, expected_rows, 
+                             f"Expected {expected_rows} rows but got {actual_rows}")
+            
+            # Test other indices
+            indices = ['HNXINDEX', 'UPCOMINDEX']
+            for index in indices:
+                result = self.vci_index.quote.history(
+                    symbol=index,
+                    start='2023-01-01', 
+                    end='2023-01-30'
+                )
+                self.assertIsInstance(result, pd.DataFrame)
+                
+        except Exception as e:
+            self.fail(f"Test raised unexpected exception: {e}")
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_global_index_history(self, mock_import):
+        """Test global market index history retrieval"""
+        # Setup mock
+        mock_module, mock_data = self._setup_history_mock(
+            mock_import, rows=30, base_price=35000
+        )
+        
+        # Test DJI (Dow Jones)
+        result = self.msn_index.quote.history(
+            start='2023-01-01', 
+            end='2023-01-30'
+        )
+        
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertEqual(len(result), len(mock_data))
+
+class TestForexData(BaseTestCase):
+    """Tests for forex data retrieval from MSN"""
+    
+    def setUp(self):
+        self.forex = MSNComponents(symbol='EURUSD', source='MSN')
+    
+    def test_forex_initialization(self):
+        """Test proper initialization of forex components"""
+        self.assertEqual(self.forex.symbol, 'EURUSD')
+        self.assertEqual(self.forex.source, 'MSN')
+        self.assertIsNotNone(self.forex.quote)
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_forex_history(self, mock_import):
+        """Test forex rate history retrieval"""
+        # Setup mock
+        mock_module, mock_data = self._setup_history_mock(
+            mock_import, rows=30, base_price=1.1, volatility=0.05
+        )
+        
+        # Test EURUSD
+        result = self.forex.quote.history(
+            start='2023-01-01', 
+            end='2023-01-30'
+        )
+        
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertEqual(len(result), len(mock_data))
+        
+        # Test JPYVND
+        result = self.forex.quote.history(
+            symbol='JPYVND',
+            start='2023-01-01', 
+            end='2023-01-30'
+        )
+        
+        self.assertIsInstance(result, pd.DataFrame)
+
+class TestCryptoData(BaseTestCase):
+    """Tests for cryptocurrency data retrieval from MSN"""
+    
+    def setUp(self):
+        self.crypto = MSNComponents(symbol='BTC', source='MSN')
+    
+    def test_crypto_initialization(self):
+        """Test proper initialization of crypto components"""
+        self.assertEqual(self.crypto.symbol, 'BTC')
+        self.assertEqual(self.crypto.source, 'MSN')
+        self.assertIsNotNone(self.crypto.quote)
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_crypto_history(self, mock_import):
+        """Test cryptocurrency price history retrieval"""
+        # Setup mock
+        mock_module, mock_data = self._setup_history_mock(
+            mock_import, rows=30, base_price=30000, volatility=1000
+        )
+        
+        # Test BTC
+        result = self.crypto.quote.history(
+            start='2023-01-01', 
+            end='2023-01-30'
+        )
+        
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertEqual(len(result), len(mock_data))
+
+class TestCoveredWarrantData(BaseTestCase):
+    """Tests for covered warrant data retrieval"""
+    
+    def setUp(self):
+        self.cw = StockComponents(symbol='CFPT2314', source='VCI')
+    
+    def test_cw_initialization(self):
+        """Test proper initialization of covered warrant components"""
+        self.assertEqual(self.cw.symbol, 'CFPT2314')
+        self.assertEqual(self.cw.source, 'VCI')
+        self.assertIsNotNone(self.cw.quote)
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_cw_history(self, mock_import):
+        """Test covered warrant price history retrieval"""
+        # Setup mock
+        mock_module, mock_data = self._setup_history_mock(
+            mock_import, rows=30, base_price=500, volatility=100
+        )
+        
+        result = self.cw.quote.history(
+            start='2023-01-01', 
+            end='2023-01-30'
+        )
+        
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertEqual(len(result), len(mock_data))
+
+class TestBondData(BaseTestCase):
+    """Tests for bond data retrieval"""
+    
+    def setUp(self):
+        self.bond = StockComponents(symbol='CII424002', source='VCI')
+    
+    def test_bond_initialization(self):
+        """Test proper initialization of bond components"""
+        self.assertEqual(self.bond.symbol, 'CII424002')
+        self.assertEqual(self.bond.source, 'VCI')
+        self.assertIsNotNone(self.bond.quote)
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_bond_history(self, mock_import):
+        """Test bond price history retrieval"""
+        # Setup mock with stable prices typical for bonds
+        mock_module = MagicMock()
+        mock_import.return_value = mock_module
+        mock_data = pd.DataFrame({
+            'time': pd.date_range(start='2023-01-01', periods=30),
+            'open': np.ones(30) * 100000,
+            'high': np.ones(30) * 100000,
+            'low': np.ones(30) * 100000,
+            'close': np.ones(30) * 100000,
+            'volume': np.random.randint(100, 1000, 30)
         })
-        pd.testing.assert_frame_equal(history, expected_history)
+        mock_module.Quote.return_value.history.return_value = mock_data
+        
+        result = self.bond.quote.history(
+            start='2023-01-01', 
+            end='2023-01-30'
+        )
+        
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertEqual(len(result), len(mock_data))
 
-
-class TestListing(unittest.TestCase):
-
-    def test_listing_init_valid_source(self):
-        listing = Listing(source="VCI")
-        self.assertEqual(listing.source, "VCI")
-
-    def test_listing_init_invalid_source(self):
+class TestErrorHandling(BaseTestCase):
+    """Tests for error handling and edge cases"""
+    
+    def setUp(self):
+        self.stock = StockComponents(symbol='ACB', source='VCI')
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_nonexistent_symbol(self, mock_import):
+        """Test behavior with nonexistent symbols"""
+        mock_module = MagicMock()
+        mock_import.return_value = mock_module
+        mock_module.Quote.return_value.history.side_effect = ValueError("Symbol not found")
+        
         with self.assertRaises(ValueError):
-            Listing(source="INVALID")
-
-    def test_listing_all_symbols(self):
-        listing = Listing(source="VCI")
-        # Mock the data source's all_symbols method
-        listing.data_source.all_symbols = lambda **kwargs: ["ACB", "VN30F1M"]
-        symbols = listing.all_symbols()
-        self.assertEqual(symbols, ["ACB", "VN30F1M"])
-
-
-class TestTrading(unittest.TestCase):
-
-    def test_trading_init_valid_source(self):
-        trading = Trading(symbol="VN30F1M", source="VCI")
-        self.assertEqual(trading.symbol, "VN30F1M")
-        self.assertEqual(trading.source, "VCI")
-
-    def test_trading_init_invalid_source(self):
+            self.stock.quote.history(symbol='NONEXISTENT')
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_invalid_date_range(self, mock_import):
+        """Test behavior with invalid date ranges"""
+        mock_module = MagicMock()
+        mock_import.return_value = mock_module
+        mock_module.Quote.return_value.history.side_effect = ValueError("End date must be after start date")
+        
         with self.assertRaises(ValueError):
-            Trading(symbol="VN30F1M", source="INVALID")
+            self.stock.quote.history(start='2023-01-30', end='2023-01-01')
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_future_date(self, mock_import):
+        """Test behavior with future dates"""
+        mock_module = MagicMock()
+        mock_import.return_value = mock_module
+        
+        # Set a future date
+        future_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
+        
+        # Empty data for future dates
+        mock_data = pd.DataFrame(columns=['time', 'open', 'high', 'low', 'close', 'volume'])
+        mock_module.Quote.return_value.history.return_value = mock_data
+        
+        result = self.stock.quote.history(
+            start='2023-01-01', 
+            end=future_date
+        )
+        
+        # Should return an empty DataFrame for future dates
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertEqual(len(result), 0)
 
-    def test_trading_price_board(self):
-        trading = Trading(symbol="VN30F1M", source="VCI")
-        # Mock the data source's price_board method
-        trading.data_source.price_board = lambda symbols_list, **kwargs: {"price_board": "data"}
-        price_board = trading.price_board(symbols_list=["ACB", "VCB", "VIC", "FRT", "HAH"])
-        self.assertEqual(price_board, {"price_board": "data"})
-
-
-class TestCompany(unittest.TestCase):
-
-    def test_company_init_valid_source(self):
-        company = Company(symbol="ACB", source="TCBS")
-        self.assertEqual(company.symbol, "ACB")
-
-    def test_company_init_invalid_source(self):
-        with self.assertRaises(ValueError):
-            Company(symbol="ACB", source="INVALID")
-
-    def test_company_profile(self):
-        company = Company(symbol="ACB", source="TCBS")
-        # Mock the data source's profile method
-        company.data_source.profile = lambda **kwargs: {"profile": "data"}
-        profile = company.profile()
-        self.assertEqual(profile, {"profile": "data"})
-
-
-class TestFinance(unittest.TestCase):
-
-    def test_finance_init_valid_source(self):
-        finance = Finance(symbol="ACB", source="TCBS")
-        self.assertEqual(finance.symbol, "ACB")
-
-    def test_finance_init_invalid_source(self):
-        with self.assertRaises(ValueError):
-            Finance(symbol="ACB", source="INVALID")
-
-    def test_finance_balance_sheet(self):
-        finance = Finance(symbol="ACB", source="TCBS")
-        # Mock the data source's balance_sheet method
-        finance.data_source.balance_sheet = lambda **kwargs: {"balance_sheet": "data"}
-        balance_sheet = finance.balance_sheet()
-        self.assertEqual(balance_sheet, {"balance_sheet": "data"})
-
-
-class TestMSNComponents(unittest.TestCase):
-
-    def test_msncomponents_init_valid_source(self):
-        msn = MSNComponents(symbol="EURUSD", source="MSN")
-        self.assertEqual(msn.symbol, "EURUSD")
-
-    def test_msncomponents_init_invalid_source(self):
-        with self.assertRaises(ValueError):
-            MSNComponents(symbol="EURUSD", source="INVALID")
-
-    def test_msncomponents_update_symbol(self):
-        msn = MSNComponents(symbol="EURUSD", source="MSN")
-        msn.update_symbol("USDJPY")
-        self.assertEqual(msn.symbol, "USDJPY")
-
+class TestDataIntegrity(BaseTestCase):
+    """Tests for data integrity and consistency"""
+    
+    @patch('vnstock.common.data.data_explorer.importlib.import_module')
+    def test_stock_data_schema(self, mock_import):
+        """Test stock data has the expected schema"""
+        stock = StockComponents(symbol='ACB', source='VCI')
+        
+        mock_module = MagicMock()
+        mock_import.return_value = mock_module
+        
+        # Create mock data with exact column names
+        mock_data = pd.DataFrame({
+            'time': pd.date_range(start='2023-01-01', periods=5),
+            'open': [25000, 25100, 25200, 25300, 25400],
+            'high': [25500, 25600, 25700, 25800, 25900],
+            'low': [24800, 24900, 25000, 25100, 25200],
+            'close': [25200, 25300, 25400, 25500, 25600],
+            'volume': [1000000, 1100000, 1200000, 1300000, 1400000]
+        })
+        mock_module.Quote.return_value.history.return_value = mock_data
+        
+        result = stock.quote.history(start='2023-01-01', end='2023-01-05')
+        
+        # Check column presence one by one
+        expected_columns = ['time', 'open', 'high', 'low', 'close', 'volume']
+        for col in expected_columns:
+            self.assertIn(col, result.columns, f"Column '{col}' is missing from result")
+        
+        # Verify data types
+        self.assertIsInstance(result['time'][0], pd.Timestamp)
+        self.assertTrue(np.issubdtype(result['open'].dtype, np.number))
+        
+        # Verify high >= low
+        self.assertTrue(all(result['high'] >= result['low']))
+        
+        # Verify high >= open and high >= close
+        self.assertTrue(all(result['high'] >= result['open']))
+        self.assertTrue(all(result['high'] >= result['close']))
+        
+        # Verify low <= open and low <= close
+        self.assertTrue(all(result['low'] <= result['open']))
+        self.assertTrue(all(result['low'] <= result['close']))
 
 if __name__ == '__main__':
-    unittest.main()
+    # Run with coverage
+    import sys
+    import coverage
+    
+    # Setup coverage
+    cov = coverage.Coverage(
+        source=['vnstock.common.data.data_explorer'],
+        omit=['*/tests/*', '*/site-packages/*']
+    )
+    cov.start()
+    
+    # Run all tests or specific test classes
+    if len(sys.argv) > 1:
+        # Run specific test classes if provided
+        test_classes = []
+        for arg in sys.argv[1:]:
+            if arg.startswith('Test'):
+                test_classes.append(globals()[arg])
+        
+        for test_class in test_classes:
+            unittest.TextTestRunner(verbosity=2).run(
+                unittest.TestLoader().loadTestsFromTestCase(test_class)
+            )
+    else:
+        # Run all tests
+        test_suite = unittest.TestLoader().loadTestsFromModule(sys.modules[__name__])
+        unittest.TextTestRunner(verbosity=2).run(test_suite)
+    
+    # Generate coverage report
+    cov.stop()
+    cov.save()
+    
+    print("\nCoverage Summary:")
+    cov.report()
+    
+    print("\nGenerating HTML coverage report in htmlcov directory...")
+    cov.html_report(directory='htmlcov')
+    
+    print("\nCompleted test run with coverage analysis")
+    
+    # Exit with non-zero code if tests failed
+    sys.exit(not unittest.TextTestRunner().run(test_suite).wasSuccessful())

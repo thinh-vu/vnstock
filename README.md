@@ -64,15 +64,33 @@ Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án c�
 
 ![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
 
-Cài đặt thư viện với câu lệnh sau:
+Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstocks.com](https://vnstocks.com/docs/category/s%E1%BB%95-tay-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn). 
+
+Xem minh hoạ các tính năng thông qua Colab Notebook sau:
+
+<div id="badges" align="center">
+  <a href="https://vnstocks.com/docs/tai-lieu/huong-dan-nhanh" target="_blank">
+    <img src="https://img.shields.io/badge/Tài%20liệu%20hướng%20dẫn-Vnstock-blue?style=for-the-badge&logo=book" alt="Tài liệu hướng dẫn Vnstock Badge"/>
+  </a>
+</div>
+
+## Cài đặt 
+
+Bạn có thể cài đặt thư viện với câu lệnh sau:
 
 ```
 pip install -U vnstock
 ```
 
-Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstocks.com](https://vnstocks.com/docs/category/s%E1%BB%95-tay-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn). 
+## Nạp thư viện
 
 Bạn cần nạp thư viện vào môi trường Python thông qua giao diện Jupyter Notebook hoặc Terminal để có thể gọi và sử dụng các hàm được cung cấp.
+
+Có 4 cách nạp thư viện vào môi trường làm việc như sau:
+
+### 1. Nạp thông qua giao diện làm việc chính
+
+Giao diện làm việc chính cho phép chuyển đổi nguồn và chỉ cần khai báo tên mã khi khởi động. Cấu trúc này phù hợp khi phân tích xuyên suốt 1 mã chứng khoán và nguồn dữ liệu đồng thời giúp tăng độ ổn định của mã nguồn trong tương lai khi các nguồn dữ mới được bổ sung hoặc nguồn cũ hết hiệu lực, bạn chỉ cần đổi tên nguồn để tiếp tục sử dụng.
 
 ```
 from vnstock import Vnstock
@@ -80,11 +98,125 @@ stock = Vnstock().stock(symbol='VCI', source='VCI')
 stock.quote.history(start='2020-01-01', end='2024-05-25')
 ```
 
-<div id="badges" align="center">
-  <a href="https://vnstocks.com/docs/tai-lieu/huong-dan-nhanh" target="_blank">
-    <img src="https://img.shields.io/badge/Tài%20liệu%20hướng%20dẫn-Vnstock-blue?style=for-the-badge&logo=book" alt="Tài liệu hướng dẫn Vnstock Badge"/>
-  </a>
-</div>
+### 2. Nạp thông qua các class tổng hợp
+
+Bạn chọn nạp một trong các lớp chức năng chính. Các lớp chức năng này cho phép chuyển đổi dễ dàng nguồn dữ liệu được hỗ trợ trong khi giữ nguyên cấu trúc hàm. Cấu trúc này giúp tăng độ ổn định của mã nguồn trong tương lai khi các nguồn dữ mới được bổ sung hoặc nguồn cũ hết hiệu lực, bạn chỉ cần đổi tên nguồn để tiếp tục sử dụng.
+
+```python
+from vnstock import Listing, Quote, Company, Finance, Trading, Screener 
+```
+
+### Nạp các lớp tính năng riêng lẻ theo nguồn dữ liệu cố định
+
+> Bạn cần tham khảo [mã nguồn](https://github.com/thinh-vu/vnstock/tree/main/vnstock/explorer) để sử dụng đúng các chức năng có sẵn trong thư viện.
+
+```python
+from vnstock.explorer.vci import Listing, Quote, Company, Finance, Trading
+```
+
+hoặc 
+
+```python
+from vnstock.explorer.vci import Listing, Quote, Company, Finance, Trading, Screener
+```
+
+## Danh sách niêm yết
+
+> Danh sách các mã chứng khoán sử dụng trong việc thiết lập vòng lặp truy xuất dữ liệu từ các chức năng khác như Giá lịch sử, Thông tin công ty, Báo cáo tài chính, vv
+
+```python
+from vnstock import Listing
+listing = Listing()
+listing.all_symbols()
+```
+
+## Giá lịch sử & thống kê giao dịch
+
+### Giá lịch sử
+```
+from vnstock import Vnstock
+stock = Vnstock().stock(symbol='ACB', source='VCI')
+stock.quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
+```
+
+hoặc
+
+```python
+from vnstock import Quote
+quote = Quote(symbol='ACB', source='VCI')
+quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
+```
+
+### Intraday
+
+> Dữ liệu giao dịch khớp lệnh theo từng tick
+
+```python
+stock.quote.intraday(symbol='ACB', page_size=10_000, show_log=False)
+```
+
+Chi tiết vui lòng tham khảo tài liệu và Demo Notebook.
+
+## Bảng giá giao dịch
+
+```python
+from vnstock import Trading
+Trading(source='VCI').price_board(['VCB','ACB','TCB','BID'])
+```
+
+## Truy xuất thông tin công ty
+
+```python
+from vnstock import Vnstock
+company = Vnstock().stock(symbol='ACB', source='VCI').company
+company.overview()
+```
+
+hoặc
+
+```python
+from vnstock import Company
+company = Company(symbol='ACB', source='VCI')
+company.overview()
+```
+
+## Truy xuất báo cáo tài chính
+
+```python
+from vnstock import Vnstock
+stock = Vnstock().stock(symbol='VCI', source='VCI')
+# Bảng cân đối kế toán - năm
+stock.finance.balance_sheet(period='year', lang='vi', dropna=True)
+# Bảng cân đối kế toán - quý
+stock.finance.balance_sheet(period='quarter', lang='en', dropna=True)
+# Kết quả hoạt động kinh doanh
+stock.finance.income_statement(period='year', lang='vi', dropna=True)
+# Lưu chuyển tiền tệ
+stock.finance.cash_flow(period='year', dropna=True)
+# Chỉ số tài chính
+stock.finance.ratio(period='year', lang='vi', dropna=True)
+```
+
+## Bộ lọc cổ phiếu
+
+```python
+from vnstock import Screener
+stock.screener.stock(params={"exchangeName": "HOSE,HNX,UPCOM"}, limit=1700)
+```
+
+## Xuất dữ liệu
+
+> Tất cả dữ liệu trả về từ Vnstock đều là Pandas DataFrame hoặc Series, do đó, bạn có thể mô hình hoá các thao tác phân tích của mình với lệnh Python dễ dàng nhờ hỗ trợ của AI. Nếu cần xuất dữ liệu sang các định dạng truyền thống, bạn chỉ cần gán các hàm mô tả ở trên với 1 tên biến và thực hiện xuất dữ liệu như dưới đây:
+
+```python
+# Biến ratio_df lưu giá trị của phép tính vào bộ nhớ
+ratio_df = stock.finance.ratio(period='year', lang='vi', dropna=True)
+
+# Xuất dữ liệu ra Excel
+ratio_df.to_excel('/nơi_lưu_file_của_bạn/tên_file-ratio_df.xlsx`, index=False')
+# Xuất dữ liệu ra CSV
+ratio_df.to_csv('/nơi_lưu_file_của_bạn/tên_file-ratio_df.csv`, index=False')
+```
 
 # V. 🙋‍♂️ Thông tin liên hệ
 

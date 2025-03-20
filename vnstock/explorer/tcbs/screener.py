@@ -161,7 +161,12 @@ class Screener:
                     df[col] = df[col].apply(lambda cell: cell.get(lang) if isinstance(cell, dict) and lang in cell else cell)
 
             # replace value HOSE to HSX for the column exchange
-            df['exchange'] = df['exchange'].replace('HOSE', 'HSX')
+            try:
+                df['exchange'] = df['exchange'].replace('HOSE', 'HSX')
+                df = df.drop(columns=['company_name'])
+            except Exception as e:
+                logger.error(f"Lỗi khi thực hiện chuẩn hoá cột: {str(e)}")
+                pass
             
             return df
             

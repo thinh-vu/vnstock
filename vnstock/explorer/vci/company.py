@@ -196,7 +196,9 @@ class Company:
         else:
             # Combine both working and resigned officers
             working_df = self._process_data(self.raw_data, 'OrganizationManagers')
+            working_df['type'] = 'đang làm việc'
             resigned_df = self._process_data(self.raw_data, 'OrganizationResignedManagers')
+            resigned_df['type'] = 'đã từ nhiệm'
             df = pd.concat([working_df, resigned_df])
         
         # Drop unnecessary columns
@@ -218,13 +220,22 @@ class Company:
         return df
     
     @optimize_execution("VCI")
-    def subsidiaries(self) -> pd.DataFrame:
+    def subsidiaries(self, filter_by: str = 'all') -> pd.DataFrame:
         """
         Truy xuất thông tin công ty con của công ty.
-        
+
+        Tham số:
+            - filter_by (str): Lọc công ty con hoặc công ty liên kết.
+                - 'all': Lọc tất cả.
+                - 'subsidiary': Lọc công ty con.
+                - 'affiliate': Lọc công ty liên kết.
+
         Returns:
             pd.DataFrame: DataFrame chứa thông tin công ty con.
         """
+        if filter_by not in ['all', 'subsidiary']:
+            raise ValueError("filter_by chỉ nhận giá trị 'all' hoặc 'subsidiary'")
+        
         df = self.raw_data['Subsidiary']
         df = flatten_list_to_df(df, 'subOrListingInfo')
         
@@ -237,9 +248,16 @@ class Company:
         
         # Rename percentage to ownership_percent for clarity
         df = df.rename(columns={'percentage': 'ownership_percent'})
+        df['type'] = 'công ty con'
+
+        if filter_by == 'subsidiary':
+            return df
+        elif filter_by == 'all':
+            affiliate_df = self.affiliate()
+            affiliate_df['type'] = 'công ty liên kết'
+            combine_df = pd.concat([df, affiliate_df])
+            return combine_df
         
-        return df
-    
     @optimize_execution("VCI")
     def affiliate(self) -> pd.DataFrame:
         """
@@ -261,8 +279,8 @@ class Company:
         # Reorder columns
         df = reorder_cols(df, ['id', 'sub_organ_code', 'organ_name'], position='first')
         
-        # Rename percentage to share_own_percent for clarity
-        df = df.rename(columns={'percentage': 'share_own_percent'})
+        # Rename percentage to ownership_percent for clarity
+        df = df.rename(columns={'percentage': 'ownership_percent'})
         
         return df
       
