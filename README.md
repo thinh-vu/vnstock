@@ -78,7 +78,7 @@ Xem minh hoạ các tính năng thông qua Colab Notebook sau:
 
 Bạn có thể cài đặt thư viện với câu lệnh sau:
 
-```
+```bash
 pip install -U vnstock
 ```
 
@@ -117,7 +117,7 @@ from vnstock.explorer.vci import Listing, Quote, Company, Finance, Trading
 hoặc 
 
 ```python
-from vnstock.explorer.tcbs import Listing, Quote, Company, Finance, Trading, Screener
+from vnstock.explorer.tcbs import Quote, Company, Finance, Trading, Screener
 ```
 
 ## 4.3. Danh sách niêm yết
