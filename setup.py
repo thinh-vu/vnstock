@@ -40,6 +40,7 @@ setup(
         "click",
         "packaging>=20.0",
         "importlib-metadata>=1.0",
+        "tenacity",
      ],
     extras_require={
         "dev": ["flake8"],
