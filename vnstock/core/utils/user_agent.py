@@ -12,6 +12,8 @@ DEFAULT_HEADERS = {
             'Sec-Fetch-Site': 'same-site',
             'DNT': '1',
             'Pragma': 'no-cache',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-ch-ua-mobile': '?0',
         }
 
 HEADERS_MAPPING_SOURCE =    {
@@ -30,7 +32,7 @@ def get_headers(data_source='SSI', random_agent=True):
     Tạo headers cho request theo nguồn dữ liệu.
     """
     data_source = data_source.upper()
-    ua = UserAgent(fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36')
+    ua = UserAgent(fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36')
     headers = DEFAULT_HEADERS.copy()
     if random_agent:
         headers['User-Agent'] = ua.random

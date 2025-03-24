@@ -23,3 +23,4 @@ dist/
 *.egg-info/
 *.egg
 *.pyc
+dev/temp_1_vietnam_stock_vnstock3.ipynb

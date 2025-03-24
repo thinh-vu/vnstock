@@ -5,7 +5,7 @@ from datetime import datetime
 import pandas as pd
 from vnai import optimize_execution
 from .const import (
-    _BASE_URL, _TRADING_URL, _CHART_URL, _INTERVAL_MAP, 
+    _TRADING_URL, _CHART_URL, _INTERVAL_MAP, 
     _OHLC_MAP, _RESAMPLE_MAP, _OHLC_DTYPE, _INTRADAY_URL, 
     _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
 )

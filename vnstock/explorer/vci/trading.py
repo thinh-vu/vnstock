@@ -2,7 +2,7 @@
 
 from typing import List, Dict, Optional, Union
 from datetime import datetime
-from .const import _BASE_URL, _TRADING_URL
+from .const import _TRADING_URL
 import json
 import requests
 import pandas as pd

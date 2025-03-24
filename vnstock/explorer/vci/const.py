@@ -1,8 +1,8 @@
-_BASE_URL = 'https://mt.vietcap.com.vn/api/'
+# _BASE_URL = 'https://mt.vietcap.com.vn/api/'
 _TRADING_URL = 'https://trading.vietcap.com.vn/api/'
 _CHART_URL = 'chart/OHLCChart/gap'
 _INTRADAY_URL = 'market-watch'
-_GRAPHQL_URL = 'https://api.vietcap.com.vn/data-mt/graphql'
+_GRAPHQL_URL = 'https://trading.vietcap.com.vn/data-mt/graphql'
 
 _INTERVAL_MAP = {'1m' : 'ONE_MINUTE',
             '5m' : 'ONE_MINUTE',
