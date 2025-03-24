@@ -42,33 +42,45 @@ def detect_environment():
 
 def update_notice():
     """
-    Checks for a newer version of the package and displays an update notice.
+    Checks for newer versions of vnstock and vnai packages and displays update notices.
     """
+    packages = ["vnstock", "vnai"]
+    
     try:
-        installed_version = get_version("vnstock")
-        response = requests.get("https://pypi.org/pypi/vnstock/json", timeout=5)
-        response.raise_for_status()
-        latest_version = response.json().get("info", {}).get("version")
+        environment = detect_environment()
+        
+        for package in packages:
+            try:
+                installed_version = get_version(package)
+                response = requests.get(f"https://pypi.org/pypi/{package}/json", timeout=5)
+                response.raise_for_status()
+                latest_version = response.json().get("info", {}).get("version")
 
-        if latest_version and version.parse(installed_version) < version.parse(latest_version):
-            message = (
-                f"Phiên bản Vnstock {latest_version} đã có mặt, vui lòng cập nhật với câu lệnh : `pip install vnstock --upgrade`.\n"
-                f"Lịch sử phiên bản: https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban\n"
-                f"Phiên bản hiện tại {installed_version}"
-            )
+                if latest_version and version.parse(installed_version) < version.parse(latest_version):
+                    package_name = package.capitalize()
+                    # Customize URL based on package
+                    history_url = "https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban" if package == "vnstock" else "https://pypi.org/project/vnai/#history"
+                    
+                    message = (
+                        f"Phiên bản {package_name} {latest_version} đã có mặt, vui lòng cập nhật với câu lệnh : `pip install {package} --upgrade`.\n"
+                        f"Lịch sử phiên bản: {history_url}\n"
+                        f"Phiên bản hiện tại {installed_version}"
+                    )
 
-            environment = detect_environment()
-
-            if environment in ["Jupyter", "Google Colab"] and ipython_available:
-                display(Markdown(message))  # Display as markdown in Jupyter or Google Colab
-            else:
-                warnings.simplefilter("always", UserWarning)
-                warnings.warn(
-                    message.replace("**", ""),  # Remove markdown styling for non-notebook environments
-                    UserWarning,
-                    stacklevel=2
-                )
-    except requests.exceptions.RequestException:
+                    if environment in ["Jupyter", "Google Colab"] and ipython_available:
+                        display(Markdown(message))  # Display as markdown in Jupyter or Google Colab
+                    else:
+                        warnings.simplefilter("always", UserWarning)
+                        warnings.warn(
+                            message.replace("**", ""),  # Remove markdown styling for non-notebook environments
+                            UserWarning,
+                            stacklevel=2
+                        )
+            except (requests.exceptions.RequestException, ImportError, pkg_resources.DistributionNotFound):
+                # Skip this package if it's not installed or can't be checked
+                pass
+    except Exception:
+        # Ensure the entire update check doesn't break the user's code
         pass
 
 # Customizing the warnings output format for non-notebook environments
