@@ -70,8 +70,8 @@ class StockComponents(BaseComponent):
         
             if self.source == 'TCBS':
                 logger.info("TCBS không cung cấp thông tin danh sách. Dữ liệu tự động trả về từ VCI.")
-            elif self.source == 'VCI':
-                logger.info("VCI không hỗ trợ kiểm tra cổ phiếu. Dữ liệu tự động trả về từ TCBS.")
+            # elif self.source == 'VCI':
+            #     logger.info("Nguồn VCI không hỗ trợ dữ liệu bộ lọc cổ phiếu. Dữ liệu tự động trả về từ TCBS.")
         elif self.source == 'MSN':
             self.quote = Quote(self.symbol, 'MSN')
             self.listing = Listing(source='MSN')
