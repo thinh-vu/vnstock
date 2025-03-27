@@ -132,7 +132,8 @@ class Company:
         df = flatten_dict_to_df(clean_data, 'financialRatio')
         
         # Replace '\n' with ' ' in all string columns
-        df = df.map(lambda x: x.replace('\n', ' ') if isinstance(x, str) else x)
+        # df = df.map(lambda x: x.replace('\n', ' ') if isinstance(x, str) else x) # This is for pandas 2.x
+        df = df.applymap(lambda x: x.replace('\n', ' ') if isinstance(x, str) else x) # This can be used for pandas 1.x and 2.x
         
         # Convert to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]

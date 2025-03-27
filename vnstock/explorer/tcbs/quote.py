@@ -229,8 +229,8 @@ class Quote:
         Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu TCBS
         """
         market_status = trading_hours(None)
-        if not market_status['is_trading_hour']:
-            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh chỉ có thể truy xuất trong giờ giao dịch. Vui lòng quay lại sau.")
+        if market_status['is_trading_hour'] is False and market_status['data_status'] == 'preparing':
+            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh không thể truy cập trong thời gian chuẩn bị phiên mới. Vui lòng quay lại sau.")
 
         # Validate input
         if self.symbol is None:

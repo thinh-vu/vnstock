@@ -69,27 +69,60 @@ class Finance:
         return com_type_code
 
     @staticmethod
-    def duplicated_columns_handling(all_columns_mapping: pd.DataFrame, 
-                                   target_col_name: str = 'name') -> pd.DataFrame:
+    def duplicated_columns_handling(df_or_mapping, target_col_name=None):
         """
-        Xử lý các tên cột trùng lặp trong DataFrame bằng cách thêm tên cột gốc làm hậu tố.
-
-        Tham số:
-            - all_columns_mapping (pd.DataFrame): DataFrame có tên cột có thể trùng lặp sau khi đổi tên.
-            - target_col_name (str): Tên cột để kiểm tra trùng lặp. Mặc định là 'name', giá trị khác có thể là 'en_name'.
-
+        Handle duplicated column names in a DataFrame or column mapping DataFrame.
+        
+        Parameters:
+            - df_or_mapping (pd.DataFrame): Either a DataFrame with potentially duplicated columns
+            or a mapping DataFrame with columns that may have duplicated values.
+            - target_col_name (str, optional): When handling a mapping DataFrame, this is the column
+            to check for duplicates. When None, assumes we're handling DataFrame columns directly.
+        
         Returns:
-            pd.DataFrame: DataFrame với tên cột đã được giải quyết trùng lặp.
+            pd.DataFrame: DataFrame with resolved column duplications.
         """
-        # Duplicated subset
-        duplicated_subset = all_columns_mapping[all_columns_mapping[target_col_name].duplicated()].copy()
-        # Non-duplicated subset
-        non_duplicated_subset = all_columns_mapping[~all_columns_mapping[target_col_name].duplicated()].copy()
-        # Replace values in the duplicated columns by appending the field_name
-        duplicated_subset[target_col_name] = all_columns_mapping['name'] + ' - ' + all_columns_mapping['field_name']
-        # Combine the two subsets
-        all_columns_mapping = pd.concat([non_duplicated_subset, duplicated_subset])
-        return all_columns_mapping
+        if target_col_name is not None:
+            # Original behavior for handling mapping DataFrames
+            # Duplicated subset
+            duplicated_subset = df_or_mapping[df_or_mapping[target_col_name].duplicated()].copy()
+            # Non-duplicated subset
+            non_duplicated_subset = df_or_mapping[~df_or_mapping[target_col_name].duplicated()].copy()
+            # Replace values in the duplicated columns by appending the field_name
+            duplicated_subset[target_col_name] = df_or_mapping['name'] + ' - ' + df_or_mapping['field_name']
+            # Combine the two subsets
+            return pd.concat([non_duplicated_subset, duplicated_subset])
+        else:
+            # New behavior for handling DataFrame columns directly
+            df = df_or_mapping.copy()
+            # Find columns that have any duplicates at all
+            duplicate_mask = df.columns.duplicated(keep=False)
+            duplicated_col_names = df.columns[duplicate_mask].unique()
+            
+            if len(duplicated_col_names) > 0:
+                # Create a new column mapping for rename operation
+                new_columns = df.columns.tolist()
+                
+                for col_name in duplicated_col_names:
+                    # Find all indices where this column name appears
+                    indices = [i for i, name in enumerate(new_columns) if name == col_name]
+                    
+                    # Skip the first occurrence, only rename subsequent occurrences
+                    for idx in indices[1:]:
+                        new_col_name = f"_{col_name}"
+                        # Check if the new name already exists or will be created
+                        suffix_count = 1
+                        while new_col_name in new_columns:
+                            new_col_name = f"{'_' * (suffix_count + 1)}{col_name}"
+                            suffix_count += 1
+                        
+                        # Update the name in our new_columns list
+                        new_columns[idx] = new_col_name
+                
+                # Apply the renaming
+                df.columns = new_columns
+            
+            return df
     
     def _get_ratio_dict(self, show_log: Optional[bool] = False, 
                        get_all: Optional[bool] = False) -> pd.DataFrame:
@@ -353,25 +386,14 @@ class Finance:
             # Replace "(Tỷ đồng)" with "(đồng)" in column names
             target_report_df = replace_in_column_names(target_report_df, "(Tỷ đồng)", "(đồng)")
             
-            # Handle duplicated column names by adding '_' prefix to later occurrences
-            duplicated_cols = target_report_df.columns[target_report_df.columns.duplicated()].tolist()
-            if duplicated_cols:
-                for col in duplicated_cols:
-                    # Find all occurrences of the duplicated column
-                    col_indices = [i for i, x in enumerate(target_report_df.columns) if x == col]
-                    # Keep the first occurrence unchanged, prefix others with '_'
-                    for idx in col_indices[1:]:
-                        # Create a new column name with '_' prefix
-                        new_col_name = f"_{target_report_df.columns[idx]}"
-                        # Rename the column in-place
-                        target_report_df.rename(columns={target_report_df.columns[idx]: new_col_name}, inplace=True)
+            # Handle duplicated column names - use the enhanced duplicated_columns_handling method
+            target_report_df = self.duplicated_columns_handling(target_report_df)
                     
             return target_report_df
             
         except Exception as e:
             logger.error(f"Error processing report '{report_key}': {e}")
             raise
-
 
     @optimize_execution("VCI")
     def balance_sheet(self, period: Optional[str] = None, lang: Optional[str] = 'en', 

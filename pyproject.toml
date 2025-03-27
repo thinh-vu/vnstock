@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 # Metadata Information
 [project]
 name = "vnstock"
-version = "3.2.2"
+version = "3.2.3"
 description = "A comprehensive and transparent solution for Vietnamese stock market analysis."
 authors = [
     { name = "Thinh Vu", email = "vnstock.hq@gmail.com" },
@@ -34,7 +34,8 @@ dependencies = [
     "fake_useragent",
     "vnstock_ezchart",
     "click",
-    "seaborn"
+    "seaborn",
+    "tenacity"
 ]
 
 # Dependency Management

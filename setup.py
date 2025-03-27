@@ -6,12 +6,12 @@ from setuptools.command.install import install
 
 setup(
     name="vnstock",
-    version="3.2.2",
+    version="3.2.3",
     description="A comprehensive and transparent solution for Vietnamese stock market analysis.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     author="Thinh Vu",
-    author_email="vnstock.hq@gmail.com",
+    author_email="support@vnstocks.com",
     url="https://github.com/thinh-vu/vnstock",
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -40,6 +40,7 @@ setup(
         "click",
         "packaging>=20.0",
         "importlib-metadata>=1.0",
+        "tenacity",
      ],
     extras_require={
         "dev": ["flake8"],
