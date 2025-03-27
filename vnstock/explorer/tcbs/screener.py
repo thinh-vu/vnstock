@@ -151,7 +151,10 @@ class Screener:
                 "price_vs_sma5",
                 "company_name",    
                 "industry",   
-                "exchange"    
+                "exchange",
+                "uptrend",
+                "price_break_out52_week",
+                "heating_up"
             ]
             
             # Process the specified columns:
