@@ -154,6 +154,7 @@ class Screener:
                 "exchange",
                 "uptrend",
                 "price_break_out52_week",
+                "price_wash_out52_week",
                 "heating_up"
             ]
             
