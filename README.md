@@ -21,7 +21,7 @@
 
 # 🎤 Giới thiệu về Vnstock
 
-Chào mừng bạn đến với **Vnstock**, bộ giải pháp mã nguồn mở toàn diện cho phân tích và tự động hóa đầu tư chứng khoán.
+> Chào mừng bạn đến với **Vnstock**, bộ giải pháp mã nguồn mở toàn diện cho phân tích và tự động hóa đầu tư chứng khoán.
 
 Với sứ mệnh **"Mang dữ liệu chứng khoán và công cụ đầu tư đến gần hơn với tất cả mọi người"**, Vnstock liên tục cải tiến, tích hợp những công nghệ hiện đại để không chỉ đáp ứng nhu cầu cơ bản về dữ liệu, mà còn giúp bạn xây dựng các giải pháp phân tích tài chính thông minh và linh hoạt hơn bao giờ hết.
 
@@ -84,9 +84,9 @@ Tham gia ngay cộng đồng Vnstock để giao lưu, chia sẻ kinh nghiệm v�
 12. **Tin tức & sự kiện tài chính**  
   Tự động cập nhật tin tức, công bố thông tin doanh nghiệp và lịch sự kiện thị trường.
 
-# III. Tuyên bố mmễn trừ trách nhiệm
+# III. Tuyên bố miễn trừ trách nhiệm
 
-Dự án **Vnstock** được phát triển nhằm phục vụ **mục đích nghiên cứu và sử dụng cá nhân**. Dữ liệu cung cấp có thể không đầy đủ, không liên tục hoặc sai lệch so với thực tế, do đó không khuyến nghị **sử dụng cho mục đích giao dịch thực tế, thuật toán đầu tư, hoặc ra quyết định tài chính** khi bạn không hiểu rõ.
+> Dự án **Vnstock** được phát triển nhằm phục vụ **mục đích nghiên cứu và sử dụng cá nhân**. Dữ liệu cung cấp có thể không đầy đủ, không liên tục hoặc sai lệch so với thực tế, do đó không khuyến nghị **sử dụng cho mục đích giao dịch thực tế, thuật toán đầu tư, hoặc ra quyết định tài chính** khi bạn không hiểu rõ.
 
 Các tác giả **không chịu trách nhiệm đối với bất kỳ tổn thất hay thiệt hại nào** phát sinh từ việc sử dụng dữ liệu hoặc mã nguồn này, bao gồm nhưng không giới hạn: sai lệch dữ liệu, mất mát tài chính, hoặc sử dụng sai mục đích.
 
