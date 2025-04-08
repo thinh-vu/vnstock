@@ -107,6 +107,7 @@ def localize_timestamp (
     
     return vietnam_series
 
+
 def get_asset_type(symbol: str) -> str:
     """
     Xác định loại tài sản dựa trên mã chứng khoán được cung cấp.
@@ -118,28 +119,49 @@ def get_asset_type(symbol: str) -> str:
         - 'index' nếu mã chứng khoán là mã chỉ số.
         - 'stock' nếu mã chứng khoán là mã cổ phiếu.
         - 'derivative' nếu mã chứng khoán là mã hợp đồng tương lai hoặc quyền chọn.
+        - 'bond' nếu mã chứng khoán là mã trái phiếu (chính phủ hoặc doanh nghiệp).
         - 'coveredWarr' nếu mã chứng khoán là mã chứng quyền.
     """
     symbol = symbol.upper()
-    if symbol in ['VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'VN30', 'VN100', 'HNX30', 'VNSML', 'VNMID', 'VNALL', 'VNREAL', 'VNMAT', 'VNIT', 'VNHEAL', 'VNFINSELECT', 'VNFIN', 'VNENE', 'VNDIAMOND', 'VNCONS', 'VNCOND']:
+    
+    # Index symbols
+    if symbol in [
+        'VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'VN30', 'VN100', 'HNX30',
+        'VNSML', 'VNMID', 'VNALL', 'VNREAL', 'VNMAT', 'VNIT', 'VNHEAL',
+        'VNFINSELECT', 'VNFIN', 'VNENE', 'VNDIAMOND', 'VNCONS', 'VNCOND'
+    ]:
         return 'index'
+    
+    # Stock symbols (assumed to have 3 characters)
     elif len(symbol) == 3:
         return 'stock'
+    
+    # For symbols that could be derivative or bond (length 7 or 9)
     elif len(symbol) in [7, 9]:
-        fm_pattern = re.compile(r'VN30F\d{1,2}M')
-        ym_pattern = re.compile(r'VN30F\d{4}')
-        gb_pattern = re.compile(r'[A-Z]{3}\d{5}')
-        bond_pattern = re.compile(r'[A-Z]{3}\d{6}')
-        if bond_pattern.match(symbol) or gb_pattern.match(symbol):
+        # VN30 derivative patterns:
+        fm_pattern = re.compile(r'^VN30F\d{1,2}M$')
+        ym_pattern = re.compile(r'^VN30F\d{4}$')
+        
+        # Bond patterns:
+        # Government bond: e.g., GB05F2506 or GB10F2024
+        gov_bond_pattern = re.compile(r'^GB\d{2}F\d{4}$')
+        # Company bond: e.g., BAB122032; exclude those starting with VN30F.
+        comp_bond_pattern = re.compile(r'^(?!VN30F)[A-Z]{3}\d{6}$')
+        
+        if gov_bond_pattern.match(symbol) or comp_bond_pattern.match(symbol):
             return 'bond'
         elif fm_pattern.match(symbol) or ym_pattern.match(symbol):
             return 'derivative'
         else:
-            raise ValueError('Invalid derivative symbol. Symbol must be in format of VN30F1M, VN30F2024, GB10F2024')
+            raise ValueError('Invalid derivative or bond symbol. Symbol must be in format of VN30F1M, VN30F2024, GB10F2024, or for company bonds, e.g., BAB122032')
+    
+    # Covered warrant symbols (assumed to have 8 characters)
     elif len(symbol) == 8:
         return 'coveredWarr'
+    
     else:
         raise ValueError('Invalid symbol. Your symbol format is not recognized!')
+
 
 def camel_to_snake(name):
     """
