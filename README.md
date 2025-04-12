@@ -19,6 +19,11 @@
 
 ---
 
+> ⚠️ **Note**: This document begins in 🇻🇳 Vietnamese for our local community.  
+> 🌐 **English version available below** — scroll or use the TOC (top-right 🟰) to navigate.
+
+---
+
 # 🎤 Giới thiệu về Vnstock
 
 > Chào mừng bạn đến với **Vnstock**, bộ giải pháp mã nguồn mở toàn diện cho phân tích và tự động hóa đầu tư chứng khoán.
