@@ -1,3 +1,4 @@
+---
 name: Báo lỗi
 description: Tạo báo lỗi giúp tác giả phát hiện và sửa lỗi nhanh chóng
 title: "[Bug]: "
@@ -112,3 +113,4 @@ body:
       options:
         - label: Tôi đã kiểm tra thông tin và xác nhận lỗi này chưa được báo cáo trước đây
           required: true
+---
