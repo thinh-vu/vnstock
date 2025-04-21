@@ -1,6 +1,6 @@
 ---
 name: Báo lỗi
-about: Tạo báo lỗi giúp tác giả phát hiện và sửa lỗi nhanh chóng
+description: Tạo báo lỗi giúp tác giả phát hiện và sửa lỗi nhanh chóng
 title: "[Bug]: "
 labels: ["bug"]
 projects: ["thinh-vu/4"]
