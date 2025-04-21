@@ -4,7 +4,8 @@ about: Đề xuất ý tưởng cho vnstock
 title: ''
 labels: enhancement
 assignees: thinh-vu
-
+project: Vnstock Ecosystem Roadmap
+status: backlog
 ---
 
 **Yêu cầu tính năng có liên quan đến một vấn đề? Vui lòng mô tả.**
