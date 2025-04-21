@@ -2,7 +2,8 @@ name: Báo lỗi
 description: Tạo báo lỗi giúp tác giả phát hiện và sửa lỗi nhanh chóng
 title: "[Bug]: "
 labels: ["bug"]
-projects: ["thinh-vu/Vnstock Ecosystem Roadmap"]
+projects:
+  - 42
 assignees:
   - thinh-vu
 body:
