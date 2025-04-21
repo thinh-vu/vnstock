@@ -39,7 +39,8 @@ setup(
         "packaging>=20.0",
         "importlib-metadata>=1.0",
         "tenacity",
-        "vnai @ https://github.com/vnstock-hq/initialization/releases/download/vnai-2.0.3/vnai-2.0.3.tar.gz"
+        "vnai>=2.0.3",
+        # "vnai @ https://github.com/vnstock-hq/initialization/releases/download/vnai-2.0.3/vnai-2.0.3.tar.gz"
      ],
     extras_require={
         "dev": ["flake8"],
