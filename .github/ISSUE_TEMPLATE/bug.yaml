@@ -24,12 +24,17 @@ body:
       label: Cách tái hiện lại lỗi để xử lý
       description: Các bước để tái hiện sự cố
       placeholder: |
-        1. Sử dụng VSCode '...'
-        2. Sử dụng hàm '....'
-        3. Thực thi lệnh '....'
-        4. Gặp lỗi
+        Thông tin Lỗi xuất hiện khi sử dụng đoạn code sau '....'
     validations:
       required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Thông báo lỗi hoặc logs
+      description: Sao chép và dán bất kỳ thông báo lỗi hoặc logs nào liên quan.
+      render: shell
+    validations:
+      required: false
   - type: textarea
     id: expected-behavior
     attributes:
@@ -37,7 +42,7 @@ body:
       description: Mô tả một cách rõ ràng và ngắn gọn về kỳ vọng của bạn.
       placeholder: Mô tả kết quả bạn mong muốn đạt được...
     validations:
-      required: true
+      required: false
   - type: textarea
     id: screenshots
     attributes:
@@ -47,27 +52,27 @@ body:
     validations:
       required: false
   - type: dropdown
-    id: operating-system
-    attributes:
-      label: Hệ điều hành
-      description: Bạn đang sử dụng hệ điều hành nào?
-      options:
-        - Windows
-        - macOS
-        - Linux
-        - Khác
-    validations:
-      required: true
-  - type: dropdown
     id: environment
     attributes:
       label: Môi trường
       description: Bạn đang sử dụng trong môi trường nào?
       options:
+        - Google Colab
         - VSCode
         - Jupyter Notebook
-        - Google Colab
         - PyCharm
+        - Khác
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Hệ điều hành
+      description: Bạn đang sử dụng hệ điều hành nào?
+      options:
+        - Linux
+        - Windows
+        - macOS
         - Khác
     validations:
       required: true
@@ -93,18 +98,10 @@ body:
       label: Môi trường ảo
       description: Bạn có sử dụng môi trường ảo không?
       options:
-        - Có
         - Không
+        - Có
     validations:
       required: true
-  - type: textarea
-    id: logs
-    attributes:
-      label: Thông báo lỗi hoặc logs
-      description: Sao chép và dán bất kỳ thông báo lỗi hoặc logs nào liên quan.
-      render: shell
-    validations:
-      required: false
   - type: checkboxes
     id: terms
     attributes:
