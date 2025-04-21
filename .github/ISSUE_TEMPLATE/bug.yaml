@@ -3,7 +3,6 @@ description: Tạo báo lỗi giúp tác giả phát hiện và sửa lỗi nhan
 title: "[Bug]: "
 labels: ["bug"]
 projects: ["thinh-vu/4"]
-status: backlog
 assignees:
   - thinh-vu
 body:
