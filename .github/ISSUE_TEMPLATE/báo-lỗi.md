@@ -3,7 +3,7 @@ description: Tạo báo lỗi giúp tác giả phát hiện và sửa lỗi nhan
 title: "[Bug]: "
 labels: ["bug"]
 projects:
-  - 42
+  - 4
 assignees:
   - thinh-vu
 body:
