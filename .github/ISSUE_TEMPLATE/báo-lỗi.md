@@ -2,8 +2,7 @@ name: Báo lỗi
 description: Tạo báo lỗi giúp tác giả phát hiện và sửa lỗi nhanh chóng
 title: "[Bug]: "
 labels: ["bug"]
-projects:
-  - 4
+projects: ["thinh-vu/4"]
 assignees:
   - thinh-vu
 body:
