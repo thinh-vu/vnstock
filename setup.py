@@ -6,7 +6,7 @@ from setuptools.command.install import install
 
 setup(
     name="vnstock",
-    version="3.2.3",
+    version="3.2.4",
     description="A comprehensive and transparent solution for Vietnamese stock market analysis.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
@@ -30,7 +30,6 @@ setup(
         "beautifulsoup4",
         "pandas",
         "seaborn",
-        "vnai>=2.0.1",
         "openpyxl",
         "pydantic",
         "psutil",
@@ -40,6 +39,7 @@ setup(
         "packaging>=20.0",
         "importlib-metadata>=1.0",
         "tenacity",
+        "vnai @ https://github.com/vnstock-hq/initialization/releases/download/vnai-2.0.3/vnai-2.0.3.tar.gz"
      ],
     extras_require={
         "dev": ["flake8"],
