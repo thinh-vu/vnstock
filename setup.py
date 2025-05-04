@@ -6,7 +6,7 @@ from setuptools.command.install import install
 
 setup(
     name="vnstock",
-    version="3.2.4",
+    version="3.2.5",
     description="A comprehensive and transparent solution for Vietnamese stock market analysis.",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",

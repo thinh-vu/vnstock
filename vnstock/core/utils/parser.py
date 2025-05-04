@@ -107,7 +107,6 @@ def localize_timestamp (
     
     return vietnam_series
 
-
 def get_asset_type(symbol: str) -> str:
     """
     Xác định loại tài sản dựa trên mã chứng khoán được cung cấp.
@@ -161,7 +160,6 @@ def get_asset_type(symbol: str) -> str:
     
     else:
         raise ValueError('Invalid symbol. Your symbol format is not recognized!')
-
 
 def camel_to_snake(name):
     """

@@ -47,17 +47,6 @@ def get_package_path(package='vnstock'):
         package_path = None
     return package_path
 
-
-# def id_valid():
-#     pkg_init = ID_DIR / "environment.json"
-#     try:
-#         with open(pkg_init, 'r') as f:
-#             env = json.load(f)
-#         if not env['accepted_agreement']:
-#             raise SystemExit('Bạn cần chấp thuận điều khoản, điều kiện để sử dụng Vnstock!')
-#     except:
-#         raise SystemExit('Bạn cần chấp thuận điều khoản, điều kiện để sử dụng Vnstock!')
-
 def id_valid():
     """
     Check if license terms have been accepted.
@@ -77,8 +66,7 @@ def id_valid():
         vnai.accept_license_terms()
     
     return True
-
-    
+   
 def get_username():
     """
     Get the current username of the system.
@@ -90,7 +78,6 @@ def get_username():
         print(f"Error: {e}")
         return None
 
-
 def get_cwd():
     """Return current working directory"""
     try:
@@ -99,7 +86,6 @@ def get_cwd():
     except OSError as e:
         print(f"Error: {e}")
         return None
-
 
 def get_path_delimiter():
     """

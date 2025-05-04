@@ -245,8 +245,6 @@ def trading_hours(market: str = "HOSE", custom_time: Optional[datetime.datetime]
         "market": market_display
     }
 
-
-
 # # Example usage
 # if __name__ == "__main__":
 #     print(check_market_hours(market="HOSE", custom_time=datetime.datetime(2025, 3, 17, 10, 0, 0), enable_log=True, language="en"))

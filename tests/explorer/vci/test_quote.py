@@ -329,6 +329,62 @@ class TestQuotePriceDepth(unittest.TestCase):
         with self.assertRaises(ValueError):
             quote.price_depth()
 
+class TestQuote(unittest.TestCase):
+    def setUp(self):
+        self.symbol = 'VIC'
+        self.quote = Quote(self.symbol)
+
+    def test_init_with_default_headers(self):
+        """Test khởi tạo Quote với headers mặc định"""
+        self.assertEqual(self.quote.symbol, self.symbol.upper())
+        self.assertEqual(self.quote.data_source, 'VCI')
+        self.assertIn('User-Agent', self.quote.headers)
+        self.assertIn('Referer', self.quote.headers)
+        self.assertIn('Origin', self.quote.headers)
+        self.assertEqual(
+            self.quote.headers['Referer'], 
+            'https://trading.vietcap.com.vn/'
+        )
+        self.assertEqual(
+            self.quote.headers['Origin'], 
+            'https://trading.vietcap.com.vn/'
+        )
+
+    def test_init_with_random_agent(self):
+        """Test khởi tạo Quote với random_agent=True"""
+        quote = Quote(self.symbol, random_agent=True)
+        self.assertIn('User-Agent', quote.headers)
+        # Kiểm tra User-Agent có chứa thông tin browser
+        browsers = ['chrome', 'safari', 'firefox', 'coccoc', 'brave', 'vivaldi']
+        self.assertTrue(
+            any(browser in quote.headers['User-Agent'].lower() 
+                for browser in browsers)
+        )
+
+    @patch('vnstock.core.utils.user_agent.get_headers')
+    def test_init_with_custom_headers(self, mock_get_headers):
+        """Test khởi tạo Quote với custom headers"""
+        custom_headers = {
+            'User-Agent': 'Custom Agent',
+            'Referer': 'https://custom.com',
+            'Origin': 'https://custom.com'
+        }
+        mock_get_headers.return_value = custom_headers
+        
+        quote = Quote(self.symbol)
+        self.assertEqual(quote.headers, custom_headers)
+
+    def test_init_with_show_log_false(self):
+        """Test khởi tạo Quote với show_log=False"""
+        quote = Quote(self.symbol, show_log=False)
+        self.assertFalse(quote.show_log)
+
+    def test_init_with_index_symbol(self):
+        """Test khởi tạo Quote với mã index"""
+        index_symbol = 'VNINDEX'
+        quote = Quote(index_symbol)
+        self.assertEqual(quote.symbol, 'VNINDEX')
+
 def run_tests_with_coverage():
     """Run tests with coverage measurement."""
     import coverage
@@ -345,6 +401,7 @@ def run_tests_with_coverage():
         test_suite.addTest(unittest.makeSuite(TestQuoteHistory))
         test_suite.addTest(unittest.makeSuite(TestQuoteIntraday))
         test_suite.addTest(unittest.makeSuite(TestQuotePriceDepth))
+        test_suite.addTest(unittest.makeSuite(TestQuote))
         
         test_runner = unittest.TextTestRunner(verbosity=2)
         test_result = test_runner.run(test_suite)
