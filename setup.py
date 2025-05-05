@@ -4,24 +4,53 @@ import subprocess
 from setuptools import setup, find_packages, Command
 from setuptools.command.install import install
 
+here = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(here, "README.md"), "r", encoding="utf-8") as f:
+    long_description = f.read()
+
 setup(
     name="vnstock",
     version="3.2.5",
-    description="A comprehensive and transparent solution for Vietnamese stock market analysis.",
-    long_description=open("README.md", "r", encoding="utf-8").read(),
+    description="A beginner-friendly yet powerful Python toolkit for financial analysis and automation — built to make modern investing accessible to everyone",
+    long_description=long_description,
     long_description_content_type="text/markdown",
     author="Thinh Vu",
     author_email="support@vnstocks.com",
     url="https://github.com/thinh-vu/vnstock",
+    project_urls={
+        "Documentation": "https://github.com/thinh-vu/vnstock",
+        "Source": "https://github.com/thinh-vu/vnstock",
+        "Issue Tracker": "https://github.com/thinh-vu/vnstock/issues",
+    },
+    keywords="vnstock, finance, vietnam, stock market, analysis, API",
+    license="Custom: Personal, research, non-commercial; contact support@vnstocks.com for other use",
     classifiers=[
+        # Trạng thái phát triển
+        "Development Status :: 5 - Production/Stable",
+        # Đối tượng sử dụng
+        "Intended Audience :: Developers",
+        "Intended Audience :: Education",
+        "Intended Audience :: Financial and Insurance Industry",
+        # Lĩnh vực
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Software Development :: API",
+        "Topic :: Office/Business :: Financial :: Investment",
+        # Python versions
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        # Hệ điều hành
         "Operating System :: OS Independent",
+        # License (custom)
+        "License :: Other/Proprietary License",
+        # Ngôn ngữ tự nhiên của package
+        "Natural Language :: English",
+        "Natural Language :: Vietnamese",
     ],
     python_requires=">=3.10",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests*", "docs*"]),
+    include_package_data=True,
     package_data={
         "vnstock": ["docs/*.txt", "docs/*.csv"],
     },

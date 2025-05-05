@@ -1,11 +1,16 @@
 """Data transformation utilities for vnstock data sources."""
 
+import re
 import pytz
+import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
 from typing import Dict, Any, List, Optional, Union
 from datetime import datetime, timedelta, time
 from vnstock.core.utils.parser import localize_timestamp
+from vnstock.core.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 # Vietnam timezone
 vietnam_tz = pytz.timezone('Asia/Ho_Chi_Minh')
@@ -163,88 +168,95 @@ def ohlc_to_df(data: Dict[str, Any], column_map: Dict[str, str], dtype_map: Dict
     
     return df
 
-def intraday_to_df(data: List[Dict[str, Any]], column_map: Dict[str, str], 
-                  dtype_map: Dict[str, str], symbol: str, asset_type: str, 
-                  source: str) -> pd.DataFrame:
+def intraday_to_df(
+    data: List[Dict[str, Any]],
+    column_map: Dict[str, str],
+    dtype_map: Dict[str, str],
+    symbol: str,
+    asset_type: str,
+    source: str
+) -> pd.DataFrame:
     """
-    Convert intraday trading data to standardized DataFrame format.
-    
-    Parameters:
-        data: List of dictionary data from API
-        column_map: Mapping from source columns to standard column names
-        dtype_map: Data types for each column
-        symbol: Trading symbol
-        asset_type: Asset type (stock, derivative, etc.)
-        source: Data source identifier (VCI, TCBS, etc.)
-        
-    Returns:
-        DataFrame with standardized format and timezone-aware timestamps
+    Convert intraday trading data to standardized DataFrame format,
+    cleaning numeric strings (thousands separators, commas) and logging parse failures.
     """
-    # Early exit if no data
+    # --- empty case ---
     if not data:
-        empty_df = pd.DataFrame(columns=list(column_map.values()))
-        empty_df.attrs['symbol'] = symbol
-        empty_df.category = asset_type
-        empty_df.source = source
-        return empty_df
-    
-    # Create DataFrame
+        empty = pd.DataFrame(columns=list(column_map.values()))
+        empty.attrs['symbol'] = symbol
+        empty.category = asset_type
+        empty.source = source
+        return empty
+
+    # --- build raw DF ---
     df = pd.DataFrame(data)
-    
-    # Select and rename columns
-    available_columns = [col for col in column_map.keys() if col in df.columns]
-    if not available_columns:
-        raise ValueError(f"None of the expected columns found in data. Expected: {list(column_map.keys())}, Found: {df.columns.tolist()}")
-    
-    df = df[available_columns]
-    df.rename(columns={k: column_map[k] for k in available_columns}, inplace=True)
-    
-    # Handle time column based on source
+
+    # --- select & rename ---
+    cols = [c for c in column_map if c in df.columns]
+    df = df[cols]
+    df.rename(columns={c: column_map[c] for c in cols}, inplace=True)
+
+    # --- cleaning + parsing numeric columns ---
+    numeric_cols = [
+        col for col, dt in dtype_map.items()
+        if col in df.columns and dt.startswith(("int", "float"))
+    ]
+
+    def clean_and_parse(val: Any, col: str) -> float:
+        # NaN pass-through
+        if pd.isna(val):
+            return np.nan
+        s = str(val).strip()
+        # Remove thousands separators: e.g. "1,234" or "1.234"
+        s = re.sub(r'(?<=\d)[.,](?=\d{3}\b)', '', s)
+        # Normalize decimal comma to dot
+        s = s.replace(',', '.')
+        try:
+            return float(s)
+        except Exception:
+            logger.warning(f"[intraday_to_df] cannot parse '{val}' in column '{col}'")
+            return np.nan
+
+    for col in numeric_cols:
+        # apply vectorized map for speed & logging
+        df[col] = df[col].map(lambda v: clean_and_parse(v, col))
+
+    # --- handle time column ---
     if 'time' in df.columns:
         trading_date = get_trading_date()
-        
         if source == 'VCI':
-            # VCI provides timestamps - use localize_timestamp directly
             df['time'] = localize_timestamp(df['time'].astype(int), unit='s')
-        else:  # TCBS
-            # Check if we have just time values (HH:MM:SS)
-            sample_time = str(df['time'].iloc[0]) if not df.empty else ''
-            
-            if ':' in sample_time and len(sample_time) <= 8:
-                # Time-only values, combine with trading_date
+        else:
+            sample = str(df['time'].iloc[0]) if not df.empty else ''
+            if ':' in sample and len(sample) <= 8:
                 df['time'] = df['time'].apply(
                     lambda x: datetime.combine(trading_date, datetime.strptime(x, '%H:%M:%S').time())
                     if isinstance(x, str) and ':' in x else pd.NaT
                 )
-                # Use localize_timestamp to handle timezone
                 df['time'] = localize_timestamp(df['time'], return_string=False)
             else:
-                # Parse as full datetime, then localize
                 df['time'] = pd.to_datetime(df['time'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
-                # Use localize_timestamp instead of manual localization
                 if df['time'].dt.tz is None:
                     df['time'] = localize_timestamp(df['time'], return_string=False)
-    
-    # Process match types
+
+    # --- process special match types (ATO/ATC) ---
     if 'match_type' in df.columns:
         df = process_match_types(df, asset_type, source)
-    
-    # Sort by time
+
+    # --- sort & reset ---
     if 'time' in df.columns:
         df = df.sort_values('time')
+    df.reset_index(drop=True, inplace=True)
 
-    # Reset_index
-    df = df.reset_index(drop=True)
-    
-    # Apply data types
-    dtype_without_time = {k: v for k, v in dtype_map.items() if k != 'time' and k in df.columns}
-    df = df.astype(dtype_without_time)
-    
-    # Add metadata
+    # --- final dtype cast ---
+    cast_map = {k: v for k, v in dtype_map.items() if k in df.columns and k != 'time'}
+    df = df.astype(cast_map)
+
+    # --- metadata ---
     df.attrs['symbol'] = symbol
     df.category = asset_type
     df.source = source
-    
+
     return df
 
 def replace_in_column_names(df, old_text, new_text, regex=False):
