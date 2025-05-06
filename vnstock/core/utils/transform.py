@@ -17,6 +17,18 @@ vietnam_tz = pytz.timezone('Asia/Ho_Chi_Minh')
 
 # ==== Utils functions for data transformation ====
 
+def clean_numeric_string(s: Any) -> Any:
+    """
+    Loại bỏ dấu phân nhóm (',' hoặc NBSP), chuẩn hoá dấu thập phân về '.'
+    """
+    if not isinstance(s, str):
+        return s
+    s = s.replace('\u00A0', '').replace(',', '')
+    # Nếu chỉ có một dấu ',' (nghĩa decimal), chuyển thành '.'
+    if s.count('.') == 0 and s.count(',') == 1:
+        s = s.replace(',', '.')
+    return s.strip()
+
 def get_trading_date() -> datetime.date:
     """
     Determine the appropriate trading date based on current day and time in Vietnam timezone.
@@ -178,60 +190,71 @@ def intraday_to_df(
 ) -> pd.DataFrame:
     """
     Convert intraday trading data to standardized DataFrame format,
-    cleaning numeric strings (thousands separators, commas) and logging parse failures.
+    với:
+      - Tiền xử lý chuỗi số cho price/volume
+      - Map scale dựa trên source (không hardcode /1000)
+      - Kiểm soát NaN, rounding volume an toàn
+      - Xử lý time, match_type như trước
     """
-    # --- empty case ---
+    # --- Early exit ---
     if not data:
-        empty = pd.DataFrame(columns=list(column_map.values()))
-        empty.attrs['symbol'] = symbol
-        empty.category = asset_type
-        empty.source = source
-        return empty
+        empty_df = pd.DataFrame(columns=list(column_map.values()))
+        empty_df.attrs['symbol'] = symbol
+        empty_df.category = asset_type
+        empty_df.source = source
+        return empty_df
 
-    # --- build raw DF ---
     df = pd.DataFrame(data)
 
-    # --- select & rename ---
-    cols = [c for c in column_map if c in df.columns]
-    df = df[cols]
-    df.rename(columns={c: column_map[c] for c in cols}, inplace=True)
+    # --- Chọn & rename columns ---
+    available = [c for c in column_map if c in df.columns]
+    if not available:
+        raise ValueError(f"Expected columns {list(column_map)} not found, got {df.columns.tolist()}")
+    df = df[available].rename(columns={k: column_map[k] for k in available})
 
-    # --- cleaning + parsing numeric columns ---
-    numeric_cols = [
-        col for col, dt in dtype_map.items()
-        if col in df.columns and dt.startswith(("int", "float"))
-    ]
+    # --- Làm sạch & chuyển numeric ---
+    for col in ('price', 'volume'):
+        if col in df.columns:
+            # Tiền xử lý chuỗi
+            df[col] = df[col].map(clean_numeric_string)
+            # Chuyển sang float, lỗi thành NaN
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+            n_bad = df[col].isna().sum()
+            if n_bad:
+                print(f"[Warning] {n_bad} giá trị ở '{col}' không parse được, chuyển thành NaN")
 
-    def clean_and_parse(val: Any, col: str) -> float:
-        # NaN pass-through
-        if pd.isna(val):
-            return np.nan
-        s = str(val).strip()
-        # Remove thousands separators: e.g. "1,234" or "1.234"
-        s = re.sub(r'(?<=\d)[.,](?=\d{3}\b)', '', s)
-        # Normalize decimal comma to dot
-        s = s.replace(',', '.')
-        try:
-            return float(s)
-        except Exception:
-            logger.warning(f"[intraday_to_df] cannot parse '{val}' in column '{col}'")
-            return np.nan
+    # --- Scale price theo source ---
+    scale_map = {'VCI': 1000, 'MAS': 1000}
+    scale = scale_map.get(source, 1)
+    if 'price' in df.columns:
+        df['price'] = df['price'] / scale
 
-    for col in numeric_cols:
-        # apply vectorized map for speed & logging
-        df[col] = df[col].map(lambda v: clean_and_parse(v, col))
+    # --- Volume: round & cast int ---
+    if 'volume' in df.columns:
+        vol = df['volume'].fillna(0)
+        # Kiểm tra nếu có decimal
+        mask = (vol % 1 != 0)
+        if mask.any():
+            print(f"[Info] {int(mask.sum())} giá trị volume có decimal, sẽ làm tròn")
+        df['volume'] = vol.round().astype(int)
 
-    # --- handle time column ---
+    # --- Xử lý cột time như trước ---
     if 'time' in df.columns:
         trading_date = get_trading_date()
+
         if source == 'VCI':
             df['time'] = localize_timestamp(df['time'].astype(int), unit='s')
-        else:
+        elif source == 'MAS':
+            df['time'] = localize_timestamp(df['time'].astype(int), unit='ms')
+            df['time'] = df['time'].dt.floor('s')
+        else:  # TCBS
             sample = str(df['time'].iloc[0]) if not df.empty else ''
             if ':' in sample and len(sample) <= 8:
                 df['time'] = df['time'].apply(
-                    lambda x: datetime.combine(trading_date, datetime.strptime(x, '%H:%M:%S').time())
-                    if isinstance(x, str) and ':' in x else pd.NaT
+                    lambda x: datetime.combine(
+                        trading_date,
+                        datetime.strptime(x, '%H:%M:%S').time()
+                    ) if isinstance(x, str) and ':' in x else pd.NaT
                 )
                 df['time'] = localize_timestamp(df['time'], return_string=False)
             else:
@@ -239,20 +262,21 @@ def intraday_to_df(
                 if df['time'].dt.tz is None:
                     df['time'] = localize_timestamp(df['time'], return_string=False)
 
-    # --- process special match types (ATO/ATC) ---
+    # --- Process match types như bạn đã định nghĩa ---
     if 'match_type' in df.columns:
         df = process_match_types(df, asset_type, source)
 
-    # --- sort & reset ---
+    # --- Sort, reset index & apply dtype ---
     if 'time' in df.columns:
         df = df.sort_values('time')
-    df.reset_index(drop=True, inplace=True)
+    df = df.reset_index(drop=True)
 
-    # --- final dtype cast ---
-    cast_map = {k: v for k, v in dtype_map.items() if k in df.columns and k != 'time'}
-    df = df.astype(cast_map)
+    # Áp dtype_map (không tính time)
+    type_map = {k: v for k, v in dtype_map.items() if k in df.columns and k != 'time'}
+    if type_map:
+        df = df.astype(type_map)
 
-    # --- metadata ---
+    # --- Metadata ---
     df.attrs['symbol'] = symbol
     df.category = asset_type
     df.source = source
