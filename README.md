@@ -162,7 +162,7 @@ Dù lớn hay nhỏ, mỗi sự hỗ trợ đều là một lời nhắc nhở r
 <a href="https://github.com/toramidu"><img src="https://avatars.githubusercontent.com/u/98959140?s=100&v=4" width="60px" alt="toramidu" style="border-radius: 50%;" /></a>
 </div>
 
-### Hỗ trợ dự án
+## Hỗ trợ dự án
 
 Nếu vnstock đã mang lại giá trị cho bạn và bạn muốn trở thành một phần của cộng đồng những người ủng hộ, sự đóng góp của bạn sẽ là nguồn động lực vô cùng to lớn đối với chúng tôi. Mỗi nhà tài trợ giúp chúng tôi có thêm thời gian cải thiện tài liệu, phát triển tính năng mới và duy trì sự bền vững lâu dài cho dự án này.
 
@@ -595,6 +595,12 @@ Install or upgrade to the latest version of Vnstock via pip:
 
 ```bash
 pip install -U vnstock
+```
+
+You can also install the experimental release from GitHub using the command:
+
+```bash
+pip install git+https://github.com/thinh-vu/vnstock.git
 ```
 
 ---
