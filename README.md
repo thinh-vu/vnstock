@@ -115,9 +115,9 @@ Khi sử dụng Vnstock trong dự án của mình, bạn cần trích dẫn th�
 
 ---
 
-# V. 🙏 Contributors & Sponsors
+# V. 🙏 Bạn đồng hành & tài trợ
 
-## Contributors 
+## Bạn đồng hành
 
 Vnstock phát triển nhờ sự chung tay của cộng đồng những người yêu thích công nghệ và tài chính. Mỗi dòng code, mỗi bản sửa lỗi đều là minh chứng cho sự đóng góp quý giá của các bạn. Cảm ơn vì đã biến vnstock thành công cụ mạnh mẽ cho cộng đồng đầu tư Việt Nam!
 
@@ -125,9 +125,11 @@ Vnstock phát triển nhờ sự chung tay của cộng đồng những người
    <img src="https://contributors-img.web.app/image?repo=thinh-vu/vnstock" width="800"/>
 </a>
 
-## ❤️ Sponsors
+## ❤️ Nhà tài trợ nổi bật
 
-Từ tận đáy lòng, Vnstock gửi lời tri ân sâu sắc đến những người đã tin tưởng và ủng hộ vnstock. Sự đóng góp của các bạn không chỉ là nguồn lực tài chính – mà còn là niềm tin, sự khích lệ và là động lực mạnh mẽ để chúng tôi tiếp tục phát triển, tối ưu hóa và lan tỏa công cụ này đến cộng đồng đầu tư Việt Nam. Dù lớn hay nhỏ, mỗi sự hỗ trợ đều là một lời nhắc nhở rằng chúng tôi không đi một mình. Các bạn là những đối tác đồng hành, những người tiên phong chung tay kiến tạo một hệ sinh thái dữ liệu tài chính dễ tiếp cận và minh bạch hơn cho mọi nhà đầu tư. 
+Từ tận đáy lòng, Vnstock gửi lời tri ân sâu sắc đến những người đã tin tưởng và ủng hộ vnstock. Sự đóng góp của các bạn không chỉ là nguồn lực tài chính – mà còn là niềm tin, sự khích lệ và là động lực mạnh mẽ để chúng tôi tiếp tục phát triển, tối ưu hóa và lan tỏa công cụ này đến cộng đồng đầu tư Việt Nam. 
+
+Dù lớn hay nhỏ, mỗi sự hỗ trợ đều là một lời nhắc nhở rằng chúng tôi không đi một mình. Các bạn là những đối tác đồng hành, những người tiên phong chung tay kiến tạo một hệ sinh thái dữ liệu tài chính dễ tiếp cận và minh bạch hơn cho mọi nhà đầu tư. 
 
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
   <!-- Present & Past sponsors -->
@@ -165,8 +167,8 @@ Từ tận đáy lòng, Vnstock gửi lời tri ân sâu sắc đến những ng
 Nếu vnstock đã mang lại giá trị cho bạn và bạn muốn trở thành một phần của cộng đồng những người ủng hộ, sự đóng góp của bạn sẽ là nguồn động lực vô cùng to lớn đối với chúng tôi. Mỗi nhà tài trợ giúp chúng tôi có thêm thời gian cải thiện tài liệu, phát triển tính năng mới và duy trì sự bền vững lâu dài cho dự án này.
 
 <div id="badges" align="center">
-    <a href="https://github.com/sponsors/thinh-vu" style="text-decoration: none;">
-        <img src="https://img.shields.io/static/v1?label=Support Our Work&message=Become a Sponsor ❤️&logo=GitHub&color=%23fe8e86" alt="Sponsor vnstock"/>
+    <a href="https://github.com/sponsors/thinh-vu">
+        <img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" alt="vnstock3 download badge"/>
     </a>
 </div>
 
@@ -504,7 +506,7 @@ Vnstock thrives thanks to the collective efforts of tech and finance enthusiasts
    <img src="https://contributors-img.web.app/image?repo=thinh-vu/vnstock" width="800"/>
 </a>
 
-## ❤️ Sponsors
+## ❤️ Featured Sponsors
 
 From the bottom of our hearts, we want to express our deepest gratitude to all our incredible sponsors. Your generous support has been the backbone of this project, allowing us to dedicate more time and resources to improving vnstock. Each contribution, regardless of size, fuels our passion and helps us maintain and enhance this open-source tool for the entire investment community. You are not just sponsors – you are essential partners in our journey to democratize financial data access for all investors.
 
@@ -544,8 +546,8 @@ From the bottom of our hearts, we want to express our deepest gratitude to all o
 If you've found value in vnstock and would like to join our community of supporters, your contribution would mean the world to us. Every sponsor enables us to dedicate more time to improving documentation, adding new features, and ensuring the long-term sustainability of this project.
 
 <div id="badges" align="center">
-    <a href="https://github.com/sponsors/thinh-vu" style="text-decoration: none;">
-        <img src="https://img.shields.io/static/v1?label=Support Our Work&message=Become a Sponsor ❤️&logo=GitHub&color=%23fe8e86" alt="Sponsor vnstock"/>
+    <a href="https://github.com/sponsors/thinh-vu">
+        <img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" alt="vnstock3 download badge"/>
     </a>
 </div>
 
