@@ -17,6 +17,11 @@
     </a>
 </div>
 
+<div id="badges" align="center">
+    <a href="https://github.com/sponsors/thinh-vu">
+        <img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" alt="vnstock3 download badge"/>
+    </a>
+</div>
 ---
 
 > ⚠️ **Note**: This document begins in 🇻🇳 Vietnamese for our local community.  
@@ -48,6 +53,7 @@ Tham gia ngay cộng đồng Vnstock để giao lưu, chia sẻ kinh nghiệm v�
   </a>
 </div>
 
+---
 
 # II. Các nhóm tính năng chính
 
@@ -89,6 +95,8 @@ Tham gia ngay cộng đồng Vnstock để giao lưu, chia sẻ kinh nghiệm v�
 12. **Tin tức & sự kiện tài chính**  
   Tự động cập nhật tin tức, công bố thông tin doanh nghiệp và lịch sự kiện thị trường.
 
+---
+
 # III. Tuyên bố miễn trừ trách nhiệm
 
 > Dự án **Vnstock** được phát triển nhằm phục vụ **mục đích nghiên cứu và sử dụng cá nhân**. Dữ liệu cung cấp có thể không đầy đủ, không liên tục hoặc sai lệch so với thực tế, do đó không khuyến nghị **sử dụng cho mục đích giao dịch thực tế, thuật toán đầu tư, hoặc ra quyết định tài chính** khi bạn không hiểu rõ.
@@ -97,20 +105,81 @@ Các tác giả **không chịu trách nhiệm đối với bất kỳ tổn th�
 
 **Vnstock không cung cấp tư vấn đầu tư hay tín hiệu giao dịch**. Người dùng hoàn toàn tự chịu trách nhiệm khi sử dụng dự án.
 
+---
+
 # IV. 🔑 Giấy phép sử dụng (License)
 
 `Vnstock` được phát hành theo giấy phép tuỳ chỉnh hướng đến cá nhân, không dành cho mục đích thương mại. Quyền sử dụng được quy định cụ thể trong [giấy phép](LICENSE.md) kèm theo. Nếu bạn hoặc tổ chức bạn đang làm việc muốn sử dụng Vnstock có thể liên hệ tác giả để hiểu rõ phạm vi sử dụng và được cấp phép chính thức.
 
 Khi sử dụng Vnstock trong dự án của mình, bạn cần trích dẫn thông tin về tác giả và dự án theo hướng dẫn của Vnstock.
 
-# V. Lịch sử lượt yêu thích
+---
+
+# V. 🙏 Contributors & Sponsors
+
+## Contributors 
+
+Vnstock phát triển nhờ sự chung tay của cộng đồng những người yêu thích công nghệ và tài chính. Mỗi dòng code, mỗi bản sửa lỗi đều là minh chứng cho sự đóng góp quý giá của các bạn. Cảm ơn vì đã biến vnstock thành công cụ mạnh mẽ cho cộng đồng đầu tư Việt Nam!
+
+<a href="https://github.com/thinh-vu/vnstock/graphs/contributors">
+   <img src="https://contributors-img.web.app/image?repo=thinh-vu/vnstock" width="800"/>
+</a>
+
+## ❤️ Sponsors
+
+Từ tận đáy lòng, Vnstock gửi lời tri ân sâu sắc đến những người đã tin tưởng và ủng hộ vnstock. Sự đóng góp của các bạn không chỉ là nguồn lực tài chính – mà còn là niềm tin, sự khích lệ và là động lực mạnh mẽ để chúng tôi tiếp tục phát triển, tối ưu hóa và lan tỏa công cụ này đến cộng đồng đầu tư Việt Nam. Dù lớn hay nhỏ, mỗi sự hỗ trợ đều là một lời nhắc nhở rằng chúng tôi không đi một mình. Các bạn là những đối tác đồng hành, những người tiên phong chung tay kiến tạo một hệ sinh thái dữ liệu tài chính dễ tiếp cận và minh bạch hơn cho mọi nhà đầu tư. 
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <!-- Present & Past sponsors -->
+<a href="https://github.com/Huytq82"><img src="https://avatars.githubusercontent.com/u/68698802?s=100&v=4" width="60px" alt="Huytq82" style="border-radius: 50%;" /></a>
+<a href="https://github.com/yellow1912"><img src="https://avatars.githubusercontent.com/u/374134?s=100&v=4" width="60px" alt="yellow1912" style="border-radius: 50%;" /></a>
+<a href="https://github.com/thaituankha"><img src="https://avatars.githubusercontent.com/u/136249921?s=100&v=4" width="60px" alt="thaituankha" style="border-radius: 50%;" /></a>
+<a href="https://github.com/huannguyen2606"><img src="https://avatars.githubusercontent.com/u/207012732?s=100&v=4" width="60px" alt="huannguyen2606" style="border-radius: 50%;" /></a>
+<a href="https://github.com/hungson175"><img src="https://avatars.githubusercontent.com/u/565789?s=100&v=4" width="60px" alt="hungson175" style="border-radius: 50%;" /></a>
+<a href="https://github.com/kynnbreak"><img src="https://avatars.githubusercontent.com/u/60998063?s=100&v=4" width="60px" alt="kynnbreak" style="border-radius: 50%;" /></a>
+<a href="https://github.com/quanglaife"><img src="https://avatars.githubusercontent.com/u/153795419?s=100&v=4" width="60px" alt="quanglaife" style="border-radius: 50%;" /></a>
+<a href="https://github.com/itkennylee"><img src="https://avatars.githubusercontent.com/u/206494183?s=100&v=4" width="60px" alt="itkennylee" style="border-radius: 50%;" /></a>
+<a href="https://github.com/congnt91"><img src="https://avatars.githubusercontent.com/u/191594462?s=100&v=4" width="60px" alt="congnt91" style="border-radius: 50%;" /></a>
+<a href="https://github.com/NATien1999"><img src="https://avatars.githubusercontent.com/u/155497138?s=100&v=4" width="60px" alt="NATien1999" style="border-radius: 50%;" /></a>
+<a href="https://github.com/khanhnl2806"><img src="https://avatars.githubusercontent.com/u/202572860?s=100&v=4" width="60px" alt="khanhnl2806" style="border-radius: 50%;" /></a>
+<a href="https://github.com/Namdo1402"><img src="https://avatars.githubusercontent.com/u/205231143?s=100&v=4" width="60px" alt="Namdo1402" style="border-radius: 50%;" /></a>
+<a href="https://github.com/VNNTNAM"><img src="https://avatars.githubusercontent.com/u/199906888?s=100&v=4" width="60px" alt="VNNTNAM" style="border-radius: 50%;" /></a>
+<a href="https://github.com/NguyenNgocHuyhub"><img src="https://avatars.githubusercontent.com/u/174630720?s=100&v=4" width="60px" alt="NguyenNgocHuyhub" style="border-radius: 50%;" /></a>
+<a href="https://github.com/quy0193"><img src="https://avatars.githubusercontent.com/u/90856171?s=100&v=4" width="60px" alt="quy0193" style="border-radius: 50%;" /></a>
+<a href="https://github.com/hieuvoquang87"><img src="https://avatars.githubusercontent.com/u/8354819?s=100&v=4" width="60px" alt="hieuvoquang87" style="border-radius: 50%;" /></a>
+<a href="https://github.com/DrDinhLuong"><img src="https://avatars.githubusercontent.com/u/86107710?s=100&v=4" width="60px" alt="DrDinhLuong" style="border-radius: 50%;" /></a>
+<a href="https://github.com/hphuongdhsp"><img src="https://avatars.githubusercontent.com/u/37414457?s=100&v=4" width="60px" alt="hphuongdhsp" style="border-radius: 50%;" /></a>
+<a href="https://github.com/dnambinh"><img src="https://avatars.githubusercontent.com/u/91754083?s=100&v=4" width="60px" alt="dnambinh" style="border-radius: 50%;" /></a>
+<a href="https://github.com/tuanhung0804"><img src="https://avatars.githubusercontent.com/u/59684986?s=100&v=4" width="60px" alt="tuanhung0804" style="border-radius: 50%;" /></a>
+<a href="https://github.com/ducdv2018"><img src="https://avatars.githubusercontent.com/u/113516668?s=100&v=4" width="60px" alt="ducdv2018" style="border-radius: 50%;" /></a>
+<a href="https://github.com/ngohonglinh"><img src="https://avatars.githubusercontent.com/u/41242183?s=100&v=4" width="60px" alt="ngohonglinh" style="border-radius: 50%;" /></a>
+<a href="https://github.com/cutuananh"><img src="https://avatars.githubusercontent.com/u/6285586?s=100&v=4" width="60px" alt="cutuananh" style="border-radius: 50%;" /></a>
+<a href="https://github.com/ThomasNguyen-git"><img src="https://avatars.githubusercontent.com/u/182118805?s=100&v=4" width="60px" alt="ThomasNguyen-git" style="border-radius: 50%;" /></a>
+<a href="https://github.com/lamquangphuc"><img src="https://avatars.githubusercontent.com/u/454179?s=100&v=4" width="60px" alt="lamquangphuc" style="border-radius: 50%;" /></a>
+<a href="https://github.com/nguyenquangtrung8"><img src="https://avatars.githubusercontent.com/u/170158913?s=100&v=4" width="60px" alt="nguyenquangtrung8" style="border-radius: 50%;" /></a>
+<a href="https://github.com/toramidu"><img src="https://avatars.githubusercontent.com/u/98959140?s=100&v=4" width="60px" alt="toramidu" style="border-radius: 50%;" /></a>
+</div>
+
+### Hỗ trợ dự án
+
+Nếu vnstock đã mang lại giá trị cho bạn và bạn muốn trở thành một phần của cộng đồng những người ủng hộ, sự đóng góp của bạn sẽ là nguồn động lực vô cùng to lớn đối với chúng tôi. Mỗi nhà tài trợ giúp chúng tôi có thêm thời gian cải thiện tài liệu, phát triển tính năng mới và duy trì sự bền vững lâu dài cho dự án này.
+
+<div id="badges" align="center">
+    <a href="https://github.com/sponsors/thinh-vu" style="text-decoration: none;">
+        <img src="https://img.shields.io/static/v1?label=Support Our Work&message=Become a Sponsor ❤️&logo=GitHub&color=%23fe8e86" alt="Sponsor vnstock"/>
+    </a>
+</div>
+
+---
+
+# VI. Lịch sử lượt yêu thích
 
 Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Dưới đây là lịch sử lượt yêu thích của dự án.
 
 [![Star History Chart](https://api.star-history.com/svg?repos=thinh-vu/vnstock&type=Date)](https://www.star-history.com/#thinh-vu/vnstock&Date)
 
 
-# VI. ⏱️ Cập nhật đáng chú ý
+# VII. ⏱️ Cập nhật đáng chú ý
 - 20-03-2025: Ra mắt phiên bản Vnstock `3.2.0` bổ sung thêm tính năng truy xuất dữ liệu Bộ lọc cổ phiếu.
 - 02-01-2025: Vnstock3 chính thức sử dụng tên nhận diện gói thư viện là vnstock tại trang phân phối chính thức pypi.org. Chi tiết [tại đây](https://vnstocks.com/blog/chuyen-doi-sang-vnstock3-truoc-2025)
 - 02-11-2024: Ra mắt Vnstock3 phiên bản 3.0.9. Chi tiết: [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban#02-11-2024)
@@ -118,7 +187,9 @@ Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đ�
 
 > Chi tiết cập nhật phần mềm và phiên bản [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban)
 
-# VII. 📔 Tài liệu hướng dẫn
+---
+
+# VIII. 📔 Tài liệu hướng dẫn
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
@@ -134,21 +205,27 @@ Xem minh hoạ các tính năng thông qua Colab Notebook sau:
   </a>
 </div>
 
-## 7.1. Cài đặt 
+## 8.1. Cài đặt 
 
-Bạn có thể cài đặt thư viện với câu lệnh sau:
+Bạn có thể cài đặt thư viện bản phát hành ổn định qua PyPI với câu lệnh sau:
 
 ```bash
 pip install -U vnstock
 ```
 
-## 7.2. Nạp thư viện
+Bạn cũng có thể cài đặt bản phát hành thử nghiệm trên Github với câu lệnh:
+
+```bash
+pip install git+https://github.com/thinh-vu/vnstock.git
+```
+
+## 8.2. Nạp thư viện
 
 Bạn cần nạp thư viện vào môi trường Python thông qua giao diện Jupyter Notebook hoặc Terminal để có thể gọi và sử dụng các hàm được cung cấp.
 
 Có 4 cách nạp thư viện vào môi trường làm việc như sau:
 
-### 7.2.1. Nạp thông qua giao diện làm việc chính
+### 8.2.1. Nạp thông qua giao diện làm việc chính
 
 Giao diện làm việc chính cho phép chuyển đổi nguồn và chỉ cần khai báo tên mã khi khởi động. Cấu trúc này phù hợp khi phân tích xuyên suốt 1 mã chứng khoán và nguồn dữ liệu đồng thời giúp tăng độ ổn định của mã nguồn trong tương lai khi các nguồn dữ mới được bổ sung hoặc nguồn cũ hết hiệu lực, bạn chỉ cần đổi tên nguồn để tiếp tục sử dụng.
 
@@ -158,7 +235,7 @@ stock = Vnstock().stock(symbol='VCI', source='VCI')
 stock.quote.history(start='2020-01-01', end='2024-05-25')
 ```
 
-### 7.2.2. Nạp thông qua các class tổng hợp
+### 8.2.2. Nạp thông qua các class tổng hợp
 
 Bạn chọn nạp một trong các lớp chức năng chính. Các lớp chức năng này cho phép chuyển đổi dễ dàng nguồn dữ liệu được hỗ trợ trong khi giữ nguyên cấu trúc hàm. Cấu trúc này giúp tăng độ ổn định của mã nguồn trong tương lai khi các nguồn dữ mới được bổ sung hoặc nguồn cũ hết hiệu lực, bạn chỉ cần đổi tên nguồn để tiếp tục sử dụng.
 
@@ -166,7 +243,7 @@ Bạn chọn nạp một trong các lớp chức năng chính. Các lớp chức
 from vnstock import Listing, Quote, Company, Finance, Trading, Screener 
 ```
 
-### 7.2.3. Nạp các lớp tính năng riêng lẻ theo nguồn dữ liệu cố định
+### 8.2.3. Nạp các lớp tính năng riêng lẻ theo nguồn dữ liệu cố định
 
 > Bạn cần tham khảo [mã nguồn](https://github.com/thinh-vu/vnstock/tree/main/vnstock/explorer) để sử dụng đúng các chức năng có sẵn trong thư viện.
 
@@ -180,7 +257,7 @@ hoặc
 from vnstock.explorer.tcbs import Quote, Company, Finance, Trading, Screener
 ```
 
-## 7.3. Danh sách niêm yết
+## 8.3. Danh sách niêm yết
 
 > Danh sách các mã chứng khoán sử dụng trong việc thiết lập vòng lặp truy xuất dữ liệu từ các chức năng khác như Giá lịch sử, Thông tin công ty, Báo cáo tài chính, vv
 
@@ -190,7 +267,7 @@ listing = Listing()
 listing.all_symbols()
 ```
 
-## 7.7. Giá lịch sử & thống kê giao dịch
+## 8.7. Giá lịch sử & thống kê giao dịch
 
 ### Giá lịch sử
 
@@ -208,7 +285,7 @@ quote = Quote(symbol='ACB', source='VCI')
 quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
 ```
 
-### 7.5. Intraday
+### 8.5. Intraday
 
 > Dữ liệu giao dịch khớp lệnh theo từng tick
 
@@ -225,7 +302,7 @@ from vnstock import Trading
 Trading(source='VCI').price_board(['VCB','ACB','TCB','BID'])
 ```
 
-## 7.7. Truy xuất thông tin công ty
+## 8.7. Truy xuất thông tin công ty
 
 ```python
 from vnstock import Vnstock
@@ -241,7 +318,7 @@ company = Company(symbol='ACB', source='VCI')
 company.overview()
 ```
 
-## 7.8. Truy xuất báo cáo tài chính
+## 8.8. Truy xuất báo cáo tài chính
 
 ```python
 from vnstock import Vnstock
@@ -258,14 +335,14 @@ stock.finance.cash_flow(period='year', dropna=True)
 stock.finance.ratio(period='year', lang='vi', dropna=True)
 ```
 
-## 7.9. Bộ lọc cổ phiếu
+## 8.9. Bộ lọc cổ phiếu
 
 ```python
 from vnstock import Screener
 stock.screener.stock(params={"exchangeName": "HOSE,HNX,UPCOM"}, limit=1700)
 ```
 
-## 7.10. Dữ liệu quỹ mở
+## 8.10. Dữ liệu quỹ mở
 
 ```python
 from vnstock.explorer.fmarket.fund import Fund
@@ -273,7 +350,7 @@ fund = Fund()
 fund.listing()
 ```
 
-## 7.11. Dữ liệu thị trường quốc tế: Cổ phiếu, FX, Index
+## 8.11. Dữ liệu thị trường quốc tế: Cổ phiếu, FX, Index
 
 ```python
 from vnstock import Vnstock
@@ -282,7 +359,7 @@ df = fx.quote.history(start='2025-01-02', end='2025-03-20', interval='1D')
 df
 ```
 
-## 7.12. Tỷ giá & giá vàng
+## 8.12. Tỷ giá & giá vàng
 
 ```python
 from vnstock.explorer.misc import *
@@ -294,7 +371,7 @@ vcb_exchange_rate(date='2024-03-21')
 sjc_gold_price()
 ```
 
-## 7.13. Xuất dữ liệu
+## 8.13. Xuất dữ liệu
 
 > Tất cả dữ liệu trả về từ Vnstock đều là Pandas DataFrame hoặc Series, do đó, bạn có thể mô hình hoá các thao tác phân tích của mình với lệnh Python dễ dàng nhờ hỗ trợ của AI. Nếu cần xuất dữ liệu sang các định dạng truyền thống, bạn chỉ cần gán các hàm mô tả ở trên với 1 tên biến và thực hiện xuất dữ liệu như dưới đây:
 
@@ -417,7 +494,65 @@ When using Vnstock in your project, you are required to cite the author and proj
 
 ---
 
-# V. Star History
+# V. 🙏 Contributors & Sponsors
+
+## Contributors 
+
+Vnstock thrives thanks to the collective efforts of tech and finance enthusiasts. Every line of code and every bug fix reflects your valuable contributions. Thank you for making vnstock a powerful tool for the investment community!
+
+<a href="https://github.com/thinh-vu/vnstock/graphs/contributors">
+   <img src="https://contributors-img.web.app/image?repo=thinh-vu/vnstock" width="800"/>
+</a>
+
+## ❤️ Sponsors
+
+From the bottom of our hearts, we want to express our deepest gratitude to all our incredible sponsors. Your generous support has been the backbone of this project, allowing us to dedicate more time and resources to improving vnstock. Each contribution, regardless of size, fuels our passion and helps us maintain and enhance this open-source tool for the entire investment community. You are not just sponsors – you are essential partners in our journey to democratize financial data access for all investors.
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <!-- Present & Past sponsors -->
+<a href="https://github.com/Huytq82"><img src="https://avatars.githubusercontent.com/u/68698802?s=100&v=4" width="60px" alt="Huytq82" style="border-radius: 50%;" /></a>
+<a href="https://github.com/yellow1912"><img src="https://avatars.githubusercontent.com/u/374134?s=100&v=4" width="60px" alt="yellow1912" style="border-radius: 50%;" /></a>
+<a href="https://github.com/thaituankha"><img src="https://avatars.githubusercontent.com/u/136249921?s=100&v=4" width="60px" alt="thaituankha" style="border-radius: 50%;" /></a>
+<a href="https://github.com/huannguyen2606"><img src="https://avatars.githubusercontent.com/u/207012732?s=100&v=4" width="60px" alt="huannguyen2606" style="border-radius: 50%;" /></a>
+<a href="https://github.com/hungson175"><img src="https://avatars.githubusercontent.com/u/565789?s=100&v=4" width="60px" alt="hungson175" style="border-radius: 50%;" /></a>
+<a href="https://github.com/kynnbreak"><img src="https://avatars.githubusercontent.com/u/60998063?s=100&v=4" width="60px" alt="kynnbreak" style="border-radius: 50%;" /></a>
+<a href="https://github.com/quanglaife"><img src="https://avatars.githubusercontent.com/u/153795419?s=100&v=4" width="60px" alt="quanglaife" style="border-radius: 50%;" /></a>
+<a href="https://github.com/itkennylee"><img src="https://avatars.githubusercontent.com/u/206494183?s=100&v=4" width="60px" alt="itkennylee" style="border-radius: 50%;" /></a>
+<a href="https://github.com/congnt91"><img src="https://avatars.githubusercontent.com/u/191594462?s=100&v=4" width="60px" alt="congnt91" style="border-radius: 50%;" /></a>
+<a href="https://github.com/NATien1999"><img src="https://avatars.githubusercontent.com/u/155497138?s=100&v=4" width="60px" alt="NATien1999" style="border-radius: 50%;" /></a>
+<a href="https://github.com/khanhnl2806"><img src="https://avatars.githubusercontent.com/u/202572860?s=100&v=4" width="60px" alt="khanhnl2806" style="border-radius: 50%;" /></a>
+<a href="https://github.com/Namdo1402"><img src="https://avatars.githubusercontent.com/u/205231143?s=100&v=4" width="60px" alt="Namdo1402" style="border-radius: 50%;" /></a>
+<a href="https://github.com/VNNTNAM"><img src="https://avatars.githubusercontent.com/u/199906888?s=100&v=4" width="60px" alt="VNNTNAM" style="border-radius: 50%;" /></a>
+<a href="https://github.com/NguyenNgocHuyhub"><img src="https://avatars.githubusercontent.com/u/174630720?s=100&v=4" width="60px" alt="NguyenNgocHuyhub" style="border-radius: 50%;" /></a>
+<a href="https://github.com/quy0193"><img src="https://avatars.githubusercontent.com/u/90856171?s=100&v=4" width="60px" alt="quy0193" style="border-radius: 50%;" /></a>
+<a href="https://github.com/hieuvoquang87"><img src="https://avatars.githubusercontent.com/u/8354819?s=100&v=4" width="60px" alt="hieuvoquang87" style="border-radius: 50%;" /></a>
+<a href="https://github.com/DrDinhLuong"><img src="https://avatars.githubusercontent.com/u/86107710?s=100&v=4" width="60px" alt="DrDinhLuong" style="border-radius: 50%;" /></a>
+<a href="https://github.com/hphuongdhsp"><img src="https://avatars.githubusercontent.com/u/37414457?s=100&v=4" width="60px" alt="hphuongdhsp" style="border-radius: 50%;" /></a>
+<a href="https://github.com/dnambinh"><img src="https://avatars.githubusercontent.com/u/91754083?s=100&v=4" width="60px" alt="dnambinh" style="border-radius: 50%;" /></a>
+<a href="https://github.com/tuanhung0804"><img src="https://avatars.githubusercontent.com/u/59684986?s=100&v=4" width="60px" alt="tuanhung0804" style="border-radius: 50%;" /></a>
+<a href="https://github.com/ducdv2018"><img src="https://avatars.githubusercontent.com/u/113516668?s=100&v=4" width="60px" alt="ducdv2018" style="border-radius: 50%;" /></a>
+<a href="https://github.com/ngohonglinh"><img src="https://avatars.githubusercontent.com/u/41242183?s=100&v=4" width="60px" alt="ngohonglinh" style="border-radius: 50%;" /></a>
+<a href="https://github.com/cutuananh"><img src="https://avatars.githubusercontent.com/u/6285586?s=100&v=4" width="60px" alt="cutuananh" style="border-radius: 50%;" /></a>
+<a href="https://github.com/ThomasNguyen-git"><img src="https://avatars.githubusercontent.com/u/182118805?s=100&v=4" width="60px" alt="ThomasNguyen-git" style="border-radius: 50%;" /></a>
+<a href="https://github.com/lamquangphuc"><img src="https://avatars.githubusercontent.com/u/454179?s=100&v=4" width="60px" alt="lamquangphuc" style="border-radius: 50%;" /></a>
+<a href="https://github.com/nguyenquangtrung8"><img src="https://avatars.githubusercontent.com/u/170158913?s=100&v=4" width="60px" alt="nguyenquangtrung8" style="border-radius: 50%;" /></a>
+<a href="https://github.com/toramidu"><img src="https://avatars.githubusercontent.com/u/98959140?s=100&v=4" width="60px" alt="toramidu" style="border-radius: 50%;" /></a>
+</div>
+
+### Support the Project
+
+If you've found value in vnstock and would like to join our community of supporters, your contribution would mean the world to us. Every sponsor enables us to dedicate more time to improving documentation, adding new features, and ensuring the long-term sustainability of this project.
+
+<div id="badges" align="center">
+    <a href="https://github.com/sponsors/thinh-vu" style="text-decoration: none;">
+        <img src="https://img.shields.io/static/v1?label=Support Our Work&message=Become a Sponsor ❤️&logo=GitHub&color=%23fe8e86" alt="Sponsor vnstock"/>
+    </a>
+</div>
+
+
+---
+
+# VI. Star History
 
 You can support the project by simply starring it on GitHub—this helps the project reach more people. Here's the star history:
 
@@ -425,7 +560,7 @@ You can support the project by simply starring it on GitHub—this helps the pro
 
 ---
 
-# VI. ⏱️ Notable Updates
+# VII. ⏱️ Notable Updates
 
 - **20-Mar-2025**: Version `3.2.0` released with Stock Screener data access.
 - **02-Jan-2025**: Official package name for Vnstock3 updated to `vnstock` on PyPI. [Read more](https://vnstocks.com/blog/chuyen-doi-sang-vnstock3-truoc-2025)
@@ -452,7 +587,7 @@ Example use cases in Colab Notebook:
   </a>
 </div>
 
-## 7.1 Installation
+## 8.1 Installation
 
 Install or upgrade to the latest version of Vnstock via pip:
 
@@ -462,11 +597,11 @@ pip install -U vnstock
 
 ---
 
-## 7.2 Importing the Library
+## 8.2 Importing the Library
 
 You can import Vnstock into your Python environment using Jupyter Notebook or any Python console. There are four supported methods:
 
-### 7.2.1. Import via Unified Interface
+### 8.2.1. Import via Unified Interface
 
 This is the primary method for loading the library, allowing you to define the data source once and reuse across functions. Ideal for analyzing a single stock with consistent settings:
 
@@ -476,7 +611,7 @@ stock = Vnstock().stock(symbol='VCI', source='VCI')
 stock.quote.history(start='2020-01-01', end='2024-05-25')
 ```
 
-### 7.2.2. Import Main Functional Classes
+### 8.2.2. Import Main Functional Classes
 
 Load from core modules that support dynamic switching between data providers:
 
@@ -484,7 +619,7 @@ Load from core modules that support dynamic switching between data providers:
 from vnstock import Listing, Quote, Company, Finance, Trading, Screener 
 ```
 
-### 7.2.3. Import from Specific Data Providers
+### 8.2.3. Import from Specific Data Providers
 
 For advanced users needing fixed data sources. Refer to the [source code](https://github.com/thinh-vu/vnstock/tree/main/vnstock/explorer) for details:
 
@@ -500,7 +635,7 @@ from vnstock.explorer.tcbs import Quote, Company, Finance, Trading, Screener
 
 ---
 
-## 7.3 Listing Symbols
+## 8.3 Listing Symbols
 
 Used for generating lists of available tickers—essential for batch operations:
 
@@ -512,7 +647,7 @@ listing.all_symbols()
 
 ---
 
-## 7.4 Historical Prices & Trading Stats
+## 8.4 Historical Prices & Trading Stats
 
 ### Historical Prices
 
@@ -532,7 +667,7 @@ quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
 
 ---
 
-## 7.5 Intraday Tick Data
+## 8.5 Intraday Tick Data
 
 > Retrieves granular trade data per tick:
 
@@ -542,7 +677,7 @@ stock.quote.intraday(symbol='ACB', page_size=10_000, show_log=False)
 
 ---
 
-## 7.6 Market Price Board
+## 8.6 Market Price Board
 
 Get real-time quotes for multiple tickers:
 
@@ -553,7 +688,7 @@ Trading(source='VCI').price_board(['VCB','ACB','TCB','BID'])
 
 ---
 
-## 7.7 Company Information
+## 8.7 Company Information
 
 ```python
 from vnstock import Vnstock
@@ -571,7 +706,7 @@ company.overview()
 
 ---
 
-## 7.8 Financial Reports
+## 8.8 Financial Reports
 
 ```python
 from vnstock import Vnstock
@@ -595,7 +730,7 @@ stock.finance.ratio(period='year', lang='vi', dropna=True)
 
 ---
 
-## 7.9 Stock Screener
+## 8.9 Stock Screener
 
 ```python
 from vnstock import Screener
@@ -604,7 +739,7 @@ stock.screener.stock(params={"exchangeName": "HOSE,HNX,UPCOM"}, limit=1700)
 
 ---
 
-## 7.10 Mutual Fund Data
+## 8.10 Mutual Fund Data
 
 ```python
 from vnstock.explorer.fmarket.fund import Fund
@@ -614,7 +749,7 @@ fund.listing()
 
 ---
 
-## 7.11 International Markets: Stocks, FX, Indices
+## 8.11 International Markets: Stocks, FX, Indices
 
 ```python
 from vnstock import Vnstock
@@ -625,7 +760,7 @@ df
 
 ---
 
-## 7.12 Exchange Rates & Gold Prices
+## 8.12 Exchange Rates & Gold Prices
 
 ```python
 from vnstock.explorer.misc import *
@@ -639,7 +774,7 @@ sjc_gold_price()
 
 ---
 
-## 7.13 Exporting Data
+## 8.13 Exporting Data
 
 > All data from Vnstock is returned as Pandas `DataFrame` or `Series`, making it AI-friendly and easy to process or export.
 
