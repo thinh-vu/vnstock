@@ -274,6 +274,9 @@ class Quote:
             asset_type=self.asset_type,
             source=self.data_source
         )
+
+        # Reduce the time index by 7 hours to match the GMT+7 timezone
+        df['time'] = df['time'] - pd.Timedelta(hours=7)
         
         return df if to_df else df.to_json(orient='records')
 
