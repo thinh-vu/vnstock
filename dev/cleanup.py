@@ -29,7 +29,7 @@ def delete_files(files):
                     print(f"Error while deleting file: {file_path}. Error: {str(e)}")
 
 # List of directories to delete
-dirs_to_delete = ["__pycache__", "build", "*.egg-info", "dist"]
+dirs_to_delete = ["__pycache__", "build", "*.egg-info", "dist", "htmlcov"]
 
 # List of files to delete
 files_to_delete = ["*.tmp"]

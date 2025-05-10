@@ -1,9 +1,11 @@
+# vnstock/core/utils/parser.py
+
 import re
 import requests
 import pandas as pd
 import numpy as np
 from pytz import timezone
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import Dict, Union, Literal, Any, Optional
 from vnstock.core.config.const import UA
 from vnstock.core.utils.logger import get_logger
@@ -209,3 +211,105 @@ def decd(byte_data):
     kb64 = base64.urlsafe_b64encode(kb)
     cipher = Fernet(kb64)
     return cipher.decrypt(byte_data).decode('utf-8')
+
+# VN30 Future contract parser
+
+_QUARTER_MONTHS = [3, 6, 9, 12]
+
+def vn30_expand_contract(abbrev: str, today: date) -> str:
+    """
+    Convert a VN30 futures abbreviation (e.g. 'VN30F2M') into its full code 'VN30FYYMM'.
+    
+    Parameters
+    ----------
+    abbrev : str
+        Short code in format 'VN30F<n><M|Q>', where n is 1–9.
+    today : datetime.date
+        Reference date used to determine the year and month.
+
+    Returns
+    -------
+    str
+        Full contract code, e.g. 'VN30F2506'.
+
+    Raises
+    ------
+    TypeError
+        If inputs are not of expected types.
+    ValueError
+        If the abbreviation format is invalid or out of supported range.
+    """
+    if not isinstance(abbrev, str):
+        raise TypeError(f"Expected abbrev as str, got {type(abbrev).__name__}")
+    if not isinstance(today, date):
+        raise TypeError(f"Expected today as datetime.date, got {type(today).__name__}")
+
+    m = re.match(r"^VN30F([1-9])([MQ])$", abbrev)
+    if not m:
+        raise ValueError(f"Invalid abbrev format: '{abbrev}'. Expect 'VN30F<n><M|Q>'")
+    n, cycle = int(m.group(1)), m.group(2)
+
+    yy = today.year % 100
+    if cycle == "M":
+        mm = today.month + (n - 1)
+    else:  # cycle == "Q"
+        future_q = [q for q in _QUARTER_MONTHS if q > today.month]
+        seq = future_q + _QUARTER_MONTHS
+        try:
+            mm = seq[n - 1]
+        except IndexError:
+            raise ValueError(f"No quarterly F{n}Q from month {today.month}")
+
+    # Adjust year rollover
+    add_years = (mm - 1) // 12
+    mm = ((mm - 1) % 12) + 1
+    yy = (yy + add_years) % 100
+
+    return f"VN30F{yy:02d}{mm:02d}"
+
+def vn30_abbrev_contract(full: str, today: date) -> str:
+    """
+    Convert full code 'VN30FYYMM' to short form 'VN30F<n><M|Q>'.
+    Logic: any quarter‐month (03,06,09,12) → Q; else → M.
+    """
+    if not isinstance(full, str):
+        raise TypeError(f"Expected full as str, got {type(full).__name__}")
+    if not isinstance(today, date):
+        raise TypeError(f"Expected today as datetime.date, got {type(today).__name__}")
+
+    m = re.match(r"^VN30F(\d{2})(\d{2})$", full)
+    if not m:
+        raise ValueError(f"Invalid full format: '{full}'. Expect 'VN30FYYMM'")
+    yy, mm = int(m.group(1)), int(m.group(2))
+
+    # Rebuild the target year/month as a date
+    century = today.year - (today.year % 100)
+    year = century + yy
+    if mm < today.month:
+        year += 100
+    target = date(year, mm, 1)
+
+    # How many months ahead is it?
+    delta = (target.year - today.year) * 12 + (target.month - today.month)
+    if delta < 0:
+        raise ValueError("Target contract is before today's date.")
+
+    # ALWAYS use Q if it's a standard quarter month:
+    if mm in _QUARTER_MONTHS:
+        # Build the sequence of upcoming quarter‐months from today
+        future_q = [q for q in _QUARTER_MONTHS if q > today.month]
+        seq = future_q + _QUARTER_MONTHS
+        try:
+            n = seq.index(mm) + 1
+        except ValueError:
+            raise ValueError(f"Cannot determine quarterly sequence for month {mm}")
+        cycle = 'Q'
+    else:
+        # Otherwise, simple “n months ahead” → M
+        n = delta + 1
+        cycle = 'M'
+
+    if not (1 <= n <= 9):
+        raise ValueError(f"Sequence number {n} out of supported range.")
+
+    return f"VN30F{n}{cycle}"

@@ -10,7 +10,7 @@ with open(os.path.join(here, "README.md"), "r", encoding="utf-8") as f:
 
 setup(
     name="vnstock",
-    version="3.2.5",
+    version="3.2.6",
     description="A beginner-friendly yet powerful Python toolkit for financial analysis and automation — built to make modern investing accessible to everyone",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -33,7 +33,6 @@ setup(
         "Intended Audience :: Financial and Insurance Industry",
         # Lĩnh vực
         "Topic :: Software Development :: Libraries",
-        "Topic :: Software Development :: API",
         "Topic :: Office/Business :: Financial :: Investment",
         # Python versions
         "Programming Language :: Python :: 3",
