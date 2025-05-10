@@ -25,7 +25,7 @@ class Trading(BaseAdapter):
     def __init__(
         self,
         source: str = "vci",
-        symbol: str = "",
+        symbol: str = None,
         random_agent: bool = False,
         show_log: bool = False
     ):
