@@ -22,7 +22,14 @@ def validate_symbol(symbol: str, symbol_map: Optional[Dict[str, str]] = None) ->
     Raises:
         - ValueError: If symbol is invalid or not found in the mapping
     """
-    symbol = symbol.upper()
+    if symbol is None:
+        raise ValueError("Symbol không được để trống.")
+    if not isinstance(symbol, str):
+        raise ValueError("Symbol phải là một chuỗi.")
+    if len(symbol) < 3 or len(symbol) > 10:
+        raise ValueError("Symbol phải có độ dài từ 3 đến 10 ký tự.")
+    else:
+        symbol = symbol.upper()
     
     # Apply mapping if provided (e.g., INDEX mapping)
     if symbol_map and symbol in symbol_map:

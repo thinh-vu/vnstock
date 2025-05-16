@@ -11,6 +11,7 @@ from vnai import optimize_execution
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.market import trading_hours
 from vnstock.core.utils.parser import get_asset_type
+from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils import client, transform, validation
 
@@ -22,7 +23,7 @@ class Quote:
     """
     def __init__(self, symbol: str, random_agent: bool = False, show_log: bool = True):
         """Initialize the Quote object with the given symbol."""
-        symbol = symbol.upper()
+        symbol = validate_symbol(symbol)
         self.data_source = 'TCBS'
         self._history = None  # Cache for backwards compatibility
         self.base_url = _BASE_URL

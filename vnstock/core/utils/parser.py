@@ -112,7 +112,8 @@ def localize_timestamp (
 def get_asset_type(symbol: str) -> str:
     """
     Xác định loại tài sản dựa trên mã chứng khoán được cung cấp.
-
+    Hỗ trợ cả định dạng mã cũ và mã mới theo KRX.
+    
     Tham số: 
         - symbol (str): Mã chứng khoán hoặc mã chỉ số.
     
@@ -136,6 +137,11 @@ def get_asset_type(symbol: str) -> str:
     # Stock symbols (assumed to have 3 characters)
     elif len(symbol) == 3:
         return 'stock'
+    
+    # New KRX derivative format (e.g., 41I1F4000)
+    krx_derivative_pattern = re.compile(r'^4[12][A-Z0-9]{2}[0-9A-HJ-NP-TV-W][1-9A-C]\d{3}$')
+    if krx_derivative_pattern.match(symbol):
+        return 'derivative'
     
     # For symbols that could be derivative or bond (length 7 or 9)
     elif len(symbol) in [7, 9]:

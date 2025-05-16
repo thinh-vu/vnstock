@@ -8,6 +8,7 @@ import requests
 import pandas as pd
 from vnai import optimize_execution
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake, flatten_data
+from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.transform import flatten_hierarchical_index
@@ -19,7 +20,7 @@ class Trading:
     Truy xuất dữ liệu giao dịch của mã chứng khoán từ nguồn dữ liệu VCI.
     """
     def __init__(self, symbol:Optional[str]='VCI', random_agent=False, show_log:Optional[bool]=True):
-        self.symbol = symbol.upper()
+        self.symbol = validate_symbol(symbol)
         self.asset_type = get_asset_type(self.symbol)
         self.base_url = _TRADING_URL
         self.headers = get_headers(data_source='VCI', random_agent=random_agent)

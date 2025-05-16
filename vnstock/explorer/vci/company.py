@@ -10,6 +10,7 @@ from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.transform import clean_html_dict, flatten_dict_to_df, flatten_list_to_df, reorder_cols, drop_cols_by_pattern
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
+from vnstock.core.utils.validation import validate_symbol
 from vnai import optimize_execution  # Import the decorator from vnai package
 from .const import _GRAPHQL_URL, _PRICE_INFO_MAP
 import copy
@@ -31,7 +32,7 @@ class Company:
         """
         Khởi tạo đối tượng Company với các tham số cho việc truy xuất dữ liệu.
         """
-        self.symbol = symbol.upper()
+        self.symbol = validate_symbol(symbol)
         self.asset_type = get_asset_type(self.symbol)
         
         # Validate if symbol is a stock

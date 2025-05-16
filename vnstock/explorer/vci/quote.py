@@ -13,6 +13,7 @@ from .models import TickerModel
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.market import trading_hours
 from vnstock.core.utils.parser import get_asset_type
+from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.client import send_request
 from vnstock.core.utils.transform import ohlc_to_df, intraday_to_df
@@ -24,7 +25,7 @@ class Quote:
     Cấu hình truy cập dữ liệu lịch sử giá chứng khoán từ VCI.
     """
     def __init__(self, symbol, random_agent=False, show_log=True):
-        self.symbol = symbol.upper()
+        self.symbol = validate_symbol(symbol)
         self.data_source = 'VCI'
         self._history = None  # Cache for historical data
         self.asset_type = get_asset_type(self.symbol)

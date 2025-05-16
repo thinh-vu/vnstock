@@ -9,6 +9,7 @@ from typing import Dict, Optional, List, Union
 from vnstock.core.utils import client
 from vnstock.explorer.tcbs.const import _BASE_URL, _ANALYSIS_URL
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
+from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
 from vnai import optimize_execution
@@ -31,7 +32,7 @@ class Company:
         """
         Khởi tạo đối tượng Company với các tham số cho việc truy xuất dữ liệu.
         """
-        self.symbol = symbol.upper()
+        self.symbol = validate_symbol(symbol)
         self.asset_type = get_asset_type(self.symbol)
         
         # Validate if symbol is a stock
