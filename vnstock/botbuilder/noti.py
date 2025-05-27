@@ -1,5 +1,7 @@
 import requests
 import json
+import base64
+import os
 from typing import Union, Dict
 from vnstock.core.utils.env import get_path_delimiter
 
@@ -53,10 +55,76 @@ class Messenger:
             if self.channel is not None:
                 raise ValueError('Channel name is not required for Lark messaging!')
 
+    def _get_file_mime_type(self, file_path: str) -> str:
+        """
+        Get MIME type based on file extension.
+        
+        Args:
+            file_path (str): Path to the file.
+            
+        Returns:
+            str: MIME type of the file.
+        """
+        file_extension = file_path.split('.')[-1].lower()
+        mime_types = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'gif': 'image/gif',
+            'bmp': 'image/bmp',
+            'webp': 'image/webp',
+            'pdf': 'application/pdf',
+            'doc': 'application/msword',
+            'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xls': 'application/vnd.ms-excel',
+            'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'ppt': 'application/vnd.ms-powerpoint',
+            'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'txt': 'text/plain',
+            'csv': 'text/csv',
+            'json': 'application/json',
+            'xml': 'application/xml',
+            'zip': 'application/zip',
+            'rar': 'application/x-rar-compressed',
+            '7z': 'application/x-7z-compressed'
+        }
+        return mime_types.get(file_extension, 'application/octet-stream')
+
+    def _encode_file_to_base64(self, file_path: str) -> str:
+        """
+        Encode a file to base64 string.
+        
+        Args:
+            file_path (str): Path to the file to encode.
+            
+        Returns:
+            str: Base64 encoded string of the file.
+            
+        Raises:
+            FileNotFoundError: If the file doesn't exist.
+            IOError: If there's an error reading the file.
+        """
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"File not found: {file_path}")
+        
+        try:
+            with open(file_path, 'rb') as file:
+                file_content = file.read()
+                return base64.b64encode(file_content).decode('utf-8')
+        except IOError as e:
+            raise IOError(f"Error reading file {file_path}: {str(e)}")
 
     def send_message(self, message:str, file_path:Union[str, None]=None, title:Union[str, None]=None):
         """
         Send a message to a channel or group using the specified platform.
+        
+        Args:
+            message (str): The message text to send.
+            file_path (str, optional): Path to the file to send.
+            title (str, optional): Title for the file (used by Slack and Lark).
+            
+        Returns:
+            dict: Response from the respective platform's API.
         """
         if self.platform == 'slack':
             if file_path is not None:
@@ -69,6 +137,12 @@ class Messenger:
                 return self._telegram_photo(message, file_path)
             else:
                 return self._telegram_message(message)
+
+        elif self.platform == 'lark':
+            if file_path is not None:
+                return self._lark_file(message, file_path, title)
+            else:
+                return self._lark_message(message)
 
     def _slack_file(self, text_comment, file_path, title=None):
         """
@@ -151,7 +225,7 @@ class Messenger:
         Returns:
             object: Response object from the Telegram API.
         """
-        url = 'https://api.telegram.org/bot{}/sendMessage?chat_id={}&text={}'.format(self.token_key, self.channel, message) # thêm chữ bot trước token so với code cũ
+        url = 'https://api.telegram.org/bot{}/sendMessage?chat_id={}&text={}'.format(self.token_key, self.channel, message)
         response = requests.post(url)
         return response.json()
 
@@ -165,11 +239,69 @@ class Messenger:
         Returns:
             object: Response object from the Lark API.
         """
-        # validate payload shoule be None or dict
         url = f'https://botbuilder.larksuite.com/api/trigger-webhook/{self.token_key}'
         if payload is None:
-            payload = {'content' : message}
+            payload = {'message': message}
         else:
-            payload = message
+            payload = payload
         response = requests.post(url, json=payload)
         return response.json()
+
+    def _lark_file(self, message: str, file_path: str, title: Union[str, None] = None):
+        """
+        Send a file to a Lark Botbuilder Webhook as base64 encoded data.
+
+        Args:
+            message (str): Your text message.
+            file_path (str): Path to the file to send.
+            title (str): Optional title for the file.
+
+        Returns:
+            dict: Response from the Lark API in JSON format.
+            
+        Raises:
+            FileNotFoundError: If the file doesn't exist.
+            IOError: If there's an error reading the file.
+        """
+        try:
+            # Get file information
+            file_name = file_path.split(get_path_delimiter())[-1]
+            file_extension = file_name.split('.')[-1].lower()
+            mime_type = self._get_file_mime_type(file_path)
+            
+            # Encode file to base64
+            base64_content = self._encode_file_to_base64(file_path)
+            
+            # Get file size
+            file_size = os.path.getsize(file_path)
+            
+            # Prepare payload
+            url = f'https://botbuilder.larksuite.com/api/trigger-webhook/{self.token_key}'
+            payload = {
+                'message': message,
+                'file': {
+                    'name': file_name,
+                    'title': title or file_name,
+                    'content': base64_content,
+                    'mime_type': mime_type,
+                    'extension': file_extension,
+                    'size': file_size,
+                    'encoding': 'base64'
+                }
+            }
+            
+            response = requests.post(url, json=payload)
+            return response.json()
+            
+        except (FileNotFoundError, IOError) as e:
+            return {
+                'error': True,
+                'message': str(e),
+                'status_code': 400
+            }
+        except Exception as e:
+            return {
+                'error': True,
+                'message': f'Unexpected error: {str(e)}',
+                'status_code': 500
+            }
