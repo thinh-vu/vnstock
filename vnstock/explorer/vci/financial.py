@@ -4,6 +4,20 @@ Module quản lý thông tin báo cáo tài chính từ nguồn dữ liệu VCI.
 
 import json
 import pandas as pd
+from packaging import version
+
+def _safe_infer_objects(df):
+    """
+    Tự động gọi infer_objects phù hợp với version pandas.
+    pandas >= 2.1.0: dùng copy=False
+    pandas < 2.1.0: không truyền copy
+    """
+    if version.parse(pd.__version__) >= version.parse("2.1.0"):
+        return df.infer_objects(copy=False)
+    else:
+        return df.infer_objects()
+
+import pandas as pd
 from typing import Optional, List, Dict, Tuple, Union
 from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP, _ICB4_COMTYPE_CODE_MAP, SUPPORTED_LANGUAGES
 from vnstock.explorer.vci import Company
@@ -373,7 +387,7 @@ class Finance:
             
             if dropna:
                 # Fill NaN values with 0
-                target_report_df = target_report_df.fillna(0)
+                target_report_df = _safe_infer_objects(target_report_df.fillna(0))
                 # Drop columns with all 0 values
                 target_report_df = target_report_df.loc[:, (target_report_df != 0).any(axis=0)]
 
@@ -485,7 +499,7 @@ class Finance:
             
             if dropna:
                 # Fill NaN values with 0
-                financial_report = financial_report.fillna(0)
+                financial_report = _safe_infer_objects(financial_report.fillna(0))
                 # Drop columns with all 0 values
                 financial_report = financial_report.loc[:, (financial_report != 0).any(axis=0)]
 
