@@ -79,7 +79,7 @@ class Quote:
         ticker = self._input_validation(start, end, interval)
 
         start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
-        
+
         # Calculate end timestamp
         if end is not None:
             end_time = datetime.strptime(ticker.end, "%Y-%m-%d") + pd.Timedelta(days=1)
@@ -87,19 +87,57 @@ class Quote:
                 raise ValueError("Thời gian bắt đầu không thể lớn hơn thời gian kết thúc.")
             end_stamp = int(end_time.timestamp())
         else:
-            end_stamp = int((datetime.now() + pd.Timedelta(days=1)).timestamp())
+            end_time = datetime.now() + pd.Timedelta(days=1)
+            end_stamp = int(end_time.timestamp())
 
-        start_stamp = int(start_time.timestamp())
         interval_value = self.interval_map[ticker.interval]
+
+        # Tính count_back nếu chưa truyền vào
+        if count_back is None:
+            # Chuẩn hóa interval_value về 3 loại gốc của VCI
+            # _INTERVAL_MAP = {'1m' : 'ONE_MINUTE', '5m' : 'ONE_MINUTE', '15m' : 'ONE_MINUTE', '30m' : 'ONE_MINUTE',
+            #                 '1H' : 'ONE_HOUR', '1D' : 'ONE_DAY', '1W' : 'ONE_DAY', '1M' : 'ONE_DAY'}
+            interval = ticker.interval.lower()
+            if interval in ["1d", "1w", "1m"]:
+                # Dùng ONE_DAY
+                delta = end_time.date() - start_time.date()
+                count_back = delta.days
+                if interval == "1w":
+                    count_back = count_back // 7
+                elif interval == "1m":
+                    count_back = (end_time.year - start_time.year) * 12 + (end_time.month - start_time.month)
+            elif interval in ["1h"]:
+                # Dùng ONE_HOUR
+                total_hours = int((end_time - start_time).total_seconds() // 3600)
+                count_back = total_hours
+            elif interval in ["1m", "5m", "15m", "30m"]:
+                # Dùng ONE_MINUTE
+                total_minutes = int((end_time - start_time).total_seconds() // 60)
+                if interval == "1m":
+                    count_back = total_minutes
+                elif interval == "5m":
+                    count_back = total_minutes // 5
+                elif interval == "15m":
+                    count_back = total_minutes // 15
+                elif interval == "30m":
+                    count_back = total_minutes // 30
+                else:
+                    count_back = total_minutes
+            else:
+                # fallback: 30
+                count_back = 30
+            if count_back <= 0:
+                count_back = 1
 
         # Prepare request
         url = self.base_url + _CHART_URL
         payload = {
             "timeFrame": interval_value,
             "symbols": [self.symbol],
-            "from": start_stamp,
-            "to": end_stamp
+            "to": end_stamp,
+            "countBack": count_back
         }
+
 
         # Use the send_request utility from api_client
         json_data = send_request(
