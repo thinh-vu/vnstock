@@ -29,12 +29,41 @@ def msn_apikey (headers, version='20240430', show_log=False):
     url = f"https://assets.msn.com/resolver/api/resolve/v3/config/?expType=AppConfig&expInstance=default&apptype=finance&v={version}.130&targetScope={scope}"
     if show_log:
         logger.info(f"Requesting apikey from {url}")
-    response = requests.request("GET", url, headers=headers)
-    data = response.json()
-    if show_log:
-        logger.info(f"Response: {data}")
-    apikey = data['configs']["shared/msn-ns/HoroscopeAnswerCardWC/default"]["properties"]["horoscopeAnswerServiceClientSettings"]["apikey"]
-    return apikey
+    
+    try:
+        response = requests.request("GET", url, headers=headers, timeout=10)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        
+        # Check if response is empty
+        if not response.text.strip():
+            raise ValueError("Empty response from MSN API")
+        
+        # Try to parse JSON
+        try:
+            data = response.json()
+        except requests.exceptions.JSONDecodeError as e:
+            logger.error(f"Failed to parse JSON response. Status: {response.status_code}, Text: {response.text[:200]}...")
+            raise ValueError(f"Invalid JSON response from MSN API: {str(e)}")
+        
+        if show_log:
+            logger.info(f"Response: {data}")
+        
+        # Check if expected structure exists
+        try:
+            apikey = data['configs']["shared/msn-ns/HoroscopeAnswerCardWC/default"]["properties"]["horoscopeAnswerServiceClientSettings"]["apikey"]
+        except KeyError as e:
+            logger.error(f"Expected API key structure not found in response: {str(e)}")
+            logger.error(f"Available keys in response: {list(data.keys()) if isinstance(data, dict) else 'Not a dict'}")
+            raise ValueError(f"API key not found in MSN response structure: {str(e)}")
+        
+        return apikey
+        
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Network error when requesting MSN API key: {str(e)}")
+        raise ConnectionError(f"Failed to connect to MSN API: {str(e)}")
+    except Exception as e:
+        logger.error(f"Unexpected error in msn_apikey: {str(e)}")
+        raise
 
 def get_asset_type(symbol_id):
     if symbol_id in _CURRENCY_ID_MAP.values():

@@ -29,10 +29,11 @@ class Fund:
         """
         Khởi tạo đối tượng để truy cập dữ liệu từ Fmarket.
         """
+        self.random_agent = random_agent
         self.data_source = "fmarket"
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.base_url = _BASE_URL
-        self.fund_list = self.listing()['short_name'].to_list()
+        self.fund_list = self.listing()["short_name"].to_list()
         self.details = self.FundDetails(self)
 
     @optimize_execution("fmarket")

@@ -45,7 +45,7 @@ class Listing:
         json_data = response.json()['data']['stocks']
 
         if show_log:
-            logger.info(f'Truy xuất thành công dữ liệu danh sách rút gọn các mã cổ phiếu cho {len(json_data["data"]["stocks"])} mã.')
+            logger.info(f'Truy xuất thành công dữ liệu danh sách rút gọn các mã cổ phiếu cho {len(json_data)} mã.')
 
         combine_ls = []
         for item in json_data:
