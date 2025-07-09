@@ -242,6 +242,18 @@ class Company(BaseComponent):
     @lru_cache(maxsize=Config.CACHE_SIZE)
     def dividends(self, **kwargs):
         return self.data_source.dividends(**kwargs)
+    
+    @lru_cache(maxsize=Config.CACHE_SIZE)
+    def affiliate(self, **kwargs):
+        return self.data_source.affiliate(**kwargs)
+        
+    @lru_cache(maxsize=Config.CACHE_SIZE)
+    def trading_stats(self, **kwargs):
+        return self.data_source.trading_stats(**kwargs)
+        
+    @lru_cache(maxsize=Config.CACHE_SIZE)
+    def ratio_summary(self, **kwargs):
+        return self.data_source.ratio_summary(**kwargs)
 
 class Finance(BaseComponent):
     SUPPORTED_SOURCES = ["TCBS", "VCI"]
@@ -340,23 +352,37 @@ class Fund(BaseComponent):
     SUPPORTED_SOURCES = ["FMARKET"]
 
     def __init__(self, source: str = "FMARKET", random_agent: bool = False):
-        super().__init__(source=source)
         self.random_agent = random_agent
+        super().__init__(source=source)
         self.details = self.data_source.details
 
     def _load_data_source(self):
         module = importlib.import_module(self.source_module)
-        return module.Fund(self.random_agent)
+        return module.Fund(random_agent=self.random_agent)
+        
+    def listing(self, **kwargs):
+        """Danh sách quỹ mở"""
+        return self.data_source.listing(**kwargs)
 
 class MSNComponents:
     """
     Class (lớp) quản lý các chức năng của thư viện Vnstock liên quan đến thị trường ngoại hối.
     """
     def __init__(self, symbol: Optional[str]='EURUSD', source: str = "MSN"):
-        self.symbol = symbol.upper()
+        self.original_symbol = symbol.upper()  # Keep original for reference
         self.source = source.upper()
         if self.source not in ["MSN"]:
             raise ValueError("Hiện tại chỉ có nguồn dữ liệu từ MSN được hỗ trợ.")
+        
+        # Map symbol to MSN symbol_id if needed
+        symbol_map = {**_CURRENCY_ID_MAP, **_GLOBAL_INDICES, **_CRYPTO_ID_MAP}
+        if self.original_symbol in symbol_map:
+            self.symbol = symbol_map[self.original_symbol]
+            logger.info(f"Mapped {self.original_symbol} -> {self.symbol}")
+        else:
+            self.symbol = self.original_symbol
+            logger.warning(f"No mapping found for {self.original_symbol}, using as-is")
+        
         self._initialize_components()
 
     def _initialize_components(self):
