@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vnstock"
+version = "3.2.7"
+description = "A beginner-friendly yet powerful Python toolkit for financial analysis and automation — built to make modern investing accessible to everyone"
+readme = "README.md"
+authors = [
+  { name = "Thinh Vu", email = "support@vnstocks.com" },
+]
+license = { text = "Custom: Personal, research, non-commercial; contact support@vnstocks.com for other use" }
+requires-python = ">=3.10"
+keywords = ["vnstock", "finance", "vietnam", "stock market", "analysis", "API"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "License :: Other/Proprietary License",
+    "Natural Language :: English",
+    "Natural Language :: Vietnamese",
+]
+dependencies = [
+    "requests",
+    "beautifulsoup4",
+    "pandas",
+    "seaborn",
+    "openpyxl",
+    "pydantic",
+    "psutil",
+    "fake_useragent",
+    "click",
+    "packaging>=20.0",
+    "importlib-metadata>=1.0",
+    "tenacity",
+    "vnai>=2.1.7"
+]
+
+[project.optional-dependencies]
+dev = ["flake8"]
+docs = ["sphinx", "sphinx_rtd_theme"]
+test = ["unittest"]
+
+[project.urls]
+Documentation = "https://github.com/thinh-vu/vnstock"
+Source = "https://github.com/thinh-vu/vnstock"
+IssueTracker = "https://github.com/thinh-vu/vnstock/issues"
+
+[tool.setuptools]
+include-package-data = true
+packages = ["vnstock"]
+
+[tool.setuptools.package-data]
+vnstock = ["docs/*.txt", "docs/*.csv"]
+
+[project.scripts]
+vnstock = "vnstock.common.cli:cli"

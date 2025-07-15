@@ -15,7 +15,7 @@ from vnstock.core.utils.market import trading_hours
 from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.user_agent import get_headers
-from vnstock.core.utils.client import send_request
+from vnstock.core.utils.client import send_request, ProxyConfig
 from vnstock.core.utils.transform import ohlc_to_df, intraday_to_df
 
 logger = get_logger(__name__)
