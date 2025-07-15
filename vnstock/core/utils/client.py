@@ -191,7 +191,15 @@ def send_request(
                     if show_log:
                         logger.warning(f"HF proxy {hf_url} failed: {e}")
                     continue
-            raise ConnectionError(f"All HF proxies failed. Last error: {last_exception}")
+            hf_proxy_links = '\n'.join([f"- {url}" for url in HF_PROXY_URLS])
+            raise ConnectionError(
+                "Tất cả các HuggingFace proxy đều thất bại.\n"
+                "Proxy HuggingFace có thể đang ở trạng thái sleep do không có truy cập thường xuyên.\n"
+                "Vui lòng click vào một trong các link dưới đây để mở app proxy trên HuggingFace, đợi 5-10 giây rồi thử lại.\n"
+                f"\nDanh sách proxy đã thử:\n{hf_proxy_links}\n"
+                f"\nLỗi cuối cùng: {last_exception}"
+                )
+
         else:
             # Chọn HF proxy theo mode
             if len(HF_PROXY_URLS) > 1:
