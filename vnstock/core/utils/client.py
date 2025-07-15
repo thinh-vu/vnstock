@@ -2,28 +2,39 @@
 """
 API client utilities for vnstock data sources.
 
-Module này cung cấp các tiện ích để gửi request tới các nguồn dữ liệu của vnstock, hỗ trợ nhiều chế độ gửi (trực tiếp, qua proxy) và nhiều chế độ chọn proxy (try, rotate, random, single).
+This module provides utilities to send requests to vnstock data sources, supporting multiple modes of sending (direct, via proxy) and multiple proxy selection modes (try, rotate, random, single).
 
-Các hàm chính:
-- send_request: interface trung tâm cho tất cả các mode gửi request
-- send_request_direct: gửi request trực tiếp
-- send_request_hf_proxy: gửi request qua Hugging Face proxy
+Functions:
+- send_request: interface for all modes of sending requests
+- send_request_direct: send request directly
+- send_request_hf_proxy: send request via Hugging Face proxy
 - send_proxy_request: gửi request qua proxy thông thường
 """
 
-
-# Thư viện chuẩn và bên thứ ba
 import requests
 import json
 import random
 from typing import Dict, Any, Optional, Union, List
 from enum import Enum
+from pydantic import BaseModel
 from vnstock.core.utils.logger import get_logger
-
 
 # Khởi tạo logger cho module
 logger = get_logger(__name__)
 
+# Model cấu hình proxy dùng chung cho toàn bộ dự án
+class ProxyConfig(BaseModel):
+    """
+    Cấu hình proxy cho các request API.
+    Sử dụng cho các class/module cần truyền proxy.
+    """
+    proxy_list: Optional[List[str]] = None
+    proxy_mode: 'ProxyMode' = 'try'
+    request_mode: 'RequestMode' = 'direct'
+    hf_proxy_url: Optional[str] = None
+
+# Khởi tạo logger cho module
+logger = get_logger(__name__)
 
 class ProxyMode(Enum):
     """
@@ -38,7 +49,6 @@ class ProxyMode(Enum):
     RANDOM = "random"
     SINGLE = "single"
 
-
 class RequestMode(Enum):
     """
     Các chế độ gửi request:
@@ -50,17 +60,14 @@ class RequestMode(Enum):
     PROXY = "proxy"
     HF_PROXY = "hf_proxy"
 
-
 # Biến toàn cục để theo dõi index proxy hiện tại cho chế độ ROTATE
 _current_proxy_index = 0
-
 
 # Danh sách các Hugging Face proxy URL (có thể mở rộng)
 HF_PROXY_URLS = [
     "https://YOUR_SPACE_NAME.hf.space/proxy",
     # Thêm các HF proxy khác nếu cần
 ]
-
 
 def build_proxy_dict(proxy_url: str) -> Dict[str, str]:
     """
@@ -71,7 +78,6 @@ def build_proxy_dict(proxy_url: str) -> Dict[str, str]:
         Dict[str, str]: Dict cấu hình proxy cho requests
     """
     return {"http": proxy_url, "https": proxy_url}
-
 
 def get_proxy_by_mode(proxy_list: List[str], mode: ProxyMode) -> str:
     """
@@ -98,7 +104,6 @@ def get_proxy_by_mode(proxy_list: List[str], mode: ProxyMode) -> str:
     else:  # TRY mode
         return proxy_list[0]
 
-
 def create_hf_proxy_payload(url: str, headers: dict, method: str = "GET", payload=None) -> dict:
     """
     Tạo payload để gửi qua Hugging Face proxy.
@@ -116,113 +121,6 @@ def create_hf_proxy_payload(url: str, headers: dict, method: str = "GET", payloa
         "method": method,
         "payload": payload
     }
-
-
-def send_request_direct(
-    url: str,
-    headers: Dict[str, str],
-    method: str = "GET",
-    params: Optional[Dict] = None,
-    payload: Optional[Union[Dict, str]] = None,
-    timeout: int = 30,
-    proxies: Optional[Dict[str, str]] = None
-) -> Dict[str, Any]:
-    """
-    Gửi request trực tiếp tới endpoint, không qua proxy đặc biệt.
-    Args:
-        url (str): Endpoint URL
-        headers (Dict[str, str]): Header cho request
-        method (str): "GET" hoặc "POST"
-        params (Optional[Dict]): Tham số query cho GET
-        payload (Optional[Union[Dict, str]]): Dữ liệu gửi đi (POST)
-        timeout (int): Timeout (giây)
-        proxies (Optional[Dict[str, str]]): Dict proxy nếu có
-    Returns:
-        Dict[str, Any]: Dữ liệu JSON trả về
-    Raises:
-        ConnectionError: Nếu request thất bại hoặc trả về mã lỗi
-    """
-    try:
-        # Xử lý GET/POST
-        if method.upper() == "GET":
-            response = requests.get(
-                url, headers=headers, params=params, timeout=timeout, proxies=proxies
-            )
-        else:  # POST
-            if payload is not None:
-                if isinstance(payload, dict):
-                    data_arg = json.dumps(payload)
-                elif isinstance(payload, str):
-                    data_arg = payload
-                else:
-                    raise ValueError("Payload must be either a dictionary or a raw string.")
-            else:
-                data_arg = None
-            response = requests.post(
-                url, headers=headers, data=data_arg, timeout=timeout, proxies=proxies
-            )
-        # Kiểm tra mã trả về
-        if response.status_code != 200:
-            raise ConnectionError(
-                f"Failed to fetch data: {response.status_code} - {response.reason}"
-            )
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        error_msg = f"API request failed: {str(e)}"
-        logger.error(error_msg)
-        raise ConnectionError(error_msg)
-
-
-def send_request_hf_proxy(
-    url: str,
-    headers: Dict[str, str],
-    method: str = "GET",
-    params: Optional[Dict] = None,
-    payload: Optional[Union[Dict, str]] = None,
-    timeout: int = 30,
-    hf_proxy_url: str = None
-) -> Dict[str, Any]:
-    """
-    Gửi request qua Hugging Face proxy.
-    Args:
-        url (str): Endpoint URL cần truy cập
-        headers (Dict[str, str]): Header cho request
-        method (str): "GET" hoặc "POST"
-        params (Optional[Dict]): Tham số query cho GET
-        payload (Optional[Union[Dict, str]]): Dữ liệu gửi đi (POST)
-        timeout (int): Timeout (giây)
-        hf_proxy_url (str): URL của Hugging Face proxy
-    Returns:
-        Dict[str, Any]: Dữ liệu JSON trả về
-    """
-    if not hf_proxy_url:
-        hf_proxy_url = HF_PROXY_URLS[0]
-    # Xử lý query parameters cho GET
-    target_url = url
-    if params and method.upper() == "GET":
-        query_string = "&".join([f"{k}={v}" for k, v in params.items()])
-        target_url = f"{url}?{query_string}"
-    # Tạo payload cho HF proxy
-    hf_payload = create_hf_proxy_payload(
-        url=target_url,
-        headers=headers,
-        method=method,
-        payload=payload
-    )
-    # Headers cho request tới HF proxy
-    hf_headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
-    # Gửi request qua HF proxy bằng POST
-    return send_request_direct(
-        url=hf_proxy_url,
-        headers=hf_headers,
-        method="POST",
-        payload=hf_payload,
-        timeout=timeout
-    )
-
 
 def send_request(
     url: str,
@@ -343,6 +241,109 @@ def send_request(
             url, headers, method, params, payload, timeout, proxies=None
         )
 
+def send_request_hf_proxy(
+    url: str,
+    headers: Dict[str, str],
+    method: str = "GET",
+    params: Optional[Dict] = None,
+    payload: Optional[Union[Dict, str]] = None,
+    timeout: int = 30,
+    hf_proxy_url: str = None
+) -> Dict[str, Any]:
+    """
+    Gửi request qua Hugging Face proxy.
+    Args:
+        url (str): Endpoint URL cần truy cập
+        headers (Dict[str, str]): Header cho request
+        method (str): "GET" hoặc "POST"
+        params (Optional[Dict]): Tham số query cho GET
+        payload (Optional[Union[Dict, str]]): Dữ liệu gửi đi (POST)
+        timeout (int): Timeout (giây)
+        hf_proxy_url (str): URL của Hugging Face proxy
+    Returns:
+        Dict[str, Any]: Dữ liệu JSON trả về
+    """
+    if not hf_proxy_url:
+        hf_proxy_url = HF_PROXY_URLS[0]
+    # Xử lý query parameters cho GET
+    target_url = url
+    if params and method.upper() == "GET":
+        query_string = "&".join([f"{k}={v}" for k, v in params.items()])
+        target_url = f"{url}?{query_string}"
+    # Tạo payload cho HF proxy
+    hf_payload = create_hf_proxy_payload(
+        url=target_url,
+        headers=headers,
+        method=method,
+        payload=payload
+    )
+    # Headers cho request tới HF proxy
+    hf_headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    # Gửi request qua HF proxy bằng POST
+    return send_request_direct(
+        url=hf_proxy_url,
+        headers=hf_headers,
+        method="POST",
+        payload=hf_payload,
+        timeout=timeout
+    )
+
+def send_request_direct(
+    url: str,
+    headers: Dict[str, str],
+    method: str = "GET",
+    params: Optional[Dict] = None,
+    payload: Optional[Union[Dict, str]] = None,
+    timeout: int = 30,
+    proxies: Optional[Dict[str, str]] = None
+) -> Dict[str, Any]:
+    """
+    Gửi request trực tiếp tới endpoint, không qua proxy đặc biệt.
+    Args:
+        url (str): Endpoint URL
+        headers (Dict[str, str]): Header cho request
+        method (str): "GET" hoặc "POST"
+        params (Optional[Dict]): Tham số query cho GET
+        payload (Optional[Union[Dict, str]]): Dữ liệu gửi đi (POST)
+        timeout (int): Timeout (giây)
+        proxies (Optional[Dict[str, str]]): Dict proxy nếu có
+    Returns:
+        Dict[str, Any]: Dữ liệu JSON trả về
+    Raises:
+        ConnectionError: Nếu request thất bại hoặc trả về mã lỗi
+    """
+    try:
+        # Xử lý GET/POST
+        if method.upper() == "GET":
+            response = requests.get(
+                url, headers=headers, params=params, timeout=timeout, proxies=proxies
+            )
+        else:  # POST
+            if payload is not None:
+                if isinstance(payload, dict):
+                    data_arg = json.dumps(payload)
+                elif isinstance(payload, str):
+                    data_arg = payload
+                else:
+                    raise ValueError("Payload must be either a dictionary or a raw string.")
+            else:
+                data_arg = None
+            response = requests.post(
+                url, headers=headers, data=data_arg, timeout=timeout, proxies=proxies
+            )
+        # Kiểm tra mã trả về
+        if response.status_code != 200:
+            raise ConnectionError(
+                f"Failed to fetch data: {response.status_code} - {response.reason}"
+            )
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        error_msg = f"API request failed: {str(e)}"
+        logger.error(error_msg)
+        raise ConnectionError(error_msg)
 
 def reset_proxy_rotation():
     """
@@ -351,7 +352,6 @@ def reset_proxy_rotation():
     """
     global _current_proxy_index
     _current_proxy_index = 0
-
 
 # Các hàm tiện lợi cho từng mode gửi request
 def send_direct_request(url: str, headers: Dict[str, str], **kwargs):

@@ -22,9 +22,15 @@ logger = get_logger(__name__)
 
 class Quote:
     """
-    Cấu hình truy cập dữ liệu lịch sử giá chứng khoán từ VCI.
+    The Quote class is used to fetch historical price data from VCI.
+
+    Parameters:
+        - symbol (required): the stock symbol to fetch data for.
+        - random_agent (optional): whether to use random user agent. Default is False.
+        - proxy_config (optional): proxy configuration. Default is None.
+        - show_log (optional): whether to show log. Default is True.
     """
-    def __init__(self, symbol, random_agent=False, show_log=True):
+    def __init__(self, symbol, random_agent=False, proxy_config: Optional[ProxyConfig]=None, show_log=True):
         self.symbol = validate_symbol(symbol)
         self.data_source = 'VCI'
         self._history = None  # Cache for historical data
@@ -33,6 +39,7 @@ class Quote:
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.interval_map = _INTERVAL_MAP
         self.show_log = show_log
+        self.proxy_config = proxy_config if proxy_config is not None else ProxyConfig()
 
         if not show_log:
             logger.setLevel('CRITICAL')
@@ -145,7 +152,11 @@ class Quote:
             headers=self.headers, 
             method="POST", 
             payload=payload, 
-            show_log=show_log
+            show_log=show_log,
+            proxy_list=self.proxy_config.proxy_list,
+            proxy_mode=self.proxy_config.proxy_mode,
+            request_mode=self.proxy_config.request_mode,
+            hf_proxy_url=self.proxy_config.hf_proxy_url
         )
 
         if not json_data:
@@ -207,7 +218,11 @@ class Quote:
             headers=self.headers, 
             method="POST", 
             payload=payload, 
-            show_log=show_log
+            show_log=show_log,
+            proxy_list=self.proxy_config.proxy_list,
+            proxy_mode=self.proxy_config.proxy_mode,
+            request_mode=self.proxy_config.request_mode,
+            hf_proxy_url=self.proxy_config.hf_proxy_url
         )
 
         # Transform data using intraday_to_df utility
@@ -252,7 +267,11 @@ class Quote:
             headers=self.headers, 
             method="POST", 
             payload=payload, 
-            show_log=show_log
+            show_log=show_log,
+            proxy_list=self.proxy_config.proxy_list,
+            proxy_mode=self.proxy_config.proxy_mode,
+            request_mode=self.proxy_config.request_mode,
+            hf_proxy_url=self.proxy_config.hf_proxy_url
         )
 
         # Process the data to DataFrame
