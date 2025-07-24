@@ -86,7 +86,7 @@ class Quote:
         ticker = self._input_validation(start, end, interval)
 
         start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
-
+        
         # Calculate end timestamp
         if end is not None:
             end_time = datetime.strptime(ticker.end, "%Y-%m-%d") + pd.Timedelta(days=1)
@@ -99,52 +99,34 @@ class Quote:
 
         interval_value = self.interval_map[ticker.interval]
 
-        # Tính count_back nếu chưa truyền vào
-        if count_back is None:
-            # Chuẩn hóa interval_value về 3 loại gốc của VCI
-            # _INTERVAL_MAP = {'1m' : 'ONE_MINUTE', '5m' : 'ONE_MINUTE', '15m' : 'ONE_MINUTE', '30m' : 'ONE_MINUTE',
-            #                 '1H' : 'ONE_HOUR', '1D' : 'ONE_DAY', '1W' : 'ONE_DAY', '1M' : 'ONE_DAY'}
-            interval = ticker.interval.lower()
-            if interval in ["1d", "1w", "1m"]:
-                # Dùng ONE_DAY
-                delta = end_time.date() - start_time.date()
-                count_back = delta.days
-                if interval == "1w":
-                    count_back = count_back // 7
-                elif interval == "1m":
-                    count_back = (end_time.year - start_time.year) * 12 + (end_time.month - start_time.month)
-            elif interval in ["1h"]:
-                # Dùng ONE_HOUR
-                total_hours = int((end_time - start_time).total_seconds() // 3600)
-                count_back = total_hours
-            elif interval in ["1m", "5m", "15m", "30m"]:
-                # Dùng ONE_MINUTE
-                total_minutes = int((end_time - start_time).total_seconds() // 60)
-                if interval == "1m":
-                    count_back = total_minutes
-                elif interval == "5m":
-                    count_back = total_minutes // 5
-                elif interval == "15m":
-                    count_back = total_minutes // 15
-                elif interval == "30m":
-                    count_back = total_minutes // 30
-                else:
-                    count_back = total_minutes
-            else:
-                # fallback: 30
-                count_back = 30
-            if count_back <= 0:
-                count_back = 1
+        # Tự động tính count_back nếu không truyền vào
+        auto_count_back = 1000
+        business_days = pd.bdate_range(start=start_time, end=end_time)
+
+        if count_back is None and end is not None:
+            # Lấy giá trị interval đã mapping
+            interval_mapped = interval_value
+            
+            if interval_mapped == "ONE_DAY":
+                # Sử dụng bdate_range để đếm số ngày làm việc (không tính thứ 7, chủ nhật)
+                auto_count_back = len(business_days) + 1
+            elif interval_mapped == "ONE_HOUR":
+                # Tính số ngày làm việc và nhân với số giờ giao dịch mỗi ngày (6.5 giờ)
+                auto_count_back = len(business_days) * 6.5 + 1
+            elif interval_mapped == "ONE_MINUTE":
+                # Tính số ngày làm việc và nhân với số phút giao dịch mỗi ngày (6.5 * 60 phút)
+                auto_count_back = len(business_days) * 6.5 * 60 + 1
+        else:
+            auto_count_back = count_back if count_back is not None else 1000
 
         # Prepare request
-        url = self.base_url + _CHART_URL
+        url = f'{self.base_url}chart/OHLCChart/gap-chart'
         payload = {
             "timeFrame": interval_value,
             "symbols": [self.symbol],
             "to": end_stamp,
-            "countBack": count_back
+            "countBack": auto_count_back
         }
-
 
         # Use the send_request utility from api_client
         json_data = send_request(
@@ -174,6 +156,9 @@ class Quote:
             floating=floating,
             resample_map=_RESAMPLE_MAP
         )
+
+        # trim the data to the start time
+        df = df[df['time'] >= start_time].reset_index(drop=True)
 
         if count_back is not None:
             df = df.tail(count_back)
