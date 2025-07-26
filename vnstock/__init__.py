@@ -1,6 +1,5 @@
 import vnai
-from .common.vnstock import Vnstock
-from .common.plot import chart_wrapper
+from vnstock.common.vnstock import Vnstock
 from .api.quote import Quote
 from .api.company import Company
 from .api.financial import Finance
