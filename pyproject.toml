@@ -37,12 +37,10 @@ dependencies = [
     "openpyxl",
     "pydantic",
     "psutil",
-    "fake_useragent",
-    "click",
     "packaging>=20.0",
     "importlib-metadata>=1.0",
     "tenacity",
-    "vnai>=2.1.7"
+    "vnai>=2.1.9"
 ]
 
 [project.optional-dependencies]
@@ -57,10 +55,7 @@ IssueTracker = "https://github.com/thinh-vu/vnstock/issues"
 
 [tool.setuptools]
 include-package-data = true
-packages = ["vnstock"]
+packages = { find = {} } # Support Python3.11
 
 [tool.setuptools.package-data]
 vnstock = ["docs/*.txt", "docs/*.csv"]
-
-[project.scripts]
-vnstock = "vnstock.common.cli:cli"

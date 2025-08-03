@@ -7,7 +7,4 @@ vnstock_ezchart>=0.0.2
 fake_useragent==1.5.1
 cryptography==42.0.5
 psutil==6.0.0
-click==8.1.7
-click-repl==0.3.0
 seaborn==0.13.2
-# coverage # for testing
