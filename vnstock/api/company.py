@@ -34,9 +34,16 @@ class Company(BaseAdapter):
         random_agent: bool = False,
         show_log: bool = False
     ):
+        # Store parameters for later use
+        self.source = source
+        self.symbol = symbol if symbol else ""
+        self.random_agent = random_agent
+        self.show_log = show_log
+        
         # Validate the source to only accept vci or tcbs
         if source.lower() not in ["vci", "tcbs"]:
             raise ValueError("Lớp Company chỉ nhận giá trị tham số source là 'VCI' hoặc 'TCBS'.")
+        
         # BaseAdapter will discover vnstock.explorer.<real_source>.company
         # and pass only the kwargs its __init__ accepts (random_agent, show_log).
         super().__init__(
@@ -143,3 +150,31 @@ class Company(BaseAdapter):
     def events(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company events."""
         pass
+        
+    def _delegate_to_provider(self, method_name: str, symbol: str = None, **kwargs: Any) -> Any:
+        """
+        Delegate method call to the provider with symbol update if needed.
+
+        Args:
+            method_name (str): Method name to call.
+            symbol (str, optional): Symbol to use.
+            **kwargs: Additional parameters.
+
+        Returns:
+            Any: Result from the provider.
+        """
+        # Standard vnstock implementation
+        original_symbol = None
+        try:
+            if symbol:
+                original_symbol = self.symbol
+                self.symbol = symbol.upper()
+                self._update_provider()
+                
+            # Get the method from the provider
+            method = getattr(self.provider, method_name)
+            return method(**kwargs)
+        finally:
+            if original_symbol:
+                self.symbol = original_symbol
+                self._update_provider()

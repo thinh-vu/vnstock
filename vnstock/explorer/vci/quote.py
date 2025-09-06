@@ -85,11 +85,29 @@ class Quote:
         # Validate inputs
         ticker = self._input_validation(start, end, interval)
 
-        start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
+        # Hỗ trợ cả định dạng ngày và định dạng ngày giờ
+        try:
+            # Thử với định dạng ngày giờ
+            start_time = datetime.strptime(ticker.start, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            try:
+                # Thử với định dạng ngày
+                start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
+            except ValueError:
+                raise ValueError(f"Định dạng ngày không hợp lệ: {ticker.start}. Sử dụng định dạng YYYY-MM-DD hoặc YYYY-MM-DD HH:MM:SS")
         
         # Calculate end timestamp
         if end is not None:
-            end_time = datetime.strptime(ticker.end, "%Y-%m-%d") + pd.Timedelta(days=1)
+            try:
+                # Thử với định dạng ngày giờ
+                end_time = datetime.strptime(ticker.end, "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                try:
+                    # Thử với định dạng ngày
+                    end_time = datetime.strptime(ticker.end, "%Y-%m-%d") + pd.Timedelta(days=1)
+                except ValueError:
+                    raise ValueError(f"Định dạng ngày không hợp lệ: {ticker.end}. Sử dụng định dạng YYYY-MM-DD hoặc YYYY-MM-DD HH:MM:SS")
+            
             if start_time > end_time:
                 raise ValueError("Thời gian bắt đầu không thể lớn hơn thời gian kết thúc.")
             end_stamp = int(end_time.timestamp())

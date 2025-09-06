@@ -4,7 +4,6 @@ vnstock/api/trading.py
 Unified Trading adapter with dynamic method detection and parameter filtering.
 """
 
-import inspect
 from typing import Any
 from tenacity import retry, stop_after_attempt, wait_exponential
 from vnstock.config import Config
@@ -29,9 +28,16 @@ class Trading(BaseAdapter):
         random_agent: bool = False,
         show_log: bool = False
     ):
+        # Store parameters for later use
+        self.source = source
+        self.symbol = symbol if symbol else ""
+        self.random_agent = random_agent
+        self.show_log = show_log
+        
         # Validate to accept vci, tcbs as source
         if source.lower() not in ["vci", "tcbs"]:
             raise ValueError("Lớp Trading chỉ nhận giá trị tham số source là 'VCI' hoặc 'TCBS'.")
+        
         super().__init__(
             source=source,
             symbol=symbol,
@@ -161,3 +167,30 @@ class Trading(BaseAdapter):
         """
         pass
             
+    def _delegate_to_provider(self, method_name: str, symbol: str = None, **kwargs: Any) -> Any:
+        """
+        Delegate method call to the provider with symbol update if needed.
+
+        Args:
+            method_name (str): Method name to call.
+            symbol (str, optional): Symbol to use.
+            **kwargs: Additional parameters.
+
+        Returns:
+            Any: Result from the provider.
+        """
+        # Standard vnstock implementation
+        original_symbol = None
+        try:
+            if symbol:
+                original_symbol = self.symbol
+                self.symbol = symbol.upper()
+                self._update_provider()
+                
+            # Get the method from the provider
+            method = getattr(self.provider, method_name)
+            return method(**kwargs)
+        finally:
+            if original_symbol:
+                self.symbol = original_symbol
+                self._update_provider()

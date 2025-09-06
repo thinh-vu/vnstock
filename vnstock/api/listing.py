@@ -33,9 +33,15 @@ class Listing(BaseAdapter):
         random_agent: bool = False,
         show_log: bool = False
     ):
+        # Store parameters for later use
+        self.source = source
+        self.random_agent = random_agent
+        self.show_log = show_log
+        
         # Validate the source to only accept vci or msn
         if source.lower() not in ["vci", "msn"]:
             raise ValueError("Lớp Listing chỉ nhận giá trị tham số source là 'VCI' hoặc 'MSN'.")
+        
         # BaseAdapter will discover vnstock.explorer.<real_source>.listing
         # and pass only the kwargs its __init__ accepts (random_agent, show_log).
         super().__init__(
@@ -157,3 +163,18 @@ class Listing(BaseAdapter):
     def all_bonds(self, **kwargs: Any) -> Any:
         """Retrieve all bonds (group='BOND')."""
         return self.symbols_by_group(group="BOND", **kwargs)
+        
+    def _delegate_to_provider(self, method_name: str, **kwargs: Any) -> Any:
+        """
+        Delegate method call to the provider.
+
+        Args:
+            method_name (str): Method name to call.
+            **kwargs: Additional parameters.
+
+        Returns:
+            Any: Result from the provider.
+        """
+        # Standard vnstock implementation
+        method = getattr(self.provider, method_name)
+        return method(**kwargs)

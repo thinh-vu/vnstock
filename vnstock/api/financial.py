@@ -5,6 +5,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from vnstock.config import Config
 from vnstock.base import BaseAdapter, dynamic_method
 
+
 class Finance(BaseAdapter):
     _module_name = "financial"
     """
@@ -30,13 +31,19 @@ class Finance(BaseAdapter):
         get_all: bool = True,
         show_log: bool = False
     ):
+        # Store parameters for later use
+        self.source = source
+        self.symbol = symbol if symbol else ""
+        self.period = period
+        self.get_all = get_all
+        self.show_log = show_log
+        
         # Validate the source to only accept vci or tcbs
         if source.lower() not in ["vci", "tcbs"]:
             raise ValueError("Lớp Finance chỉ nhận giá trị tham số source là 'VCI' hoặc 'TCBS'.")
-        # Validate the period to accept only year or quarter
-        if period.lower() not in ["year", "quarter"]:
-            raise ValueError("Lớp Finance chỉ nhận giá trị tham số period là 'year' hoặc 'quarter'.")
-        # Forward all to the provider’s constructor (symbol, period, get_all, show_log)
+        
+        # BaseAdapter will discover vnstock.explorer.<real_source>.financial
+        # and pass only the kwargs its __init__ accepts (symbol, period, get_all, show_log).
         super().__init__(
             source=source,
             symbol=symbol,
@@ -55,10 +62,7 @@ class Finance(BaseAdapter):
     )
     @dynamic_method
     def balance_sheet(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve balance sheet data.
-        Forwards supported kwargs (e.g., period, lang, dropna, show_log).
-        """
+        """Retrieve balance sheet data."""
         pass
 
     @retry(
@@ -71,9 +75,7 @@ class Finance(BaseAdapter):
     )
     @dynamic_method
     def income_statement(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve income statement data.
-        """
+        """Retrieve income statement data."""
         pass
 
     @retry(
@@ -86,9 +88,7 @@ class Finance(BaseAdapter):
     )
     @dynamic_method
     def cash_flow(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve cash flow statement data.
-        """
+        """Retrieve cash flow data."""
         pass
 
     @retry(
@@ -101,8 +101,33 @@ class Finance(BaseAdapter):
     )
     @dynamic_method
     def ratio(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve financial ratios.
-        Supports provider kwargs like flatten_columns, separator, drop_levels, etc.
-        """
+        """Retrieve financial ratio data."""
         pass
+        
+    def _delegate_to_provider(self, method_name: str, symbol: str = None, **kwargs: Any) -> Any:
+        """
+        Delegate method call to the provider with symbol update if needed.
+
+        Args:
+            method_name (str): Method name to call.
+            symbol (str, optional): Symbol to use.
+            **kwargs: Additional parameters.
+
+        Returns:
+            Any: Result from the provider.
+        """
+        # Standard vnstock implementation
+        original_symbol = None
+        try:
+            if symbol:
+                original_symbol = self.symbol
+                self.symbol = symbol.upper()
+                self._update_provider()
+                
+            # Get the method from the provider
+            method = getattr(self.provider, method_name)
+            return method(**kwargs)
+        finally:
+            if original_symbol:
+                self.symbol = original_symbol
+                self._update_provider()

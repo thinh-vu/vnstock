@@ -26,7 +26,7 @@ def msn_apikey (headers, version='20240430', show_log=False):
         today = (datetime.now()-timedelta(hours=7)).strftime("%Y%m%d")
         version = today
     
-    url = f"https://assets.msn.com/resolver/api/resolve/v3/config/?expType=AppConfig&expInstance=default&apptype=finance&v={version}.130&targetScope={scope}"
+    url = f"https://assets.msn.com/resolver/api/resolve/v3/config/?expType=AppConfig&expInstance=default&apptype=finance&v={version}.168&targetScope={scope}"
     if show_log:
         logger.info(f"Requesting apikey from {url}")
     
