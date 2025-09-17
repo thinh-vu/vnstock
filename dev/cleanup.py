@@ -1,6 +1,11 @@
 import os
 import shutil
 import fnmatch
+import stat
+
+def remove_readonly(func, path, excinfo):
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
 
 def delete_dirs(dirs):
     for dir in dirs:
@@ -8,7 +13,7 @@ def delete_dirs(dirs):
             for dirname in fnmatch.filter(dirnames, dir):
                 dir_path = os.path.join(root, dirname)
                 try:
-                    shutil.rmtree(dir_path)
+                    shutil.rmtree(dir_path, onerror=remove_readonly)
                     print(f"Deleted directory: {dir_path}")
                 except FileNotFoundError:
                     print(f"Directory not found: {dir_path}")
@@ -29,7 +34,7 @@ def delete_files(files):
                     print(f"Error while deleting file: {file_path}. Error: {str(e)}")
 
 # List of directories to delete
-dirs_to_delete = ["__pycache__", "build", "*.egg-info", "dist", "htmlcov"]
+dirs_to_delete = ["__pycache__", "build", "*.egg-info", "dist"]
 
 # List of files to delete
 files_to_delete = ["*.tmp"]
