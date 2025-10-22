@@ -579,7 +579,7 @@ Before getting started, consider starring the project to support us—thank you!
 
 ![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
 
-Full documentation and usage guide: [vnstocks.com/docs](https://vnstocks.com/docs/category/s%E1%BB%95-tay-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn)
+Full documentation and usage guide: [vnstocks.com/docs](https://vnstocks.com/docs)
 
 Example use cases in Colab Notebook:
 
