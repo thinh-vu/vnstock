@@ -155,7 +155,8 @@ class Screener:
                 "uptrend",
                 "price_break_out52_week",
                 "price_wash_out52_week",
-                "heating_up"
+                "heating_up",
+                "price_vs_sma200",
             ]
             
             # Process the specified columns:
