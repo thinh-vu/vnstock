@@ -15,8 +15,10 @@ class DataSources:
     MSN = "msn"
     DNSE = "dnse"
     BINANCE = "binance"
+    FMP = "fmp"
+    XNO = "xno"
     
-    ALL_SOURCES = [VCI, TCBS, MSN, DNSE, BINANCE]
+    ALL_SOURCES = [VCI, TCBS, MSN, DNSE, FMP, XNO]
 
 
 class TimeResolutions:

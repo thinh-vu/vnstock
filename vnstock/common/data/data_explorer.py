@@ -43,18 +43,23 @@ class BaseComponent:
         raise NotImplementedError("Phương thức này phải được triển khai bởi các lớp con")
 
 class StockComponents(BaseComponent):
-    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN"]
+    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN", "FMP"]
 
     def __init__(self, symbol: str, source: str = Config.DEFAULT_SOURCE, show_log: bool = True):
         super().__init__(symbol, source)
         self.show_log = show_log
-        self.asset_type = get_asset_type(self.symbol)
+        # For FMP, assume 'stock' type to skip VN validation
+        if self.source == 'FMP':
+            self.asset_type = 'stock'
+        else:
+            self.asset_type = get_asset_type(self.symbol)
         if not show_log:
             logger.setLevel(logging.CRITICAL)
         self._initialize_components()
 
     def _initialize_components(self):
-        if self.asset_type == "stock":
+        # For FMP, assume all symbols are stocks (international markets)
+        if self.source == 'FMP' or self.asset_type == "stock":
             self.company = Company(self.symbol, source=self.source)
             self.finance = Finance(self.symbol, source=self.source)
         else:
@@ -75,6 +80,11 @@ class StockComponents(BaseComponent):
         elif self.source == 'MSN':
             self.quote = Quote(self.symbol, 'MSN')
             self.listing = Listing(source='MSN')
+        elif self.source == 'FMP':
+            self.quote = Quote(self.symbol, 'FMP')
+            self.listing = Listing(source='FMP')
+            self.company = Company(self.symbol, source='FMP')
+            self.finance = Finance(self.symbol, source='FMP')
 
     def _load_data_source(self):
         """
@@ -93,14 +103,17 @@ class StockComponents(BaseComponent):
         self._initialize_components()
 
 class Quote(BaseComponent):
-    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN"]
+    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN", "FMP"]
 
     def __init__(self, symbol: str, source: str = Config.DEFAULT_SOURCE):
         super().__init__(symbol, source)
 
     def _load_data_source(self):
         module = importlib.import_module(self.source_module)
-        return module.Quote(self.symbol.lower() if self.source == "MSN" else self.symbol)
+        if self.source == "MSN":
+            return module.Quote(self.symbol.lower())
+        else:
+            return module.Quote(self.symbol)
     
     def _update_data_source(self, symbol: Optional[str] = None):
         if symbol:
@@ -128,7 +141,7 @@ class Quote(BaseComponent):
         return self.data_source.price_depth(**kwargs)
 
 class Listing(BaseComponent):
-    SUPPORTED_SOURCES = ["VCI", "MSN"]
+    SUPPORTED_SOURCES = ["VCI", "MSN", "FMP"]
 
     def __init__(self, source: str = Config.DEFAULT_SOURCE):
         super().__init__(source=source)
@@ -193,7 +206,7 @@ class Trading(BaseComponent):
         return self.data_source.price_board(symbols_list, **kwargs)
 
 class Company(BaseComponent):
-    SUPPORTED_SOURCES = ["TCBS", "VCI"]
+    SUPPORTED_SOURCES = ["TCBS", "VCI", "FMP"]
 
     def __init__(self, symbol: Optional[str] = 'ACB', source: str = "TCBS"):
         super().__init__(symbol, source)
@@ -256,7 +269,7 @@ class Company(BaseComponent):
         return self.data_source.ratio_summary(**kwargs)
 
 class Finance(BaseComponent):
-    SUPPORTED_SOURCES = ["TCBS", "VCI"]
+    SUPPORTED_SOURCES = ["TCBS", "VCI", "FMP"]
     SUPPORTED_PERIODS = ["quarter", "annual"]
 
     def __init__(
@@ -392,6 +405,39 @@ class MSNComponents:
 
         if self.source != "MSN":    
             logger.warning("Thông tin niêm yết sẽ được truy xuất từ MSN")
+
+    def update_symbol(self, symbol: str):
+        """
+        Update the symbol for all sub-components.
+        """
+        self.symbol = symbol.upper()
+        self._initialize_components()
+
+
+class FMPComponents:
+    """
+    Class (lớp) quản lý các chức năng của thư viện Vnstock
+    liên quan đến thị trường quốc tế.
+    """
+    def __init__(self, symbol: Optional[str] = 'AAPL', source: str = "FMP",
+                 api_key: Optional[str] = None):
+        self.original_symbol = symbol.upper()
+        self.symbol = self.original_symbol
+        self.source = source.upper()
+        self.api_key = api_key
+        
+        if self.source not in ["FMP"]:
+            error_msg = "Hiện tại chỉ có nguồn dữ liệu từ FMP được hỗ trợ."
+            raise ValueError(error_msg)
+            
+        self._initialize_components()
+
+    def _initialize_components(self):
+        """Initialize all FMP components."""
+        self.quote = Quote(self.symbol, self.source)
+        self.listing = Listing(source=self.source)
+        self.company = Company(self.symbol, source=self.source)
+        self.finance = Finance(self.symbol, source=self.source)
 
     def update_symbol(self, symbol: str):
         """
