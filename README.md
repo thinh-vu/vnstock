@@ -197,7 +197,9 @@ Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án c�
 
 ![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
 
-Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstocks.com](https://vnstocks.com/docs/category/s%E1%BB%95-tay-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn). 
+👉 Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstocks.com/docs](https://vnstocks.com/docs). 
+
+👉 Để hiểu sử dụng tính năng MCP cho các trình soạn thảo lệnh chuyên nghiệp (IDE), thêm [cấu hình MCP Context7](https://github.com/upstash/context7) cho [Vnstock](https://context7.com/thinh-vu/vnstock) để AI tạo code chính xác hơn. 
 
 Xem minh hoạ các tính năng thông qua Colab Notebook sau:
 
@@ -218,7 +220,7 @@ pip install -U vnstock
 Bạn cũng có thể cài đặt bản phát hành thử nghiệm trên Github với câu lệnh:
 
 ```bash
-pip install git+https://github.com/thinh-vu/vnstock.git
+pip install git+https://github.com/thinh-vu/vnstock
 ```
 
 ## 8.2. Nạp thư viện
@@ -573,13 +575,15 @@ You can support the project by simply starring it on GitHub—this helps the pro
 
 ---
 
-# VII. 📔 Documentation
+# VIII. 📔 Documentation
 
 Before getting started, consider starring the project to support us—thank you!
 
 ![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
 
-Full documentation and usage guide: [vnstocks.com/docs](https://vnstocks.com/docs/category/s%E1%BB%95-tay-h%C6%B0%E1%BB%9Bng-d%E1%BA%ABn)
+👉 Full documentation and usage guide: [vnstocks.com/docs](https://vnstocks.com/docs)
+
+👉 To understand how to use the MCP feature with professional code editors (IDEs), add the [Context7 MCP Configuration](https://github.com/upstash/context7) for [Vnstock](https://context7.com/thinh-vu/vnstock) to help the AI generate more accurate code.
 
 Example use cases in Colab Notebook:
 
