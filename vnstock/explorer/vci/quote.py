@@ -253,6 +253,41 @@ class Quote:
             hf_proxy_url=self.proxy_config.hf_proxy_url
         )
 
+        # Debug: log response structure
+        if show_log:
+            logger.info(f"API Response type: {type(json_data)}")
+            data_len = (
+                len(json_data) if hasattr(json_data, '__len__') else 'N/A'
+            )
+            logger.info(f"Response length: {data_len}")
+
+        # Handle both list and dict responses
+        if isinstance(json_data, list):
+            # API returns list of OHLC data directly
+            pass  # json_data is already in correct format
+        elif isinstance(json_data, dict) and 'data' in json_data:
+            # API returns dict with 'data' key
+            json_data = json_data['data']
+
+        # Transform VCI array format to row format
+        if isinstance(json_data, list) and len(json_data) > 0:
+            list_data = json_data
+            symbol_data = list_data[0]
+            if (
+                isinstance(symbol_data, dict) and
+                'o' in symbol_data and
+                isinstance(symbol_data['o'], list)
+            ):
+                # Vectorized conversion using pandas
+                json_data = pd.DataFrame({
+                    't': symbol_data['t'],
+                    'o': symbol_data['o'],
+                    'h': symbol_data['h'],
+                    'l': symbol_data['l'],
+                    'c': symbol_data['c'],
+                    'v': symbol_data['v']
+                }).to_dict('records')
+
         if not json_data:
             raise ValueError(
                 "Không tìm thấy dữ liệu. Vui lòng kiểm tra lại "

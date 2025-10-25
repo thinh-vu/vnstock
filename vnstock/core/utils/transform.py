@@ -109,30 +109,50 @@ def process_match_types(df, asset_type, source):
     
     return df
 
-def ohlc_to_df(data: Dict[str, Any], column_map: Dict[str, str], dtype_map: Dict[str, str],
-              asset_type: str, symbol: str, source: str, interval: str = "1D",
-              floating: int = 2, resample_map: Optional[Dict[str, str]] = None) -> pd.DataFrame:
+def ohlc_to_df(
+    data: Dict[str, Any],
+    column_map: Dict[str, str],
+    dtype_map: Dict[str, str],
+    asset_type: str,
+    symbol: str,
+    source: str,
+    interval: str = "1D",
+    floating: int = 2,
+    resample_map: Optional[Dict[str, str]] = None
+) -> pd.DataFrame:
     """Convert OHLC data from any source to standardized DataFrame format."""
     if not data:
         raise ValueError("Input data is empty or not provided.")
-        
+    
     # Handle different data source formats
-    if source == 'TCBS':
-        # TCBS data is already a list of dictionaries
+    if source == 'TCBS' or isinstance(data, list):
+        # TCBS and VCI list responses are already list of dictionaries
         df = pd.DataFrame(data)
         # Apply column mapping directly through rename
         df.rename(columns=column_map, inplace=True)
     else:
-        # VCI and other sources
+        # Other sources with dict data
         # Select and rename columns using dictionary comprehension
-        columns_of_interest = {key: column_map[key] for key in column_map.keys() if key in data}
-        df = pd.DataFrame(data)[columns_of_interest.keys()].rename(columns=column_map)
+        columns_of_interest = {
+            key: column_map[key]
+            for key in column_map.keys()
+            if key in data
+        }
+        df = pd.DataFrame(data)[columns_of_interest.keys()].rename(
+            columns=column_map
+        )
     
     # Ensure all required columns exist
     required_columns = ['time', 'open', 'high', 'low', 'close', 'volume']
-    missing_columns = [col for col in required_columns if col not in df.columns]
+    missing_columns = [
+        col for col in required_columns if col not in df.columns
+    ]
     if missing_columns:
-        raise ValueError(f"Missing required columns: {missing_columns}. Available columns: {df.columns.tolist()}")
+        msg = (
+            f"Missing required columns: {missing_columns}. "
+            f"Available columns: {df.columns.tolist()}"
+        )
+        raise ValueError(msg)
     
     # Standard column order
     df = df[['time', 'open', 'high', 'low', 'close', 'volume']]
