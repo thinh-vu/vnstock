@@ -269,15 +269,22 @@ class Quote:
             # Normalize interval for API endpoint selection
             timeframe = normalize_interval(ticker.interval)
             
-            if str(timeframe) in ["1D", "1W", "1M"]:
+            # Map TimeFrame enum value to interval key (e.g., D -> 1D)
+            interval_key = _TIMEFRAME_MAP.get(timeframe.value)
+            if interval_key is None:
+                raise ValueError(
+                    f"Invalid timeframe value: {timeframe.value}"
+                )
+            
+            if interval_key in ["1D", "1W", "1M"]:
                 end_point = "bars-long-term"
-            elif str(timeframe) in ["1m", "5m", "15m", "30m", "1H"]:
+            elif interval_key in ["1m", "5m", "15m", "30m", "1H"]:
                 end_point = "bars"
             else:
                 end_point = "bars"
 
             # Translate the interval to TCBS format
-            interval_value = self.interval_map[str(timeframe)]
+            interval_value = self.interval_map[interval_key]
 
             # Construct the URL for fetching data
             if asset_type == "derivative":
