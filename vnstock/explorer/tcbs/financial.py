@@ -3,7 +3,7 @@ Module quản lý thông tin báo cáo tài chính từ nguồn dữ liệu TCBS
 """
 
 import pandas as pd
-from typing import Optional, Dict, Union
+from typing import Optional
 from vnstock.core.utils import client
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock.core.utils.validation import validate_symbol
@@ -126,17 +126,16 @@ class Finance:
     
     @optimize_execution("TCBS")
     def balance_sheet(self, period: Optional[str] = 'year', 
-                     to_df: Optional[bool] = True, show_log: Optional[bool] = False) -> Union[pd.DataFrame, Dict]:
+                     show_log: Optional[bool] = False) -> pd.DataFrame:
         """
         Truy xuất thông tin bảng cân đối kế toán (rút gọn) của một công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
 
         Tham số:
             - period (str): Chu kỳ báo cáo tài chính cần truy xuất. Mặc định là 'year'.
-            - to_df (bool): Chuyển đổi kết quả thành DataFrame hoặc không. Mặc định là True.
             - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
             
         Returns:
-            Union[pd.DataFrame, Dict]: DataFrame chứa dữ liệu bảng cân đối kế toán hoặc Dict dạng JSON.
+            pd.DataFrame: DataFrame chứa dữ liệu bảng cân đối kế toán.
         """
         # Validate input for period
         if period not in ['year', 'quarter']:
@@ -149,24 +148,20 @@ class Finance:
             df.drop(columns=['ticker'], inplace=True, errors='ignore')
             df.columns = [camel_to_snake(col) for col in df.columns]
             
-        if to_df:
-            return df
-        else:
-            return df.to_dict(orient='records')[0] if not df.empty else {}
+        return df
     
     @optimize_execution("TCBS")
     def income_statement(self, period: Optional[str] = 'year', 
-                        to_df: Optional[bool] = True, show_log: Optional[bool] = False) -> Union[pd.DataFrame, Dict]:
+                        show_log: Optional[bool] = False) -> pd.DataFrame:
         """
         Truy xuất thông tin báo cáo kết quả kinh doanh của một công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
 
         Tham số:
             - period (str): Chu kỳ báo cáo tài chính cần truy xuất. Mặc định là 'year'.
-            - to_df (bool): Chuyển đổi kết quả thành DataFrame hoặc không. Mặc định là True.
             - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
             
         Returns:
-            Union[pd.DataFrame, Dict]: DataFrame chứa dữ liệu báo cáo kết quả kinh doanh hoặc Dict dạng JSON.
+            pd.DataFrame: DataFrame chứa dữ liệu báo cáo kết quả kinh doanh.
         """
         df = self._get_report('income_statement', period=period, show_log=show_log)
         
@@ -175,24 +170,20 @@ class Finance:
             df.drop(columns=['ticker'], inplace=True, errors='ignore')
             df.columns = [camel_to_snake(col) for col in df.columns]
             
-        if to_df:
-            return df
-        else:
-            return df.to_dict(orient='records')[0] if not df.empty else {}
+        return df
     
     @optimize_execution("TCBS")
-    def cash_flow(self, period: Optional[str] = 'year', 
-                 to_df: Optional[bool] = True, show_log: Optional[bool] = False) -> Union[pd.DataFrame, Dict]:
+    def cash_flow(self, period: Optional[str] = 'year',
+                 show_log: Optional[bool] = False) -> pd.DataFrame:
         """
         Truy xuất thông tin báo cáo lưu chuyển tiền tệ của một công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
 
         Tham số:
             - period (str): Chu kỳ báo cáo tài chính cần truy xuất. Mặc định là 'year'.
-            - to_df (bool): Chuyển đổi kết quả thành DataFrame hoặc không. Mặc định là True.
             - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
             
         Returns:
-            Union[pd.DataFrame, Dict]: DataFrame chứa dữ liệu báo cáo lưu chuyển tiền tệ hoặc Dict dạng JSON.
+            pd.DataFrame: DataFrame chứa dữ liệu báo cáo lưu chuyển tiền tệ.
         """
         df = self._get_report('cash_flow', period=period, show_log=show_log)
         
@@ -201,10 +192,7 @@ class Finance:
             df.drop(columns=['ticker'], inplace=True, errors='ignore')
             df.columns = [camel_to_snake(col) for col in df.columns]
             
-        if to_df:
-            return df
-        else:
-            return df.to_dict(orient='records')[0] if not df.empty else {}
+        return df
     
     @optimize_execution("TCBS")
     def ratio(self, period: Optional[str] = 'quarter', dropna: Optional[bool] = True, 

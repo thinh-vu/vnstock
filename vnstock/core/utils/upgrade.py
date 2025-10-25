@@ -76,7 +76,11 @@ def update_notice():
                             UserWarning,
                             stacklevel=2
                         )
-            except (requests.exceptions.RequestException, ImportError, pkg_resources.DistributionNotFound):
+            except (
+                requests.exceptions.RequestException,
+                ImportError,
+                Exception  # Catch any other import-related errors
+            ):
                 # Skip this package if it's not installed or can't be checked
                 pass
     except Exception:
@@ -84,7 +88,10 @@ def update_notice():
         pass
 
 # Customizing the warnings output format for non-notebook environments
+
+
 def custom_formatwarning(message, category, filename, lineno, line=None):
     return f"{message}\n"
+
 
 warnings.formatwarning = custom_formatwarning

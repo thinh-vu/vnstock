@@ -31,11 +31,10 @@ class Trading:
 
     @optimize_execution("VCI")
     def price_board (self, symbols_list: List[str], 
-                     to_df:Optional[bool]=True, 
-                     show_log:Optional[bool]=False,
-                     flatten_columns:Optional[bool]=False,
-                     separator:Optional[str]='_',
-                     drop_levels:Optional[Union[int, List[int]]]=None):
+                     show_log: Optional[bool] = False,
+                     flatten_columns: Optional[bool] = False,
+                     separator: Optional[str] = '_',
+                     drop_levels: Optional[Union[int, List[int]]] = None) -> pd.DataFrame:
         """
         Truy xuất thông tin bảng giá của các mã chứng khoán tuỳ chọn từ nguồn dữ liệu VCI.
         """
@@ -109,7 +108,4 @@ class Trading:
 
         combine_df.attrs['source'] = 'VCI'
 
-        if to_df:
-            return combine_df
-        else:
-            return data
+        return combine_df

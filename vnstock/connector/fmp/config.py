@@ -1,5 +1,5 @@
 """
-Configuration and utility functions for FMP data source.
+Configuration and utility functions for FMP connector.
 Following VCI patterns for consistency.
 """
 

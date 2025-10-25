@@ -4,10 +4,13 @@ import requests
 import pandas as pd
 from typing import Dict, Optional, Union, List
 from datetime import datetime, timedelta
+from vnai import optimize_execution
+from vnstock.core.base.registry import ProviderRegistry
+from vnstock.core.types import DataCategory, ProviderType, TimeFrame
+from vnstock.core.utils.interval import normalize_interval
 from .const import (_BASE_URL, _STOCKS_URL, _FUTURE_URL, _INTERVAL_MAP, _OHLC_MAP, 
                     _OHLC_DTYPE, _INTRADAY_MAP, _INTRADAY_DTYPE, _INDEX_MAPPING)
-from .models import TickerModel
-from vnai import optimize_execution
+from vnstock.core.models import TickerModel
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.market import trading_hours
 from vnstock.core.utils.parser import get_asset_type
@@ -17,6 +20,8 @@ from vnstock.core.utils import client, transform, validation
 
 logger = get_logger(__name__)
 
+
+@ProviderRegistry.register(DataCategory.QUOTE, "tcbs", ProviderType.SCRAPING)
 class Quote:
     """
     TCBS data source for fetching stock market data, accommodating requests with large date ranges.
@@ -45,11 +50,22 @@ class Quote:
     
     def _input_validation(self, start: str, end: str, interval: str) -> TickerModel:
         """Validate input data using shared validation utilities."""
-        # Create ticker model
-        ticker = TickerModel(symbol=self.symbol, start=start, end=end, interval=interval)
+        # Normalize interval to standard format
+        timeframe = normalize_interval(interval)
         
-        # Validate interval
-        validation.validate_interval(ticker.interval, self.interval_map)
+        # Create ticker model with normalized interval
+        ticker = TickerModel(
+            symbol=self.symbol, start=start, end=end, 
+            interval=str(timeframe)
+        )
+        
+        # Validate interval is supported
+        if timeframe not in self.interval_map.values():
+            msg = (
+                f"Giá trị interval không hợp lệ: {timeframe}. "
+                f"Vui lòng chọn: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M"
+            )
+            raise ValueError(msg)
         
         return ticker
     
@@ -120,14 +136,13 @@ class Quote:
 
     @optimize_execution("TCBS")
     def history(self, start: str, end: Optional[str] = None, interval: Optional[str] = "1D", 
-            to_df: bool = True, show_log: bool = False, count_back: Optional[int] = 365,
-            asset_type: Optional[str] = None, _skip_long_check: bool = False) -> Dict:
+            show_log: bool = False, count_back: Optional[int] = 365,
+            asset_type: Optional[str] = None, _skip_long_check: bool = False) -> pd.DataFrame:
         """
         Tham số:
             - start (bắt buộc): thời gian bắt đầu lấy dữ liệu, có thể là ngày dạng string kiểu "YYYY-MM-DD".
             - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None (ngày hiện tại).
             - interval (tùy chọn): Khung thời gian trích xuất dữ liệu giá lịch sử (1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M).
-            - to_df (tùy chọn): Chuyển đổi dữ liệu trả về dưới dạng DataFrame (True) hoặc JSON (False).
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng.
             - count_back (tùy chọn): Số lượng dữ liệu trả về từ thời điểm cuối. Mặc định là 365.
             - asset_type (tùy chọn): Loại tài sản (stock, index, derivative). Mặc định là None (tự xác định).
@@ -161,19 +176,30 @@ class Quote:
             else:
                 end_stamp = int(end_time.timestamp())
 
-            if interval in ["1D", "1W", "1M"]:
+            # Normalize interval for API endpoint selection
+            timeframe = normalize_interval(ticker.interval)
+            
+            if str(timeframe) in ["1D", "1W", "1M"]:
                 end_point = "bars-long-term"
-            elif interval in ["1m", "5m", "15m", "30m", "1H"]:
+            elif str(timeframe) in ["1m", "5m", "15m", "30m", "1H"]:
                 end_point = "bars"
 
-            # translate the interval to TCBS format
-            interval_value = self.interval_map[ticker.interval]
+            # Translate the interval to TCBS format
+            interval_value = self.interval_map[str(timeframe)]
 
             # Construct the URL for fetching data
             if asset_type == "derivative":
-                url = f"{self.base_url}/{_FUTURE_URL}/v2/stock/{end_point}?resolution={interval_value}&ticker={self.symbol}&type={asset_type}&to={end_stamp}&countBack={count_back}"
+                url = (
+                    f"{self.base_url}/{_FUTURE_URL}/v2/stock/{end_point}"
+                    f"?resolution={interval_value}&ticker={self.symbol}"
+                    f"&type={asset_type}&to={end_stamp}&countBack={count_back}"
+                )
             else:
-                url = f"{self.base_url}/{_STOCKS_URL}/v2/stock/{end_point}?resolution={interval_value}&ticker={self.symbol}&type={asset_type}&to={end_stamp}&countBack={count_back}"
+                url = (
+                    f"{self.base_url}/{_STOCKS_URL}/v2/stock/{end_point}"
+                    f"?resolution={interval_value}&ticker={self.symbol}"
+                    f"&type={asset_type}&to={end_stamp}&countBack={count_back}"
+                )
 
             if interval_value in ["1", "5", "15", "30", "60"]:
                 # replace 'bars-long-term' with 'bars' in the url
@@ -186,12 +212,21 @@ class Quote:
             response = requests.get(url, headers=self.headers)
 
             if response.status_code != 200:
-                raise ConnectionError(f"Tải dữ liệu không thành công: {response.status_code} - {response.reason}")
+                msg = (
+                    f"Tải dữ liệu không thành công: "
+                    f"{response.status_code} - {response.reason}"
+                )
+                raise ConnectionError(msg)
 
             json_data = response.json()['data']
 
             if show_log:
-                logger.info(f'Truy xuất thành công dữ liệu {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}.')
+                msg = (
+                    f'Truy xuất thành công dữ liệu {ticker.symbol} '
+                    f'từ {ticker.start} đến {ticker.end}, '
+                    f'khung thời gian {ticker.interval}.'
+                )
+                logger.info(msg)
 
             df = self._as_df(json_data, asset_type)
 
@@ -199,12 +234,7 @@ class Quote:
         df.category = self.asset_type
         df.source = self.data_source
         
-        if to_df:
-            return df
-        else:
-            # convert df to json format 
-            json_data = df.to_json(orient='records')
-            return json_data
+        return df
         
     def _as_df(self, history_data: Dict, asset_type: str, floating: Optional[int] = 2) -> pd.DataFrame:
         """
@@ -224,8 +254,8 @@ class Quote:
         )
     
     @optimize_execution("TCBS")
-    def intraday(self, page_size: Optional[int]=100, page: Optional[int]=0, 
-            to_df: Optional[bool]=True, show_log: bool=False) -> Dict:
+    def intraday(self, page_size: Optional[int] = 100, page: Optional[int] = 0,
+            show_log: bool = False) -> pd.DataFrame:
         """
         Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu TCBS
         """
@@ -279,6 +309,6 @@ class Quote:
         # Reduce the time index by 7 hours to match the GMT+7 timezone
         df['time'] = df['time'] - pd.Timedelta(hours=7)
         
-        return df if to_df else df.to_json(orient='records')
+        return df
 
 

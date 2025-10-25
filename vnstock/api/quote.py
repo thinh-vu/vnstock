@@ -10,7 +10,16 @@ import pandas as pd
 from tenacity import retry, stop_after_attempt, wait_exponential
 from vnstock.config import Config
 from vnstock.base import BaseAdapter, dynamic_method
-from vnstock.core.constants import ParameterNames as P, MethodNames as M, DataSources, TimeResolutions
+from vnstock.core.types import (
+    ParameterNames as P,
+    MethodNames as M,
+    DataSource,
+    TimeFrame,
+)
+
+# Backward compatibility aliases
+DataSources = DataSource
+TimeResolutions = TimeFrame
 
 
 class Quote(BaseAdapter):
@@ -49,8 +58,12 @@ class Quote(BaseAdapter):
         self.show_log = show_log
         
         # Validate the source to only accept vci or tcbs or msn
-        if source.lower() not in [s.lower() for s in DataSources.ALL_SOURCES]:
-            raise ValueError(f"Lớp Quote chỉ nhận giá trị tham số source là {', '.join(DataSources.ALL_SOURCES)}.")        
+        all_sources = DataSources.all_sources()
+        if source.lower() not in [s.lower() for s in all_sources]:
+            sources_str = ', '.join(all_sources)
+            raise ValueError(
+                f"Lớp Quote chỉ nhận giá trị tham số source là {sources_str}."
+            )
         
         # BaseAdapter will discover vnstock.explorer.<real_source>.quote
         # and pass only the kwargs its __init__ accepts (symbol, random_agent, show_log).

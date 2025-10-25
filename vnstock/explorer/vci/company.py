@@ -24,11 +24,10 @@ class Company:
     Tham số:
         - symbol (str): Mã chứng khoán của công ty cần truy xuất thông tin.
         - random_agent (bool): Sử dụng user-agent ngẫu nhiên hoặc không. Mặc định là False.
-        - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
         - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
     """
     def __init__(self, symbol: str, random_agent: bool = False, 
-                 to_df: Optional[bool] = True, show_log: Optional[bool] = False):
+                 show_log: Optional[bool] = False):
         """
         Khởi tạo đối tượng Company với các tham số cho việc truy xuất dữ liệu.
         """
@@ -41,7 +40,6 @@ class Company:
             
         self.headers = get_headers(data_source='VCI', random_agent=random_agent)
         self.show_log = show_log
-        self.to_df = to_df
         self.raw_data = self._fetch_data()
         
         if not show_log:

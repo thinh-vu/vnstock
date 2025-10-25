@@ -3,37 +3,51 @@ vnstock/core/constants.py
 
 Constants used throughout the vnstock package.
 Các hằng số được sử dụng trong gói vnstock.
+
+NOTE: This module provides backward compatibility.
+New code should use types.py (DataSource, TimeFrame enums).
 """
+
+# Import from types.py for unified definitions
+from vnstock.core.types import (
+    DataSource as _DataSource,
+    TimeFrame as _TimeFrame,
+)
+
 
 class DataSources:
     """
+    DEPRECATED: Use vnstock.core.types.DataSource enum instead.
+    
     Data sources supported by vnstock.
     Các nguồn dữ liệu được hỗ trợ bởi vnstock.
     """
-    VCI = "vci"
-    TCBS = "tcbs"
-    MSN = "msn"
-    DNSE = "dnse"
-    BINANCE = "binance"
-    FMP = "fmp"
-    XNO = "xno"
+    VCI = _DataSource.VCI.value
+    TCBS = _DataSource.TCBS.value
+    MSN = _DataSource.MSN.value
+    DNSE = _DataSource.DNSE.value
+    BINANCE = _DataSource.BINANCE.value
+    FMP = _DataSource.FMP.value
+    XNO = _DataSource.XNO.value
     
-    ALL_SOURCES = [VCI, TCBS, MSN, DNSE, FMP, XNO]
+    ALL_SOURCES = _DataSource.all_sources()
 
 
 class TimeResolutions:
     """
+    DEPRECATED: Use vnstock.core.types.TimeFrame enum instead.
+    
     Time resolutions for historical data.
     Độ phân giải thời gian cho dữ liệu lịch sử.
     """
-    MINUTE_1 = "1m"
-    MINUTE_5 = "5m"
-    MINUTE_15 = "15m"
-    MINUTE_30 = "30m"
-    HOUR_1 = "1H"
-    DAILY = "D"
-    WEEKLY = "1W"
-    MONTHLY = "1M"
+    MINUTE_1 = _TimeFrame.MINUTE_1.value
+    MINUTE_5 = _TimeFrame.MINUTE_5.value
+    MINUTE_15 = _TimeFrame.MINUTE_15.value
+    MINUTE_30 = _TimeFrame.MINUTE_30.value
+    HOUR_1 = _TimeFrame.HOUR_1.value
+    DAILY = _TimeFrame.DAILY.value
+    WEEKLY = _TimeFrame.WEEKLY.value
+    MONTHLY = _TimeFrame.MONTHLY.value
 
 
 class ParameterNames:

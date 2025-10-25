@@ -6,16 +6,21 @@ import requests
 from datetime import datetime
 from typing import Optional, Dict
 from vnai import optimize_execution
+from vnstock.core.base.registry import ProviderRegistry
+from vnstock.core.types import DataCategory, ProviderType, TimeFrame
+from vnstock.core.utils.interval import normalize_interval
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.explorer.msn.listing import Listing
 from vnstock.explorer.msn.helper import msn_apikey
-from vnstock.explorer.msn.models import TickerModel 
+from vnstock.core.models import TickerModel 
 from vnstock.explorer.msn.helper import get_asset_type
 from .const import _BASE_URL, _RESAMPLE_MAP, _OHLC_MAP, _OHLC_DTYPE
 
 logger = get_logger(__name__)
 
+
+@ProviderRegistry.register(DataCategory.QUOTE, "msn", ProviderType.SCRAPING)
 class Quote:
     """
     MSN data source for fetching stock market data, accommodating requests with large date ranges.
@@ -32,19 +37,32 @@ class Quote:
         """
         Validate input data
         """
-        # Validate input data
-        ticker = TickerModel(symbol=self.symbol_id, start=start, end=end, interval=interval)
+        # Normalize interval to standard format
+        timeframe = normalize_interval(interval)
+        
+        # Validate interval is supported by MSN
+        if str(timeframe) not in _RESAMPLE_MAP.keys():
+            msg = (
+                f"Giá trị interval không hợp lệ: {timeframe}. "
+                f"MSN chỉ hỗ trợ: 1D, 1W, 1M"
+            )
+            raise ValueError(msg)
+        
+        # Create ticker model with normalized interval
+        ticker = TickerModel(
+            symbol=self.symbol_id, start=start, end=end, 
+            interval=str(timeframe)
+        )
         return ticker
     
 
     @optimize_execution('MSN')
-    def history(self, start: str, end: Optional[str], interval: Optional[str] = "1D", to_df: bool =True, show_log: bool =False, count_back: Optional[int]=365, asset_type: Optional[str] = None) -> Dict:
+    def history(self, start: str, end: Optional[str], interval: Optional[str] = "1D", show_log: bool = False, count_back: Optional[int] = 365, asset_type: Optional[str] = None) -> pd.DataFrame:
         """
         Tham số:
             - start (bắt buộc): thời gian bắt đầu lấy dữ liệu, có thể là ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS".
             - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None, chương trình tự động lấy thời điểm hiện tại. Có thể nhập ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS". 
             - interval (tùy chọn): Khung thời gian trích xuất dữ liệu giá lịch sử. Giá trị duy nhất được hỗ trợ là "1D".
-            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True. Đặt là False để trả về dữ liệu dạng JSON.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
             - count_back (tùy chọn): Số lượng dữ liệu trả về từ thời điểm cuối. Mặc định là 365.
         """
@@ -55,19 +73,26 @@ class Quote:
         if count_back is None:
             count_back = 365
 
-        # interval should be in 1D, 1W, 1M
-        if interval not in _RESAMPLE_MAP.keys():
-            raise ValueError("Giá trị interval được phép chỉ bao gồm 1D, 1W, 1M cho nguồn dữ liệu từ MSN.")
+        # Normalize interval for resample mapping
+        timeframe = normalize_interval(ticker.interval)
+        
+        if str(timeframe) not in _RESAMPLE_MAP.keys():
+            msg = (
+                f"Giá trị interval không hợp lệ: {timeframe}. "
+                f"MSN chỉ hỗ trợ: 1D, 1W, 1M"
+            )
+            raise ValueError(msg)
 
         if self.asset_type == "crypto":
             url = f"{_BASE_URL}/Cryptocurrency/chart"
         else:
             url = f"{_BASE_URL}/Charts/TimeRange"
 
-        params = {"apikey": self.apikey,
-                  'StartTime': f'{start}T17:00:00.000Z',
-                    'EndTime': f'{end}T16:59:00.858Z',
-                    'timeframe' : 1, 
+        params = {
+            "apikey": self.apikey,
+            'StartTime': f'{start}T17:00:00.000Z',
+            'EndTime': f'{end}T16:59:00.858Z',
+            'timeframe': 1,
                     "ocid": "finance-utils-peregrine",
                     "cm": "vi-vn",
                     "it": "web",
@@ -102,14 +127,7 @@ class Quote:
         if count_back is not None:
             df = df.tail(count_back)
         
-        if to_df:
-            return df
-        else:
-            # convert the time column to int value in seconds
-            df['time'] = df['time'].astype("int64")
-            # convert df to json format 
-            json_data = df.to_dict(orient='records')
-            return json_data
+        return df
     
     def _as_df(self, history_data: Dict, interval:str, floating: Optional[int] = 2) -> pd.DataFrame:
         """

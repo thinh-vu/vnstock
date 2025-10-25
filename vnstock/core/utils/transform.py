@@ -152,18 +152,16 @@ def ohlc_to_df(data: Dict[str, Any], column_map: Dict[str, str], dtype_map: Dict
         df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].div(1000)
     
     # Round price columns
-    df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].round(floating)
-    
-    # Resample if needed
+    df[["open", "high", "low", "close"]] = (
+        df[["open", "high", "low", "close"]].round(floating)
+    )
+
+    # Resample if needed - use shared utility for consistency
     if resample_map and interval not in ["1m", "1H", "1D"]:
-        df = df.set_index('time').resample(resample_map[interval]).agg({
-            'open': 'first',
-            'high': 'max',
-            'low': 'min',
-            'close': 'last',
-            'volume': 'sum'
-        }).reset_index()
-    
+        df = resample_ohlcv(
+            df, interval, freq_map=resample_map, time_col='time'
+        )
+
     # Apply data types
     for col, dtype in dtype_map.items():
         if col in df.columns:
@@ -674,3 +672,131 @@ def drop_cols_by_pattern(df, patterns, regex=True, case_sensitive=False):
     
     # Return DataFrame with matched columns removed
     return df.drop(columns=cols_to_drop)
+
+
+def resample_ohlcv(df: pd.DataFrame,
+                   interval: str,
+                   freq_map: Optional[Dict[str, str]] = None,
+                   time_col: str = 'time') -> pd.DataFrame:
+    """
+    Resample OHLCV data to different time frequencies.
+
+    Shared utility for resampling OHLCV data across vnstock library.
+    Supports any interval/frequency pair through flexible frequency mapping.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        DataFrame containing OHLCV data with time column (datetime format)
+    interval : str
+        Target interval/frequency (e.g., '1W', '1M', '1H', '5min')
+    freq_map : Optional[Dict[str, str]], optional
+        Mapping from interval to pandas frequency string. Default supports:
+        - '1W': 'W' (weekly)
+        - '1M': 'M' (monthly)
+        - '1H': 'H' (hourly)
+        - '5min': '5min' (5-minute)
+        If an interval not in freq_map, used directly as frequency.
+    time_col : str, optional
+        Name of the time column (default: 'time')
+
+    Returns:
+    --------
+    pd.DataFrame
+        Resampled OHLCV DataFrame with the same structure as input
+
+    Raises:
+    -------
+    KeyError: If time_col is not found in DataFrame
+    ValueError: If no OHLCV columns are found
+
+    Examples:
+    ---------
+    # Resample daily data to weekly
+    >>> df_weekly = resample_ohlcv(df_daily, '1W')
+
+    # Resample to monthly with custom frequency mapping
+    >>> freq_map = {'1M': 'MS', '1W': 'W', '4h': '4h'}
+    >>> df_monthly = resample_ohlcv(df_daily, '1M', freq_map)
+
+    # Resample intraday 1-minute to 5-minute
+    >>> df_5min = resample_ohlcv(df_1min, '5min')
+
+    Notes:
+    ------
+    - Input DataFrame's time column must be datetime type
+    - OHLCV columns: 'open', 'high', 'low', 'close', 'volume'
+    - Resampling rules:
+        * open: uses first value
+        * high: uses maximum value
+        * low: uses minimum value
+        * close: uses last value
+        * volume: sums all values
+        * other columns: uses last value
+    - Result is sorted by time with index reset
+    """
+    if time_col not in df.columns:
+        raise KeyError(
+            f"Time column '{time_col}' not found in DataFrame. "
+            f"Available: {list(df.columns)}"
+        )
+
+    # Default frequency mapping
+    if freq_map is None:
+        freq_map = {
+            '1W': 'W',
+            '1M': 'M',
+            '1H': 'H',
+            '5min': '5min',
+            '15min': '15min',
+            '30min': '30min',
+            '4H': '4h',
+            '4hour': '4h',
+        }
+
+    # Get the actual frequency string
+    freq = freq_map.get(interval, interval)
+
+    # Set time column as index
+    df_resample = df.set_index(time_col)
+
+    # Define resampling aggregation rules for OHLCV columns
+    agg_rules = {
+        'open': 'first',
+        'high': 'max',
+        'low': 'min',
+        'close': 'last',
+        'volume': 'sum',
+    }
+
+    # Build aggregation dict for available columns
+    agg_dict = {}
+    for col in df_resample.columns:
+        if col in agg_rules:
+            agg_dict[col] = agg_rules[col]
+        else:
+            # For other columns, use last value
+            agg_dict[col] = 'last'
+
+    # Validate that we have at least one OHLCV column
+    if not agg_dict:
+        raise ValueError(
+            "No resampable columns found in DataFrame. "
+            f"Expected columns like: {list(agg_rules.keys())}"
+        )
+
+    # Perform resampling
+    df_result = df_resample.resample(freq).agg(agg_dict)
+
+    # Reset index to make time a column again
+    df_result = df_result.reset_index()
+
+    # Sort by time and reset index
+    if time_col in df_result.columns:
+        df_result = (
+            df_result
+            .sort_values(time_col, ascending=True)
+            .reset_index(drop=True)
+        )
+
+    return df_result

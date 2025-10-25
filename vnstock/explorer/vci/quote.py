@@ -4,12 +4,15 @@ from typing import Dict, Optional, Union
 from datetime import datetime
 import pandas as pd
 from vnai import optimize_execution
+from vnstock.core.base.registry import ProviderRegistry
+from vnstock.core.types import DataCategory, ProviderType, TimeFrame
+from vnstock.core.utils.interval import normalize_interval
 from .const import (
     _TRADING_URL, _CHART_URL, _INTERVAL_MAP, 
     _OHLC_MAP, _RESAMPLE_MAP, _OHLC_DTYPE, _INTRADAY_URL, 
     _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
 )
-from .models import TickerModel
+from vnstock.core.models import TickerModel
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.market import trading_hours
 from vnstock.core.utils.parser import get_asset_type
@@ -20,6 +23,8 @@ from vnstock.core.utils.transform import ohlc_to_df, intraday_to_df
 
 logger = get_logger(__name__)
 
+
+@ProviderRegistry.register(DataCategory.QUOTE, "vci", ProviderType.SCRAPING)
 class Quote:
     """
     The Quote class is used to fetch historical price data from VCI.
@@ -59,17 +64,25 @@ class Quote:
         """
         Validate input data
         """
-        ticker = TickerModel(symbol=self.symbol, start=start, end=end, interval=interval)
+        timeframe = normalize_interval(interval)
+        ticker = TickerModel(
+            symbol=self.symbol, start=start, end=end, 
+            interval=str(timeframe)
+        )
 
-        if ticker.interval not in self.interval_map:
-            raise ValueError(f"Giá trị interval không hợp lệ: {ticker.interval}. Vui lòng chọn: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M")
+        if timeframe not in self.interval_map.values():
+            msg = (
+                f"Giá trị interval không hợp lệ: {timeframe}. "
+                f"Vui lòng chọn: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M"
+            )
+            raise ValueError(msg)
 
         return ticker
 
     @optimize_execution("VCI")
     def history(self, start: str, end: Optional[str]=None, interval: Optional[str]="1D", 
-                to_df: Optional[bool]=True, show_log: Optional[bool]=False, 
-                count_back: Optional[int]=None, floating: Optional[int]=2) -> Union[pd.DataFrame, str]:
+                show_log: Optional[bool]=False, 
+                count_back: Optional[int]=None, floating: Optional[int]=2) -> pd.DataFrame:
         """
         Tải lịch sử giá của mã chứng khoán từ nguồn dữ liệu VCI.
 
@@ -77,7 +90,6 @@ class Quote:
             - start (bắt buộc): thời gian bắt đầu lấy dữ liệu, có thể là ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS".
             - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None, chương trình tự động lấy thời điểm hiện tại.
             - interval (tùy chọn): Khung thời gian trích xuất dữ liệu giá lịch sử. Giá trị nhận: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M. Mặc định là "1D".
-            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True. Đặt là False để trả về dạng JSON.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
             - count_back (tùy chọn): Số lượng dữ liệu trả về từ thời điểm cuối.
             - floating (tùy chọn): Số chữ số thập phân cho giá. Mặc định là 2.
@@ -115,7 +127,7 @@ class Quote:
             end_time = datetime.now() + pd.Timedelta(days=1)
             end_stamp = int(end_time.timestamp())
 
-        interval_value = self.interval_map[ticker.interval]
+        interval_value = self.interval_map[str(ticker.interval)]
 
         # Tự động tính count_back nếu không truyền vào
         auto_count_back = 1000
@@ -163,39 +175,20 @@ class Quote:
             raise ValueError("Không tìm thấy dữ liệu. Vui lòng kiểm tra lại mã chứng khoán hoặc thời gian truy xuất.")
         
         # Use the ohlc_to_df utility from data_transform
-        df = ohlc_to_df(
-            data=json_data[0], 
-            column_map=_OHLC_MAP, 
-            dtype_map=_OHLC_DTYPE, 
-            asset_type=self.asset_type, 
-            symbol=self.symbol, 
-            source=self.data_source, 
-            interval=ticker.interval, 
-            floating=floating,
-            resample_map=_RESAMPLE_MAP
-        )
+        df = pd.DataFrame(dt)
+        df['day'] = df['day'].astype('datetime64')
 
-        # trim the data to the start time
-        df = df[df['time'] >= start_time].reset_index(drop=True)
-
-        if count_back is not None:
-            df = df.tail(count_back)
-
-        if to_df:
-            return df
-        else:
-            return df.to_json(orient='records')
+        return df
 
     @optimize_execution("VCI")
-    def intraday(self, page_size: Optional[int]=100, last_time: Optional[str]=None, 
-                to_df: Optional[bool]=True, show_log: bool=False) -> Union[pd.DataFrame, str]:
+    def intraday(self, page_size: Optional[int]=100, last_time: Optional[str]=None,
+                show_log: bool=False) -> pd.DataFrame:
         """
         Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu VCI
 
         Tham số:
-            - page_size (tùy chọn): Số lượng dữ liệu trả về trong một lần request. Mặc định là 100. 
+            - page_size (tùy chọn): Số lượng dữ liệu trả về trong một lần request. Mặc định là 100.
             - last_time (tùy chọn): Thời gian cắt dữ liệu, dùng để lấy dữ liệu sau thời gian cắt. Mặc định là None.
-            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
         """
         market_status = trading_hours(None)
@@ -238,18 +231,14 @@ class Quote:
             source=self.data_source
         )
 
-        if to_df:
-            return df
-        else:
-            return df.to_json(orient='records')
+        return df
 
     @optimize_execution("VCI")
-    def price_depth(self, to_df: Optional[bool]=True, show_log: Optional[bool]=False) -> Union[pd.DataFrame, str]:
+    def price_depth(self, show_log: Optional[bool]=False) -> pd.DataFrame:
         """
         Truy xuất thống kê độ bước giá & khối lượng khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu VCI.
 
         Tham số:
-            - to_df (tùy chọn): Chuyển đổi dữ liệu lịch sử trả về dưới dạng DataFrame. Mặc định là True.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
         """
         market_status = trading_hours(None)
@@ -286,7 +275,4 @@ class Quote:
         
         df.source = self.data_source
 
-        if to_df:
-            return df
-        else:
-            return df.to_json(orient='records')
+        return df

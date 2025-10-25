@@ -1,6 +1,6 @@
 """Listing module."""
 
-from typing import Dict, Optional
+from typing import Optional
 from datetime import datetime
 import pandas as pd
 import requests
@@ -25,15 +25,17 @@ class Listing:
     
     
     @optimize_execution('MSN')
-    def search_symbol_id (self, query:str, locale:Optional[str]=None, limit:Optional[int]=10, show_log:Optional[bool]=False, to_df: bool =True) -> Dict:
+    def search_symbol_id(self, query: str, locale: Optional[str] = None, 
+                        limit: Optional[int] = 10, 
+                        show_log: Optional[bool] = False) -> pd.DataFrame:
         """
-        Truy xuất danh sách toàn. bộ mã và tên các cổ phiếu trên thị trường Việt Nam.
+        Truy xuất danh sách toàn bộ mã và tên các cổ phiếu từ thị trường.
 
         Tham số:
             - query (bắt buộc): Từ khóa tìm kiếm mã cổ phiếu.
             - locale (tùy chọn): Ngôn ngữ mục tiêu, đồng thời sử dụng để lọc kết quả, ví dụ 'vi-vn', 'en-us'. Mặc định là None.
+            - limit (tùy chọn): Giới hạn số kết quả. Mặc định là 10.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
-            - to_df (tùy chọn): Chuyển đổi dữ liệu danh sách mã cổ phiếu trả về dưới dạng DataFrame. Mặc định là True. Đặt là False để trả về dữ liệu dạng JSON.
         """
         url = f"https://services.bingapis.com/contentservices-finance.csautosuggest/api/v1/Query?query={query}&market={locale}&count={limit}"
 
@@ -60,9 +62,6 @@ class Listing:
         if locale is not None:
             combine_df = combine_df[combine_df['locale'] == locale]
 
-        if to_df:
-            return combine_df
-        else:
-            return combine_df.to_dict(orient='records')
+        return combine_df
 
 

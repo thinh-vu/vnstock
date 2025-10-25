@@ -3,7 +3,7 @@ Module quản lý các thông tin về giao dịch chứng khoán từ nguồn d
 """
 
 import pandas as pd
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional
 from vnstock.core.utils import client
 from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.validation import validate_symbol
@@ -40,18 +40,17 @@ class Trading:
         
     @optimize_execution("TCBS")
     def price_board(self, symbol_ls: List[str], std_columns: Optional[bool] = True, 
-                    to_df: Optional[bool] = True, show_log: bool = False) -> Union[pd.DataFrame, str]:
+                    show_log: bool = False) -> pd.DataFrame:
         """
         Truy xuất thông tin bảng giá của các mã chứng khoán tuỳ chọn từ nguồn dữ liệu TCBS.
         
         Tham số:
             - symbol_ls (List[str]): Danh sách các mã chứng khoán cần truy xuất thông tin.
             - std_columns (bool): Sử dụng danh sách cột tiêu chuẩn hoặc mở rộng. Mặc định là True.
-            - to_df (bool): Chuyển đổi kết quả thành DataFrame hoặc không. Mặc định là True.
             - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
             
         Returns:
-            Thông tin bảng giá dưới dạng DataFrame hoặc chuỗi JSON tùy theo tham số to_df.
+            Thông tin bảng giá dưới dạng DataFrame.
         """
         symbols = ",".join(symbol_ls)
         url = f'{self.base_url}/{_STOCKS_URL}/v1/stock/second-tc-price'
@@ -85,13 +84,10 @@ class Trading:
             # Add source metadata
             df.source = 'TCBS'
 
-            # Return in requested format
-            if to_df:
-                return df
-            else:
-                return df.to_json(orient='records')
+            # Return DataFrame
+            return df
                 
         except Exception as e:
             # Better error handling with logging
             logger.error(f"Error processing price board data: {e}")
-            return pd.DataFrame() if to_df else "[]"
+            return pd.DataFrame()

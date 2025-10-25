@@ -1,15 +1,10 @@
 """
-Constants and configuration for FMP data source.
+Constants and configuration for FMP connector.
 Following VCI patterns for consistency.
 """
 
 # FMP API Configuration
 _FMP_DOMAIN = "https://financialmodelingprep.com/stable"
-_DEFAULT_TIMEOUT = 30
-_DEFAULT_API_KEY = "demo"  # Demo key for testing
-
-# Base URLs
-_FMP_DOMAIN = 'https://financialmodelingprep.com'
 _API_V3 = '/api/v3'
 _API_V4 = '/api/v4'
 
@@ -24,16 +19,15 @@ _ENDPOINTS = {
     # Quote & Price Data
     'quote': '/quote',  # ✅ Tested
     'quote_short': '/quote-short',  # ✅ Tested
+    # Historical price endpoints (end-of-day)
+    'historical_price_eod': '/historical-price-eod',  # ✅ Available
     # Note: historical-chart endpoints cần subscription cao hơn
-    'historical_chart_1min': '/historical-chart/1min',  # ❌ 404
-    'historical_chart_5min': '/historical-chart/5min',  # ❌ 404
-    'historical_chart_15min': '/historical-chart/15min',  # ❌ 404
-    'historical_chart_30min': '/historical-chart/30min',  # ❌ 404
-    'historical_chart_1hour': '/historical-chart/1hour',  # ❌ 404
-    'historical_chart_4hour': '/historical-chart/4hour',  # ❌ 404
-    'historical_chart_1day': '/historical-chart/1day',  # ❌ 404
-    'historical_chart_1week': '/historical-chart/1week',  # ❌ 404
-    'historical_chart_1month': '/historical-chart/1month',  # ❌ 404
+    'historical_chart_1min': '/historical-chart/1min',  # ✅ Tested
+    'historical_chart_5min': '/historical-chart/5min',  # ✅ Tested
+    'historical_chart_15min': '/historical-chart/15min',  # ✅ Tested
+    'historical_chart_30min': '/historical-chart/30min',  # ✅ Tested
+    'historical_chart_1hour': '/historical-chart/1hour',  # ✅ Tested
+    'historical_chart_4hour': '/historical-chart/4hour',  # ✅ Tested
 
     # Company Information
     'profile': '/profile',  # ✅ Tested
@@ -81,8 +75,6 @@ _NUMERIC_COLUMNS = [
     'marketCap', 'beta', 'revenue', 'netIncome',
     'eps', 'epsDiluted', 'pe', 'priceToBook'
 ]
-
-
 
 # Supported intervals for historical data
 _SUPPORTED_INTERVALS = [

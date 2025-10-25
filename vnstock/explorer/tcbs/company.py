@@ -5,7 +5,7 @@ Module quản lý các thông tin liên quan đến công ty từ nguồn dữ l
 import pandas as pd
 from pandas import json_normalize
 from bs4 import BeautifulSoup
-from typing import Dict, Optional, List, Union
+from typing import Optional, List
 from vnstock.core.utils import client
 from vnstock.explorer.tcbs.const import _BASE_URL, _ANALYSIS_URL
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
@@ -24,11 +24,10 @@ class Company:
     Tham số:
         - symbol (str): Mã chứng khoán của công ty cần truy xuất thông tin.
         - random_agent (bool): Sử dụng user-agent ngẫu nhiên hoặc không. Mặc định là False.
-        - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
         - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
     """
     def __init__(self, symbol: str, random_agent: bool = False, 
-                 to_df: Optional[bool] = True, show_log: Optional[bool] = False):
+                 show_log: Optional[bool] = False):
         """
         Khởi tạo đối tượng Company với các tham số cho việc truy xuất dữ liệu.
         """
@@ -42,23 +41,24 @@ class Company:
         self.base_url = _BASE_URL
         self.headers = get_headers(data_source='TCBS', random_agent=random_agent)
         self.show_log = show_log
-        self.to_df = to_df
         self.finance = Finance(self.symbol)
 
         # Adjust logger level based on show_log parameter
         if not self.show_log:
             logger.setLevel('CRITICAL')
 
-    def _process_response(self, df: pd.DataFrame, exclude_columns: Optional[List[str]] = None) -> Union[pd.DataFrame, Dict]:
+    def _process_response(self, df: pd.DataFrame, 
+                         exclude_columns: Optional[List[str]] = None
+                         ) -> pd.DataFrame:
         """
-        Helper method to process response DataFrame and return in required format.
+        Helper method to process response DataFrame.
         
         Args:
             df: DataFrame to process
             exclude_columns: Columns to exclude from DataFrame
             
         Returns:
-            DataFrame or dict based on to_df setting
+            Processed DataFrame
         """
         # Convert column names to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]
@@ -73,14 +73,10 @@ class Company:
         df.name = self.symbol
         df.source = 'TCBS'
         
-        # Return DataFrame or dict based on to_df setting
-        if self.to_df:
-            return df
-        else:
-            return df.to_dict(orient='records')[0]
+        return df
 
     @optimize_execution("TCBS")
-    def overview(self) -> Union[pd.DataFrame, Dict]:
+    def overview(self) -> pd.DataFrame:
         """
         Truy xuất thông tin tổng quan của mã chứng khoán từ nguồn dữ liệu TCBS với các thông số cài đặt khi khởi tạo class.
         
@@ -119,12 +115,12 @@ class Company:
         return self._process_response(df)
     
     @optimize_execution("TCBS")
-    def profile(self) -> Union[pd.DataFrame, Dict]:
+    def profile(self) -> pd.DataFrame:
         """
-        Truy xuất thông tin mô tả công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
+        Truy xuất thông tin mô tả công ty theo mã chứng khoán.
         
         Returns:
-            Thông tin mô tả công ty dưới dạng DataFrame hoặc dict.
+            Thông tin mô tả công ty dưới dạng DataFrame.
         """
         url = f"{self.base_url}/{_ANALYSIS_URL}/v1/company/{self.symbol}/overview"
         
@@ -169,14 +165,10 @@ class Company:
         df.name = self.symbol
         df.source = 'TCBS'
         
-        # Return in requested format
-        if self.to_df:
-            return df
-        else:
-            return df.to_dict(orient='records')[0]
+        return df
 
     @optimize_execution("TCBS")
-    def shareholders(self) -> Union[pd.DataFrame, Dict]:
+    def shareholders(self) -> pd.DataFrame:
         """
         Truy xuất thông tin cổ đông lớn của công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
         
@@ -205,7 +197,7 @@ class Company:
         return self._process_response(df, exclude_columns=['no', 'ticker'])
         
     @optimize_execution("TCBS")
-    def insider_deals(self, page_size: Optional[int] = 20, page: Optional[int] = 0) -> Union[pd.DataFrame, Dict]:
+    def insider_deals(self, page_size: Optional[int] = 20, page: Optional[int] = 0) -> pd.DataFrame:
         """
         Truy xuất thông tin giao dịch nội bộ của công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
 
@@ -232,7 +224,7 @@ class Company:
             df = json_normalize(response_data['listInsiderDealing'])
         except KeyError:
             logger.error(f"No insider dealing data available for {self.symbol}")
-            return pd.DataFrame() if self.to_df else {}
+            return pd.DataFrame()
             
         # Drop unnecessary columns
         try:
@@ -275,7 +267,7 @@ class Company:
         return self._process_response(df)
         
     @optimize_execution("TCBS")
-    def subsidiaries(self, page_size: Optional[int] = 100, page: Optional[int] = 0) -> Union[pd.DataFrame, Dict]:
+    def subsidiaries(self, page_size: Optional[int] = 100, page: Optional[int] = 0) -> pd.DataFrame:
         """
         Truy xuất thông tin các công ty con, công ty liên kết của một công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
 
@@ -324,7 +316,7 @@ class Company:
             
         # Combine results from all pages
         if not df_list:
-            return pd.DataFrame() if self.to_df else {}
+            return pd.DataFrame()
             
         df = pd.concat(df_list, ignore_index=True)
         
@@ -337,7 +329,7 @@ class Company:
         return self._process_response(df, exclude_columns=['no', 'ticker'])
         
     @optimize_execution("TCBS")
-    def officers(self, page_size: Optional[int] = 20, page: Optional[int] = 0) -> Union[pd.DataFrame, Dict]:
+    def officers(self, page_size: Optional[int] = 20, page: Optional[int] = 0) -> pd.DataFrame:
         """
         Truy xuất danh sách lãnh đạo của một công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
 
@@ -375,7 +367,7 @@ class Company:
         return self._process_response(df, exclude_columns=['no', 'ticker'])
         
     @optimize_execution("TCBS")
-    def events(self, page_size: Optional[int] = 15, page: Optional[int] = 0) -> Union[pd.DataFrame, Dict]:
+    def events(self, page_size: Optional[int] = 15, page: Optional[int] = 0) -> pd.DataFrame:
         """
         Truy xuất thông tin sự kiện của một công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
 
@@ -434,7 +426,7 @@ class Company:
         return df
 
     @optimize_execution("TCBS")
-    def news (self, page_size: Optional[int] = 15, page: Optional[int] = 0) -> Union[pd.DataFrame, Dict]:
+    def news (self, page_size: Optional[int] = 15, page: Optional[int] = 0) -> pd.DataFrame:
         """
         Truy xuất thông tin tin tức liên quan đến công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
 
@@ -470,7 +462,7 @@ class Company:
         return self._process_response(df, exclude_columns=['ticker'])
         
     @optimize_execution("TCBS")
-    def dividends(self, page_size: Optional[int] = 15, page: Optional[int] = 0) -> Union[pd.DataFrame, Dict]:
+    def dividends(self, page_size: Optional[int] = 15, page: Optional[int] = 0) -> pd.DataFrame:
         """
         Truy xuất lịch sử cổ tức của một công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.
         

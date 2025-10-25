@@ -1,5 +1,5 @@
 """
-Configuration and utility functions for XNO data source.
+Configuration and utility functions for XNO connector.
 Following vnstock coding standards and VCI patterns.
 """
 
@@ -36,11 +36,13 @@ class XNOConfig:
             api_key (Optional[str]): XNO API key
             show_log (Optional[bool]): Hiển thị log
         """
+        # Assign show_log first (needed by _get_api_key)
+        self.show_log = show_log
+        
         self.api_key = api_key or self._get_api_key()
         self.api_base = _XNO_API_BASE
         self.lambda_base = _XNO_LAMBDA_BASE
         self.timeout = _DEFAULT_TIMEOUT
-        self.show_log = show_log
 
         if not show_log:
             logger.setLevel('CRITICAL')
