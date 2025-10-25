@@ -2,14 +2,17 @@
 
 import requests
 import pandas as pd
-from typing import Dict, Optional, Union, List
+from typing import Dict, Optional
 from datetime import datetime, timedelta
 from vnai import optimize_execution
 from vnstock.core.base.registry import ProviderRegistry
-from vnstock.core.types import DataCategory, ProviderType, TimeFrame
+from vnstock.core.types import DataCategory, ProviderType
 from vnstock.core.utils.interval import normalize_interval
-from .const import (_BASE_URL, _STOCKS_URL, _FUTURE_URL, _INTERVAL_MAP, _OHLC_MAP, 
-                    _OHLC_DTYPE, _INTRADAY_MAP, _INTRADAY_DTYPE, _INDEX_MAPPING)
+from .const import (
+    _BASE_URL, _STOCKS_URL, _FUTURE_URL, _INTERVAL_MAP,
+    _OHLC_MAP, _OHLC_DTYPE, _INTRADAY_MAP, _INTRADAY_DTYPE,
+    _INDEX_MAPPING
+)
 from vnstock.core.models import TickerModel
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.market import trading_hours
@@ -20,133 +23,214 @@ from vnstock.core.utils import client, transform, validation
 
 logger = get_logger(__name__)
 
+# TimeFrame to interval key mapping
+_TIMEFRAME_MAP = {
+    '1m': '1m',
+    '5m': '5m',
+    '15m': '15m',
+    '30m': '30m',
+    '1H': '1H',
+    'D': '1D',
+    '1W': '1W',
+    '1M': '1M'
+}
+
 
 @ProviderRegistry.register(DataCategory.QUOTE, "tcbs", ProviderType.SCRAPING)
 class Quote:
     """
-    TCBS data source for fetching stock market data, accommodating requests with large date ranges.
+    TCBS data source for fetching stock market data, accommodating
+    requests with large date ranges.
     """
-    def __init__(self, symbol: str, random_agent: bool = False, show_log: bool = True):
+
+    def __init__(
+        self,
+        symbol: str,
+        random_agent: bool = False,
+        show_log: bool = True
+    ):
         """Initialize the Quote object with the given symbol."""
         symbol = validate_symbol(symbol)
         self.data_source = 'TCBS'
         self._history = None  # Cache for backwards compatibility
         self.base_url = _BASE_URL
-        self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
+        self.headers = get_headers(
+            data_source=self.data_source,
+            random_agent=random_agent
+        )
         self.interval_map = _INTERVAL_MAP
         self.show_log = show_log
-        
+
         # Handle INDEX symbols using shared validation
         if 'INDEX' in symbol:
-            self.symbol = validation.validate_symbol(symbol, _INDEX_MAPPING)
+            self.symbol = validation.validate_symbol(
+                symbol,
+                _INDEX_MAPPING
+            )
         else:
             self.symbol = symbol
-            
+
         # Get asset type using existing utility
         self.asset_type = get_asset_type(symbol)
-        
+
         if not show_log:
             logger.setLevel('CRITICAL')
     
-    def _input_validation(self, start: str, end: str, interval: str) -> TickerModel:
+    def _input_validation(
+        self,
+        start: Optional[str],
+        end: Optional[str],
+        interval: Optional[str]
+    ) -> TickerModel:
         """Validate input data using shared validation utilities."""
+        # Validate required parameters
+        if not start:
+            raise ValueError("Vui lòng cung cấp ngày bắt đầu (start)")
+        if not end:
+            raise ValueError("Vui lòng cung cấp ngày kết thúc (end)")
+        if not interval:
+            raise ValueError("Vui lòng cung cấp khung thời gian (interval)")
+
         # Normalize interval to standard format
         timeframe = normalize_interval(interval)
-        
-        # Create ticker model with normalized interval
-        ticker = TickerModel(
-            symbol=self.symbol, start=start, end=end, 
-            interval=str(timeframe)
-        )
-        
-        # Validate interval is supported
-        if timeframe not in self.interval_map.values():
+
+        # Map TimeFrame values to TCBS interval keys
+        interval_key = _TIMEFRAME_MAP.get(timeframe.value)
+        if interval_key is None or interval_key not in self.interval_map:
             msg = (
-                f"Giá trị interval không hợp lệ: {timeframe}. "
-                f"Vui lòng chọn: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M"
+                f"Giá trị interval không hợp lệ: {interval}. "
+                f"Vui lòng chọn: {', '.join(self.interval_map.keys())}"
             )
             raise ValueError(msg)
-        
+
+        # Create ticker model with normalized interval
+        ticker = TickerModel(
+            symbol=self.symbol,
+            start=start,
+            end=end,
+            interval=interval_key
+        )
+
         return ticker
     
-    def _long_history(self, start: str, end: Optional[str], show_log: bool = False, 
-                    asset_type: Optional[str] = None, _skip_long_check: bool = True) -> pd.DataFrame:
+    def _long_history(
+        self,
+        start: str,
+        end: Optional[str],
+        show_log: bool = False,
+        asset_type: Optional[str] = None,
+        _skip_long_check: bool = True
+    ) -> pd.DataFrame:
         """
-        Truy xuất dữ liệu lịch sử dài hạn từ TCBS cho khung thời gian ngày
+        Truy xuất dữ liệu lịch sử dài hạn từ TCBS cho khung
+        thời gian ngày
         """
-        from datetime import timedelta
-        
+        if not end:
+            end = datetime.now().strftime("%Y-%m-%d")
+
         start_date = datetime.strptime(start, "%Y-%m-%d")
         end_date = datetime.strptime(end, "%Y-%m-%d")
-        
+
         combined_data = []
         current_start = start_date
-        
+
         # Process each year chunk moving forward from start date
         while current_start <= end_date:
             try:
-                # Calculate end date for this chunk (either next year or final end date)
-                next_year_date = datetime(current_start.year + 1, current_start.month, 1)
+                # Calculate end date for this chunk
+                next_year_date = datetime(
+                    current_start.year + 1,
+                    current_start.month,
+                    1
+                )
                 year_end = min(
                     next_year_date - timedelta(days=1),
                     end_date
                 )
-                
+
                 # Format dates as strings
                 year_start_str = current_start.strftime("%Y-%m-%d")
                 year_end_str = year_end.strftime("%Y-%m-%d")
-                
+
                 if show_log:
-                    logger.info(f"Fetching chunk from {year_start_str} to {year_end_str}")
-                
-                # Fetch data for this year chunk - pass the _skip_long_check parameter
+                    msg = (
+                        f"Fetching chunk from {year_start_str} "
+                        f"to {year_end_str}"
+                    )
+                    logger.info(msg)
+
+                # Fetch data for this year chunk
                 try:
                     data = self.history(
-                        start=year_start_str, 
-                        end=year_end_str, 
-                        interval="1D", 
-                        to_df=True, 
-                        show_log=show_log, 
+                        start=year_start_str,
+                        end=year_end_str,
+                        interval="1D",
+                        show_log=show_log,
                         asset_type=asset_type,
                         _skip_long_check=True
                     )
                     combined_data.append(data)
                 except Exception as e:
-                    logger.error(f"Dữ liệu không tồn tại từ {year_start_str} đến {year_end_str}: {e}")
-                
-                # Move to next year's start (use the first day of the next month to avoid leap year issues)
+                    msg = (
+                        f"Dữ liệu không tồn tại từ "
+                        f"{year_start_str} đến {year_end_str}: {e}"
+                    )
+                    logger.error(msg)
+
+                # Move to next year's start
                 current_start = next_year_date
-                
+
             except Exception as e:
                 logger.error(f"Error processing year chunk: {str(e)}")
                 # Move forward by a year even if an error occurs
-                current_start = datetime(current_start.year + 1, current_start.month, 1)
-        
+                current_start = datetime(
+                    current_start.year + 1,
+                    current_start.month,
+                    1
+                )
+
         # If no data was found, raise an error
         if not combined_data:
-            raise ValueError(f"Không tìm thấy dữ liệu cho {self.symbol} từ {start} đến {end}")
-        
+            raise ValueError(
+                f"Không tìm thấy dữ liệu cho {self.symbol} "
+                f"từ {start} đến {end}"
+            )
+
         # Combine all chunks
         df = pd.concat(combined_data, ignore_index=True)
-        
+
         # Filter to ensure we only get data in the requested range
         df = df[(df['time'] >= start) & (df['time'] <= end)]
-        
+
         return df
 
     @optimize_execution("TCBS")
-    def history(self, start: str, end: Optional[str] = None, interval: Optional[str] = "1D", 
-            show_log: bool = False, count_back: Optional[int] = 365,
-            asset_type: Optional[str] = None, _skip_long_check: bool = False) -> pd.DataFrame:
+    def history(
+        self,
+        start: str,
+        end: Optional[str] = None,
+        interval: Optional[str] = "1D",
+        show_log: bool = False,
+        count_back: Optional[int] = 365,
+        asset_type: Optional[str] = None,
+        _skip_long_check: bool = False
+    ) -> pd.DataFrame:
         """
         Tham số:
-            - start (bắt buộc): thời gian bắt đầu lấy dữ liệu, có thể là ngày dạng string kiểu "YYYY-MM-DD".
-            - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None (ngày hiện tại).
-            - interval (tùy chọn): Khung thời gian trích xuất dữ liệu giá lịch sử (1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M).
-            - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng.
-            - count_back (tùy chọn): Số lượng dữ liệu trả về từ thời điểm cuối. Mặc định là 365.
-            - asset_type (tùy chọn): Loại tài sản (stock, index, derivative). Mặc định là None (tự xác định).
-            - _skip_long_check (tùy chọn): Bỏ qua kiểm tra thời gian dài để tránh đệ quy vô hạn. Mặc định là False.
+            - start (bắt buộc): thời gian bắt đầu lấy dữ liệu,
+              có thể là ngày dạng string kiểu "YYYY-MM-DD".
+            - end (tùy chọn): thời gian kết thúc lấy dữ liệu.
+              Mặc định là None (ngày hiện tại).
+            - interval (tùy chọn): Khung thời gian trích xuất
+              dữ liệu giá lịch sử (1m, 5m, 15m, 30m, 1H, 1D, 1W,
+              1M).
+            - show_log (tùy chọn): Hiển thị thông tin log.
+            - count_back (tùy chọn): Số lượng dữ liệu trả về từ
+              thời điểm cuối. Mặc định là 365.
+            - asset_type (tùy chọn): Loại tài sản (stock, index,
+              derivative). Mặc định là None (tự xác định).
+            - _skip_long_check (tùy chọn): Bỏ qua kiểm tra thời
+              gian dài để tránh đệ quy vô hạn. Mặc định là False.
         """
         # Validate inputs
         ticker = self._input_validation(start, end, interval)
@@ -159,11 +243,17 @@ class Quote:
 
         # calculate days between start and end
         start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
-        end_time = datetime.strptime(ticker.end, "%Y-%m-%d")
+        end_time_str = ticker.end if ticker.end else (
+            datetime.now().strftime("%Y-%m-%d")
+        )
+        end_time = datetime.strptime(end_time_str, "%Y-%m-%d")
 
         # validate if the end date is not earlier than the start date
         if end_time < start_time:
-            raise ValueError("Thời gian kết thúc không thể sớm hơn thời gian bắt đầu.")
+            raise ValueError(
+                "Thời gian kết thúc không thể sớm hơn "
+                "thời gian bắt đầu."
+            )
 
         days = (end_time - start_time).days
 
@@ -182,6 +272,8 @@ class Quote:
             if str(timeframe) in ["1D", "1W", "1M"]:
                 end_point = "bars-long-term"
             elif str(timeframe) in ["1m", "5m", "15m", "30m", "1H"]:
+                end_point = "bars"
+            else:
                 end_point = "bars"
 
             # Translate the interval to TCBS format
@@ -236,12 +328,18 @@ class Quote:
         
         return df
         
-    def _as_df(self, history_data: Dict, asset_type: str, floating: Optional[int] = 2) -> pd.DataFrame:
+    def _as_df(
+        self,
+        history_data: Dict,
+        asset_type: str,
+        floating: Optional[int] = 2
+    ) -> pd.DataFrame:
         """
-        Backward compatibility method that delegates to shared data_transform utility
+        Backward compatibility method that delegates to shared
+        data_transform utility
         """
         from vnstock.core.utils import transform
-        
+
         # Use the shared transformation utility
         return transform.ohlc_to_df(
             data=history_data,
@@ -252,38 +350,68 @@ class Quote:
             source=self.data_source,
             interval="1D"  # Default for long history
         )
-    
+
     @optimize_execution("TCBS")
-    def intraday(self, page_size: Optional[int] = 100, page: Optional[int] = 0,
-            show_log: bool = False) -> pd.DataFrame:
+    def intraday(
+        self,
+        page_size: Optional[int] = 100,
+        page: Optional[int] = 0,
+        show_log: bool = False
+    ) -> pd.DataFrame:
         """
-        Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ nguồn dữ liệu TCBS
+        Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ
+        từ nguồn dữ liệu TCBS
         """
-        market_status = trading_hours(None)
-        if market_status['is_trading_hour'] is False and market_status['data_status'] == 'preparing':
-            raise ValueError(f"{market_status['time']}: Dữ liệu khớp lệnh không thể truy cập trong thời gian chuẩn bị phiên mới. Vui lòng quay lại sau.")
+        # Handle None defaults
+        if page_size is None:
+            page_size = 100
+        if page is None:
+            page = 0
+
+        market_status = trading_hours("HOSE")
+        if (
+            market_status['is_trading_hour'] is False and
+            market_status['data_status'] == 'preparing'
+        ):
+            raise ValueError(
+                f"{market_status['time']}: Dữ liệu khớp lệnh "
+                f"không thể truy cập trong thời gian chuẩn bị "
+                f"phiên mới. Vui lòng quay lại sau."
+            )
 
         # Validate input
         if self.symbol is None:
-            raise ValueError("Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class.")
-        
+            raise ValueError(
+                "Vui lòng nhập mã chứng khoán cần truy xuất "
+                "khi khởi tạo Trading Class."
+            )
+
         # warning if page_size is greater than 30_000
         if page_size > 30_000:
-            logger.warning("Bạn đang yêu cầu truy xuất quá nhiều dữ liệu, điều này có thể gây lỗi quá tải.")
-        
+            logger.warning(
+                "Bạn đang yêu cầu truy xuất quá nhiều dữ liệu, "
+                "điều này có thể gây lỗi quá tải."
+            )
+
         # Fetch data
         combined_data = []
-        total_pages = (page_size // 100) + (1 if page_size % 100 != 0 else 0)
+        total_pages = (
+            (page_size // 100) +
+            (1 if page_size % 100 != 0 else 0)
+        )
 
         for i in range(total_pages):
             current_size = min(100, page_size - 100 * i)
-            url = f'{self.base_url}/{_STOCKS_URL}/v1/intraday/{self.symbol}/his/paging'
+            url = (
+                f'{self.base_url}/{_STOCKS_URL}/v1/intraday/'
+                f'{self.symbol}/his/paging'
+            )
             params = {
                 'page': page + i,
                 'size': current_size,
                 'headIndex': -1
             }
-            
+
             # Make request
             response = client.send_request(
                 url=url,
@@ -292,10 +420,10 @@ class Quote:
                 params=params,
                 show_log=show_log
             )
-            
+
             data = response.get('data', [])
             combined_data.extend(data)
-        
+
         # Transform data using shared utility
         df = transform.intraday_to_df(
             data=combined_data,
@@ -306,9 +434,9 @@ class Quote:
             source=self.data_source
         )
 
-        # Reduce the time index by 7 hours to match the GMT+7 timezone
+        # Reduce the time index by 7 hours to match GMT+7 timezone
         df['time'] = df['time'] - pd.Timedelta(hours=7)
-        
+
         return df
 
 
