@@ -1,26 +1,25 @@
 """History module for MSN."""
 
-# Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê hành vi thị tường
+# Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê
+# hành vi thị tường
 import pandas as pd
 import requests
 from datetime import datetime
 from typing import Optional, Dict
 from vnai import optimize_execution
-from vnstock.core.base.registry import ProviderRegistry
-from vnstock.core.types import DataCategory, ProviderType, TimeFrame
+from vnstock.core.types import TimeFrame
 from vnstock.core.utils.interval import normalize_interval
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.explorer.msn.listing import Listing
 from vnstock.explorer.msn.helper import msn_apikey
-from vnstock.core.models import TickerModel 
+from vnstock.core.models import TickerModel
 from vnstock.explorer.msn.helper import get_asset_type
 from .const import _BASE_URL, _RESAMPLE_MAP, _OHLC_MAP, _OHLC_DTYPE
 
 logger = get_logger(__name__)
 
 
-@ProviderRegistry.register(DataCategory.QUOTE, "msn", ProviderType.SCRAPING)
 class Quote:
     """
     MSN data source for fetching stock market data, accommodating requests with large date ranges.
@@ -180,3 +179,8 @@ class Quote:
         df = df.dropna(subset=['open', 'high', 'low'])
 
         return df
+
+
+# Register MSN Quote provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('quote', 'msn', Quote)

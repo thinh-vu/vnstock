@@ -4,8 +4,7 @@ from typing import Optional, Union
 from datetime import datetime
 import pandas as pd
 from vnai import optimize_execution
-from vnstock.core.base.registry import ProviderRegistry
-from vnstock.core.types import DataCategory, ProviderType
+from vnstock.core.types import TimeFrame
 from vnstock.core.utils.interval import normalize_interval
 from .const import (
     _TRADING_URL, _INTERVAL_MAP, _RESAMPLE_MAP,
@@ -36,7 +35,6 @@ _TIMEFRAME_MAP = {
 }
 
 
-@ProviderRegistry.register(DataCategory.QUOTE, "vci", ProviderType.SCRAPING)
 class Quote:
     """
     The Quote class is used to fetch historical price data from VCI.
@@ -453,3 +451,8 @@ class Quote:
         df.source = self.data_source
 
         return df
+
+
+# Register VCI Quote provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('quote', 'vci', Quote)

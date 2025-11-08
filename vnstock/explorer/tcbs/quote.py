@@ -5,8 +5,6 @@ import pandas as pd
 from typing import Dict, Optional
 from datetime import datetime, timedelta
 from vnai import optimize_execution
-from vnstock.core.base.registry import ProviderRegistry
-from vnstock.core.types import DataCategory, ProviderType
 from vnstock.core.utils.interval import normalize_interval
 from .const import (
     _BASE_URL, _STOCKS_URL, _FUTURE_URL, _INTERVAL_MAP,
@@ -36,7 +34,6 @@ _TIMEFRAME_MAP = {
 }
 
 
-@ProviderRegistry.register(DataCategory.QUOTE, "tcbs", ProviderType.SCRAPING)
 class Quote:
     """
     TCBS data source for fetching stock market data, accommodating
@@ -445,5 +442,10 @@ class Quote:
         df['time'] = df['time'] - pd.Timedelta(hours=7)
 
         return df
+
+
+# Register TCBS Quote provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('quote', 'tcbs', Quote)
 
 

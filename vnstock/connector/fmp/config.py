@@ -1,5 +1,8 @@
 """
-Configuration and utility functions for FMP connector.
+Configuration and utility functions for FMP API connector.
+
+Provides classes and functions for FMP API interaction including
+configuration management and HTTP request handling.
 Following VCI patterns for consistency.
 """
 
@@ -19,18 +22,21 @@ DEFAULT_API_KEY = 'YOUR_API_KEY'
 
 class FMPConfig:
     """
-    Configuration class for FMP API.
+    Configuration management for FMP API connector.
+
+    Handles API configuration including API key retrieval from environment
+    variables and provides utilities for building API URLs.
     Following VCI patterns for consistency.
     """
 
     def __init__(self, api_key: Optional[str] = None,
                  show_log: Optional[bool] = True):
         """
-        Khởi tạo cấu hình FMP.
+        Initialize FMP configuration.
 
-        Tham số:
-            api_key (Optional[str]): FMP API key
-            show_log (Optional[bool]): Hiển thị log
+        Args:
+            api_key (Optional[str]): FMP API key from environment or parameter
+            show_log (Optional[bool]): Whether to display logging messages
         """
         self.api_key = api_key or self._get_api_key()
         self.domain = _FMP_DOMAIN
@@ -41,54 +47,67 @@ class FMPConfig:
             logger.setLevel('CRITICAL')
 
     def _get_api_key(self) -> str:
-        """Lấy API key từ biến môi trường."""
-        # Thử FMP_TOKEN trước (như trong terminal)
+        """
+        Retrieve FMP API key from environment variables.
+
+        Attempts to load API key from FMP_TOKEN or FMP_API_KEY environment
+        variables. Falls back to demo key if not found.
+
+        Returns:
+            str: API key for FMP API authentication
+        """
+        # Try FMP_TOKEN first (like in terminal)
         api_key = os.getenv('FMP_TOKEN')
         if not api_key:
             api_key = os.getenv('FMP_API_KEY')
 
         if api_key:
-            logger.info("Sử dụng API key từ biến môi trường")
+            logger.info("Using API key from environment variable")
             return api_key
 
-        logger.warning("Không tìm thấy FMP API key. Sử dụng demo key.")
+        logger.warning("No FMP API key found. Using demo key.")
         return _DEFAULT_API_KEY
 
     def get_endpoint_url(self, endpoint_name: str,
-                         symbol: str = None,
-                         query: str = None) -> str:
+                         symbol: Optional[str] = None,
+                         query: Optional[str] = None) -> str:
         """
-        Xây dựng URL endpoint hoàn chỉnh theo format mới của FMP.
+        Build complete API endpoint URL.
+
+        Constructs full FMP API URL with parameters according to new format.
         Format: https://financialmodelingprep.com/stable/endpoint?params
 
-        Tham số:
-            endpoint_name (str): Tên endpoint từ _ENDPOINTS
-            symbol (str): Mã chứng khoán (tùy chọn)
-            query (str): Query string cho search endpoint (tùy chọn)
+        Args:
+            endpoint_name (str): Endpoint name key from _ENDPOINTS mapping
+            symbol (Optional[str]): Stock ticker symbol (if applicable)
+            query (Optional[str]): Search query string for search endpoints
 
         Returns:
-            str: URL API hoàn chỉnh
+            str: Complete API URL with parameters
+
+        Raises:
+            ValueError: If endpoint_name not found in _ENDPOINTS mapping
         """
         if endpoint_name not in _ENDPOINTS:
-            raise ValueError(f"Endpoint không tồn tại: {endpoint_name}")
+            raise ValueError(f"Endpoint not found: {endpoint_name}")
 
         endpoint = _ENDPOINTS[endpoint_name]
         url = f"{self.domain}{endpoint}"
 
-        # Xử lý parameters
+        # Build query parameters
         params = []
-        
+
         if query:
-            # Cho search endpoint
+            # For search endpoint
             params.append(f"query={query}")
         elif symbol:
-            # Cho các endpoint khác cần symbol
+            # For endpoints requiring symbol
             params.append(f"symbol={symbol}")
-        
-        # Thêm API key
+
+        # Add API key authentication
         params.append(f"apikey={self.api_key}")
-        
-        # Ghép params
+
+        # Join parameters into URL
         url = f"{url}?{'&'.join(params)}"
         return url
 
@@ -96,16 +115,19 @@ class FMPConfig:
 def make_fmp_request(url: str, timeout: int = _DEFAULT_TIMEOUT,
                      show_log: bool = True) -> Optional[pd.DataFrame]:
     """
-    Thực hiện HTTP request tới FMP API và trả về DataFrame.
-    Following VCI patterns for error handling and logging.
+    Execute HTTP request to FMP API and return data as DataFrame.
 
-    Tham số:
-        url (str): URL API hoàn chỉnh
-        timeout (int): Thời gian timeout (giây)
-        show_log (bool): Hiển thị log
+    Handles API communication including error handling for various HTTP
+    status codes and response data formats. Following VCI patterns for
+    consistent error handling and logging.
+
+    Args:
+        url (str): Complete API URL with all parameters
+        timeout (int): Request timeout in seconds. Defaults to 30.
+        show_log (bool): Whether to display logging messages
 
     Returns:
-        Optional[pd.DataFrame]: Dữ liệu trả về dạng DataFrame hoặc None
+        Optional[pd.DataFrame]: Response data as DataFrame, or None on error
     """
     if show_log:
         logger.info(f"Gửi request tới: {url}")
@@ -119,16 +141,16 @@ def make_fmp_request(url: str, timeout: int = _DEFAULT_TIMEOUT,
             if isinstance(data, list):
                 if len(data) == 0:
                     if show_log:
-                        logger.warning("API trả về dữ liệu rỗng")
+                        logger.warning("API returned empty data")
                     return pd.DataFrame()
                 return pd.DataFrame(data)
 
             elif isinstance(data, dict):
-                # Handle historical data format từ FMP
+                # Handle historical data format from FMP API
                 if 'historical' in data:
                     historical_data = data['historical']
                     df = pd.DataFrame(historical_data)
-                    # Thêm metadata nếu cần
+                    # Add metadata if available
                     if 'symbol' in data:
                         df['symbol'] = data['symbol']
                     return df
@@ -136,23 +158,25 @@ def make_fmp_request(url: str, timeout: int = _DEFAULT_TIMEOUT,
                     return json_normalize(data)
             else:
                 if show_log:
-                    logger.error(f"Kiểu dữ liệu không mong đợi: {type(data)}")
+                    logger.error(f"Unexpected data type: {type(data)}")
                 return None
 
         elif response.status_code == 403:
-            error_msg = "Truy cập API bị từ chối. Kiểm tra gói đăng ký."
+            error_msg = (
+                "API access denied. Check subscription plan."
+            )
             if show_log:
                 logger.error(error_msg)
             return None
 
         elif response.status_code == 429:
-            error_msg = "Vượt quá giới hạn request. Thử lại sau."
+            error_msg = "Rate limit exceeded. Try again later."
             if show_log:
                 logger.error(error_msg)
             return None
 
         else:
-            error_msg = f"Lỗi API {response.status_code}: {response.text}"
+            error_msg = f"API Error {response.status_code}: {response.text}"
             if show_log:
                 logger.error(error_msg)
             return None
@@ -164,35 +188,39 @@ def make_fmp_request(url: str, timeout: int = _DEFAULT_TIMEOUT,
 
     except requests.exceptions.RequestException as e:
         if show_log:
-            logger.error(f"Request thất bại: {e}")
+            logger.error(f"Request failed: {e}")
         return None
 
     except Exception as e:
         if show_log:
-            logger.error(f"Lỗi không mong đợi: {e}")
+            logger.error(f"Unexpected error: {e}")
         return None
 
 
 def normalize_dataframe(df: pd.DataFrame,
-                       date_columns: list = None,
-                       show_log: bool = True) -> pd.DataFrame:
+                        date_columns: Optional[list] = None,
+                        show_log: bool = True) -> pd.DataFrame:
     """
-    Chuẩn hóa DataFrame: convert date columns, numeric columns.
+    Normalize DataFrame: convert date and numeric columns.
 
-    Tham số:
-        df (pd.DataFrame): DataFrame cần chuẩn hóa
-        date_columns (list): Danh sách cột date cần convert
-        show_log (bool): Hiển thị log
+    Standardizes data types for date, numeric, and symbol columns to ensure
+    consistency across all FMP API responses.
+
+    Args:
+        df (pd.DataFrame): DataFrame to normalize
+        date_columns (Optional[list]): List of date columns to convert.
+                                       If None, uses default date columns.
+        show_log (bool): Whether to display logging messages
 
     Returns:
-        pd.DataFrame: DataFrame đã chuẩn hóa
+        pd.DataFrame: Normalized DataFrame with standardized types
     """
     if df is None or df.empty:
         return df
 
     from .const import _DATE_COLUMNS
 
-    # Convert date columns
+    # Convert date columns to datetime type
     if date_columns is None:
         date_columns = _DATE_COLUMNS
 
@@ -202,15 +230,19 @@ def normalize_dataframe(df: pd.DataFrame,
                 df[col] = pd.to_datetime(df[col], errors='coerce')
             except Exception as e:
                 if show_log:
-                    logger.warning(f"Không thể convert {col} sang datetime: {e}")
+                    logger.warning(
+                        f"Cannot convert {col} to datetime: {e}"
+                    )
 
-    # Convert symbol to uppercase
+    # Convert symbol column to uppercase
     if 'symbol' in df.columns:
         df['symbol'] = df['symbol'].str.upper()
 
-    # Convert numeric columns if they're strings
-    numeric_candidates = ['price', 'change', 'changePercentage', 'volume',
-                         'marketCap', 'revenue', 'netIncome', 'eps']
+    # Convert numeric columns from string if needed
+    numeric_candidates = [
+        'price', 'change', 'changePercentage', 'volume',
+        'marketCap', 'revenue', 'netIncome', 'eps'
+    ]
 
     for col in numeric_candidates:
         if col in df.columns and df[col].dtype == 'object':

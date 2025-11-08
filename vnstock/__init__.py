@@ -23,6 +23,10 @@ from .constants import (
 # Tải các module connector để đăng ký các provider
 from . import connector
 
+# Load explorer modules to register providers
+# Tải các module explorer để đăng ký các provider
+from .explorer import vci, tcbs, msn  # noqa: F401
+
 __all__ = [
     "Vnstock",
     "Quote",

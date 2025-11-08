@@ -1,6 +1,8 @@
 """
-Constants and configuration for FMP connector.
-Following VCI patterns for consistency.
+Constants and configuration for FMP API connector.
+
+Defines API endpoints, default settings, and data mappings for FMP
+connector following VCI patterns for consistency.
 """
 
 # FMP API Configuration
@@ -12,16 +14,15 @@ _API_V4 = '/api/v4'
 _DEFAULT_TIMEOUT = 30
 _DEFAULT_API_KEY = 'demo'
 
-# Endpoint mappings for FMP API (based on current FMP structure)
-# FMP API Endpoints (sử dụng /stable domain)
-# ✅ = Đã test hoạt động | ❌ = Endpoint không khả dụng với gói hiện tại
+# FMP API endpoint mappings for current FMP structure
+# Status codes: ✅ = Tested and working | ❌ = Not available with current plan
 _ENDPOINTS = {
-    # Quote & Price Data
+    # Quote & Real-Time Price Data
     'quote': '/quote',  # ✅ Tested
     'quote_short': '/quote-short',  # ✅ Tested
     # Historical price endpoints (end-of-day)
     'historical_price_eod': '/historical-price-eod',  # ✅ Available
-    # Note: historical-chart endpoints cần subscription cao hơn
+    # Note: historical-chart endpoints require higher subscription tier
     'historical_chart_1min': '/historical-chart/1min',  # ✅ Tested
     'historical_chart_5min': '/historical-chart/5min',  # ✅ Tested
     'historical_chart_15min': '/historical-chart/15min',  # ✅ Tested
@@ -44,7 +45,7 @@ _ENDPOINTS = {
     'key_metrics': '/key-metrics',
     'financial_score': '/score',
 
-    # Market Data
+    # Market Data & Listings
     'search': '/search',
     'search_ticker': '/search-ticker',
     'search_symbol': '/search-symbol',  # ✅ Tested
@@ -52,36 +53,36 @@ _ENDPOINTS = {
     'stock_list': '/stock/list',  # ❌ 404
     'etf_list': '/etf/list',  # ❌ 404
 
-    # Analyst & Rating
+    # Analyst & Rating Data
     'analyst_estimates': '/analyst-estimates',
     'rating': '/rating',  # ❌ 404
     'historical_rating': '/historical-rating',
 
-    # Dividends & Splits
+    # Dividends & Stock Splits
     'historical_dividends': '/historical-price-full/stock-dividend',
     'stock_split': '/historical-price-full/stock-split',
 }
 
-# Date columns cần convert sang datetime
+# Date columns that need datetime type conversion
 _DATE_COLUMNS = [
     'date', 'filingDate', 'acceptedDate', 'publishedDate',
     'paymentDate', 'recordDate', 'declarationDate',
     'calendarYear', 'period', 'ipoDate'
 ]
 
-# Numeric columns cần convert sang numeric type
+# Numeric columns that need numeric type conversion
 _NUMERIC_COLUMNS = [
     'price', 'change', 'changePercentage', 'volume',
     'marketCap', 'beta', 'revenue', 'netIncome',
     'eps', 'epsDiluted', 'pe', 'priceToBook'
 ]
 
-# Supported intervals for historical data
+# Supported intervals for historical data requests
 _SUPPORTED_INTERVALS = [
     '1min', '5min', '15min', '30min', '1hour', '4hour', '1day'
 ]
 
-# Period mapping
+# Period format mapping for API requests
 _PERIOD_MAP = {
     'annual': 'annual',
     'quarter': 'quarter',
@@ -89,7 +90,7 @@ _PERIOD_MAP = {
     'quarterly': 'quarter'
 }
 
-# Exchange mappings
+# Stock exchange name mappings
 _EXCHANGE_MAP = {
     'NYSE': 'New York Stock Exchange',
     'NASDAQ': 'NASDAQ',
@@ -98,7 +99,8 @@ _EXCHANGE_MAP = {
     'TSE': 'Tokyo Stock Exchange'
 }
 
-# Column mappings for standardization (following VCI patterns)
+# Column name mappings for OHLCV standardization
+# Maps FMP column names to vnstock standard column names
 _OHLCV_MAP = {
     'date': 'time',
     'open': 'open',
@@ -108,7 +110,7 @@ _OHLCV_MAP = {
     'volume': 'volume'
 }
 
-# Data type mapping for DataFrame
+# Data type specifications for OHLCV DataFrame
 _OHLCV_DTYPE = {
     'time': 'datetime64[ns]',
     'open': 'float64',

@@ -1,16 +1,16 @@
 """
 FMP Quote connector for vnstock.
 
-Module xử lý dữ liệu giá chứng khoán từ FMP API.
+Handles fetching and processing stock price data from FMP API.
 Following VCI patterns for consistency.
 """
 
 import pandas as pd
 from typing import Optional
-from vnstock.core.base.registry import ProviderRegistry
-from vnstock.core.types import DataCategory, ProviderType, TimeFrame
+from vnstock.core.types import TimeFrame
 from vnstock.core.utils.interval import normalize_interval
 from vnstock.core.utils.logger import get_logger
+from vnstock.core.utils.parser import camel_to_snake
 from vnstock.core.utils.transform import resample_ohlcv
 from .config import FMPConfig, make_fmp_request
 from .const import _OHLCV_MAP
@@ -18,34 +18,39 @@ from .const import _OHLCV_MAP
 logger = get_logger(__name__)
 
 
-@ProviderRegistry.register(DataCategory.QUOTE, "fmp", ProviderType.API)
 class Quote:
     """
-    FMP Quote provider for vnstock.
-    
-    Class xử lý dữ liệu giá chứng khoán từ FMP.
+    FMP Quote data provider for vnstock.
+
+    Provides methods to fetch stock price data including real-time quotes,
+    historical EOD (End-Of-Day) prices, and intraday price movements.
     """
 
     def __init__(self, symbol: str, api_key: Optional[str] = None,
                  show_log: Optional[bool] = True):
         """
-        Khởi tạo Quote instance.
+        Initialize Quote instance.
 
-        Tham số:
-            symbol (str): Mã chứng khoán (ticker symbol)
-            api_key (Optional[str]): FMP API key
-            show_log (Optional[bool]): Hiển thị log
+        Args:
+            symbol (str): Stock ticker symbol
+            api_key (Optional[str]): FMP API key from environment or parameter
+            show_log (Optional[bool]): Whether to display logging messages.
+                                      Defaults to False per vnstock standards.
         """
         self.symbol = symbol.upper()
         self.config = FMPConfig(api_key=api_key, show_log=show_log)
         self.show_log = show_log
 
-    def realtime(self) -> Optional[pd.DataFrame]:
+    def short(self) -> Optional[pd.DataFrame]:
         """
-        Lấy dữ liệu giá realtime cho mã chứng khoán.
+        Get real-time stock quote snapshot (short format).
+
+        Fetches quick snapshots of real-time stock quotes with current price,
+        volume, and price changes for instant market insights. Uses the FMP
+        quote-short endpoint for minimal data.
 
         Returns:
-            Optional[pd.DataFrame]: DataFrame chứa dữ liệu giá realtime
+            Optional[pd.DataFrame]: DataFrame with real-time quote data
         """
         url = self.config.get_endpoint_url('quote_short', self.symbol)
         df = make_fmp_request(url, timeout=self.config.timeout,
@@ -54,15 +59,21 @@ class Quote:
         if df is not None and not df.empty:
             if 'symbol' in df.columns:
                 df['symbol'] = df['symbol'].str.upper()
+            # Convert all column names to snake_case
+            df.columns = [camel_to_snake(col) for col in df.columns]
 
         return df
 
-    def full_quote(self) -> Optional[pd.DataFrame]:
+    def full(self) -> Optional[pd.DataFrame]:
         """
-        Lấy dữ liệu quote đầy đủ cho mã chứng khoán.
+        Get comprehensive real-time stock quote (full format).
+
+        Fetches up-to-the-minute prices, changes, and volume data for
+        individual stocks with complete quote information. Uses the FMP
+        quote endpoint for full quote data.
 
         Returns:
-            Optional[pd.DataFrame]: DataFrame chứa dữ liệu quote đầy đủ
+            Optional[pd.DataFrame]: DataFrame with complete quote data
         """
         url = self.config.get_endpoint_url('quote', self.symbol)
         df = make_fmp_request(url, timeout=self.config.timeout,
@@ -71,60 +82,63 @@ class Quote:
         if df is not None and not df.empty:
             if 'symbol' in df.columns:
                 df['symbol'] = df['symbol'].str.upper()
+            # Convert all column names to snake_case
+            df.columns = [camel_to_snake(col) for col in df.columns]
 
         return df
 
     def history(self, start: Optional[str] = None,
                 end: Optional[str] = None,
-                interval: str = '1D',
+                interval: str = 'd',
                 adj_type: str = 'full') -> Optional[pd.DataFrame]:
         """
-        Lấy dữ liệu lịch sử giá EOD chứng khoán.
+        Fetch historical End-Of-Day (EOD) price data.
 
-        Phương thức này luôn trả về dữ liệu End-Of-Day. Hỗ trợ:
-        - 1D: Dữ liệu daily trực tiếp từ API
-        - 1W, 1M: Resample từ dữ liệu 1D
+        Returns daily price data by default. Supports resampling to weekly
+        and monthly intervals from daily data.
 
-        Để lấy dữ liệu intraday, sử dụng phương thức intraday().
+        For intraday data (minute/hour intervals), use intraday() method.
 
-        Tham số:
-            start (Optional[str]): Ngày bắt đầu (YYYY-MM-DD)
-            end (Optional[str]): Ngày kết thúc (YYYY-MM-DD)
-            interval (str): Khoảng thời gian EOD
-                           - '1D': Daily (trực tiếp)
-                           - '1W': Weekly (resample từ 1D)
-                           - '1M': Monthly (resample từ 1D)
-                           Mặc định: '1D'
-            adj_type (str): Loại điều chỉnh giá
-                           - 'light': Dữ liệu nhẹ
-                           - 'full': Dữ liệu đầy đủ (default)
-                           - 'non-split-adjusted': Không điều chỉnh tách
-                           - 'dividend-adjusted': Điều chỉnh cổ tức
-                         Mặc định: 'full'
+        Args:
+            start (Optional[str]): Start date (YYYY-MM-DD format)
+            end (Optional[str]): End date (YYYY-MM-DD format)
+            interval (str): Time interval for aggregation.
+                           Supported formats per vnstock standard:
+                           - 'd', '1d', '1D': Daily (direct from API)
+                           - 'w', '1w', '1W': Weekly (resampled from 1D)
+                           - 'M', '1M', 'month': Monthly (resampled from 1D)
+                           Defaults to 'd'
+            adj_type (str): Price adjustment type
+                           - 'light': Light data
+                           - 'full': Full adjustment (default)
+                           - 'non-split-adjusted': No split adjustment
+                           - 'dividend-adjusted': Dividend adjustment only
+                           Defaults to 'full'
 
         Returns:
-            Optional[pd.DataFrame]: DataFrame chứa dữ liệu EOD
+            Optional[pd.DataFrame]: DataFrame with OHLCV data (time, open,
+                                   high, low, close, volume)
         """
         # Normalize interval to standard format
         timeframe = normalize_interval(interval)
         
-        # Chỉ hỗ trợ EOD intervals
+        # Only EOD intervals are supported by this method
         eod_intervals = [
-            TimeFrame.DAY_1, 
-            TimeFrame.WEEK_1, 
+            TimeFrame.DAY_1,
+            TimeFrame.WEEK_1,
             TimeFrame.MONTH_1
         ]
 
         if timeframe not in eod_intervals:
             if self.show_log:
                 logger.error(
-                    f"Interval không hợp lệ: {timeframe}. "
-                    f"history() chỉ hỗ trợ EOD: 1D, 1W, 1M. "
-                    f"Dùng intraday() cho dữ liệu phút."
+                    f"Invalid interval: {interval}. "
+                    f"history() supports only EOD: d/1d/1D, w/1w/1W, M/1M. "
+                    f"Use intraday() for minute-level data."
                 )
             return None
 
-        # Lấy dữ liệu 1D từ EOD endpoint
+        # Fetch daily data from EOD endpoint
         url = (f"{self.config.domain}/historical-price-eod/"
                f"{adj_type}?symbol={self.symbol}&apikey="
                f"{self.config.api_key}")
@@ -138,71 +152,85 @@ class Quote:
                               show_log=self.show_log or False)
 
         if df is not None and not df.empty:
-            # Chuẩn hóa tên cột theo vnstock standard
+            # Normalize column names to vnstock standard
             df = self._normalize_ohlcv_columns(df)
 
-            # Đảm bảo date column là datetime
+            # Ensure date column is datetime
             if 'time' in df.columns:
                 df['time'] = pd.to_datetime(df['time'])
                 df = df.sort_values('time', ascending=True)
 
-                # Resample nếu cần 1W hoặc 1M
-                if str(timeframe) in ['1W', '1M']:
-                    df = resample_ohlcv(df, str(timeframe))
+                # Resample to weekly or monthly if needed
+                if timeframe in [TimeFrame.WEEK_1, TimeFrame.MONTH_1]:
+                    df = resample_ohlcv(df, timeframe.value)
 
                 df = df.reset_index(drop=True)
 
         return df
 
-    def intraday(self, interval: str = '1min',
+    def intraday(self, interval: str = 'm',
                  start: Optional[str] = None,
                  end: Optional[str] = None) -> Optional[pd.DataFrame]:
         """
-        Lấy dữ liệu intraday (dữ liệu theo phút/giờ) cho mã chứng khoán.
+        Fetch intraday (minute/hour level) price data.
 
-        Phương thức này luôn trả về dữ liệu intraday. Để lấy dữ liệu EOD,
-        sử dụng phương thức history().
+        Retrieves precise intraday stock price and volume data with intervals
+        from 1-minute to 4-hour. Returns real-time or historical stock data
+        including open, high, low, close prices and trading volume.
 
-        Tham số:
-            interval (str): Khoảng thời gian intraday
-                           - '1min': 1 phút (default)
-                           - '5min': 5 phút
-                           - '15min': 15 phút
-                           - '30min': 30 phút
-                           - '1hour': 1 giờ
-                           - '4hour': 4 giờ
-            start (Optional[str]): Ngày bắt đầu (YYYY-MM-DD)
-            end (Optional[str]): Ngày kết thúc (YYYY-MM-DD)
+        For End-Of-Day (daily/weekly/monthly) data, use history() method.
+
+        Args:
+            interval (str): Time interval for data aggregation.
+                           Supported formats per vnstock standard:
+                           - 'm', '1m': 1 minute (default)
+                           - '5m': 5 minutes
+                           - '15m': 15 minutes
+                           - '30m': 30 minutes
+                           - 'h', '1h': 1 hour
+                           - '4h': 4 hours
+            start (Optional[str]): Start date (YYYY-MM-DD format)
+            end (Optional[str]): End date (YYYY-MM-DD format)
 
         Returns:
-            Optional[pd.DataFrame]: DataFrame chứa dữ liệu intraday
+            Optional[pd.DataFrame]: DataFrame with intraday OHLCV data
         """
-        # Chỉ hỗ trợ intraday intervals
-        intraday_intervals = ['1min', '5min', '15min', '30min',
-                              '1hour', '4hour']
+        # Normalize interval to standard format
+        timeframe = normalize_interval(interval)
 
-        if interval not in intraday_intervals:
+        # Only intraday intervals are supported by this method
+        intraday_intervals = [
+            TimeFrame.MINUTE_1,
+            TimeFrame.MINUTE_5,
+            TimeFrame.MINUTE_15,
+            TimeFrame.MINUTE_30,
+            TimeFrame.HOUR_1,
+            TimeFrame.HOUR_4,
+        ]
+
+        if timeframe not in intraday_intervals:
             if self.show_log:
                 logger.error(
-                    f"Interval không hợp lệ: {interval}. "
-                    f"intraday() chỉ hỗ trợ: {intraday_intervals}. "
-                    f"Dùng history() cho dữ liệu EOD (1D, 1W, 1M)."
+                    f"Invalid interval: {interval}. "
+                    f"intraday() supports: m/1m, 5m, 15m, 30m, h/1h, 4h. "
+                    f"Use history() for EOD data (d/1d, w/1w, M/1M)."
                 )
             return None
 
-        # Mapping interval to FMP endpoint
-        interval_map = {
-            '1min': 'historical-chart/1min',
-            '5min': 'historical-chart/5min',
-            '15min': 'historical-chart/15min',
-            '30min': 'historical-chart/30min',
-            '1hour': 'historical-chart/1hour',
-            '4hour': 'historical-chart/4hour',
+        # Map TimeFrame to FMP API endpoint
+        timeframe_to_fmp_endpoint = {
+            TimeFrame.MINUTE_1: 'historical-chart/1min',
+            TimeFrame.MINUTE_5: 'historical-chart/5min',
+            TimeFrame.MINUTE_15: 'historical-chart/15min',
+            TimeFrame.MINUTE_30: 'historical-chart/30min',
+            TimeFrame.HOUR_1: 'historical-chart/1hour',
+            TimeFrame.HOUR_4: 'historical-chart/4hour',
         }
 
-        # Xây dựng URL:
-        # https://financialmodelingprep.com/stable/historical-chart/1min
-        interval_path = interval_map[interval]
+        # Build complete API URL
+        # Example: https://financialmodelingprep.com/stable/
+        # historical-chart/1min
+        interval_path = timeframe_to_fmp_endpoint[timeframe]
         url = (f"{self.config.domain}/{interval_path}?"
                f"symbol={self.symbol}&apikey={self.config.api_key}")
 
@@ -216,10 +244,10 @@ class Quote:
                               show_log=self.show_log or False)
 
         if df is not None and not df.empty:
-            # Chuẩn hóa tên cột theo vnstock standard
+            # Normalize column names to vnstock standard
             df = self._normalize_ohlcv_columns(df)
 
-            # Đảm bảo date column là datetime
+            # Ensure date column is datetime
             if 'time' in df.columns:
                 df['time'] = pd.to_datetime(df['time'])
                 df = df.sort_values('time', ascending=True).reset_index(
@@ -229,15 +257,20 @@ class Quote:
 
     def _normalize_ohlcv_columns(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Chuẩn hóa tên cột OHLCV theo vnstock standard.
+        Normalize OHLCV column names to vnstock standard format.
 
-        Tham số:
-            df (pd.DataFrame): DataFrame cần chuẩn hóa
+        Converts FMP column names to the standard vnstock naming convention
+        for consistency across all data providers. Also converts camelCase
+        column names to snake_case.
+
+        Args:
+            df (pd.DataFrame): DataFrame with FMP column names
 
         Returns:
-            pd.DataFrame: DataFrame đã chuẩn hóa
+            pd.DataFrame: DataFrame with standardized vnstock column names
+                         in snake_case format
         """
-        # Rename columns theo mapping
+        # Rename columns according to vnstock mapping
         rename_dict = {}
         for fmp_col, vnstock_col in _OHLCV_MAP.items():
             if fmp_col in df.columns:
@@ -246,4 +279,12 @@ class Quote:
         if rename_dict:
             df = df.rename(columns=rename_dict)
 
+        # Convert all remaining camelCase column names to snake_case
+        df.columns = [camel_to_snake(col) for col in df.columns]
+
         return df
+
+
+# Register FMP Quote provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('quote', 'fmp', Quote)
