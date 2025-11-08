@@ -8,7 +8,7 @@ from vnstock.core.base.registry import ProviderRegistry
 from vnstock.core.types import DataCategory, ProviderType
 from vnstock.core.utils.interval import normalize_interval
 from .const import (
-    _TRADING_URL, _INTERVAL_MAP,
+    _TRADING_URL, _INTERVAL_MAP, _RESAMPLE_MAP,
     _OHLC_MAP, _OHLC_DTYPE, _INTRADAY_URL,
     _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
 )
@@ -301,7 +301,9 @@ class Quote:
             dtype_map=_OHLC_DTYPE,
             symbol=self.symbol,
             asset_type=self.asset_type,
-            source=self.data_source
+            source=self.data_source,
+            interval=interval_key,
+            resample_map=_RESAMPLE_MAP
         )
 
         return df

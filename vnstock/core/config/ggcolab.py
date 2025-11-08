@@ -12,6 +12,7 @@ import os
 import sys
 import shutil
 import logging
+import subprocess
 from pathlib import Path
 from typing import Optional
 
@@ -53,12 +54,12 @@ def is_google_colab() -> bool:
 def is_drive_mounted() -> bool:
     """
     Check if Google Drive is already mounted.
-    
+
     Returns:
         bool: True if Drive is mounted
     """
     return os.path.exists(COLAB_DRIVE_MOUNT_PATH) and \
-           os.path.ismount(COLAB_DRIVE_MOUNT_PATH)
+        os.path.ismount(COLAB_DRIVE_MOUNT_PATH)
 
 
 # ============================================================================
@@ -68,6 +69,9 @@ def is_drive_mounted() -> bool:
 def mount_drive(force_remount: bool = False) -> bool:
     """
     Mount Google Drive.
+    
+    Handles case where mountpoint already contains files from previous
+    sessions (cleanup/unmount as needed).
     
     Args:
         force_remount: Force remount even if already mounted
@@ -86,11 +90,43 @@ def mount_drive(force_remount: bool = False) -> bool:
     try:
         from google.colab import drive
         
+        # If force_remount and already mounted, try to unmount first
+        if is_drive_mounted() and force_remount:
+            try:
+                subprocess.run(
+                    ["sudo", "umount", COLAB_DRIVE_MOUNT_PATH],
+                    check=False
+                )
+                logger.debug("Unmounted Drive for remount")
+            except Exception as e:
+                logger.debug(f"Unmount attempt: {e}")
+
+        # If mountpoint has files, try to clean up
+        mount_path = Path(COLAB_DRIVE_MOUNT_PATH)
+        if mount_path.exists() and any(mount_path.iterdir()):
+            logger.debug(
+                f"Mountpoint {COLAB_DRIVE_MOUNT_PATH} has files, "
+                "attempting cleanup"
+            )
+            try:
+                subprocess.run(
+                    ["sudo", "rm", "-rf", COLAB_DRIVE_MOUNT_PATH],
+                    check=False
+                )
+                logger.debug("Cleaned up mountpoint")
+            except Exception as e:
+                logger.debug(f"Cleanup attempt: {e}")
+        
         print("\n📋 Connecting Google Drive account")
         print("to save project settings.\n")
         
-        drive.mount(COLAB_DRIVE_MOUNT_PATH, force_remount=force_remount)
-        logger.info(f"Drive mounted successfully: {COLAB_DRIVE_MOUNT_PATH}")
+        drive.mount(
+            COLAB_DRIVE_MOUNT_PATH,
+            force_remount=force_remount
+        )
+        logger.info(
+            f"Drive mounted successfully: {COLAB_DRIVE_MOUNT_PATH}"
+        )
         return True
         
     except Exception as e:
@@ -101,46 +137,50 @@ def mount_drive(force_remount: bool = False) -> bool:
 def initialize_colab_environment() -> bool:
     """
     Initialize Colab environment:
-    - Mount Drive if not already mounted
+    - Mount Drive if not already mounted (with cleanup if needed)
     - Create .vnstock directory (config, license, user data)
-    - Create .venv directory (pip install --target packages, added to sys.path)
+    - Create .venv directory (pip install --target packages, added to
+      sys.path)
     - Add both directories to sys.path for imports
-    
-    Note: .venv is NOT a true virtual environment on Colab. It's an isolated
-    directory where packages are installed via pip --target flag. Packages are
-    loaded by adding the directory to sys.path, NOT by activating an env.
-    
+
+    Note: .venv is NOT a true virtual environment on Colab. It's an
+    isolated directory where packages are installed via pip --target
+    flag. Packages are loaded by adding the directory to sys.path,
+    NOT by activating an env.
+
     Returns:
         bool: True if successful
     """
     if not is_google_colab():
         return False
-    
-    # Mount Drive
-    if not mount_drive():
-        logger.warning("Cannot mount Drive, fallback to local")
-        return False
+
+    # Mount Drive - try with cleanup if needed
+    if not is_drive_mounted():
+        if not mount_drive(force_remount=True):
+            logger.warning("Cannot mount Drive, fallback to local")
+            return False
     
     try:
         # Create .vnstock directory for config/license/user data
         os.makedirs(COLAB_VNSTOCK_DIR, exist_ok=True)
         logger.info(f"Vnstock data directory: {COLAB_VNSTOCK_DIR}")
-        
+
         # Create .venv directory for isolated pip packages
         os.makedirs(COLAB_VENV_DIR, exist_ok=True)
         logger.info(f"Isolated packages directory: {COLAB_VENV_DIR}")
-        
-        # Add both to sys.path (packages loaded via path, not env activation)
+
+        # Add both to sys.path (packages loaded via path, not env
+        # activation)
         if COLAB_VNSTOCK_DIR not in sys.path:
             sys.path.insert(0, COLAB_VNSTOCK_DIR)
             logger.info(f"Added to sys.path: {COLAB_VNSTOCK_DIR}")
-        
+
         if COLAB_VENV_DIR not in sys.path:
             sys.path.insert(0, COLAB_VENV_DIR)
             logger.info(f"Added to sys.path: {COLAB_VENV_DIR}")
-        
+
         return True
-        
+
     except Exception as e:
         logger.error(f"Error initializing Colab environment: {e}")
         return False

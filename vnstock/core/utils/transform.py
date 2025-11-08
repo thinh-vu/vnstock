@@ -185,18 +185,25 @@ def ohlc_to_df(
     # Apply data types
     for col, dtype in dtype_map.items():
         if col in df.columns:
-            if dtype == "datetime64[ns]" and hasattr(df[col], 'dt') and df[col].dt.tz is not None:
-                df[col] = df[col].dt.tz_localize(None)  # Remove timezone info
-                if interval == "1D":
-                    df[col] = df[col].dt.date
+            # Only convert datetime to date for daily interval
+            if (dtype == "datetime64[ns]" and
+                    hasattr(df[col], 'dt') and
+                    df[col].dt.tz is not None):
+                df[col] = df[col].dt.tz_localize(None)
+
+            # Only remove timezone and convert to date for "1D"
+            if col == 'time' and interval == "1D":
+                df[col] = df[col].dt.date
+
             df[col] = df[col].astype(dtype)
-    
+
     # Add metadata
     df.name = symbol
     df.category = asset_type
     df.source = source
-    
+
     return df
+
 
 def intraday_to_df(
     data: List[Dict[str, Any]],
