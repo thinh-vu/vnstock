@@ -42,8 +42,8 @@ dependencies = [
     "packaging>=20.0",
     "importlib-metadata>=1.0",
     "tenacity",
-    "vnai>=2.1.9",
-    "vnstock_ezchart>=0.0.2",
+    "vnai>=2.2.2",
+    "vnstock_ezchart>=0.0.3",
 ]
 
 [project.optional-dependencies]
@@ -58,7 +58,7 @@ IssueTracker = "https://github.com/thinh-vu/vnstock/issues"
 
 [tool.setuptools]
 include-package-data = true
-packages = { find = {} } # Support Python3.11
+packages = { find = {} }
 
 [tool.setuptools.package-data]
 vnstock = ["docs/*.txt", "docs/*.csv"]

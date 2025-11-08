@@ -10,6 +10,15 @@ from .api.trading import Trading
 from .api.screener import Screener
 from .explorer.fmarket import Fund
 
+# Market constants
+from .constants import (
+    INDICES_INFO,
+    INDICES_MAP,
+    INDEX_GROUPS,
+    SECTOR_IDS,
+    EXCHANGES,
+)
+
 # Load connector modules to register providers
 # Tải các module connector để đăng ký các provider
 from . import connector
@@ -23,7 +32,12 @@ __all__ = [
     "Trading",
     "Screener",
     "Fund",
-    "connector"
+    "connector",
+    "INDICES_INFO",
+    "INDICES_MAP",
+    "INDEX_GROUPS",
+    "SECTOR_IDS",
+    "EXCHANGES",
 ]
 
 vnai.setup()

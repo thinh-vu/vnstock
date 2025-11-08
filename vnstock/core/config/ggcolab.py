@@ -23,7 +23,11 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 COLAB_DRIVE_MOUNT_PATH = "/content/drive"
+# Config, license, user data
 COLAB_VNSTOCK_DIR = "/content/drive/MyDrive/.vnstock"
+# Isolated package directory (not a true venv, but acts as target for pip
+# install via --target flag. Packages are added to sys.path)
+COLAB_VENV_DIR = "/content/drive/MyDrive/.venv"
 
 
 # ============================================================================
@@ -98,8 +102,13 @@ def initialize_colab_environment() -> bool:
     """
     Initialize Colab environment:
     - Mount Drive if not already mounted
-    - Create .vnstock directory
-    - Add to sys.path
+    - Create .vnstock directory (config, license, user data)
+    - Create .venv directory (pip install --target packages, added to sys.path)
+    - Add both directories to sys.path for imports
+    
+    Note: .venv is NOT a true virtual environment on Colab. It's an isolated
+    directory where packages are installed via pip --target flag. Packages are
+    loaded by adding the directory to sys.path, NOT by activating an env.
     
     Returns:
         bool: True if successful
@@ -113,14 +122,22 @@ def initialize_colab_environment() -> bool:
         return False
     
     try:
-        # Create directory
+        # Create .vnstock directory for config/license/user data
         os.makedirs(COLAB_VNSTOCK_DIR, exist_ok=True)
-        logger.info(f"Vnstock directory: {COLAB_VNSTOCK_DIR}")
+        logger.info(f"Vnstock data directory: {COLAB_VNSTOCK_DIR}")
         
-        # Add to sys.path
+        # Create .venv directory for isolated pip packages
+        os.makedirs(COLAB_VENV_DIR, exist_ok=True)
+        logger.info(f"Isolated packages directory: {COLAB_VENV_DIR}")
+        
+        # Add both to sys.path (packages loaded via path, not env activation)
         if COLAB_VNSTOCK_DIR not in sys.path:
             sys.path.insert(0, COLAB_VNSTOCK_DIR)
             logger.info(f"Added to sys.path: {COLAB_VNSTOCK_DIR}")
+        
+        if COLAB_VENV_DIR not in sys.path:
+            sys.path.insert(0, COLAB_VENV_DIR)
+            logger.info(f"Added to sys.path: {COLAB_VENV_DIR}")
         
         return True
         
@@ -187,13 +204,19 @@ def get_vnstock_data_dir() -> Path:
 
 def get_install_target() -> Optional[str]:
     """
-    Get target path for pip install.
+    Get target path for pip install (isolated packages directory).
+    
+    On Colab, packages are installed to .venv using:
+        pip install --target=/content/drive/MyDrive/.venv vnstock
+    
+    This directory is added to sys.path for imports, NOT activated
+    as a virtual environment.
     
     Returns:
-        Optional[str]: Path if on Colab, None if local
+        Optional[str]: Path to .venv if on Colab, None if local
     """
     if is_google_colab() and is_drive_mounted():
-        return COLAB_VNSTOCK_DIR
+        return COLAB_VENV_DIR
     return None
 
 
@@ -205,20 +228,24 @@ def show_setup_guide() -> None:
     print("\n" + "="*70)
     print("🚀 VNSTOCK ON GOOGLE COLAB")
     print("="*70)
-    print("\n📦 To install vnstock on Drive (one-time only):")
-    print(f"\n  !pip install --target={COLAB_VNSTOCK_DIR} vnstock\n")
-    print("🔄 In subsequent sessions:")
-    print("\n  from vnstock.core.config.ggcolab import initialize_colab_environment")
+    print("\n📦 To install vnstock to isolated packages dir (one-time only):")
+    print(f"\n  !pip install --target={COLAB_VENV_DIR} vnstock\n")
+    print("🔄 In subsequent sessions (packages auto-loaded from sys.path):")
+    print("\n  from vnstock.core.config.ggcolab import")
+    print("  initialize_colab_environment")
     print("  initialize_colab_environment()")
     print("  import vnstock")
     print("\n" + "="*70 + "\n")
 
 
 def get_install_command() -> str:
-    """Get pip install command for Colab"""
+    """
+    Get pip install command for Colab.
+    Packages are installed to .venv and loaded via sys.path.
+    """
     if not is_google_colab():
         return ""
-    return f"!pip install --target={COLAB_VNSTOCK_DIR} vnstock"
+    return f"!pip install --target={COLAB_VENV_DIR} vnstock"
 
 
 # ============================================================================
@@ -228,6 +255,7 @@ def get_install_command() -> str:
 def migrate_vnstock_data_colab(new_dir: Optional[str] = None) -> bool:
     """
     Migrate ~/.vnstock data to Google Drive (Colab only).
+    Only copies config, license, and user data to .vnstock directory.
     
     Args:
         new_dir: Path to new directory (default: COLAB_VNSTOCK_DIR)
@@ -262,12 +290,13 @@ def migrate_vnstock_data_colab(new_dir: Optional[str] = None) -> bool:
     
     # Check if parent directory exists
     if not new_dir.parent.exists():
-        raise FileNotFoundError(f"Parent directory of {new_dir} does not exist")
+        msg = f"Parent directory of {new_dir} does not exist"
+        raise FileNotFoundError(msg)
     
     # Create new directory
     os.makedirs(new_dir, exist_ok=True)
     
-    # Copy data
+    # Copy data (config, license, user data only)
     try:
         for item in old_dir.iterdir():
             dest = new_dir / item.name
