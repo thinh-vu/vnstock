@@ -494,3 +494,7 @@ class Company:
 
         return df
 
+
+# Register provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('company', 'tcbs', Company)

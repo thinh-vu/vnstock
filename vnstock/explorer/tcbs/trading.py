@@ -91,3 +91,8 @@ class Trading:
             # Better error handling with logging
             logger.error(f"Error processing price board data: {e}")
             return pd.DataFrame()
+
+
+# Register provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('trading', 'tcbs', Trading)

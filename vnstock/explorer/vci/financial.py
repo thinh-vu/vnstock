@@ -519,3 +519,8 @@ class Finance:
         except Exception as e:
             logger.error(f"Error retrieving financial ratios: {e}")
             raise
+
+
+# Register provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('financial', 'vci', Finance)

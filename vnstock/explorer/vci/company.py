@@ -403,3 +403,8 @@ class Company:
         df = reorder_cols(df, cols=['symbol'], position='first')
         
         return df
+
+
+# Register provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('company', 'vci', Company)

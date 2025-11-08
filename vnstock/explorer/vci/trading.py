@@ -109,3 +109,8 @@ class Trading:
         combine_df.attrs['source'] = 'VCI'
 
         return combine_df
+
+
+# Register provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('trading', 'vci', Trading)

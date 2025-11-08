@@ -249,3 +249,6 @@ class Listing:
         return market_indices.get_indices_by_group(group)
 
 
+# Register provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('listing', 'vci', Listing)

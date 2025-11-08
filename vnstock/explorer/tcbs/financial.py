@@ -258,3 +258,8 @@ class Finance:
             if show_log:
                 logger.exception("Detailed traceback:")
             return pd.DataFrame()  # Return empty DataFrame on error
+
+
+# Register provider
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+ProviderRegistry.register('financial', 'tcbs', Finance)
