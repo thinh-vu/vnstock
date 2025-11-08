@@ -1,7 +1,27 @@
 import pathlib
+
+
+def _get_project_dir() -> pathlib.Path:
+    """
+    Get project directory from ggcolab module.
+    Avoid circular import with lazy import.
+    """
+    try:
+        # Lazy import from ggcolab
+        from vnstock.core.config.ggcolab import get_vnstock_directory
+        return get_vnstock_directory()
+    except ImportError:
+        # Fallback if ggcolab not loaded yet
+        return pathlib.Path.home() / ".vnstock"
+
+
 HOME_DIR = pathlib.Path.home()
-PROJECT_DIR = HOME_DIR / ".vnstock"
+PROJECT_DIR = _get_project_dir()
 ID_DIR = PROJECT_DIR / 'id'
+
+# Ensure directories exist
+PROJECT_DIR.mkdir(parents=True, exist_ok=True)
+ID_DIR.mkdir(parents=True, exist_ok=True)
 
 TC_VAR = "ACCEPT_TC"
 TC_VAL = "tôi đồng ý"

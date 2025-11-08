@@ -19,12 +19,12 @@ vietnam_tz = pytz.timezone('Asia/Ho_Chi_Minh')
 
 def clean_numeric_string(s: Any) -> Any:
     """
-    Loại bỏ dấu phân nhóm (',' hoặc NBSP), chuẩn hoá dấu thập phân về '.'
+    Remove grouping separators (',' or NBSP), normalize decimal point to '.'.
     """
     if not isinstance(s, str):
         return s
     s = s.replace('\u00A0', '').replace(',', '')
-    # Nếu chỉ có một dấu ',' (nghĩa decimal), chuyển thành '.'
+    # If only one comma exists (as decimal), convert to period
     if s.count('.') == 0 and s.count(',') == 1:
         s = s.replace(',', '.')
     return s.strip()
@@ -207,12 +207,11 @@ def intraday_to_df(
     source: str
 ) -> pd.DataFrame:
     """
-    Convert intraday trading data to standardized DataFrame format,
-    với:
-      - Tiền xử lý chuỗi số cho price/volume
-      - Map scale dựa trên source (không hardcode /1000)
-      - Kiểm soát NaN, rounding volume an toàn
-      - Xử lý time, match_type như trước
+    Convert intraday trading data to standardized DataFrame format.
+    
+    Pre-processes numeric strings for price and volume, applies source-based
+    scaling (not hardcoded division), handles NaN safely with volume rounding,
+    and processes time and match_type consistently.
     """
     # --- Early exit ---
     if not data:
@@ -224,39 +223,51 @@ def intraday_to_df(
 
     df = pd.DataFrame(data)
 
-    # --- Chọn & rename columns ---
+    # --- Select and rename columns ---
     available = [c for c in column_map if c in df.columns]
     if not available:
-        raise ValueError(f"Expected columns {list(column_map)} not found, got {df.columns.tolist()}")
-    df = df[available].rename(columns={k: column_map[k] for k in available})
+        raise ValueError(
+            f"Expected columns {list(column_map)} not found, "
+            f"got {df.columns.tolist()}"
+        )
+    df = df[available].rename(columns={k: column_map[k]
+                                       for k in available})
 
-    # --- Làm sạch & chuyển numeric ---
+    # --- Clean and convert to numeric ---
     for col in ('price', 'volume'):
         if col in df.columns:
-            # Tiền xử lý chuỗi
+            # Pre-process string
             df[col] = df[col].map(clean_numeric_string)
-            # Chuyển sang float, lỗi thành NaN
+            # Convert to float, errors become NaN
             df[col] = pd.to_numeric(df[col], errors='coerce')
             n_bad = df[col].isna().sum()
             if n_bad:
-                print(f"[Warning] {n_bad} giá trị ở '{col}' không parse được, chuyển thành NaN")
+                msg = (
+                    f"[Warning] {n_bad} values in '{col}' "
+                    f"could not be parsed, converted to NaN"
+                )
+                print(msg)
 
-    # --- Scale price theo source ---
+    # --- Scale price by source ---
     scale_map = {'VCI': 1000, 'MAS': 1000}
     scale = scale_map.get(source, 1)
     if 'price' in df.columns:
         df['price'] = df['price'] / scale
 
-    # --- Volume: round & cast int ---
+    # --- Volume: round and cast to int ---
     if 'volume' in df.columns:
         vol = df['volume'].fillna(0)
-        # Kiểm tra nếu có decimal
+        # Check if there are decimal values
         mask = (vol % 1 != 0)
         if mask.any():
-            print(f"[Info] {int(mask.sum())} giá trị volume có decimal, sẽ làm tròn")
+            msg = (
+                f"[Info] {int(mask.sum())} volume values have "
+                f"decimals, will be rounded"
+            )
+            print(msg)
         df['volume'] = vol.round().astype(int)
 
-    # --- Xử lý cột time như trước ---
+    # --- Process time column ---
     if 'time' in df.columns:
         trading_date = get_trading_date()
 
@@ -280,16 +291,16 @@ def intraday_to_df(
                 if df['time'].dt.tz is None:
                     df['time'] = localize_timestamp(df['time'], return_string=False)
 
-    # --- Process match types như bạn đã định nghĩa ---
+    # --- Process match types as defined ---
     if 'match_type' in df.columns:
         df = process_match_types(df, asset_type, source)
 
-    # --- Sort, reset index & apply dtype ---
+    # --- Sort, reset index and apply data types ---
     if 'time' in df.columns:
         df = df.sort_values('time')
     df = df.reset_index(drop=True)
 
-    # Áp dtype_map (không tính time)
+    # Apply dtype_map (excluding time)
     type_map = {k: v for k, v in dtype_map.items() if k in df.columns and k != 'time'}
     if type_map:
         df = df.astype(type_map)

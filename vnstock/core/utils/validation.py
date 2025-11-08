@@ -17,12 +17,12 @@ def validate_symbol(
 ) -> str:
     """Validate and normalize ticker symbol."""
     if symbol is None:
-        raise ValueError("Symbol không được để trống.")
+        raise ValueError("Symbol cannot be empty.")
     if not isinstance(symbol, str):
-        raise ValueError("Symbol phải là một chuỗi.")
-    if len(symbol) < 3 or len(symbol) > 10:
-        raise ValueError("Symbol phải có độ dài từ 3 đến 10 ký tự.")
-    
+        raise ValueError("Symbol must be a string.")
+    if len(symbol) < 3 or len(symbol) > 12:
+        raise ValueError("Symbol must be between 3 and 12 characters long.")
+
     symbol = symbol.upper()
     
     if symbol_map and symbol in symbol_map:
@@ -51,7 +51,7 @@ def validate_date_range(
             
         if start_time > end_time:
             raise ValueError(
-                "Thời gian bắt đầu không thể lớn hơn thời gian kết thúc."
+                "Start date cannot be greater than end date."
             )
             
         return start_time, end_time
@@ -59,8 +59,8 @@ def validate_date_range(
     except ValueError as e:
         if "does not match format" in str(e):
             raise ValueError(
-                "Định dạng ngày không hợp lệ. "
-                "Vui lòng sử dụng định dạng YYYY-MM-DD."
+                "Invalid date format. "
+                "Please use YYYY-MM-DD format."
             )
         raise
 
@@ -82,8 +82,8 @@ def validate_interval(
     if interval not in interval_map:
         valid_options = ', '.join(interval_map.keys())
         raise ValueError(
-            f"Giá trị interval không hợp lệ: {interval}. "
-            f"Vui lòng chọn: {valid_options}"
+            f"Invalid interval value: {interval}. "
+            f"Please choose: {valid_options}"
         )
     return interval_map[interval]
 
@@ -118,5 +118,5 @@ def validate_model_input(
     
     if missing_fields:
         raise ValueError(
-            f"Thiếu các trường bắt buộc: {', '.join(missing_fields)}"
+            f"Missing required fields: {', '.join(missing_fields)}"
         )

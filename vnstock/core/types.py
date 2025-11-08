@@ -506,10 +506,7 @@ class FileTypes:
 
 
 class ParameterNames:
-    """
-    Standardized parameter names.
-    Tên tham số chuẩn hóa.
-    """
+    """Standardized parameter names."""
     SYMBOL = "symbol"
     START = "start"
     END = "end"
@@ -519,10 +516,7 @@ class ParameterNames:
 
 
 class MethodNames:
-    """
-    Method names for dynamic method detection.
-    Tên phương thức cho phát hiện phương thức động.
-    """
+    """Method names for dynamic method detection."""
     HISTORY = "history"
     INTRADAY = "intraday"
     PRICE_DEPTH = "price_depth"

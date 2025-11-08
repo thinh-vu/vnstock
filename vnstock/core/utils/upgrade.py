@@ -59,20 +59,37 @@ def update_notice():
                 if latest_version and version.parse(installed_version) < version.parse(latest_version):
                     package_name = package.capitalize()
                     # Customize URL based on package
-                    history_url = "https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban" if package == "vnstock" else "https://pypi.org/project/vnai/#history"
+                    if package == "vnstock":
+                        history_url = (
+                            "https://vnstocks.com/docs/"
+                            "release-history"
+                        )
+                    else:
+                        history_url = (
+                            "https://pypi.org/project/vnai/"
+                            "#history"
+                        )
                     
-                    message = (
-                        f"Phiên bản {package_name} {latest_version} đã có mặt, vui lòng cập nhật với câu lệnh : `pip install {package} --upgrade`.\n"
-                        f"Lịch sử phiên bản: {history_url}\n"
-                        f"Phiên bản hiện tại {installed_version}"
+                    msg = (
+                        f"Version {package_name} {latest_version} "
+                        f"is available. Please update using: "
+                        f"`pip install {package} --upgrade`.\n"
+                        f"Release history: {history_url}\n"
+                        f"Current version: {installed_version}"
                     )
 
-                    if environment in ["Jupyter", "Google Colab"] and ipython_available:
-                        display(Markdown(message))  # Display as markdown in Jupyter or Google Colab
+                    if (environment in ["Jupyter", "Google Colab"]
+                            and ipython_available):
+                        # Display as markdown in Jupyter
+                        display(Markdown(msg))
                     else:
-                        warnings.simplefilter("always", UserWarning)
+                        warnings.simplefilter(
+                            "always", UserWarning
+                        )
+                        # Remove markdown styling for
+                        # non-notebook environments
                         warnings.warn(
-                            message.replace("**", ""),  # Remove markdown styling for non-notebook environments
+                            msg.replace("**", ""),
                             UserWarning,
                             stacklevel=2
                         )

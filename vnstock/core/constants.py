@@ -2,7 +2,6 @@
 vnstock/core/constants.py
 
 Constants used throughout the vnstock package.
-Các hằng số được sử dụng trong gói vnstock.
 
 NOTE: This module provides backward compatibility.
 New code should use types.py (DataSource, TimeFrame enums).
@@ -20,7 +19,6 @@ class DataSources:
     DEPRECATED: Use vnstock.core.types.DataSource enum instead.
     
     Data sources supported by vnstock.
-    Các nguồn dữ liệu được hỗ trợ bởi vnstock.
     """
     VCI = _DataSource.VCI.value
     TCBS = _DataSource.TCBS.value
@@ -38,7 +36,6 @@ class TimeResolutions:
     DEPRECATED: Use vnstock.core.types.TimeFrame enum instead.
     
     Time resolutions for historical data.
-    Độ phân giải thời gian cho dữ liệu lịch sử.
     """
     MINUTE_1 = _TimeFrame.MINUTE_1.value
     MINUTE_5 = _TimeFrame.MINUTE_5.value
@@ -51,10 +48,7 @@ class TimeResolutions:
 
 
 class ParameterNames:
-    """
-    Standardized parameter names.
-    Tên tham số chuẩn hóa.
-    """
+    """Standardized parameter names."""
     SYMBOL = "symbol"
     START = "start"
     END = "end"
@@ -64,10 +58,7 @@ class ParameterNames:
 
 
 class MethodNames:
-    """
-    Method names for dynamic method detection.
-    Tên phương thức cho phát hiện phương thức động.
-    """
+    """Method names for dynamic method detection."""
     HISTORY = "history"
     INTRADAY = "intraday"
     PRICE_DEPTH = "price_depth"

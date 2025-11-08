@@ -111,18 +111,18 @@ def localize_timestamp (
 
 def get_asset_type(symbol: str) -> str:
     """
-    Xác định loại tài sản dựa trên mã chứng khoán được cung cấp.
-    Hỗ trợ cả định dạng mã cũ và mã mới theo KRX.
+    Determine asset type based on provided security code.
+    Supports both legacy code format and new KRX format.
     
-    Tham số: 
-        - symbol (str): Mã chứng khoán hoặc mã chỉ số.
+    Parameters:
+        - symbol (str): Security code or index symbol.
     
-    Trả về:
-        - 'index' nếu mã chứng khoán là mã chỉ số.
-        - 'stock' nếu mã chứng khoán là mã cổ phiếu.
-        - 'derivative' nếu mã chứng khoán là mã hợp đồng tương lai hoặc quyền chọn.
-        - 'bond' nếu mã chứng khoán là mã trái phiếu (chính phủ hoặc doanh nghiệp).
-        - 'coveredWarr' nếu mã chứng khoán là mã chứng quyền.
+    Returns:
+        - 'index' if security code is an index symbol.
+        - 'stock' if security code is a stock symbol.
+        - 'derivative' if security code is a futures or options contract.
+        - 'bond' if security code is a government or corporate bond.
+        - 'coveredWarr' if security code is a covered warrant.
     """
     symbol = symbol.upper()
     
@@ -171,13 +171,13 @@ def get_asset_type(symbol: str) -> str:
 
 def camel_to_snake(name):
     """
-    Chuyển đổi tên biến từ dạng CamelCase sang snake_case.
+    Convert variable name from CamelCase to snake_case.
 
-    Tham số:
-        - name (str): Tên biến dạng CamelCase.
+    Parameters:
+        - name (str): Variable name in CamelCase.
 
-    Trả về:
-        - str: Tên biến dạng snake_case.
+    Returns:
+        - str: Variable name in snake_case.
     """
     str1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     output = re.sub('([a-z0-9])([A-Z])', r'\1_\2', str1).lower()
@@ -187,12 +187,12 @@ def camel_to_snake(name):
 
 def flatten_data(json_data, parent_key='', sep='_'):
     """
-    Làm phẳng dữ liệu JSON thành dạng dict tiêu chuẩn.
+    Flatten JSON data into standard dict format.
 
-    Tham số:
-        - json_data: Dữ liệu JSON trả về từ API.
-        - parent_key: Key cha của dữ liệu JSON.
-        - sep: Ký tự phân cách giữa các key.
+    Parameters:
+        - json_data: JSON data returned from API.
+        - parent_key: Parent key of JSON data.
+        - sep: Separator character between keys.
     """
     items = []
     for k, v in json_data.items():
@@ -319,3 +319,84 @@ def vn30_abbrev_contract(full: str, today: date) -> str:
         raise ValueError(f"Sequence number {n} out of supported range.")
 
     return f"VN30F{n}{cycle}"
+
+
+def convert_time_flexible(
+    time_value: Optional[Union[str, int, float]],
+    time_format: Optional[str] = None,
+    to_iso: bool = False,
+    output_format: str = '%Y-%m-%d %H:%M:%S'
+) -> Optional[Union[str, int]]:
+    """
+    Flexibly convert time between different formats.
+
+    Parameters:
+        - time_value: Time value input (str, int, float, or None).
+          If string is epoch timestamp, will automatically convert to ISO.
+        - time_format: Custom format for input string (optional).
+        - to_iso: If True, convert from epoch timestamp to ISO string.
+                  If False (default), convert to epoch timestamp.
+        - output_format: Output string format when to_iso=True
+                        (default '%Y-%m-%d %H:%M:%S').
+
+    Returns:
+        - Epoch timestamp as string if to_iso=False.
+        - Datetime string if to_iso=True.
+        - None if time_value is None.
+    """
+    if time_value is None:
+        return None
+
+    if to_iso:
+        # Convert from epoch to ISO string
+        if isinstance(time_value, (int, float)):
+            dt = datetime.fromtimestamp(int(time_value))
+            return dt.strftime(output_format)
+        elif isinstance(time_value, str):
+            # Try parsing epoch string
+            try:
+                epoch = int(float(time_value))
+                dt = datetime.fromtimestamp(epoch)
+                return dt.strftime(output_format)
+            except (ValueError, OverflowError):
+                raise ValueError(
+                    f"Cannot parse epoch timestamp: {time_value}"
+                )
+        else:
+            raise ValueError(
+                f"For to_iso=True, time_value must be int, float, "
+                f"or epoch string, got {type(time_value)}"
+            )
+    else:
+        # Convert to epoch
+        if isinstance(time_value, (int, float)):
+            return str(int(time_value))
+
+        if isinstance(time_value, str):
+            if time_format:
+                try:
+                    dt = datetime.strptime(time_value, time_format)
+                    return str(int(dt.timestamp()))
+                except ValueError:
+                    raise ValueError(
+                        f"Invalid time_value format: {time_value} "
+                        f"with format {time_format}"
+                    )
+            else:
+                # Try default formats
+                for fmt in ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]:
+                    try:
+                        dt = datetime.strptime(time_value, fmt)
+                        return str(int(dt.timestamp()))
+                    except ValueError:
+                        continue
+                raise ValueError(
+                    f"Cannot parse time_value: {time_value}. "
+                    f"Use 'YYYY-MM-DD' or "
+                    f"'YYYY-MM-DD HH:MM:SS' format or provide time_format."
+                )
+
+        raise ValueError(
+            f"time_value must be str, int, or float, "
+            f"got {type(time_value)}"
+        )

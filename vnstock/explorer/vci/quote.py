@@ -1,6 +1,6 @@
 """History module for VCI."""
 
-from typing import Optional
+from typing import Optional, Union
 from datetime import datetime
 import pandas as pd
 from vnai import optimize_execution
@@ -15,7 +15,7 @@ from .const import (
 from vnstock.core.models import TickerModel
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.market import trading_hours
-from vnstock.core.utils.parser import get_asset_type
+from vnstock.core.utils.parser import get_asset_type, convert_time_flexible
 from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.client import send_request, ProxyConfig
@@ -310,7 +310,8 @@ class Quote:
     def intraday(
         self,
         page_size: Optional[int] = 100,
-        last_time: Optional[str] = None,
+        last_time: Optional[Union[str, int, float]] = None,
+        last_time_format: Optional[str] = None,
         show_log: bool = False
     ) -> pd.DataFrame:
         """
@@ -321,7 +322,11 @@ class Quote:
             - page_size (tùy chọn): Số lượng dữ liệu trả về trong
               một lần request. Mặc định là 100.
             - last_time (tùy chọn): Thời gian cắt dữ liệu, dùng để
-              lấy dữ liệu sau thời gian cắt. Mặc định là None.
+              lấy dữ liệu sau thời gian cắt. Có thể là epoch timestamp
+              (int/float) hoặc chuỗi datetime. Mặc định là None.
+            - last_time_format (tùy chọn): Định dạng để parse last_time
+              nếu là chuỗi. Mặc định sẽ thử 'YYYY-MM-DD HH:MM:SS'
+              và 'YYYY-MM-DD'.
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug
               dễ dàng. Mặc định là False.
         """
@@ -348,11 +353,14 @@ class Quote:
                 "điều này có thể gây lỗi quá tải."
             )
 
+        # Parse last_time to epoch timestamp
+        parsed_last_time = convert_time_flexible(last_time, last_time_format)
+
         url = f'{self.base_url}{_INTRADAY_URL}/LEData/getAll'
         payload = {
             "symbol": self.symbol,
             "limit": page_size,
-            "truncTime": last_time
+            "truncTime": parsed_last_time
         }
 
         # Fetch data using the send_request utility
