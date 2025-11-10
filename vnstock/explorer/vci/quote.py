@@ -23,8 +23,9 @@ from vnstock.core.utils.transform import ohlc_to_df, intraday_to_df
 logger = get_logger(__name__)
 
 # TimeFrame to interval key mapping
+# Standard format: m/1m=minute, h/1H=hour, d/1D=day, w/1W=week, M/1M=month
 _TIMEFRAME_MAP = {
-    'D': '1D',
+    '1D': '1D',
     '1H': '1H',
     '1W': '1W',
     '1M': '1M',

@@ -2,7 +2,16 @@
 Interval/TimeFrame utility functions.
 
 Provides unified interval conversion across vnstock library.
-Supports multiple input formats:
+Supports multiple input formats with standardized aliases:
+
+Aliases (case-sensitive):
+- m or 1m/5m/15m/30m → MINUTE
+- h or 1H → HOUR
+- d or 1D → DAY
+- w or 1W → WEEK
+- M or 1M → MONTH (capital M only)
+
+Formats:
 - TimeFrame enum: TimeFrame.DAY_1
 - vnstock format: '1D', '1H', '1W', '1M', '1m', '5m', etc.
 - Alias format: 'd', 'h', 'm', 'w', 'M' (convenient shortcuts)
@@ -19,12 +28,15 @@ def normalize_interval(
     """
     Normalize any interval format to TimeFrame enum.
 
-    Supports:
-    - TimeFrame enum: TimeFrame.DAY_1 → TimeFrame.DAY_1
-    - vnstock format: '1D', '1H', '1W', '1M', '1m', '5m' → TimeFrame enum
-    - Alias: 'd', 'h', 'm', 'w', 'M' → TimeFrame enum
-    - Human readable: 'day', 'hour', 'minute' → TimeFrame enum
-    - None → TimeFrame.DAY_1 (default)
+    Standard aliases (case-sensitive):
+    - m or 1m/5m/15m/30m → TimeFrame.MINUTE_*
+    - h or 1H → TimeFrame.HOUR_*
+    - d or 1D → TimeFrame.DAY_1
+    - w or 1W → TimeFrame.WEEK_1
+    - M or 1M → TimeFrame.MONTH_1
+
+    Also supports human readable: 'day', 'hour', 'minute', 'week', 'month'
+    None defaults to TimeFrame.DAY_1
 
     Args:
         interval: Interval in any supported format
@@ -42,8 +54,10 @@ def normalize_interval(
         <TimeFrame.HOUR_1: '1H'>
         >>> normalize_interval('h')
         <TimeFrame.HOUR_1: '1H'>
-        >>> normalize_interval('hour')
-        <TimeFrame.HOUR_1: '1H'>
+        >>> normalize_interval('d')
+        <TimeFrame.DAY_1: '1D'>
+        >>> normalize_interval('M')
+        <TimeFrame.MONTH_1: '1M'>
     """
     if interval is None:
         return TimeFrame.DAY_1
@@ -55,11 +69,14 @@ def normalize_interval(
     interval_orig = str(interval)
     interval_str = interval_orig.lower().strip()
 
-    # Handle capital M for month before general lowercase processing
-    # vnstock uses '1M' (capital) for month, not '1m'
+    # Standard aliases (case-sensitive for M vs m):
+    # m/1m/5m/15m/30m = MINUTE, M/1M = MONTH
+    # h/1H = HOUR, d/1D = DAY, w/1W = WEEK
+    
+    # Handle MONTH: capital M only
     if interval_orig in ('M', '1M'):
         return TimeFrame.MONTH_1
-
+    
     # Mapping: any input format → TimeFrame enum
     interval_map = {
         # Aliases (convenience)
@@ -82,9 +99,6 @@ def normalize_interval(
         '4h': TimeFrame.HOUR_4,
         '1d': TimeFrame.DAY_1,
         '1w': TimeFrame.WEEK_1,
-        '1mo': TimeFrame.MONTH_1,
-        '1month': TimeFrame.MONTH_1,
-        'mo': TimeFrame.MONTH_1,
     }
 
     result = interval_map.get(interval_str)
@@ -95,22 +109,29 @@ def normalize_interval(
     msg = (f"Invalid interval: {interval}. "
            f"Use TimeFrame enum or formats like: "
            f"1D, 1H, 1W, 1M (vnstock), "
-           f"d, h, m, w, M (alias), "
+           f"d, h, m, w, M (alias - case-sensitive), "
            f"or day, hour, minute, week, month (human readable)")
     raise ValueError(msg)
 
 
 def get_interval_aliases() -> dict:
     """
-    Get all supported interval aliases.
+    Get all supported interval aliases (case-sensitive).
 
     Returns:
         dict: Mapping of alias → TimeFrame enum
+        - m → MINUTE_1
+        - h → HOUR_1
+        - d → DAY_1
+        - w → WEEK_1
+        - M → MONTH_1 (capital M)
 
     Examples:
         >>> aliases = get_interval_aliases()
         >>> aliases['d']
-        <TimeFrame.DAY_1: 'D'>
+        <TimeFrame.DAY_1: '1D'>
+        >>> aliases['M']
+        <TimeFrame.MONTH_1: '1M'>
     """
     return {
         'm': TimeFrame.MINUTE_1,

@@ -58,12 +58,20 @@ class XNOConfig:
                 logger.info("Sử dụng API key từ biến môi trường")
             return api_key
 
-        logger.warning("Không tìm thấy XNO API key.")
-        raise ValueError(
-            "XNO API key không được set. "
-            "Sử dụng XNO_API_KEY environment variable hoặc "
-            "truyền api_key parameter."
+        # No API key found - raise error with instructions
+        error_msg = (
+            "XNO API key không được set trong biến môi trường.\n"
+            "Vui lòng set một trong các biến môi trường sau:\n"
+            "  - export XNO_API_KEY='your_api_key_here'\n"
+            "  - export XNO_TOKEN='your_api_key_here'\n"
+            "\n"
+            "Hoặc truyền api_key trực tiếp cho XNOQuote:\n"
+            "  quote = XNOQuote(symbol='ACB', api_key='your_key')\n"
+            "\n"
+            "Liên hệ vnstock để nhận API key"
         )
+        logger.error(error_msg)
+        raise ValueError(error_msg)
 
     def get_endpoint_url(self, endpoint_name: str,
                          use_lambda: bool = False) -> str:

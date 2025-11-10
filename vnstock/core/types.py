@@ -66,6 +66,7 @@ class TimeFrame(str, Enum):
     Time frames for historical data.
     
     Unified from legacy TimeResolutions in constants.py.
+    Standard format: '1m', '5m', '1H', '1D', '1W', '1M'
     """
     # Minute intervals
     MINUTE_1 = "1m"
@@ -75,9 +76,9 @@ class TimeFrame(str, Enum):
     # Hour intervals
     HOUR_1 = "1H"
     HOUR_4 = "4h"
-    # Day/Week/Month intervals
-    DAY_1 = "D"
-    DAILY = "D"  # Alias for DAY_1
+    # Day/Week/Month intervals (standardized format)
+    DAY_1 = "1D"
+    DAILY = "1D"  # Alias for DAY_1
     WEEK_1 = "1W"
     WEEKLY = "1W"  # Alias for WEEK_1
     MONTH_1 = "1M"

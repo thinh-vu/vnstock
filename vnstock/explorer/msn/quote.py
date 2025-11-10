@@ -36,25 +36,26 @@ class Quote:
         """
         Validate input data
         """
-        # Normalize interval to standard format
+        # Normalize interval to standard format (e.g., '1D', '1H', '1W', '1M')
         timeframe = normalize_interval(interval)
-        
+
+        # Get standardized interval value
+        timeframe_value = timeframe.value
+
         # Validate interval is supported by MSN
-        if str(timeframe) not in _RESAMPLE_MAP.keys():
+        if timeframe_value not in _RESAMPLE_MAP.keys():
             msg = (
-                f"Giá trị interval không hợp lệ: {timeframe}. "
+                f"Giá trị interval không hợp lệ: {timeframe_value}. "
                 f"MSN chỉ hỗ trợ: 1D, 1W, 1M"
             )
             raise ValueError(msg)
-        
-        # Create ticker model with normalized interval
+
+        # Create ticker model with standardized interval
         ticker = TickerModel(
-            symbol=self.symbol_id, start=start, end=end, 
-            interval=str(timeframe)
+            symbol=self.symbol_id, start=start, end=end,
+            interval=timeframe_value
         )
         return ticker
-    
-
     @optimize_execution('MSN')
     def history(self, start: str, end: Optional[str], interval: Optional[str] = "1D", show_log: bool = False, count_back: Optional[int] = 365, asset_type: Optional[str] = None) -> pd.DataFrame:
         """
@@ -74,10 +75,11 @@ class Quote:
 
         # Normalize interval for resample mapping
         timeframe = normalize_interval(ticker.interval)
-        
-        if str(timeframe) not in _RESAMPLE_MAP.keys():
+        timeframe_value = timeframe.value
+
+        if timeframe_value not in _RESAMPLE_MAP.keys():
             msg = (
-                f"Giá trị interval không hợp lệ: {timeframe}. "
+                f"Giá trị interval không hợp lệ: {timeframe_value}. "
                 f"MSN chỉ hỗ trợ: 1D, 1W, 1M"
             )
             raise ValueError(msg)

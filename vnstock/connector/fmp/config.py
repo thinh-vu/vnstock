@@ -12,12 +12,11 @@ import pandas as pd
 from pandas import json_normalize
 from typing import Optional
 from vnstock.core.utils.logger import get_logger
-from .const import _FMP_DOMAIN, _ENDPOINTS, _DEFAULT_TIMEOUT, _DEFAULT_API_KEY
+from .const import _FMP_DOMAIN, _ENDPOINTS, _DEFAULT_TIMEOUT
 
 logger = get_logger(__name__)
 
 FMP_DOMAIN = 'https://financialmodelingprep.com/stable'
-DEFAULT_API_KEY = 'YOUR_API_KEY'
 
 
 class FMPConfig:
@@ -51,10 +50,13 @@ class FMPConfig:
         Retrieve FMP API key from environment variables.
 
         Attempts to load API key from FMP_TOKEN or FMP_API_KEY environment
-        variables. Falls back to demo key if not found.
+        variables. Raises an error if no API key is found.
 
         Returns:
             str: API key for FMP API authentication
+
+        Raises:
+            ValueError: If no API key found in environment variables
         """
         # Try FMP_TOKEN first (like in terminal)
         api_key = os.getenv('FMP_TOKEN')
@@ -62,11 +64,24 @@ class FMPConfig:
             api_key = os.getenv('FMP_API_KEY')
 
         if api_key:
-            logger.info("Using API key from environment variable")
+            if self.show_log:
+                logger.info("Using API key from environment variable")
             return api_key
 
-        logger.warning("No FMP API key found. Using demo key.")
-        return _DEFAULT_API_KEY
+        # No API key found - raise error with instructions
+        error_msg = (
+            "FMP API key not found in environment variables.\n"
+            "Please set one of the following environment variables:\n"
+            "  - export FMP_API_KEY='your_api_key_here'\n"
+            "  - export FMP_TOKEN='your_api_key_here'\n"
+            "\n"
+            "Or pass api_key directly to FMPQuote:\n"
+            "  quote = FMPQuote(symbol='AAPL', api_key='your_key')\n"
+            "\n"
+            "Get your API key at: https://financialmodelingprep.com"
+        )
+        logger.error(error_msg)
+        raise ValueError(error_msg)
 
     def get_endpoint_url(self, endpoint_name: str,
                          symbol: Optional[str] = None,

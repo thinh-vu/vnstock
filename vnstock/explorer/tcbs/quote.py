@@ -22,13 +22,14 @@ from vnstock.core.utils import client, transform, validation
 logger = get_logger(__name__)
 
 # TimeFrame to interval key mapping
+# Standard format: m/1m=minute, h/1H=hour, d/1D=day, w/1W=week, M/1M=month
 _TIMEFRAME_MAP = {
     '1m': '1m',
     '5m': '5m',
     '15m': '15m',
     '30m': '30m',
     '1H': '1H',
-    'D': '1D',
+    '1D': '1D',
     '1W': '1W',
     '1M': '1M'
 }
