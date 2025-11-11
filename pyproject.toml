@@ -42,14 +42,12 @@ dependencies = [
     "packaging>=20.0",
     "importlib-metadata>=1.0",
     "tenacity",
-    "vnai>=2.2.2",
+    "vnai>=2.2.3",
     "vnstock_ezchart>=0.0.3",
 ]
 
 [project.optional-dependencies]
-dev = ["flake8"]
-docs = ["sphinx", "sphinx_rtd_theme"]
-test = ["unittest"]
+test = ["pytest>=7.0", "pytest-cov>=4.0", "pytest-timeout"]
 
 [project.urls]
 Documentation = "https://github.com/thinh-vu/vnstock"

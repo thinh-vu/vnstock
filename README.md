@@ -12,13 +12,10 @@
     <a href="https://pypi.org/project/vnstock/">
         <img src="https://img.shields.io/pypi/dm/vnstock?label=vnstock%20download&style=flat" alt="vnstock download badge"/>
     </a>
-    <a href="https://pypi.org/project/vnstock3/">
-        <img src="https://img.shields.io/pypi/dm/vnstock3?label=vnstock3%20download&style=flat" alt="vnstock3 download badge"/>
-    </a>
 </div>
 
 <div id="badges" align="center">
-    <a href="https://github.com/sponsors/thinh-vu">
+    <a href="https://vnstocks.com/insiders-program">
         <img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" alt="vnstock3 download badge"/>
     </a>
 </div>
@@ -167,7 +164,7 @@ Dù lớn hay nhỏ, mỗi sự hỗ trợ đều là một lời nhắc nhở r
 Nếu vnstock đã mang lại giá trị cho bạn và bạn muốn trở thành một phần của cộng đồng những người ủng hộ, sự đóng góp của bạn sẽ là nguồn động lực vô cùng to lớn đối với chúng tôi. Mỗi nhà tài trợ giúp chúng tôi có thêm thời gian cải thiện tài liệu, phát triển tính năng mới và duy trì sự bền vững lâu dài cho dự án này.
 
 <div id="badges" align="center">
-    <a href="https://github.com/sponsors/thinh-vu">
+    <a href="https://vnstocks.com/insiders-program#tiers">
         <img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" alt="vnstock3 download badge"/>
     </a>
 </div>
