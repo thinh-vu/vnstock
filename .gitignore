@@ -145,6 +145,10 @@ dmypy.json
 .Trashes
 ehthumbs.db
 Thumbs.db
+.DS_Store
+**/.DS_Store
+**/*/.DS_Store
+.DS_Store?*
 
 # Temporary files
 *.tmp
