@@ -123,9 +123,12 @@ class ProxyManager:
 
             data = response.json()
 
-            if data.get('status') != 'ok':
+            # Check for successful response - API doesn't return 'status' field
+            # Instead check if we have proxies data
+            if (not data.get('proxies') or
+                    not isinstance(data.get('proxies'), list)):
                 logger.warning(
-                    f"API returned status: {data.get('status')}"
+                    "API returned invalid data: no proxies list"
                 )
                 return []
 
@@ -163,9 +166,15 @@ class ProxyManager:
                 ).lower()
 
                 # Parse IP and port from different formats
-                if 'ip' in proxy_data:
+                # First try direct ip/port fields (newer API format)
+                if 'ip' in proxy_data and 'port' in proxy_data:
                     ip = proxy_data.get('ip')
                     port = int(proxy_data.get('port', 80))
+                # Then try ip_data format (older API format)
+                elif 'ip_data' in proxy_data:
+                    ip_data = proxy_data.get('ip_data', {})
+                    ip = ip_data.get('ip')
+                    port = int(ip_data.get('port', 80))
                 elif 'ipport' in proxy_data:
                     # Format: ip:port
                     ip_port = proxy_data.get('ipport', ':')
@@ -183,6 +192,10 @@ class ProxyManager:
                         port = int(port)
                     else:
                         continue
+
+                # Validate required fields
+                if not ip:
+                    continue
 
                 country = proxy_data.get('country', '')
                 speed = float(proxy_data.get('speed', 0))
