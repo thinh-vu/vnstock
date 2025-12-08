@@ -61,8 +61,7 @@ def update_notice():
                     # Customize URL based on package
                     if package == "vnstock":
                         history_url = (
-                            "https://vnstocks.com/docs/"
-                            "release-history"
+                            "https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban"
                         )
                     else:
                         history_url = (
