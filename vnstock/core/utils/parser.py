@@ -146,7 +146,7 @@ def get_asset_type(symbol: str) -> str:
     # For symbols that could be derivative or bond (length 7 or 9)
     elif len(symbol) in [7, 9]:
         # VN30 derivative patterns:
-        fm_pattern = re.compile(r'^VN30F\d{1,2}M$')
+        fm_pattern = re.compile(r'^VN30F\d{1,2}[MQ]$')
         ym_pattern = re.compile(r'^VN30F\d{4}$')
         
         # Bond patterns:
