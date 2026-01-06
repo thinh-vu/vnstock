@@ -1,4 +1,4 @@
-_BASE_URL = 'https://apipubaws.tcbs.com.vn'
+_BASE_URL = "https://apiextaws.tcbs.com.vn" # 'https://apipubaws.tcbs.com.vn'
 _STOCKS_URL = 'stock-insight'
 _FUTURE_URL = 'futures-insight'
 _ANALYSIS_URL = 'tcanalysis'

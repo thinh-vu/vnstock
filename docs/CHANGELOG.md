@@ -1,3 +1,24 @@
+## 06-01-2026
+
+### 🔧 **Sửa lỗi**
+- Khắc phục lỗi nhận diện sai ký hiệu dẫn xuất VN100 (ví dụ: `VN100F1M`) thành Covered Warrants do xung đột độ dài.
+- Tinh chỉnh logic `auto_count_back` trong `Quote.history` để phản ánh chính xác giờ giao dịch thị trường Việt Nam (5 giờ/ngày, 255 phút/ngày).
+
+### 🚀 **Thêm mới**
+- Tính năng "Smart Lookback" cho `Quote.history` trong [`vnstock/explorer/vci/quote.py`](vnstock/explorer/vci/quote.py ) và [`vnstock/explorer/tcbs/quote.py`](vnstock/explorer/tcbs/quote.py ). Người dùng có thể sử dụng tham số `length` (ví dụ: `'3M'`, `'10W'`, `'100b'`, `150`) thay vì chỉ định ngày bắt đầu/kết thúc.
+- Công cụ mới [`vnstock/core/utils/lookback.py`](vnstock/core/utils/lookback.py ) để phân tích khoảng thời gian linh hoạt và tính toán ngày bắt đầu.
+- Tài liệu cho tính năng Smart Lookback tại `docs/feature_lookback.md`.
+- Cải thiện cơ chế quản lý header trong [`vnstock/core/utils/user_agent.py`](vnstock/core/utils/user_agent.py ), hỗ trợ `Authorization`, `custom_headers` và `override_headers` cho cấu hình yêu cầu động và linh hoạt.
+- Nâng cấp `ProxyManager` với `get_fresh_proxies`, hỗ trợ proxy tùy chỉnh và instance singleton.
+- Cập nhật `client.py` để hỗ trợ chế độ proxy `AUTO` và tích hợp với `ProxyManager`.
+- Tái cấu trúc `TCBS Quote` để sử dụng wrapper yêu cầu trung tâm `client.py`, cho phép hỗ trợ proxy.
+- Tái cấu trúc tất cả module VCI (`Quote`, `Company`, `Financial`, `Listing`, `Trading`) để hỗ trợ cấu hình proxy qua tham số `__init__` (`proxy_mode`, `proxy_list`), giải quyết vấn đề chặn IP trên nền tảng đám mây như Google Colab/Kaggle.
+- Tài liệu cho hệ thống header và xác thực mới tại `docs/header_management.md`.
+
+### 🔄 **Thay đổi**
+- `Quote.history`: Tham số `start` giờ là tùy chọn nếu `length` hoặc `count_back` được cung cấp.
+- Cập nhật `get_asset_type` trong [`vnstock/core/utils/parser.py`](vnstock/core/utils/parser.py ) để nhận diện động tất cả chỉ số từ `vnstock.constants.INDICES_INFO`, đảm bảo hỗ trợ tốt hơn cho chỉ số ngành và đầu tư (ví dụ: `VNSI`, `VNFINLEAD`, `VNIND`).
+
 ## 11-11-2025
 
 ### 🚀 **Phiên bản v3.3.0**

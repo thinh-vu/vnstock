@@ -22,6 +22,7 @@ from typing import Optional, List, Dict, Tuple, Union
 from .const import _GRAPHQL_URL, _FINANCIAL_REPORT_PERIOD_MAP, _UNIT_MAP, _ICB4_COMTYPE_CODE_MAP, SUPPORTED_LANGUAGES
 from vnstock.explorer.vci import Company
 from vnstock.core.utils import client
+from vnstock.core.utils.client import ProxyConfig
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.logger import get_logger
@@ -43,7 +44,10 @@ class Finance:
     """
 
     def __init__(self, symbol: str, period: Optional[str] = 'quarter', 
-                 get_all: Optional[bool] = True, show_log: Optional[bool] = True):
+                 get_all: Optional[bool] = True, show_log: Optional[bool] = True,
+                 proxy_config: Optional[ProxyConfig] = None,
+                 proxy_mode: Optional[str] = None,
+                 proxy_list: Optional[List[str]] = None):
         """
         Khởi tạo đối tượng Finance với các tham số cho việc truy xuất dữ liệu báo cáo tài chính.
         """
@@ -51,6 +55,23 @@ class Finance:
         self.asset_type = get_asset_type(self.symbol)
         self.headers = get_headers(data_source='VCI')
         self.show_log = show_log
+
+        # Handle proxy configuration
+        if proxy_config is None:
+            # Create ProxyConfig from individual arguments
+            p_mode = proxy_mode if proxy_mode else 'try'
+            # If user asks for 'auto' or provides list, set request_mode to PROXY
+            req_mode = 'direct'
+            if proxy_mode == 'auto' or (proxy_list and len(proxy_list) > 0):
+                req_mode = 'proxy'
+                
+            self.proxy_config = ProxyConfig(
+                proxy_mode=p_mode,
+                proxy_list=proxy_list,
+                request_mode=req_mode
+            )
+        else:
+            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel('CRITICAL')
@@ -165,7 +186,11 @@ class Finance:
             headers=self.headers,
             method="POST",
             payload=payload_json,
-            show_log=show_log
+            show_log=show_log,
+            proxy_list=self.proxy_config.proxy_list,
+            proxy_mode=self.proxy_config.proxy_mode,
+            request_mode=self.proxy_config.request_mode,
+            hf_proxy_url=self.proxy_config.hf_proxy_url
         )
         
         data = response_data['data']['ListFinancialRatio']
@@ -222,7 +247,11 @@ class Finance:
             headers=self.headers,
             method="POST",
             payload=payload_json,
-            show_log=show_log
+            show_log=show_log,
+            proxy_list=self.proxy_config.proxy_list,
+            proxy_mode=self.proxy_config.proxy_mode,
+            request_mode=self.proxy_config.request_mode,
+            hf_proxy_url=self.proxy_config.hf_proxy_url
         )
         
         # Extract relevant data

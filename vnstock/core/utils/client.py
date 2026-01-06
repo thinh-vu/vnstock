@@ -20,6 +20,7 @@ from typing import Dict, Any, Optional, Union, List
 from enum import Enum
 from pydantic import BaseModel
 from vnstock.core.utils.logger import get_logger
+from vnstock.core.utils.proxy_manager import proxy_manager
 
 # Initialize logger for module
 logger = get_logger(__name__)
@@ -52,6 +53,7 @@ class ProxyMode(Enum):
     ROTATE = "rotate"
     RANDOM = "random"
     SINGLE = "single"
+    AUTO = "auto"
 
 
 class RequestMode(Enum):
@@ -243,6 +245,17 @@ def send_request(
             )
     elif request_mode == RequestMode.PROXY:
         # Send via standard proxy
+        if proxy_mode == ProxyMode.AUTO and not proxy_list:
+            # Auto-fetch proxies if none provided
+            if show_log:
+                logger.info("Auto-fetching proxies via ProxyManager...")
+            proxy_list = proxy_manager.get_fresh_proxies(use_cache=True)
+            if not proxy_list:
+                # If auto-fetch failed, fallback to direct or error? 
+                # For now let's error to be explicit, or fallback to direct if user prefers?
+                # Sticking to error to match "PROXY mode" intent.
+                raise ConnectionError("Failed to auto-fetch valid proxies.")
+
         if not proxy_list:
             raise ValueError(
                 "proxy_list is required for PROXY mode"

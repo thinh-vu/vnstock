@@ -2,7 +2,7 @@
 
 import requests
 import pandas as pd
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 from datetime import datetime, timedelta
 from vnai import optimize_execution
 from vnstock.core.utils.interval import normalize_interval
@@ -18,6 +18,7 @@ from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils import client, transform, validation
+from vnstock.core.utils.lookback import get_start_date_from_lookback, interpret_lookback_length
 
 logger = get_logger(__name__)
 
@@ -45,7 +46,9 @@ class Quote:
         self,
         symbol: str,
         random_agent: bool = False,
-        show_log: bool = True
+        show_log: bool = True,
+        proxy_mode: str = "try",
+        proxy_list: Optional[list] = None
     ):
         """Initialize the Quote object with the given symbol."""
         symbol = validate_symbol(symbol)
@@ -58,6 +61,8 @@ class Quote:
         )
         self.interval_map = _INTERVAL_MAP
         self.show_log = show_log
+        self.proxy_mode = proxy_mode
+        self.proxy_list = proxy_list
 
         # Handle INDEX symbols using shared validation
         if 'INDEX' in symbol:
@@ -81,9 +86,7 @@ class Quote:
         interval: Optional[str]
     ) -> TickerModel:
         """Validate input data using shared validation utilities."""
-        # Validate required parameters
-        if not start:
-            raise ValueError("Vui lòng cung cấp ngày bắt đầu (start)")
+        # Validate required parameters (start can now be None if length/count_back provided)
         if not end:
             raise ValueError("Vui lòng cung cấp ngày kết thúc (end)")
         if not interval:
@@ -165,7 +168,9 @@ class Quote:
                         interval="1D",
                         show_log=show_log,
                         asset_type=asset_type,
-                        _skip_long_check=True
+                        _skip_long_check=True,
+                        # Pass defaults or instance configs here if needed,
+                        # currently history uses instance defaults if not provided
                     )
                     combined_data.append(data)
                 except Exception as e:
@@ -205,32 +210,65 @@ class Quote:
     @optimize_execution("TCBS")
     def history(
         self,
-        start: str,
+        start: Optional[str] = None,
         end: Optional[str] = None,
         interval: Optional[str] = "1D",
         show_log: bool = False,
         count_back: Optional[int] = 365,
         asset_type: Optional[str] = None,
-        _skip_long_check: bool = False
+        _skip_long_check: bool = False,
+        length: Optional[Union[str, int]] = None,
+        proxy_mode: Optional[str] = None,
+        proxy_list: Optional[list] = None
     ) -> pd.DataFrame:
         """
         Tham số:
-            - start (bắt buộc): thời gian bắt đầu lấy dữ liệu,
-              có thể là ngày dạng string kiểu "YYYY-MM-DD".
+            - start (tùy chọn): thời gian bắt đầu lấy dữ liệu.
+              Bắt buộc nếu không có length hoặc count_back.
             - end (tùy chọn): thời gian kết thúc lấy dữ liệu.
               Mặc định là None (ngày hiện tại).
-            - interval (tùy chọn): Khung thời gian trích xuất
-              dữ liệu giá lịch sử (1m, 5m, 15m, 30m, 1H, 1D, 1W,
-              1M).
-            - show_log (tùy chọn): Hiển thị thông tin log.
-            - count_back (tùy chọn): Số lượng dữ liệu trả về từ
-              thời điểm cuối. Mặc định là 365.
+            - interval (tùy chọn): Khung thời gian. Mặc định "1D".
+            - length (tùy chọn): Khoảng thời gian phân tích (vd: '3M', 150, '150').
+              Nhận giá trị chuỗi (vd 3M), số ngày (int/str), hoặc số bars (vd '100b').
+            - count_back (tùy chọn): Số lượng nến (bars) cần lấy.
+            - show_log (tùy chọn): Hiển thị log.
             - asset_type (tùy chọn): Loại tài sản (stock, index,
               derivative). Mặc định là None (tự xác định).
             - _skip_long_check (tùy chọn): Bỏ qua kiểm tra thời
               gian dài để tránh đệ quy vô hạn. Mặc định là False.
         """
+        # Calculate start if not provided
+        if start is None:
+            # Check if length defines bars
+            if length is not None:
+                bars_from_len, len_remainder = interpret_lookback_length(length)
+                if bars_from_len is not None:
+                    count_back = bars_from_len
+                    length = None
+                else:
+                    length = len_remainder
+            
+            if length is not None:
+                start = get_start_date_from_lookback(
+                    lookback_length=length,
+                    end_date=end
+                )
+            elif count_back is not None:
+                start = get_start_date_from_lookback(
+                    bars=count_back,
+                    interval=interval,
+                    end_date=end
+                )
+            else:
+                raise ValueError(
+                    "Tham số 'start' là bắt buộc nếu không cung cấp "
+                    "'length' hoặc 'count_back'."
+                )
+
         # Validate inputs
+        if end is None:
+            end = datetime.now().strftime("%Y-%m-%d")
+
         ticker = self._input_validation(start, end, interval)
         
         if count_back is None:
@@ -305,17 +343,30 @@ class Quote:
             if show_log:
                 logger.info(f"Tải dữ liệu từ {url}")
 
-            # Send a GET request to fetch the data
-            response = requests.get(url, headers=self.headers)
+            # Send a request to fetch the data using client wrapper
+            # Use instance defaults if not overridden
+            req_mode = client.RequestMode.DIRECT 
+            p_mode = proxy_mode or self.proxy_mode
+            p_list = proxy_list or self.proxy_list
+            
+            if p_mode == "auto" or (p_list is not None and len(p_list) > 0):
+                req_mode = client.RequestMode.PROXY
+                
+            response_json = client.send_request(
+                url=url,
+                headers=self.headers,
+                show_log=show_log and False, # Reduce noise, we logged above
+                request_mode=req_mode,
+                proxy_mode=p_mode,
+                proxy_list=p_list
+            )
 
-            if response.status_code != 200:
-                msg = (
-                    f"Tải dữ liệu không thành công: "
-                    f"{response.status_code} - {response.reason}"
-                )
-                raise ConnectionError(msg)
-
-            json_data = response.json()['data']
+            # client.send_request returns the json payload directly
+            json_data = response_json.get('data')
+            if json_data is None:
+                 # Try fallback if structure differs or check for error
+                 # But TCBS usually returns 'data' key on 200
+                 pass
 
             if show_log:
                 msg = (

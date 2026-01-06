@@ -9,6 +9,7 @@ from datetime import date, datetime, timedelta
 from typing import Dict, Union, Literal, Any, Optional
 from vnstock.core.config.const import UA
 from vnstock.core.utils.logger import get_logger
+from vnstock.constants import INDICES_INFO
 
 logger = get_logger(__name__)
 
@@ -126,12 +127,12 @@ def get_asset_type(symbol: str) -> str:
     """
     symbol = symbol.upper()
     
-    # Index symbols
-    if symbol in [
-        'VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'VN30', 'VN100', 'HNX30',
-        'VNSML', 'VNMID', 'VNALL', 'VNREAL', 'VNMAT', 'VNIT', 'VNHEAL',
-        'VNFINSELECT', 'VNFIN', 'VNENE', 'VNDIAMOND', 'VNCONS', 'VNCOND'
-    ]:
+    # Standard market indices and HOSE managed indices
+    market_indices = {'VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'HNX30'}
+    # Combine with indices from constants
+    known_indices = market_indices.union(INDICES_INFO.keys())
+
+    if symbol in known_indices:
         return 'index'
     
     # Stock symbols (assumed to have 3 characters)
@@ -141,6 +142,11 @@ def get_asset_type(symbol: str) -> str:
     # New KRX derivative format (e.g., 41I1F4000)
     krx_derivative_pattern = re.compile(r'^4[12][A-Z0-9]{2}[0-9A-HJ-NP-TV-W][1-9A-C]\d{3}$')
     if krx_derivative_pattern.match(symbol):
+        return 'derivative'
+
+    # VN100 derivative patterns (e.g., VN100F1M, VN100F2M, VN100F1Q, VN100F2Q)
+    vn100_derivative_pattern = re.compile(r'^VN100F\d{1,2}[MQ]$')
+    if vn100_derivative_pattern.match(symbol):
         return 'derivative'
     
     # For symbols that could be derivative or bond (length 7 or 9)

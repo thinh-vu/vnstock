@@ -4,13 +4,14 @@ from typing import List, Dict, Optional, Union
 from datetime import datetime
 from .const import _TRADING_URL
 import json
-import requests
 import pandas as pd
 from vnai import optimize_execution
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake, flatten_data
 from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
+from vnstock.core.utils import client
+from vnstock.core.utils.client import ProxyConfig
 from vnstock.core.utils.transform import flatten_hierarchical_index
 logger = get_logger(__name__)
 
@@ -19,12 +20,32 @@ class Trading:
     """
     Truy xuất dữ liệu giao dịch của mã chứng khoán từ nguồn dữ liệu VCI.
     """
-    def __init__(self, symbol:Optional[str]='VCI', random_agent=False, show_log:Optional[bool]=True):
+    def __init__(self, symbol:Optional[str]='VCI', random_agent=False, show_log:Optional[bool]=True,
+                 proxy_config: Optional[ProxyConfig] = None,
+                 proxy_mode: Optional[str] = None,
+                 proxy_list: Optional[List[str]] = None):
         self.symbol = validate_symbol(symbol)
         self.asset_type = get_asset_type(self.symbol)
         self.base_url = _TRADING_URL
         self.headers = get_headers(data_source='VCI', random_agent=random_agent)
         self.show_log = show_log
+
+        # Handle proxy configuration
+        if proxy_config is None:
+            # Create ProxyConfig from individual arguments
+            p_mode = proxy_mode if proxy_mode else 'try'
+            # If user asks for 'auto' or provides list, set request_mode to PROXY
+            req_mode = 'direct'
+            if proxy_mode == 'auto' or (proxy_list and len(proxy_list) > 0):
+                req_mode = 'proxy'
+                
+            self.proxy_config = ProxyConfig(
+                proxy_mode=p_mode,
+                proxy_list=proxy_list,
+                request_mode=req_mode
+            )
+        else:
+            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel('CRITICAL')
@@ -43,12 +64,19 @@ class Trading:
 
         if show_log:
             logger.info(f'Requested URL: {url} with query payload: {payload}')
-        response = requests.post(url, headers=self.headers, data=payload)
-
-        if response.status_code != 200:
-            raise ConnectionError(f"Tải dữ liệu không thành công: {response.status_code} - {response.reason}")
-
-        data = response.json()
+        
+        # Use centralized client.send_request instead of direct requests
+        data = client.send_request(
+            url=url,
+            headers=self.headers,
+            method="POST",
+            payload=json.loads(payload),
+            show_log=show_log,
+            proxy_list=self.proxy_config.proxy_list,
+            proxy_mode=self.proxy_config.proxy_mode,
+            request_mode=self.proxy_config.request_mode,
+            hf_proxy_url=self.proxy_config.hf_proxy_url
+        )
 
         # Initialize an empty list to hold all row dictionaries
         rows = []

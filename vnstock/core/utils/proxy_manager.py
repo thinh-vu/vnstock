@@ -286,6 +286,65 @@ class ProxyManager:
 
         return working, failed
 
+    def get_fresh_proxies(
+        self,
+        use_cache: bool = True,
+        auto_test: bool = True
+    ) -> List[str]:
+        """
+        Get list of working proxy addresses (protocol://ip:port).
+        
+        Args:
+            use_cache: Use existing proxies if available
+            auto_test: Test proxies before returning
+            
+        Returns:
+            List of proxy address strings
+        """
+        if not self.proxies or not use_cache:
+            self.fetch_proxies()
+            
+        if not self.proxies:
+            return []
+            
+        if auto_test:
+            working, _ = self.test_proxies(self.proxies)
+            self.proxies = working
+            return [str(p) for p in working]
+            
+        return [str(p) for p in self.proxies]
+
+    def set_custom_proxies(self, proxy_list: List[str]):
+        """
+        Set custom proxies from list of strings.
+        
+        Args:
+            proxy_list: List of proxy strings (e.g. 'http://1.2.3.4:80')
+        """
+        new_proxies = []
+        for p_str in proxy_list:
+            try:
+                # Basic parsing
+                if '://' in p_str:
+                    protocol, rest = p_str.split('://', 1)
+                else:
+                    protocol = 'http'
+                    rest = p_str
+                    
+                if ':' in rest:
+                    ip, port = rest.split(':')
+                    new_proxies.append(Proxy(
+                        protocol=protocol,
+                        ip=ip,
+                        port=int(port)
+                    ))
+            except Exception:
+                logger.warning(f"Invalid custom proxy format: {p_str}")
+                continue
+                
+        self.proxies = new_proxies
+        logger.info(f"Set {len(new_proxies)} custom proxies")
+
     def get_best_proxy(
         self,
         proxies: Optional[List[Proxy]] = None
@@ -304,6 +363,8 @@ class ProxyManager:
         if not proxies:
             return None
 
+        # Sort by speed (0 speed means unchecked or fast, usually we prioritize verified speed)
+        # Assuming speed is response time in ms, lower is better.
         return min(proxies, key=lambda p: p.speed)
 
     def print_proxies(self, proxies: Optional[List[Proxy]] = None):
@@ -333,3 +394,6 @@ class ProxyManager:
             )
 
         print()
+
+# Global proxy manager instance
+proxy_manager = ProxyManager()

@@ -83,7 +83,7 @@ class Company:
         Returns:
             Thông tin tổng quan dưới dạng DataFrame hoặc dict.
         """
-        url = f'{self.base_url}/{_ANALYSIS_URL}/v1/ticker/{self.symbol}/overview'
+        url = f'{self.base_url}/{_ANALYSIS_URL}/v1/company/{self.symbol}/overview'
         
         # Use centralized request handler
         data = client.send_request(

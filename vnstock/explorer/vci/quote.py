@@ -19,6 +19,7 @@ from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.client import send_request, ProxyConfig
 from vnstock.core.utils.transform import ohlc_to_df, intraday_to_df
+from vnstock.core.utils.lookback import get_start_date_from_lookback, interpret_lookback_length
 
 logger = get_logger(__name__)
 
@@ -53,7 +54,9 @@ class Quote:
         symbol,
         random_agent=False,
         proxy_config: Optional[ProxyConfig] = None,
-        show_log=True
+        show_log=True,
+        proxy_mode: Optional[str] = None,
+        proxy_list: Optional[list] = None
     ):
         self.symbol = validate_symbol(symbol)
         self.data_source = 'VCI'
@@ -66,9 +69,23 @@ class Quote:
         )
         self.interval_map = _INTERVAL_MAP
         self.show_log = show_log
-        self.proxy_config = (
-            proxy_config if proxy_config is not None else ProxyConfig()
-        )
+        
+        # Handle proxy configuration
+        if proxy_config is None:
+            # Create ProxyConfig from individual arguments
+            p_mode = proxy_mode if proxy_mode else 'try'
+            # If user asks for 'auto' or provides list, set request_mode to PROXY
+            req_mode = 'direct'
+            if proxy_mode == 'auto' or (proxy_list and len(proxy_list) > 0):
+                req_mode = 'proxy'
+                
+            self.proxy_config = ProxyConfig(
+                proxy_mode=p_mode,
+                proxy_list=proxy_list,
+                request_mode=req_mode
+            )
+        else:
+            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel('CRITICAL')
@@ -123,33 +140,57 @@ class Quote:
     @optimize_execution("VCI")
     def history(
         self,
-        start: str,
+        start: Optional[str] = None,
         end: Optional[str] = None,
         interval: Optional[str] = "1D",
         show_log: Optional[bool] = False,
         count_back: Optional[int] = None,
-        floating: Optional[int] = 2
+        floating: Optional[int] = 2,
+        length: Optional[Union[str, int]] = None
     ) -> pd.DataFrame:
         """
         Tải lịch sử giá của mã chứng khoán từ nguồn dữ liệu VCI.
 
         Tham số:
-            - start (bắt buộc): thời gian bắt đầu lấy dữ liệu,
-              có thể là ngày dạng string kiểu "YYYY-MM-DD" hoặc
-              "YYYY-MM-DD HH:MM:SS".
+            - start (tùy chọn): thời gian bắt đầu lấy dữ liệu.
+              Bắt buộc nếu không có length hoặc count_back.
             - end (tùy chọn): thời gian kết thúc lấy dữ liệu.
-              Mặc định là None, chương trình tự động lấy thời điểm
-              hiện tại.
-            - interval (tùy chọn): Khung thời gian trích xuất dữ liệu
-              giá lịch sử. Giá trị nhận: 1m, 5m, 15m, 30m, 1H, 1D, 1W,
-              1M. Mặc định là "1D".
-            - show_log (tùy chọn): Hiển thị thông tin log giúp debug
-              dễ dàng. Mặc định là False.
-            - count_back (tùy chọn): Số lượng dữ liệu trả về từ thời
-              điểm cuối.
-            - floating (tùy chọn): Số chữ số thập phân cho giá.
-              Mặc định là 2.
+              Mặc định là None (hiện tại).
+            - interval (tùy chọn): Khung thời gian. Mặc định "1D".
+            - length (tùy chọn): Khoảng thời gian phân tích (vd: '3M', 150, '150').
+              Nhận giá trị chuỗi (vd 3M), số ngày (int/str), hoặc số bars (vd '100b').
+            - count_back (tùy chọn): Số lượng nến (bars) cần lấy.
+            - show_log (tùy chọn): Hiển thị log.
+            - floating (tùy chọn): Số chữ số thập phân.
         """
+        # Calculate start if not provided
+        if start is None:
+            # Check if length defines bars
+            if length is not None:
+                bars_from_len, len_remainder = interpret_lookback_length(length)
+                if bars_from_len is not None:
+                    count_back = bars_from_len
+                    length = None # Consumed as bars
+                else:
+                    length = len_remainder
+            
+            if length is not None:
+                start = get_start_date_from_lookback(
+                    lookback_length=length,
+                    end_date=end
+                )
+            elif count_back is not None:
+                start = get_start_date_from_lookback(
+                    bars=count_back,
+                    interval=interval,
+                    end_date=end
+                )
+            else:
+                raise ValueError(
+                    "Tham số 'start' là bắt buộc nếu không cung cấp "
+                    "'length' (hoặc 'period') hoặc 'count_back'."
+                )
+
         # Validate inputs
         ticker, interval_key = self._input_validation(
             start,
@@ -213,22 +254,23 @@ class Quote:
         auto_count_back = 1000
         business_days = pd.bdate_range(start=start_time, end=end_time)
 
-        if count_back is None and end is not None:
+        if count_back is None:
             interval_mapped = interval_value
 
             if interval_mapped == "ONE_DAY":
                 # Count business days (excluding weekends)
                 auto_count_back = len(business_days) + 1
             elif interval_mapped == "ONE_HOUR":
-                # Business days * trading hours per day (6.5 hours)
-                auto_count_back = int(len(business_days) * 6.5 + 1)
+                # Business days * trading hours per day (5 hours for VN market: 9-11:30, 13-14:45 approx 5 bars of 1H)
+                auto_count_back = int(len(business_days) * 5 + 1)
             elif interval_mapped == "ONE_MINUTE":
-                # Business days * trading minutes per day (390 min)
-                auto_count_back = int(len(business_days) * 390 + 1)
+                # Business days * trading minutes per day.
+                # Morning: 9:00-11:30 (150m)
+                # Afternoon: 13:00-14:45 (105m)
+                # Total: 255 minutes
+                auto_count_back = int(len(business_days) * 255 + 1)
         else:
-            auto_count_back = (
-                count_back if count_back is not None else 1000
-            )
+            auto_count_back = count_back
 
         # Prepare request
         url = f'{self.base_url}chart/OHLCChart/gap-chart'
