@@ -1,3 +1,5 @@
+.DS_Store
+
 tests/report
 
 # Byte-compiled / optimized / DLL files
