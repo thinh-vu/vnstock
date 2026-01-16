@@ -153,8 +153,8 @@ class StockComponents(BaseComponent):
             )
 
         # Initialize source-specific components
-        if self.source in ['VCI', 'TCBS']:
-            self.listing = Listing(source='VCI')
+        if self.source in ['KBS', 'VCI', 'TCBS']:
+            self.listing = Listing(source='KBS')
             self.screener = Screener(source='TCBS')
             self.quote = Quote(self.symbol, self.source)
             self.trading = Trading(self.symbol, source=self.source)
