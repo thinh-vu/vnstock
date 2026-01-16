@@ -36,31 +36,34 @@ def register_user() -> bool:
     try:
         status = check_api_key_status()
         if status.get('has_api_key'):
-            print("\n✓ Bạn đã có API key được đăng ký")
-            change = input("Bạn muốn thay đổi API key? [y/N]: ").strip().lower()
+            # Show masked API key (first 4, last 4, with *** in middle)
+            api_key = status.get('api_key_preview', '')
+            if len(api_key) > 8:
+                masked_key = f"{api_key[:4]}***{api_key[-4:]}"
+            else:
+                masked_key = api_key[:8] + "***" if len(api_key) > 4 else "****"
+            
+            print(f"\n✓ API key: {masked_key}")
+            print(f"✓ Tier (Gói): {status.get('tier', 'unknown')}")
+            print(f"✓ Giới hạn (Limits): {status.get('limits', {})}")
+            
+            change = input("\nBạn muốn thay đổi API key? [y/N]: ").strip().lower()
             if change != 'y':
                 return True
     except Exception:
         pass
     
     print("""
-Để sử dụng vnstock với giới hạn cao hơn, bạn cần đăng ký API key.
+🚀 Đăng ký API key để tăng giới hạn sử dụng:
 
-Các gói sử dụng:
   • Khách (Guest): 20 requests/phút - không cần đăng ký
-  • Phiên bản cộng đồng (Community): 60 requests/phút - cần API key
-  • Thành viên tài trợ (Sponsor): 180-600 requests/phút
+  • Cộng đồng (Community): 60 requests/phút - đăng ký miễn phí
+  • Tài trợ (Sponsor): 180-600 requests/phút
 
-Để lấy API key miễn phí:
-  1. Truy cập: https://vnstocks.com/account
-  2. Đăng ký hoặc đăng nhập bằng Google
-  3. Tìm mục "API Key của bạn"
-  4. Sao chép API key
+📌 Đăng nhập Google để tạo tài khoản và lấy API key miễn phí tại: https://vnstocks.com/account
 """)
     
-    input("Nhấn Enter khi bạn đã sao chép API key...")
-    
-    # Get API key from user
+    # Get API key from user directly (no Enter step)
     max_attempts = 3
     for attempt in range(max_attempts):
         api_key = input("\nNhập API key của bạn: ").strip()
@@ -80,8 +83,15 @@ Các gói sử dụng:
         # Try to save API key
         try:
             if setup_api_key(api_key):
-                print("\n✓ Đăng ký thành công!")
-                print("  Bạn đang sử dụng Phiên bản cộng đồng (60 requests/phút)")
+                # Show masked API key after successful registration
+                if len(api_key) > 8:
+                    masked_key = f"{api_key[:4]}***{api_key[-4:]}"
+                else:
+                    masked_key = api_key[:8] + "***" if len(api_key) > 4 else "****"
+                
+                print(f"\n✓ API key đã được lưu thành công! {masked_key}")
+                print("✓ Bạn đang sử dụng Phiên bản cộng đồng (60 requests/phút)")
+                print("\n🎉 Đăng ký thành công!")
                 return True
         except Exception as e:
             logger.debug(f"Setup failed: {e}")
