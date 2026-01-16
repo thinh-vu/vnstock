@@ -5,6 +5,7 @@ Module quản lý các thông tin về giao dịch chứng khoán từ nguồn d
 import pandas as pd
 from typing import List, Dict, Optional
 from vnstock.core.utils import client
+from vnstock.core.utils.deprecation import deprecate_provider
 from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.logger import get_logger
@@ -15,6 +16,13 @@ from .const import _BASE_URL, _STOCKS_URL, _PRICE_BOARD_COLS_MAP, _PRICE_BOARD_S
 logger = get_logger(__name__)
 
 
+@deprecate_provider(
+    provider_name='TCBS',
+    version='3.4.0',
+    removal_version='3.5.0',
+    alternative='VCI',
+    reason='TCBS API is no longer publicly accessible as of December 15, 2024'
+)
 class Trading:
     """
     Truy xuất dữ liệu giao dịch của mã chứng khoán từ nguồn dữ liệu TCBS.

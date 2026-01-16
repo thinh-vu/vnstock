@@ -15,7 +15,6 @@ class APIKeyConfig:
     """API keys for various providers."""
 
     fmp: Optional[str] = None
-    xno: Optional[str] = None
     binance: Optional[str] = None
     dnse: Optional[str] = None
 
@@ -103,7 +102,7 @@ class VnstockConfig:
     cache: CacheConfig = field(default_factory=CacheConfig)
     log_level: str = "INFO"
     debug_mode: bool = False
-    default_source: str = "tcbs"
+    default_source: str = "kbs"
 
     def __post_init__(self):
         """Validate and load from environment after initialization."""
@@ -124,8 +123,6 @@ class VnstockConfig:
         # API Keys
         if os.getenv("VNSTOCK_FMP_API_KEY") and not self.api_keys.fmp:
             self.api_keys.fmp = os.getenv("VNSTOCK_FMP_API_KEY")
-        if os.getenv("VNSTOCK_XNO_API_KEY") and not self.api_keys.xno:
-            self.api_keys.xno = os.getenv("VNSTOCK_XNO_API_KEY")
         if os.getenv("VNSTOCK_BINANCE_API_KEY") and not self.api_keys.binance:
             self.api_keys.binance = os.getenv("VNSTOCK_BINANCE_API_KEY")
         if os.getenv("VNSTOCK_DNSE_API_KEY") and not self.api_keys.dnse:
@@ -192,7 +189,6 @@ class VnstockConfig:
         return {
             "api_keys": {
                 "fmp": self.api_keys.fmp,
-                "xno": self.api_keys.xno,
                 "binance": self.api_keys.binance,
                 "dnse": self.api_keys.dnse,
             },
@@ -233,7 +229,7 @@ class VnstockConfig:
             cache=cache,
             log_level=data.get("log_level", "INFO"),
             debug_mode=data.get("debug_mode", False),
-            default_source=data.get("default_source", "tcbs"),
+            default_source=data.get("default_source", "kbs"),
         )
 
 

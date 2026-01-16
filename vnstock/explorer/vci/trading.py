@@ -74,8 +74,7 @@ class Trading:
             show_log=show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
-            hf_proxy_url=self.proxy_config.hf_proxy_url
+            request_mode=self.proxy_config.request_mode
         )
 
         # Initialize an empty list to hold all row dictionaries

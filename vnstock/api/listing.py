@@ -29,17 +29,21 @@ class Listing(BaseAdapter):
     """
     def __init__(
         self,
-        source: str = "vci",
+        source: str = "kbs",
         random_agent: bool = False,
         show_log: bool = False
     ):
+        # Ensure explorer modules are loaded (lazy load to avoid deadlock)
+        from vnstock import _ensure_explorer_modules_loaded
+        _ensure_explorer_modules_loaded()
+        
         # Store parameters for later use
         self.source = source
         self.random_agent = random_agent
         self.show_log = show_log
         
         # Validate the source to only accept vci or msn
-        if source.lower() not in ["vci", "msn"]:
+        if source.lower() not in ["kbs", "vci", "msn"]:
             raise ValueError("Lớp Listing chỉ nhận giá trị tham số source là 'VCI' hoặc 'MSN'.")
         
         # BaseAdapter will discover vnstock.explorer.<real_source>.listing

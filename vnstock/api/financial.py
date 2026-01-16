@@ -31,6 +31,10 @@ class Finance(BaseAdapter):
         get_all: bool = True,
         show_log: bool = False
     ):
+        # Ensure explorer modules are loaded (lazy load to avoid deadlock)
+        from vnstock import _ensure_explorer_modules_loaded
+        _ensure_explorer_modules_loaded()
+        
         # Store parameters for later use
         self.source = source
         self.symbol = symbol if symbol else ""
@@ -39,7 +43,7 @@ class Finance(BaseAdapter):
         self.show_log = show_log
         
         # Validate the source to only accept vci or tcbs
-        if source.lower() not in ["vci", "tcbs"]:
+        if source.lower() not in ["kbs", "vci", "tcbs"]:
             raise ValueError("Lớp Finance chỉ nhận giá trị tham số source là 'VCI' hoặc 'TCBS'.")
         
         # BaseAdapter will discover vnstock.explorer.<real_source>.financial

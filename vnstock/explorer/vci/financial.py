@@ -189,8 +189,7 @@ class Finance:
             show_log=show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
-            hf_proxy_url=self.proxy_config.hf_proxy_url
+            request_mode=self.proxy_config.request_mode
         )
         
         data = response_data['data']['ListFinancialRatio']
@@ -250,8 +249,7 @@ class Finance:
             show_log=show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
-            hf_proxy_url=self.proxy_config.hf_proxy_url
+            request_mode=self.proxy_config.request_mode
         )
         
         # Extract relevant data

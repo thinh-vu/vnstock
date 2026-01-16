@@ -6,6 +6,7 @@ from typing import Dict, Optional, Union
 from datetime import datetime, timedelta
 from vnai import optimize_execution
 from vnstock.core.utils.interval import normalize_interval
+from vnstock.core.utils.deprecation import deprecate_provider
 from .const import (
     _BASE_URL, _STOCKS_URL, _FUTURE_URL, _INTERVAL_MAP,
     _OHLC_MAP, _OHLC_DTYPE, _INTRADAY_MAP, _INTRADAY_DTYPE,
@@ -36,10 +37,21 @@ _TIMEFRAME_MAP = {
 }
 
 
+@deprecate_provider(
+    provider_name='TCBS',
+    version='3.4.0',
+    removal_version='3.5.0',
+    alternative='VCI',
+    reason='TCBS API is no longer publicly accessible as of March 1, 2026'
+)
 class Quote:
     """
     TCBS data source for fetching stock market data, accommodating
     requests with large date ranges.
+    
+    .. deprecated:: 3.4.0
+        TCBS provider is deprecated and will be removed in version 3.5.0.
+        Use VCI provider instead.
     """
 
     def __init__(

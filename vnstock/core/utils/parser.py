@@ -7,11 +7,95 @@ import numpy as np
 from pytz import timezone
 from datetime import date, datetime, timedelta
 from typing import Dict, Union, Literal, Any, Optional
-from vnstock.core.config.const import UA
 from vnstock.core.utils.logger import get_logger
-from vnstock.constants import INDICES_INFO
 
 logger = get_logger(__name__)
+
+# Lazy import to avoid circular import
+_INDICES_INFO = None
+_UA = None
+
+def _get_indices_info():
+    """Lazy load INDICES_INFO to avoid circular import."""
+    global _INDICES_INFO
+    if _INDICES_INFO is None:
+        from vnstock.constants import INDICES_INFO as _ii
+        _INDICES_INFO = _ii
+    return _INDICES_INFO
+
+def _get_ua():
+    """Lazy load UA to avoid circular import."""
+    global _UA
+    if _UA is None:
+        from vnstock.core.config.const import UA as _ua
+        _UA = _ua
+    return _UA
+
+def get_asset_type(symbol: str) -> str:
+    """
+    Determine asset type based on provided security code.
+    Supports both legacy code format and new KRX format.
+    
+    Parameters:
+        - symbol (str): Security code or index symbol.
+    
+    Returns:
+        - 'index' if security code is an index symbol.
+        - 'stock' if security code is a stock symbol.
+        - 'derivative' if security code is a futures or options contract.
+        - 'bond' if security code is a government or corporate bond.
+        - 'coveredWarr' if security code is a covered warrant.
+    """
+    symbol = symbol.upper()
+    
+    # Standard market indices and HOSE managed indices
+    market_indices = {'VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'HNX30'}
+    # Combine with indices from constants
+    indices_info = _get_indices_info()
+    known_indices = market_indices.union(indices_info.keys())
+
+    if symbol in known_indices:
+        return 'index'
+    
+    # Stock symbols (assumed to have 3 characters)
+    elif len(symbol) == 3:
+        return 'stock'
+    
+    # New KRX derivative format (e.g., 41I1F4000)
+    krx_derivative_pattern = re.compile(r'^4[12][A-Z0-9]{2}[0-9A-HJ-NP-TV-W][1-9A-C]\d{3}$')
+    if krx_derivative_pattern.match(symbol):
+        return 'derivative'
+
+    # VN100 derivative patterns (e.g., VN100F1M, VN100F2M, VN100F1Q, VN100F2Q)
+    vn100_derivative_pattern = re.compile(r'^VN100F\d{1,2}[MQ]$')
+    if vn100_derivative_pattern.match(symbol):
+        return 'derivative'
+    
+    # For symbols that could be derivative or bond (length 7 or 9)
+    elif len(symbol) in [7, 9]:
+        # VN30 derivative patterns:
+        fm_pattern = re.compile(r'^VN30F\d{1,2}[MQ]$')
+        ym_pattern = re.compile(r'^VN30F\d{4}$')
+        
+        # Bond patterns:
+        # Government bond: e.g., GB05F2506 or GB10F2024
+        gov_bond_pattern = re.compile(r'^GB\d{2}F\d{4}$')
+        # Company bond: e.g., BAB122032; exclude those starting with VN30F.
+        comp_bond_pattern = re.compile(r'^(?!VN30F)[A-Z]{3}\d{6}$')
+        
+        if gov_bond_pattern.match(symbol) or comp_bond_pattern.match(symbol):
+            return 'bond'
+        elif fm_pattern.match(symbol) or ym_pattern.match(symbol):
+            return 'derivative'
+        else:
+            raise ValueError('Invalid derivative or bond symbol. Symbol must be in format of VN30F1M, VN30F2024, GB10F2024, or for company bonds, e.g., BAB122032')
+    
+    # Covered warrant symbols (assumed to have 8 characters)
+    elif len(symbol) == 8:
+        return 'coveredWarr'
+    
+    else:
+        raise ValueError('Invalid symbol. Your symbol format is not recognized!')
 
 def parse_timestamp(time_value):
     """
@@ -130,7 +214,8 @@ def get_asset_type(symbol: str) -> str:
     # Standard market indices and HOSE managed indices
     market_indices = {'VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'HNX30'}
     # Combine with indices from constants
-    known_indices = market_indices.union(INDICES_INFO.keys())
+    indices_info = _get_indices_info()
+    known_indices = market_indices.union(indices_info.keys())
 
     if symbol in known_indices:
         return 'index'
@@ -191,6 +276,86 @@ def camel_to_snake(name):
     output = output.replace('.', '_')
     return output
 
+def normalize_vietnamese_text_to_snake_case(text: str) -> str:
+    """
+    Convert Vietnamese text to ASCII-compatible snake_case identifier.
+    Useful for creating database-friendly column names from Vietnamese financial line items.
+    
+    Args:
+        text: Vietnamese text to normalize (typically English or Vietnamese)
+        
+    Returns:
+        Snake_case identifier suitable for database column names
+        
+    Examples:
+        >>> normalize_vietnamese_text_to_snake_case("1. Revenue")
+        'revenue'
+        >>> normalize_vietnamese_text_to_snake_case("Doanh thu bán hàng và cung cấp dịch vụ")
+        'doanh_thu_ban_hang_va_cung_cap_dich_vu'
+    """
+    if not text:
+        return ""
+    
+    # Remove numbering (e.g., "1. ", "I. ", "A. ")
+    text = re.sub(r'^[\d\w]+\.\s+', '', text)
+    
+    # Normalize Vietnamese diacritics to ASCII equivalents
+    nfd = unicodedata.normalize('NFD', text)
+    text = ''.join(c for c in nfd if unicodedata.category(c) != 'Mn')
+    
+    # Convert to lowercase
+    text = text.lower()
+    
+    # Replace spaces and special characters with underscore
+    text = re.sub(r'[\s\-/()]+', '_', text)
+    
+    # Remove consecutive underscores
+    text = re.sub(r'_+', '_', text)
+    
+    # Remove leading/trailing underscores
+    text = text.strip('_')
+    
+    return text
+
+def normalize_english_text_to_snake_case(text: str) -> str:
+    """
+    Convert English text to snake_case identifier.
+    Optimized for English financial line items (no Vietnamese diacritic handling).
+    
+    Args:
+        text: English text to normalize
+        
+    Returns:
+        Snake_case identifier suitable for database column names
+        
+    Examples:
+        >>> normalize_english_text_to_snake_case("1. Revenue")
+        'revenue'
+        >>> normalize_english_text_to_snake_case("Cost of goods sold")
+        'cost_of_goods_sold'
+        >>> normalize_english_text_to_snake_case("Net profit for the year")
+        'net_profit_for_the_year'
+    """
+    if not text:
+        return ""
+    
+    # Remove numbering (e.g., "1. ", "I. ", "A. ")
+    text = re.sub(r'^[\d\w]+\.\s+', '', text)
+    
+    # Convert to lowercase
+    text = text.lower()
+    
+    # Replace spaces and special characters with underscore
+    text = re.sub(r'[\s\-/()]+', '_', text)
+    
+    # Remove consecutive underscores
+    text = re.sub(r'_+', '_', text)
+    
+    # Remove leading/trailing underscores
+    text = text.strip('_')
+    
+    return text
+
 def flatten_data(json_data, parent_key='', sep='_'):
     """
     Flatten JSON data into standard dict format.
@@ -219,7 +384,8 @@ def last_n_days(n):
 def decd(byte_data):
     from cryptography.fernet import Fernet
     import base64
-    kb = UA['Chrome'].replace(' ', '').ljust(32)[:32].encode('utf-8')
+    ua = _get_ua()
+    kb = ua['Chrome'].replace(' ', '').ljust(32)[:32].encode('utf-8')
     kb64 = base64.urlsafe_b64encode(kb)
     cipher = Fernet(kb64)
     return cipher.decrypt(byte_data).decode('utf-8')
@@ -325,7 +491,6 @@ def vn30_abbrev_contract(full: str, today: date) -> str:
         raise ValueError(f"Sequence number {n} out of supported range.")
 
     return f"VN30F{n}{cycle}"
-
 
 def convert_time_flexible(
     time_value: Optional[Union[str, int, float]],

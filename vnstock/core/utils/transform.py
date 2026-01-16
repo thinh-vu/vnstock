@@ -55,57 +55,88 @@ def get_trading_date() -> datetime.date:
 def process_match_types(df, asset_type, source):
     """
     Process match_type labels with special handling for stock ATO/ATC transactions.
+    
+    For VCI:
+        - Replace 'b' with 'Buy' and 's' with 'Sell'.
+        - Missing values are represented by the string 'unknown'.
+    For MAS:
+        - Replace 'BUY' with 'Buy' and 'SELL' with 'Sell'.
+        - Fill in NaN values with 'unknown'.
+    For TCBS:
+        - Replace 'BU' with 'Buy' and 'SD' with 'Sell'.
+        - Missing values are assumed to be an empty string.
+    For KBS:
+        - Replace 'B' with 'Buy' and 'S' with 'Sell'.
+        - Missing values are assumed to be an empty string.
+    
+    Once basic replacements are done, if the asset type is 'stock' and missing
+    match_type values are present, the code will mark the ATO (at the earliest
+    morning transaction in the 9:13–9:17 window) and ATC (at the latest afternoon
+    transaction in the 14:43–14:47 window) within each trading day.
+    
+    Parameters:
+        df (DataFrame): The input DataFrame with a 'time' and 'match_type' column.
+        asset_type (str): The asset type (for example, 'stock').
+        source (str): The data source (e.g., 'VCI', 'MAS', 'TCBS', or 'KBS').
+        
+    Returns:
+        DataFrame: The modified DataFrame with updated match_type values.
     """
-    # Basic replacement - applies to all asset types
+    # --- Basic replacement and normalization ---
     if source == 'VCI':
         df['match_type'] = df['match_type'].replace({'b': 'Buy', 's': 'Sell'})
+    elif source == 'MAS':
+        df['match_type'] = df['match_type'].replace({'BUY': 'Buy', 'SELL': 'Sell'})
+        df['match_type'] = df['match_type'].fillna('unknown')
     elif source == 'TCBS':
         df['match_type'] = df['match_type'].replace({'BU': 'Buy', 'SD': 'Sell'})
+    elif source == 'KBS':
+        df['match_type'] = df['match_type'].replace({'B': 'Buy', 'S': 'Sell'})
     
-    # Only process ATO/ATC for stock assets
-    if asset_type == 'stock' and (
-        ('unknown' in df['match_type'].values and source == 'VCI') or 
-        ('' in df['match_type'].values and source == 'TCBS')
-    ):
-        # Sort by time to ensure correct order
+    # Determine the unknown value to check for based on the source
+    unknown_val = 'unknown' if source in ['VCI', 'MAS'] else ''
+    
+    # --- Process ATO/ATC labeling for stock assets ---
+    # Only run ATO/ATC logic if match_type contains missing values
+    if asset_type == 'stock' and (df['match_type'].eq(unknown_val).any() or df['match_type'].eq('').any()):
+        # Sort by time and add a temporary date column to group by trading day
         df = df.sort_values('time')
-        
-        # Create a date column for grouping by trading day
         df['date'] = df['time'].dt.date
-
-        # Process each trading day separately
-        for date in df['date'].unique():
-            day_mask = df['date'] == date
-            
-            # Create unknown mask based on source
-            if source == 'VCI':
-                unknown_mask = (df['match_type'] == 'unknown') & day_mask
-            else:  # TCBS
-                unknown_mask = (df['match_type'] == '') & day_mask
-            
-            unknown_indices = df[unknown_mask].index
-            
-            if len(unknown_indices) > 0:
-                # Morning session: Find transactions around 9:15 AM (9:13-9:17)
-                morning_mask = unknown_mask & (df['time'].dt.hour == 9) & (df['time'].dt.minute >= 13) & (df['time'].dt.minute <= 17)
-                morning_indices = df[morning_mask].index
-                
-                # Afternoon session: Find transactions around 2:45 PM (14:43-14:47)
-                afternoon_mask = unknown_mask & (df['time'].dt.hour == 14) & (df['time'].dt.minute >= 43) & (df['time'].dt.minute <= 47)
-                afternoon_indices = df[afternoon_mask].index
-                
-                # Label ATO for first morning session transaction
-                if len(morning_indices) > 0:
-                    ato_idx = df.loc[morning_indices, 'time'].idxmin()
-                    df.loc[ato_idx, 'match_type'] = 'ATO'
-                
-                # Label ATC for last afternoon session transaction
-                if len(afternoon_indices) > 0:
-                    atc_idx = df.loc[afternoon_indices, 'time'].idxmax()
-                    df.loc[atc_idx, 'match_type'] = 'ATC'
         
-        # Remove the temporary date column
-        df = df.drop(columns=['date'])
+        # Group by date and process each day
+        def process_day(day_df):
+            # Identify rows with missing match_type
+            unknown_df = day_df[day_df['match_type'] == unknown_val]
+            if unknown_df.empty:
+                return day_df
+
+            # Morning session: filter for transactions between 9:13 and 9:17
+            morning_df = unknown_df[
+                (unknown_df['time'].dt.hour == 9) &
+                (unknown_df['time'].dt.minute.between(13, 17))
+            ]
+            if not morning_df.empty:
+                # Set the earliest transaction time as ATO
+                min_idx = morning_df['time'].idxmin()
+                day_df.loc[min_idx, 'match_type'] = 'ATO'
+            
+            # Afternoon session: filter for transactions between 14:43 and 14:47
+            afternoon_df = unknown_df[
+                (unknown_df['time'].dt.hour == 14) &
+                (unknown_df['time'].dt.minute.between(43, 47))
+            ]
+            if not afternoon_df.empty:
+                # Set the latest transaction time as ATC
+                max_idx = afternoon_df['time'].idxmax()
+                day_df.loc[max_idx, 'match_type'] = 'ATC'
+            
+            return day_df
+        
+        # Apply the processing function to each trading day
+        df = df.groupby('date', group_keys=False).apply(process_day, include_groups=False)
+        # Drop date column if it exists
+        if 'date' in df.columns:
+            df.drop(columns=['date'], inplace=True)
     
     return df
 
@@ -203,7 +234,6 @@ def ohlc_to_df(
     df.source = source
 
     return df
-
 
 def intraday_to_df(
     data: List[Dict[str, Any]],
@@ -710,7 +740,6 @@ def drop_cols_by_pattern(df, patterns, regex=True, case_sensitive=False):
     
     # Return DataFrame with matched columns removed
     return df.drop(columns=cols_to_drop)
-
 
 def resample_ohlcv(df: pd.DataFrame,
                    interval: str,

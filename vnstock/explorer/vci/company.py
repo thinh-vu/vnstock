@@ -94,8 +94,7 @@ class Company:
             show_log=self.show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
-            hf_proxy_url=self.proxy_config.hf_proxy_url
+            request_mode=self.proxy_config.request_mode
         )
         
         return response_data['data']

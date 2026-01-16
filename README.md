@@ -63,7 +63,7 @@ Tham gia ngay cộng đồng Vnstock để giao lưu, chia sẻ kinh nghiệm v�
   Giá cổ phiếu thời gian thực, dữ liệu lịch sử, chỉ số tài chính và thông tin doanh nghiệp của các mã niêm yết.
 
 3. **Bộ lọc cổ phiếu**  
-  Hỗ trợ lọc cổ phiếu theo tiêu chí tài chính, kỹ thuật hoặc thị trường để phục vụ phân tích.
+  Hỗ trợ lọc cổ phiếu theo tiêu chí tài chính, kỹ thuật hoặc thị trường để phục vụ phân tích. (tạm thời không hoạt động)
 
 4. **Chỉ số thị trường (Index)**  
   Theo dõi hiệu suất các chỉ số trong nước (VNIndex, HNXIndex, UPCOM) và một số chỉ số quốc tế.
@@ -179,6 +179,7 @@ Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đ�
 
 
 # VII. ⏱️ Cập nhật đáng chú ý
+- 16-01-2026: Cập nhật phiên bản trải nghiệm `3.4.0` tại Github (chưa phát hành chính thức qua PyPI)
 - 20-03-2025: Ra mắt phiên bản Vnstock `3.2.0` bổ sung thêm tính năng truy xuất dữ liệu Bộ lọc cổ phiếu.
 - 02-01-2025: Vnstock3 chính thức sử dụng tên nhận diện gói thư viện là vnstock tại trang phân phối chính thức pypi.org. Chi tiết [tại đây](https://vnstocks.com/blog/chuyen-doi-sang-vnstock3-truoc-2025)
 - 02-11-2024: Ra mắt Vnstock3 phiên bản 3.0.9. Chi tiết: [tại đây](https://vnstocks.com/docs/tai-lieu/lich-su-phien-ban#02-11-2024)
@@ -232,7 +233,7 @@ Giao diện làm việc chính cho phép chuyển đổi nguồn và chỉ cần
 
 ```
 from vnstock import Vnstock
-stock = Vnstock().stock(symbol='VCI', source='VCI')
+stock = Vnstock().stock(symbol='VCI', source='KBS')
 stock.quote.history(start='2020-01-01', end='2024-05-25')
 ```
 
@@ -255,7 +256,7 @@ from vnstock.explorer.vci import Listing, Quote, Company, Finance, Trading
 hoặc 
 
 ```python
-from vnstock.explorer.tcbs import Quote, Company, Finance, Trading, Screener
+from vnstock.explorer.kbs import Quote, Company, Finance, Trading, Screener
 ```
 
 ## 8.3. Danh sách niêm yết
@@ -273,16 +274,16 @@ listing.all_symbols()
 ### Giá lịch sử
 
 ```python
-from vnstock import Vnstock
-stock = Vnstock().stock(symbol='ACB', source='VCI')
-stock.quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
+from vnstock import Quote
+quote = Quote(symbol='ACB', source='KBS')
+quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
 ```
 
 hoặc
 
 ```python
 from vnstock import Quote
-quote = Quote(symbol='ACB', source='VCI')
+quote = Quote(symbol='ACB', source='KBS')
 quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
 ```
 
@@ -291,7 +292,7 @@ quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
 > Dữ liệu giao dịch khớp lệnh theo từng tick
 
 ```python
-stock.quote.intraday(symbol='ACB', page_size=10_000, show_log=False)
+quote.intraday(symbol='ACB', page_size=10_000, show_log=False)
 ```
 
 Chi tiết vui lòng tham khảo tài liệu và Demo Notebook.
@@ -300,14 +301,14 @@ Chi tiết vui lòng tham khảo tài liệu và Demo Notebook.
 
 ```python
 from vnstock import Trading
-Trading(source='VCI').price_board(['VCB','ACB','TCB','BID'])
+Trading(source='KBS').price_board(['VCB','ACB','TCB','BID'])
 ```
 
 ## 8.7. Truy xuất thông tin công ty
 
 ```python
-from vnstock import Vnstock
-company = Vnstock().stock(symbol='ACB', source='VCI').company
+from vnstock import Company
+company = Company(symbol='ACB', source='KBS')
 company.overview()
 ```
 
@@ -315,30 +316,31 @@ hoặc
 
 ```python
 from vnstock import Company
-company = Company(symbol='ACB', source='VCI')
+company = Company(symbol='ACB', source='KBS')
 company.overview()
 ```
 
 ## 8.8. Truy xuất báo cáo tài chính
 
 ```python
-from vnstock import Vnstock
-stock = Vnstock().stock(symbol='VCI', source='VCI')
+from vnstock import Finance
+finance = Finance(symbol='VCI', source='KBS')
 # Bảng cân đối kế toán - năm
-stock.finance.balance_sheet(period='year', lang='vi', dropna=True)
+finance.balance_sheet(period='year', lang='vi', dropna=True)
 # Bảng cân đối kế toán - quý
-stock.finance.balance_sheet(period='quarter', lang='en', dropna=True)
+finance.balance_sheet(period='quarter', lang='en', dropna=True)
 # Kết quả hoạt động kinh doanh
-stock.finance.income_statement(period='year', lang='vi', dropna=True)
+finance.income_statement(period='year', lang='vi', dropna=True)
 # Lưu chuyển tiền tệ
-stock.finance.cash_flow(period='year', dropna=True)
+finance.cash_flow(period='year', dropna=True)
 # Chỉ số tài chính
-stock.finance.ratio(period='year', lang='vi', dropna=True)
+finance.ratio(period='year', lang='vi', dropna=True)
 ```
 
 ## 8.9. Bộ lọc cổ phiếu
 
 ```python
+# Tạm thời không hoạt động do thay đổi API từ TCBS (không còn hỗ trợ code này)
 from vnstock import Screener
 stock.screener.stock(params={"exchangeName": "HOSE,HNX,UPCOM"}, limit=1700)
 ```
@@ -378,7 +380,7 @@ sjc_gold_price()
 
 ```python
 # Biến ratio_df lưu giá trị của phép tính vào bộ nhớ
-ratio_df = stock.finance.ratio(period='year', lang='vi', dropna=True)
+ratio_df = finance.ratio(period='year', lang='vi', dropna=True)
 
 # Xuất dữ liệu ra Excel
 ratio_df.to_excel('/nơi_lưu_file_của_bạn/tên_file-ratio_df.xlsx`, index=False')
@@ -610,17 +612,7 @@ pip install git+https://github.com/thinh-vu/vnstock.git
 
 You can import Vnstock into your Python environment using Jupyter Notebook or any Python console. There are four supported methods:
 
-### 8.2.1. Import via Unified Interface
-
-This is the primary method for loading the library, allowing you to define the data source once and reuse across functions. Ideal for analyzing a single stock with consistent settings:
-
-```python
-from vnstock import Vnstock
-stock = Vnstock().stock(symbol='VCI', source='VCI')
-stock.quote.history(start='2020-01-01', end='2024-05-25')
-```
-
-### 8.2.2. Import Main Functional Classes
+### 8.2.1. Import Main Functional Classes
 
 Load from core modules that support dynamic switching between data providers:
 
@@ -628,7 +620,7 @@ Load from core modules that support dynamic switching between data providers:
 from vnstock import Listing, Quote, Company, Finance, Trading, Screener 
 ```
 
-### 8.2.3. Import from Specific Data Providers
+### 8.2.2. Import from Specific Data Providers
 
 For advanced users needing fixed data sources. Refer to the [source code](https://github.com/thinh-vu/vnstock/tree/main/vnstock/explorer) for details:
 
@@ -661,16 +653,16 @@ listing.all_symbols()
 ### Historical Prices
 
 ```python
-from vnstock import Vnstock
-stock = Vnstock().stock(symbol='ACB', source='VCI')
-stock.quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
+from vnstock import Quote 
+quote = Quote(symbol='ACB', source='KBS')
+quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
 ```
 
 Or use:
 
 ```python
 from vnstock import Quote
-quote = Quote(symbol='ACB', source='VCI')
+quote = Quote(symbol='ACB', source='KBS')
 quote.history(start='2024-01-01', end='2025-03-19', interval='1D')
 ```
 
@@ -692,7 +684,7 @@ Get real-time quotes for multiple tickers:
 
 ```python
 from vnstock import Trading
-Trading(source='VCI').price_board(['VCB','ACB','TCB','BID'])
+Trading(source='KBS').price_board(['VCB','ACB','TCB','BID'])
 ```
 
 ---
@@ -700,8 +692,8 @@ Trading(source='VCI').price_board(['VCB','ACB','TCB','BID'])
 ## 8.7 Company Information
 
 ```python
-from vnstock import Vnstock
-company = Vnstock().stock(symbol='ACB', source='VCI').company
+from vnstock import Company
+company = Company(symbol='ACB', source='KBS')
 company.overview()
 ```
 
@@ -709,7 +701,7 @@ Or:
 
 ```python
 from vnstock import Company
-company = Company(symbol='ACB', source='VCI')
+company = Company(symbol='ACB', source='KBS')
 company.overview()
 ```
 
@@ -718,23 +710,23 @@ company.overview()
 ## 8.8 Financial Reports
 
 ```python
-from vnstock import Vnstock
-stock = Vnstock().stock(symbol='VCI', source='VCI')
+from vnstock import Finance
+finance = Finance(symbol='VCI', source='KBS')
 
 # Balance Sheet - yearly
-stock.finance.balance_sheet(period='year', lang='vi', dropna=True)
+finance.balance_sheet(period='year', lang='vi', dropna=True)
 
 # Balance Sheet - quarterly
-stock.finance.balance_sheet(period='quarter', lang='en', dropna=True)
+finance.balance_sheet(period='quarter', lang='en', dropna=True)
 
 # Income Statement
-stock.finance.income_statement(period='year', lang='vi', dropna=True)
+finance.income_statement(period='year', lang='vi', dropna=True)
 
 # Cash Flow
-stock.finance.cash_flow(period='year', dropna=True)
+finance.cash_flow(period='year', dropna=True)
 
 # Financial Ratios
-stock.finance.ratio(period='year', lang='vi', dropna=True)
+finance.ratio(period='year', lang='vi', dropna=True)
 ```
 
 ---
@@ -789,7 +781,7 @@ sjc_gold_price()
 
 ```python
 # Save ratio data to memory
-ratio_df = stock.finance.ratio(period='year', lang='vi', dropna=True)
+ratio_df = finance.ratio(period='year', lang='vi', dropna=True)
 
 # Export to Excel
 ratio_df.to_excel('/your_save_path/ratio_df.xlsx', index=False)

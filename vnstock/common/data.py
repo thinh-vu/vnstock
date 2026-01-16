@@ -12,19 +12,48 @@ from functools import lru_cache
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from vnstock.core.utils.logger import get_logger
-from vnstock.explorer.msn.const import (
-    _CURRENCY_ID_MAP,
-    _GLOBAL_INDICES,
-    _CRYPTO_ID_MAP,
-)
-from vnstock.core.utils.parser import get_asset_type
 
 logger = get_logger(__name__)
+
+# Lazy import to avoid circular import
+_get_asset_type = None
+
+def _ensure_get_asset_type():
+    """Lazy load get_asset_type to avoid circular import."""
+    global _get_asset_type
+    if _get_asset_type is None:
+        from vnstock.core.utils.parser import get_asset_type as _gat
+        _get_asset_type = _gat
+    return _get_asset_type
+
+# Lazy import to avoid circular import deadlock
+_MSN_CONST_LOADED = False
+_CURRENCY_ID_MAP = {}
+_GLOBAL_INDICES = {}
+_CRYPTO_ID_MAP = {}
+
+def _load_msn_const():
+    """Lazy load MSN constants to avoid circular import."""
+    global _MSN_CONST_LOADED, _CURRENCY_ID_MAP, _GLOBAL_INDICES, _CRYPTO_ID_MAP
+    if _MSN_CONST_LOADED:
+        return
+    try:
+        from vnstock.explorer.msn.const import (
+            _CURRENCY_ID_MAP as _CURR,
+            _GLOBAL_INDICES as _GLOB,
+            _CRYPTO_ID_MAP as _CRYPT,
+        )
+        _CURRENCY_ID_MAP.update(_CURR)
+        _GLOBAL_INDICES.update(_GLOB)
+        _CRYPTO_ID_MAP.update(_CRYPT)
+        _MSN_CONST_LOADED = True
+    except Exception as e:
+        logger.debug(f"Failed to load MSN constants: {e}")
 
 
 class Config:
     """Global configuration for data layer."""
-    DEFAULT_SOURCE = "VCI"
+    DEFAULT_SOURCE = "KBS"
     DEFAULT_TIMEOUT = 30  # seconds
     DEFAULT_RETRIES = 3
     CACHE_SIZE = 128
@@ -80,7 +109,7 @@ class BaseComponent:
 class StockComponents(BaseComponent):
     """Unified access to stock data and related information."""
 
-    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN", "FMP"]
+    SUPPORTED_SOURCES = ["KBS", "VCI", "TCBS", "MSN", "FMP"]
 
     def __init__(self, symbol: str, source: str = Config.DEFAULT_SOURCE,
                  show_log: bool = True):
@@ -102,7 +131,8 @@ class StockComponents(BaseComponent):
         if self.source == 'FMP':
             self.asset_type = 'stock'
         else:
-            self.asset_type = get_asset_type(self.symbol)
+            get_asset_type_func = _ensure_get_asset_type()
+            self.asset_type = get_asset_type_func(self.symbol)
 
         if not show_log:
             logger.setLevel(logging.CRITICAL)
@@ -155,7 +185,7 @@ class StockComponents(BaseComponent):
 class Quote(BaseComponent):
     """Historical and real-time price data."""
 
-    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN", "FMP"]
+    SUPPORTED_SOURCES = ["KBS", "VCI", "TCBS", "MSN", "FMP"]
 
     def __init__(self, symbol: str, source: str = Config.DEFAULT_SOURCE):
         super().__init__(symbol, source)
@@ -181,6 +211,7 @@ class Quote(BaseComponent):
     def history(self, symbol: Optional[str] = None, **kwargs):
         """Fetch historical price data."""
         if self.source == "MSN":
+            _load_msn_const()
             symbol_map = {
                 **_CURRENCY_ID_MAP,
                 **_GLOBAL_INDICES,
@@ -214,7 +245,7 @@ class Quote(BaseComponent):
 class Listing(BaseComponent):
     """Symbol listing and grouping data."""
 
-    SUPPORTED_SOURCES = ["VCI", "MSN", "FMP"]
+    SUPPORTED_SOURCES = ["KBS", "VCI", "MSN", "FMP"]
 
     def __init__(self, source: str = Config.DEFAULT_SOURCE):
         # Don't need symbol for listing data
@@ -274,7 +305,7 @@ class Listing(BaseComponent):
 class Trading(BaseComponent):
     """Real-time trading data and market board information."""
 
-    SUPPORTED_SOURCES = ["VCI", "TCBS"]
+    SUPPORTED_SOURCES = ["KBS", "VCI", "TCBS"]
 
     def __init__(self, symbol: Optional[str] = 'VN30F1M',
                  source: str = Config.DEFAULT_SOURCE):
@@ -303,7 +334,7 @@ class Trading(BaseComponent):
 class Company(BaseComponent):
     """Company profile, management, ownership information."""
 
-    SUPPORTED_SOURCES = ["TCBS", "VCI", "FMP"]
+    SUPPORTED_SOURCES = ["KBS", "TCBS", "VCI", "FMP"]
 
     def __init__(self, symbol: Optional[str] = 'ACB',
                  source: str = "TCBS"):
@@ -384,7 +415,7 @@ class Company(BaseComponent):
 class Finance(BaseComponent):
     """Financial statements and ratios."""
 
-    SUPPORTED_SOURCES = ["TCBS", "VCI", "FMP"]
+    SUPPORTED_SOURCES = ["KBS", "TCBS", "VCI", "FMP"]
     SUPPORTED_PERIODS = ["quarter", "annual"]
 
     def __init__(
@@ -567,6 +598,7 @@ class MSNComponents:
             raise ValueError("MSN components only support MSN source")
 
         # Map symbol to MSN symbol ID if needed
+        _load_msn_const()
         symbol_map = {
             **_CURRENCY_ID_MAP,
             **_GLOBAL_INDICES,

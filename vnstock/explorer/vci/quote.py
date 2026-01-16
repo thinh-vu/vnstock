@@ -290,8 +290,7 @@ class Quote:
             show_log=show_log if show_log is not None else False,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
-            hf_proxy_url=self.proxy_config.hf_proxy_url
+            request_mode=self.proxy_config.request_mode
         )
 
         # Debug: log response structure
@@ -415,8 +414,7 @@ class Quote:
             show_log=show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
-            hf_proxy_url=self.proxy_config.hf_proxy_url
+            request_mode=self.proxy_config.request_mode
         )
 
         # Ensure data is a list
@@ -480,8 +478,7 @@ class Quote:
             show_log=show_log if show_log is not None else False,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
-            hf_proxy_url=self.proxy_config.hf_proxy_url
+            request_mode=self.proxy_config.request_mode
         )
 
         # Process the data to DataFrame

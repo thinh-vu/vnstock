@@ -42,12 +42,13 @@ class ProviderRegistry:
             provider_type (str): Type của provider
                                  (quote, company, financial, etc.)
             source_name (str): Tên nguồn dữ liệu
-                              (vci, fmp, xno, tcbs, msn, etc.)
+                              (vci, fmp, tcbs, msn, kbs, etc.)
             provider_class (Type): Class của provider
             
         Ví dụ:
             ProviderRegistry.register('quote', 'fmp', FMPQuote)
             ProviderRegistry.register('quote', 'vci', VCIQuote)
+            ProviderRegistry.register('quote', 'kbs', KBSQuote)
         """
         key = (provider_type, source_name.lower())
         cls._registry[key] = provider_class

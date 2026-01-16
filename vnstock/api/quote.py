@@ -36,7 +36,7 @@ class Quote(BaseAdapter):
     """
     def __init__(
         self,
-        source: str = DataSources.VCI,
+        source: str = DataSources.KBS,
         symbol: str = "",
         random_agent: bool = False,
         show_log: bool = False
@@ -51,6 +51,10 @@ class Quote(BaseAdapter):
             random_agent (bool): Use random user agent for requests. Sử dụng user agent ngẫu nhiên cho các yêu cầu.
             show_log (bool): Show log messages. Hiển thị thông báo nhật ký.
         """
+        # Ensure explorer modules are loaded (lazy load to avoid deadlock)
+        from vnstock import _ensure_explorer_modules_loaded
+        _ensure_explorer_modules_loaded()
+        
         # Store parameters for later use
         self.source = source
         self.symbol = symbol if symbol else ""

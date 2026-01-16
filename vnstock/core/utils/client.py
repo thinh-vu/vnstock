@@ -1,4 +1,3 @@
-
 """
 API client utilities for vnstock data sources.
 
@@ -9,7 +8,6 @@ selection modes (try, rotate, random, single).
 Functions:
 - send_request: interface for all modes of sending requests
 - send_request_direct: send request directly
-- send_request_hf_proxy: send request via Hugging Face proxy
 - send_proxy_request: send request via standard proxy
 """
 
@@ -35,7 +33,6 @@ class ProxyConfig(BaseModel):
     proxy_list: Optional[List[str]] = None
     proxy_mode: 'ProxyMode' = 'try'
     request_mode: 'RequestMode' = 'direct'
-    hf_proxy_url: Optional[str] = None
 
 
 logger = get_logger(__name__)
@@ -48,6 +45,7 @@ class ProxyMode(Enum):
     - ROTATE: Rotate proxy after each call
     - RANDOM: Select random proxy for each call
     - SINGLE: Always use first proxy
+    - AUTO: Auto-fetch proxies if none provided
     """
     TRY = "try"
     ROTATE = "rotate"
@@ -61,21 +59,14 @@ class RequestMode(Enum):
     Request sending modes:
     - DIRECT: Send directly without proxy
     - PROXY: Send via standard proxy
-    - HF_PROXY: Send via Hugging Face proxy
     """
     DIRECT = "direct"
     PROXY = "proxy"
-    HF_PROXY = "hf_proxy"
 
 
 # Global variable to track current proxy index for ROTATE mode
 _current_proxy_index = 0
 
-# List of Hugging Face proxy URLs (can be extended)
-HF_PROXY_URLS = [
-    "https://YOUR_SPACE_NAME.hf.space/proxy",
-    # Add other HF proxies if needed
-]
 
 def build_proxy_dict(proxy_url: str) -> Dict[str, str]:
     """
@@ -116,28 +107,6 @@ def get_proxy_by_mode(proxy_list: List[str], mode: ProxyMode) -> str:
     else:  # TRY mode
         return proxy_list[0]
 
-def create_hf_proxy_payload(
-    url: str, headers: dict, method: str = "GET",
-    payload: Optional[dict] = None
-) -> dict:
-    """
-    Create payload to send via Hugging Face proxy.
-    
-    Args:
-        url (str): Endpoint URL to access
-        headers (dict): Headers for request
-        method (str): HTTP method
-        payload: Data to send
-        
-    Returns:
-        dict: Payload to send to HF proxy
-    """
-    return {
-        "url": url,
-        "headers": headers,
-        "method": method,
-        "payload": payload
-    }
 
 
 def send_request(
@@ -151,7 +120,6 @@ def send_request(
     proxy_list: Optional[List[str]] = None,
     proxy_mode: Union[ProxyMode, str] = ProxyMode.TRY,
     request_mode: Union[RequestMode, str] = RequestMode.DIRECT,
-    hf_proxy_url: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Central interface for all request sending modes.
@@ -171,7 +139,6 @@ def send_request(
           (for PROXY mode)
         proxy_mode (Union[ProxyMode, str]): Proxy usage mode
         request_mode (Union[RequestMode, str]): Request sending mode
-        hf_proxy_url (Optional[str]): URL of Hugging Face proxy
         
     Returns:
         Dict[str, Any]: Returned JSON data
@@ -198,52 +165,7 @@ def send_request(
         if payload:
             logger.info(f"Payload: {payload}")
     # Handle different request modes
-    if request_mode == RequestMode.HF_PROXY:
-        # Send via Hugging Face proxy
-        if proxy_mode == ProxyMode.TRY and len(HF_PROXY_URLS) > 1:
-            # Try each HF proxy sequentially until successful
-            last_exception = None
-            for hf_url in HF_PROXY_URLS:
-                try:
-                    if show_log:
-                        logger.info(f"Trying HF proxy: {hf_url}")
-                    return send_request_hf_proxy(
-                        url, headers, method, params, payload,
-                        timeout, hf_url
-                    )
-                except ConnectionError as e:
-                    last_exception = e
-                    if show_log:
-                        logger.warning(f"HF proxy {hf_url} failed: {e}")
-                    continue
-            hf_proxy_links = '\n'.join([f"- {url}"
-                                        for url in HF_PROXY_URLS])
-            raise ConnectionError(
-                "All Hugging Face proxies failed.\n"
-                "HF proxy may be in sleep mode due to inactivity.\n"
-                "Please click one of the links below to activate "
-                "the HF proxy app, wait 5-10 seconds, then retry.\n"
-                f"\nTried proxies:\n{hf_proxy_links}\n"
-                f"\nLast error: {last_exception}"
-            )
-
-        else:
-            # Select HF proxy by mode
-            if len(HF_PROXY_URLS) > 1:
-                selected_hf_proxy = get_proxy_by_mode(
-                    HF_PROXY_URLS, proxy_mode
-                )
-            else:
-                selected_hf_proxy = (
-                    hf_proxy_url or HF_PROXY_URLS[0]
-                )
-            if show_log:
-                logger.info(f"Using HF proxy: {selected_hf_proxy}")
-            return send_request_hf_proxy(
-                url, headers, method, params, payload, timeout,
-                selected_hf_proxy
-            )
-    elif request_mode == RequestMode.PROXY:
+    if request_mode == RequestMode.PROXY:
         # Send via standard proxy
         if proxy_mode == ProxyMode.AUTO and not proxy_list:
             # Auto-fetch proxies if none provided
@@ -309,58 +231,6 @@ def send_request(
             proxies=None
         )
 
-def send_request_hf_proxy(
-    url: str,
-    headers: Dict[str, str],
-    method: str = "GET",
-    params: Optional[Dict] = None,
-    payload: Optional[Union[Dict, str]] = None,
-    timeout: int = 30,
-    hf_proxy_url: Optional[str] = None
-) -> Dict[str, Any]:
-    """
-    Send request via Hugging Face proxy.
-    
-    Args:
-        url (str): Endpoint URL to access
-        headers (Dict[str, str]): Headers for request
-        method (str): "GET" or "POST"
-        params (Optional[Dict]): Query parameters for GET
-        payload (Optional[Union[Dict, str]]): Data to send (POST)
-        timeout (int): Timeout in seconds
-        hf_proxy_url (Optional[str]): URL of Hugging Face proxy
-        
-    Returns:
-        Dict[str, Any]: Returned JSON data
-    """
-    if not hf_proxy_url:
-        hf_proxy_url = HF_PROXY_URLS[0]
-    # Handle query parameters for GET
-    target_url = url
-    if params and method.upper() == "GET":
-        query_string = "&".join([f"{k}={v}"
-                                 for k, v in params.items()])
-        target_url = f"{url}?{query_string}"
-    # Create payload for HF proxy
-    hf_payload = create_hf_proxy_payload(
-        url=target_url,
-        headers=headers,
-        method=method,
-        payload=payload
-    )
-    # Headers for request to HF proxy
-    hf_headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
-    # Send request to HF proxy using POST
-    return send_request_direct(
-        url=hf_proxy_url,
-        headers=hf_headers,
-        method="POST",
-        payload=hf_payload,
-        timeout=timeout
-    )
 
 def send_request_direct(
     url: str,
@@ -478,21 +348,4 @@ def send_proxy_request(
     )
 
 
-def send_hf_proxy_request(
-    url: str, headers: Dict[str, str], **kwargs
-):
-    """
-    Send request via Hugging Face proxy.
-    
-    Args:
-        url (str): Endpoint URL
-        headers (Dict[str, str]): Headers for request
-        **kwargs: Additional parameters for send_request
-        
-    Returns:
-        Dict[str, Any]: Returned JSON data
-    """
-    return send_request(
-        url, headers, request_mode=RequestMode.HF_PROXY, **kwargs
-    )
 

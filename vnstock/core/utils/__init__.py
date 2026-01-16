@@ -49,7 +49,6 @@ from .client import (
     send_request,
     send_direct_request,
     send_proxy_request,
-    send_hf_proxy_request,
     ProxyMode,
     RequestMode,
     ProxyConfig,
@@ -64,6 +63,23 @@ from .env import (
     get_username,
     get_cwd,
     get_path_delimiter,
+)
+
+# Deprecation utilities
+from .deprecation import (
+    deprecated,
+    deprecate_provider,
+    warn_deprecated,
+    get_deprecation_info,
+    list_deprecated_features,
+    DeprecationRegistry,
+)
+
+# Authentication utilities
+from .auth import (
+    register_user,
+    change_api_key,
+    check_status,
 )
 
 __all__ = [
@@ -102,7 +118,6 @@ __all__ = [
     'send_request',
     'send_direct_request',
     'send_proxy_request',
-    'send_hf_proxy_request',
     'ProxyMode',
     'RequestMode',
     'ProxyConfig',
@@ -114,4 +129,15 @@ __all__ = [
     'get_username',
     'get_cwd',
     'get_path_delimiter',
+    # Deprecation
+    'deprecated',
+    'deprecate_provider',
+    'warn_deprecated',
+    'get_deprecation_info',
+    'list_deprecated_features',
+    'DeprecationRegistry',
+    # Authentication
+    'register_user',
+    'change_api_key',
+    'check_status',
 ]

@@ -23,11 +23,15 @@ class Trading(BaseAdapter):
     """
     def __init__(
         self,
-        source: str = "vci",
+        source: str = "kbs",
         symbol: str = None,
         random_agent: bool = False,
         show_log: bool = False
     ):
+        # Ensure explorer modules are loaded (lazy load to avoid deadlock)
+        from vnstock import _ensure_explorer_modules_loaded
+        _ensure_explorer_modules_loaded()
+        
         # Store parameters for later use
         self.source = source
         self.symbol = symbol if symbol else ""
@@ -35,7 +39,7 @@ class Trading(BaseAdapter):
         self.show_log = show_log
         
         # Validate to accept vci, tcbs as source
-        if source.lower() not in ["vci", "tcbs"]:
+        if source.lower() not in ["kbs", "vci", "tcbs"]:
             raise ValueError("Lớp Trading chỉ nhận giá trị tham số source là 'VCI' hoặc 'TCBS'.")
         
         super().__init__(

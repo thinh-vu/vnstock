@@ -37,8 +37,8 @@ class DataCategory(str, Enum):
 
 class ProviderType(str, Enum):
     """Type of data provider."""
-    SCRAPING = "scraping"  # Web scraping sources (VCI, TCBS, MSN)
-    API = "api"            # REST API partners (FMP, XNO, Binance, DNSE)
+    SCRAPING = "scraping"  # Web scraping sources (VCI, TCBS, MSN, KBS)
+    API = "api"            # REST API partners (FMP, Binance, DNSE)
 
 
 class MarketType(str, Enum):
@@ -92,13 +92,13 @@ class DataSource(str, Enum):
     Unified from legacy DataSources in constants.py.
     Maps to provider names in registry system.
     """
+    KBS = "kbs"
     VCI = "vci"
     TCBS = "tcbs"
     MSN = "msn"
     DNSE = "dnse"
     BINANCE = "binance"
     FMP = "fmp"
-    XNO = "xno"
     FMARKET = "fmarket"  # Fund market
     
     @classmethod

@@ -13,8 +13,7 @@ from vnstock.common.data import (
     StockComponents,
     MSNComponents,
     Fund,
-)
-from vnstock.explorer.msn.const import (
+    _load_msn_const,
     _CURRENCY_ID_MAP,
     _GLOBAL_INDICES,
     _CRYPTO_ID_MAP,
@@ -41,14 +40,9 @@ class Vnstock:
         >>> djia = stock.world_index('DJI')  # Dow Jones
     """
     
-    SUPPORTED_SOURCES = ["VCI", "TCBS", "MSN"]
-    msn_symbol_map = {
-        **_CURRENCY_ID_MAP,
-        **_GLOBAL_INDICES,
-        **_CRYPTO_ID_MAP,
-    }
+    SUPPORTED_SOURCES = ["KBS", "VCI", "TCBS", "MSN"]
 
-    def __init__(self, symbol: Optional[str] = None, source: str = "VCI",
+    def __init__(self, symbol: Optional[str] = None, source: str = "KBS",
                  show_log: bool = True):
         """
         Initialize Vnstock client.
@@ -76,6 +70,16 @@ class Vnstock:
         
         if not show_log:
             logger.setLevel(logging.CRITICAL)
+    
+    @property
+    def msn_symbol_map(self):
+        """Lazy load MSN symbol map to avoid circular import."""
+        _load_msn_const()
+        return {
+            **_CURRENCY_ID_MAP,
+            **_GLOBAL_INDICES,
+            **_CRYPTO_ID_MAP,
+        }
 
     def stock(self, symbol: Optional[str] = None,
               source: Optional[str] = None) -> StockComponents:

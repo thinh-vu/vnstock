@@ -7,6 +7,7 @@ from pandas import json_normalize
 from bs4 import BeautifulSoup
 from typing import Optional, List
 from vnstock.core.utils import client
+from vnstock.core.utils.deprecation import deprecate_provider
 from vnstock.explorer.tcbs.const import _BASE_URL, _ANALYSIS_URL
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock.core.utils.validation import validate_symbol
@@ -17,6 +18,13 @@ from vnstock.explorer.tcbs.financial import Finance
 
 logger = get_logger(__name__)
 
+@deprecate_provider(
+    provider_name='TCBS',
+    version='3.4.0',
+    removal_version='3.5.0',
+    alternative='VCI',
+    reason='TCBS API is no longer publicly accessible as of December 15, 2024'
+)
 class Company:
     """
     Class (lớp) quản lý các thông tin liên quan đến công ty từ nguồn dữ liệu TCBS.

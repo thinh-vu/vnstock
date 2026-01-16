@@ -5,6 +5,7 @@ Module quản lý thông tin báo cáo tài chính từ nguồn dữ liệu TCBS
 import pandas as pd
 from typing import Optional
 from vnstock.core.utils import client
+from vnstock.core.utils.deprecation import deprecate_provider
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
 from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.logger import get_logger
@@ -15,6 +16,13 @@ from .const import _BASE_URL, _ANALYSIS_URL, _FINANCIAL_REPORT_MAP, _FINANCIAL_R
 logger = get_logger(__name__)
 
 
+@deprecate_provider(
+    provider_name='TCBS',
+    version='3.4.0',
+    removal_version='3.5.0',
+    alternative='VCI',
+    reason='TCBS API is no longer publicly accessible as of December 15, 2024'
+)
 class Finance:
     """
     Truy xuất thông tin báo cáo tài chính của một công ty theo mã chứng khoán từ nguồn dữ liệu TCBS.

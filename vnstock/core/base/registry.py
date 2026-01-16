@@ -187,12 +187,24 @@ class ProviderRegistry:
         Example:
             {
                 "quote": {
-                    "scraping": ["vci", "tcbs", "msn"],
-                    "api": ["fmp", "xno"]
+                    "scraping": ["vci", "tcbs", "msn", "kbs"],
+                    "api": ["fmp"]
                 },
                 "company": {
-                    "scraping": ["vci"],
+                    "scraping": ["vci", "kbs"],
                     "api": ["fmp"]
+                },
+                "financial": {
+                    "scraping": ["vci", "kbs"],
+                    "api": ["fmp"]
+                },
+                "listing": {
+                    "scraping": ["vci", "msn", "kbs"],
+                    "api": []
+                },
+                "trading": {
+                    "scraping": ["vci", "tcbs", "kbs"],
+                    "api": []
                 }
             }
         """
