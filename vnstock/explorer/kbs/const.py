@@ -150,27 +150,63 @@ _EVENT_TYPE = {
 # Interval mapping for technical chart data (KBS API)
 # Maps user-friendly intervals to KBS API endpoint suffixes
 _INTERVAL_MAP = {
+    # Minute intervals
     '1m': '1P',      # 1 minute
     '5m': '5P',      # 5 minutes
     '15m': '15P',    # 15 minutes (not in sample but likely supported)
     '30m': '30P',    # 30 minutes
-    '1H': '60P',     # 1 hour (60 minutes)
-    '1D': 'day',     # 1 day
-    '1W': 'week',    # 1 week
+    # Hour intervals
+    '1h': '60P',     # 1 hour (60 minutes)
+    '1H': '60P',     # 1 hour (60 minutes) - uppercase alias
+    '60m': '60P',    # 60 minutes
+    # Daily intervals
+    '1d': 'day',     # 1 day
+    '1D': 'day',     # 1 day - uppercase alias
+    'd': 'day',      # 1 day - short alias
+    'D': 'day',      # 1 day - uppercase short alias
+    'daily': 'day',  # 1 day - word alias
+    # Weekly intervals
+    '1w': 'week',    # 1 week
+    '1W': 'week',    # 1 week - uppercase alias
+    'w': 'week',     # 1 week - short alias
+    'W': 'week',     # 1 week - uppercase short alias
+    'weekly': 'week', # 1 week - word alias
+    # Monthly intervals
     '1M': 'month',   # 1 month
+    'm': 'month',    # 1 month - short alias
+    'M': 'month',    # 1 month - uppercase short alias
+    'monthly': 'month', # 1 month - word alias
 }
 
 # Resample mapping for data standardization
 # Maps intervals to pandas resample frequency strings
 _RESAMPLE_MAP = {
+    # Minute intervals
     '1m': '1min',
     '5m': '5min',
     '15m': '15min',
     '30m': '30min',
+    # Hour intervals
+    '1h': '1H',
     '1H': '1H',
+    '60m': '1H',
+    # Daily intervals
+    '1d': '1D',
     '1D': '1D',
+    'd': '1D',
+    'D': '1D',
+    'daily': '1D',
+    # Weekly intervals
+    '1w': '1W',
     '1W': '1W',
+    'w': '1W',
+    'W': '1W',
+    'weekly': '1W',
+    # Monthly intervals
     '1M': '1MS',
+    'm': '1MS',
+    'M': '1MS',
+    'monthly': '1MS',
 }
 
 # Column mapping for price board (ISS endpoint)

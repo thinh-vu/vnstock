@@ -8,7 +8,7 @@ from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.client import send_request, ProxyConfig
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.explorer.kbs.const import (
-    _IIS_BASE_URL, _SEARCH_URL, _SECTOR_ALL_URL, _INDEX_URL, _GROUP_CODE, _INDUSTRY_CODE
+    _IIS_BASE_URL, _SEARCH_URL, _SECTOR_ALL_URL, _SECTOR_STOCK_URL, _INDEX_URL, _GROUP_CODE, _INDUSTRY_CODE
 )
 
 logger = get_logger(__name__)
@@ -621,7 +621,7 @@ class Listing:
         Returns:
             List[str] chứa danh sách mã.
         """
-        url = f'{_SECTOR_ALL_URL}?code={industry_code}&l=1'
+        url = f'{_SECTOR_STOCK_URL}?code={industry_code}&l=1'
 
         try:
             json_data = send_request(
@@ -639,7 +639,11 @@ class Listing:
                 return []
 
             # Handle different response formats
-            if isinstance(json_data, dict) and 'data' in json_data:
+            if isinstance(json_data, dict) and 'stocks' in json_data:
+                # Extract stock symbols from the stocks list
+                stocks = json_data['stocks']
+                symbols = [stock['sb'] for stock in stocks if 'sb' in stock]
+            elif isinstance(json_data, dict) and 'data' in json_data:
                 symbols = json_data['data']
             elif isinstance(json_data, list):
                 symbols = json_data

@@ -12,7 +12,7 @@ from vnstock.core.utils.client import send_request, ProxyConfig
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.explorer.kbs.const import (
     _IIS_BASE_URL, _STOCK_TRADE_HISTORY_URL,
-    _STOCK_MATCHED_BY_PRICE_URL,
+    _STOCK_MATCHED_BY_PRICE_URL, _STOCK_ISS_URL,
     _PRICE_BOARD_MAP, _TRADE_HISTORY_MAP, _MATCHED_BY_PRICE_MAP,
     _PRICE_BOARD_STANDARD_COLUMNS,
     _KBS_TO_SCHEMA_MAP, _EXCLUDED_COLUMNS, _EXCHANGE_CODE_MAP
@@ -85,7 +85,11 @@ class Trading:
         self,
         page: int = 1,
         page_size: int = 100,
+        symbols_list: List[str] = [],
+        board: str = 'stock',
+        exchange: str = 'HOSE',
         show_log: Optional[bool] = False,
+        get_all: bool = False,
     ) -> pd.DataFrame:
         """
         Truy xuất lịch sử giao dịch của mã chứng khoán.
@@ -93,7 +97,10 @@ class Trading:
         Args:
             page: Số trang. Mặc định 1.
             page_size: Số lượng bản ghi mỗi trang. Mặc định 100.
+            symbols_list: Danh sách mã chứng khoán (VD: ['ACB', 'VNM', 'HPG']).
+            exchange: Sàn giao dịch ('HOSE', 'HNX', 'UPCOM'). Mặc định 'HOSE'.
             show_log: Hiển thị log debug.
+            get_all: Nếu True, trả về tất cả các cột. Nếu False (mặc định), chỉ trả về các cột tiêu chuẩn.
 
         Returns:
             DataFrame chứa lịch sử giao dịch với các cột chuẩn hóa.
@@ -228,7 +235,6 @@ class Trading:
     def price_board(
         self,
         symbols_list: List[str],
-        board: str = 'stock',
         exchange: str = 'HOSE',
         show_log: Optional[bool] = False,
         get_all: bool = False,
@@ -236,10 +242,7 @@ class Trading:
         """
         Truy xuất bảng giá realtime cho danh sách mã chứng khoán.
 
-        Unified interface để lấy dữ liệu giá từ ba loại bảng giá:
-        - stock: Lô chẵn (giao dịch thông thường)
-        - odd_lot: Lô lẻ (giao dịch lô lẻ)
-        - put_through: Thỏa thuận (giao dịch thỏa thuận)
+        Lấy dữ liệu giá từ bảng giá lô chẵn (giao dịch thông thường).
 
         Args:
             symbols_list: Danh sách mã chứng khoán (VD: ['ACB', 'VNM', 'HPG']).
@@ -256,11 +259,9 @@ class Trading:
             >>> trading = Trading()
             >>> df = trading.price_board(['ACB', 'VNM', 'HPG'])  # Stock board (standard columns)
             >>> df = trading.price_board(['ACB', 'VNM', 'HPG'], get_all=True)  # All columns
-            >>> df = trading.price_board(['AAA', 'AAM'], board='odd_lot')  # Odd-lot board
-            >>> df = trading.price_board(['SCR'], board='put_through')  # Put-through board
 
         Raises:
-            ValueError: Nếu symbols_list trống hoặc board không hợp lệ.
+            ValueError: Nếu symbols_list trống.
         """
         if not symbols_list:
             raise ValueError("symbols_list không được để trống.")
@@ -294,7 +295,6 @@ class Trading:
 
         # Update metadata
         df.attrs['symbols'] = symbols_list
-        df.attrs['board'] = board
         df.attrs['source'] = self.data_source
         df.attrs['get_all'] = get_all
 
