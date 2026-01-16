@@ -260,7 +260,7 @@ Phiên bản vnstock 3.4.0 bắt đầu hỗ trợ tính năng nhận diện ng�
   - Truy cập đầy đủ các kỳ báo cáo tài chính
   - Ủng hộ dự án phát triển công cụ & cộng đồng
 
-**📌 Đăng nhập Google để tạo tài khoản và lấy API key miễn phí tại:** https://vnstocks.com/account
+**📌 Đăng nhập Google để tạo tài khoản và lấy API key miễn phí tại:** https://vnstocks.com/login
 
 ```python
 # Chạy lệnh và nhập API key theo hướng dẫn
@@ -669,7 +669,7 @@ Vnstock 3.4.0 introduces user authentication for free users to unlock enhanced f
   - Full access to all financial reporting periods
   - Support project development & community
 
-**📌 Sign in with Google to create account and get free API key at:** https://vnstocks.com/account
+**📌 Sign in with Google to create account and get free API key at:** https://vnstocks.com/login
 
 ```python
 # Run command and enter API key as instructed

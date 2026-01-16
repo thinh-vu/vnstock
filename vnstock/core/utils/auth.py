@@ -60,7 +60,7 @@ def register_user() -> bool:
   • Cộng đồng (Community): 60 requests/phút - đăng ký miễn phí
   • Tài trợ (Sponsor): 180-600 requests/phút
 
-📌 Đăng nhập Google để tạo tài khoản và lấy API key miễn phí tại: https://vnstocks.com/account
+📌 Đăng nhập Google để tạo tài khoản và lấy API key miễn phí tại: https://vnstocks.com/login
 """)
     
     # Get API key from user directly (no Enter step)
