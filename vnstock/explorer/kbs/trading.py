@@ -7,15 +7,15 @@ from datetime import datetime
 from typing import Optional, List
 from vnai import agg_execution
 from vnstock.core.utils.logger import get_logger
-from vnstock.core.utils.parser import get_asset_type, camel_to_snake
-from vnstock.core.utils.client import send_request, ProxyConfig
+from vnstock.core.utils.parser import get_asset_type
+from vnstock.core.utils.client import ProxyConfig
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.explorer.kbs.const import (
-    _IIS_BASE_URL, _STOCK_TRADE_HISTORY_URL,
-    _STOCK_MATCHED_BY_PRICE_URL, _STOCK_ISS_URL,
-    _PRICE_BOARD_MAP, _TRADE_HISTORY_MAP, _MATCHED_BY_PRICE_MAP,
+    _IIS_BASE_URL,
+    _STOCK_ISS_URL,
+    _PRICE_BOARD_MAP,
     _PRICE_BOARD_STANDARD_COLUMNS,
-    _KBS_TO_SCHEMA_MAP, _EXCLUDED_COLUMNS, _EXCHANGE_CODE_MAP
+    _EXCLUDED_COLUMNS, _EXCHANGE_CODE_MAP
 )
 
 logger = get_logger(__name__)
@@ -74,11 +74,6 @@ class Trading:
 
         if not show_log:
             logger.setLevel('CRITICAL')
-
-    # Thêm 1 hàm price_history là wrapper của trade_history
-    @agg_execution("KBS")
-    def price_history(self, *args, **kwargs):
-        return self.trade_history(*args, **kwargs)
 
     def _fetch_stock_board(
         self,
