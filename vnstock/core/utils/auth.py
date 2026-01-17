@@ -13,14 +13,74 @@ from typing import Optional
 logger = logging.getLogger(__name__)
 
 
-def register_user() -> bool:
+def register_user(api_key: Optional[str] = None) -> bool:
     """
-    Interactive user registration.
+    User registration with optional API key parameter.
     
     Guides user through the registration process to set up their API key.
+    If api_key is provided, uses it directly. Otherwise, shows interactive prompt.
     
+    Args:
+        api_key: Optional API key to register directly
+        
     Returns:
         bool: True if registration successful, False otherwise
+    """
+    try:
+        # Check vnai availability
+        import vnai
+        vnai  # Use the import to avoid unused warning
+    except ImportError:
+        print("✗ Lỗi: vnai module không được tìm thấy")
+        return False
+    
+    # If API key is provided as parameter, use it directly
+    if api_key:
+        return _register_api_key_directly(api_key)
+    
+    # Otherwise, show interactive registration
+    return _register_interactive()
+
+
+def _register_api_key_directly(api_key: str) -> bool:
+    """
+    Register API key directly without interactive prompts.
+    
+    Args:
+        api_key: API key to register
+        
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    if not api_key or len(api_key) < 10:
+        print("✗ API key không hợp lệ")
+        return False
+    
+    try:
+        from vnai import setup_api_key
+        if setup_api_key(api_key):
+            # Show masked API key after successful registration
+            if len(api_key) > 8:
+                masked_key = f"{api_key[:4]}***{api_key[-4:]}"
+            else:
+                masked_key = api_key[:8] + "***" if len(api_key) > 4 else "****"
+            
+            print(f"✓ API key đã được lưu thành công! {masked_key}")
+            print("✓ Bạn đang sử dụng Phiên bản cộng đồng (60 requests/phút)")
+            return True
+    except Exception as e:
+        logger.debug(f"Direct setup failed: {e}")
+        print("✗ Không thể lưu API key")
+    
+    return False
+
+
+def _register_interactive() -> bool:
+    """
+    Interactive registration with user prompts.
+    
+    Returns:
+        bool: True if successful, False otherwise
     """
     try:
         from vnai import setup_api_key, check_api_key_status
