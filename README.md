@@ -206,7 +206,7 @@ Bạn có thể hỗ trợ dự án bằng cách cực kỳ đơn giản là đ�
 
 Trước khi bắt đầu, hãy đánh dấu yêu thích để giúp dự án có thể tiếp cận tới nhiều người hơn. Cám ơn bạn!
 
-![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)star_star_
+![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)star_star_star_star_
 
 👉 Để hiểu rõ hơn về vnstock và hướng dẫn sử dụng toàn diện, bạn có thể truy cập [vnstocks.com/docs](https://vnstocks.com/docs). 
 
@@ -245,20 +245,24 @@ Phiên bản vnstock 3.4.0 bắt đầu hỗ trợ tính năng nhận diện ng�
 **🚀 Đăng ký API key để tăng giới hạn sử dụng:**
 
 - **Khách (Guest):**
-  - Phù hợp để thử nghiệm nhanh, xem thử tính năng. Quảng cáo hiện thường xuyên
-  - 20 requests/phút - không cần đăng ký
-  - Tải tối đa 4 kỳ báo cáo tài chính
-
+    - Phù hợp để thử nghiệm nhanh, xem thử tính năng. Quảng cáo hiện thường xuyên
+    - 20 requests/phút - không cần đăng ký
+    - Tải tối đa 4 kỳ báo cáo tài chính
 - **Cộng đồng (Community):**
-  - Trải nghiệm tính năng thư viện, chưa muốn gắn bó. Quảng cáo hiện thường xuyên
-  - 60 requests/phút - đăng ký miễn phí
-  - Tải tối đa 8 kỳ báo cáo tài chính
-
+    - Trải nghiệm tính năng thư viện, chưa muốn gắn bó. Quảng cáo hiện thường xuyên
+    - 60 requests/phút - đăng ký miễn phí
+    - Tải tối đa 8 kỳ báo cáo tài chính
 - **Tài trợ (Sponsor):**
-  - Không quảng cáo
-  - 3-5x số lượt requests/phút so với bản miễn phí
-  - Truy cập đầy đủ các kỳ báo cáo tài chính
-  - Ủng hộ dự án phát triển công cụ & cộng đồng
+    - Không quảng cáo
+    - 3-5x số lượt requests/phút so với bản miễn phí
+    - Truy cập đầy đủ các kỳ báo cáo tài chính
+    - Ủng hộ dự án phát triển công cụ & cộng đồng
+
+---
+
+## 🤖 Vibe Coding với AI để viết code Vnstock (nên thử ngay)
+
+**Đừng học code thủ công! Hãy để AI viết code chính xác cho bạn.**
 
 **📌 Đăng nhập Google để tạo tài khoản và lấy API key miễn phí tại:** https://vnstocks.com/login
 
@@ -268,7 +272,64 @@ from vnstock import register_user
 register_user()
 ```
 
-Có 4 cách nạp thư viện vào môi trường làm việc như sau:
+hoặc nhập trực tiếp API key trong code
+
+```python
+from vnstock import register_user
+register_user(api_key='vnstock_RANDOM_KEY')
+```
+
+### Bước 1: Clone Repository
+
+```bash
+git clone https://github.com/vnstock-hq/vnstock-agent-guide.git
+cd vnstock-agent-guide
+```
+
+- Nếu máy tính của bạn chưa có git, hãy tải về cài đặt [Git](https://git-scm.com/install/)
+- Nhập lệnh vào ứng dụng dòng lệnh: Terminal với macOS và Linux và là Command Prompt hoặc Powershell cho Windows 10 trở xuống, dùng Terminal nếu là Windows 11
+
+### Bước 2: Copy Instruction Files
+
+Sau khi clone, sao chép các thư mục sau ra thư mục gốc của dự án để IDE hoặc AI nhận diện chính xác. Copy thủ công hoặc chạy lệnh dưới đây với macOS, Linux.
+
+```bash
+# Copy các thư mục instruction ra thư mục gốc
+cp -r .agent ./
+cp -r .cursor ./
+cp AGENTS.md ./
+cp CLAUDE.md ./
+cp GEMINI.md ./
+```
+
+### Bước 3: Sử Dụng Với AI Agents
+
+| AI Agent               | File Instruction                  | Đặt tại thư mục gốc | Link Tải IDE                                                                                         |
+| ---------------------- | --------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Google Antigravity** | `.agent/rules/GEMINI.md`          | ✅                  | [Tải tại đây](https://antigravity.google/)                                                           |
+| **Cursor IDE**         | `.cursor/rules/instructions.md`   | ✅                  | [Tải tại đây](https://cursor.com/download)                                                           |
+| **Windsurf IDE**       | `AGENTS.md`                       | ✅                  | [Tải tại đây](https://windsurf.com/editor)                                                           |
+| **Claude Code**        | `CLAUDE.md`                       | ✅                  | [Tải tại đây](https://claude.com/product/claude-code)                                                |
+| **VS Code + Copilot**  | `.github/copilot-instructions.md` | ✅                  | [VS Code](https://code.visualstudio.com/download) + [Github Copilot](https://github.com/features/copilot/plans) |
+| **Google Colab**       | `GEMINI.md`                       | ✅                  | [Tải tại đây](https://colab.research.google.com/)                                                    |
+
+### Bước 4: Bắt đầu viết code với AI
+
+Sau khi thiết lập xong, bạn có thể yêu cầu AI viết code vnstock chính xác:
+
+**Ví dụ prompts cho AI:**
+
+- "Lấy dữ liệu giá cổ phiếu VNM từ 2024-01-01 đến nay"
+- "Phân tích báo cáo tài chính quý gần nhất của FPT"
+- "So sánh hiệu suất 5 cổ phiếu ngân hàng lớn nhất"
+
+> 🎯 **Điều kỳ diệu:** AI sẽ tự động viết code chính xác với đúng cú pháp, tham số và cấu trúc dữ liệu vnstock mới nhất, tự động chạy chương trình và trả về kết quả mà không cần sự tham gia của bạn.
+
+---
+
+## 📚 Cách sử dụng truyền thống (Thủ công)
+
+Nếu bạn muốn học và viết code thủ công, có 4 cách nạp thư viện vào môi trường làm việc như sau:
 
 ### 8.2.1. Nạp thông qua giao diện làm việc chính
 
@@ -613,7 +674,7 @@ You can support the project by simply starring it on GitHub—this helps the pro
 
 Before getting started, consider starring the project to support us—thank you!
 
-![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)star_star_
+![star_project](https://raw.githubusercontent.com/thinh-vu/vnstock/beta/docs/docs/assets/images/github_star_guide.png)
 
 👉 Full documentation and usage guide: [vnstocks.com/docs](https://vnstocks.com/docs)
 
@@ -626,6 +687,75 @@ Example use cases in Colab Notebook:
     <img src="https://img.shields.io/badge/Quick%20Guide-Vnstock-blue?style=for-the-badge&logo=book" alt="Vnstock Docs Badge"/>
   </a>
 </div>
+
+---
+
+## 🤖 AI-Powered Vibe Coding with Vnstock (Try Now)
+
+**Stop manual coding! Let AI write accurate code for you.**
+
+**📌 Sign in with Google to create account and get free API key at:** https://vnstocks.com/login
+
+```python
+# Run command and follow instructions to enter API key
+from vnstock import register_user
+register_user()
+```
+
+or enter API key directly in code
+
+```python
+from vnstock import register_user
+register_user(api_key='vnstock_RANDOM_KEY')
+```
+
+### Step 1: Clone Repository
+
+```bash
+git clone https://github.com/vnstock-hq/vnstock-agent-guide.git
+cd vnstock-agent-guide
+```
+
+- If you don't have git installed, download and install [Git](https://git-scm.com/install/)
+- Run command in: Terminal for macOS and Linux, Command Prompt or PowerShell for Windows 10 and below, use Terminal for Windows 11
+
+### Step 2: Copy Instruction Files
+
+After cloning, copy the following directories to your project root so IDE or AI can recognize them accurately. Copy manually or run the commands below for macOS, Linux.
+
+```bash
+# Copy instruction directories to project root
+cp -r .agent ./
+cp -r .cursor ./
+cp AGENTS.md ./
+cp CLAUDE.md ./
+cp GEMINI.md ./
+```
+
+### Step 3: Use With AI Agents
+
+| AI Agent               | File Instruction                  | Place at Project Root | Download IDE Link                                                                                    |
+| ---------------------- | --------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Google Antigravity** | `.agent/rules/GEMINI.md`          | ✅                     | [Download here](https://antigravity.google/)                                                           |
+| **Cursor IDE**         | `.cursor/rules/instructions.md`   | ✅                     | [Download here](https://cursor.com/download)                                                           |
+| **Windsurf IDE**       | `AGENTS.md`                       | ✅                     | [Download here](https://windsurf.com/editor)                                                           |
+| **Claude Code**        | `CLAUDE.md`                       | ✅                     | [Download here](https://claude.com/product/claude-code)                                                |
+| **VS Code + Copilot**  | `.github/copilot-instructions.md` | ✅                     | [VS Code](https://code.visualstudio.com/download) + [Github Copilot](https://github.com/features/copilot/plans) |
+| **Google Colab**       | `GEMINI.md`                       | ✅                     | [Download here](https://colab.research.google.com/)                                                    |
+
+### Step 4: Start Writing Code with AI
+
+After setup, you can ask AI to write accurate vnstock code:
+
+**Example AI prompts:**
+
+- "Get VNM stock price data from 2024-01-01 to present"
+- "Analyze FPT's latest quarterly financial report"
+- "Compare performance of top 5 banking stocks"
+
+> 🎯 **The Magic:** AI will automatically write accurate code with correct syntax, parameters, and vnstock data structure, run the program and return results without your participation.
+
+---
 
 ## 8.1 Installation
 
@@ -654,20 +784,18 @@ Vnstock 3.4.0 introduces user authentication for free users to unlock enhanced f
 **🚀 Register API key to increase usage limits:**
 
 - **Guest:**
-  - Suitable for quick testing and feature trials. Ads displayed frequently
-  - 20 requests/minute - no registration required
-  - Download up to 4 financial reporting periods
-
+    - Suitable for quick testing and feature trials. Ads displayed frequently
+    - 20 requests/minute - no registration required
+    - Download up to 4 financial reporting periods
 - **Community:**
-  - Experience library features without long-term commitment. Ads displayed frequently  
-  - 60 requests/minute - free registration
-  - Download up to 8 financial reporting periods
-
+    - Experience library features without long-term commitment. Ads displayed frequently  
+    - 60 requests/minute - free registration
+    - Download up to 8 financial reporting periods
 - **Sponsor:**
-  - No ads
-  - 3-5x more requests per minute compared to free tier
-  - Full access to all financial reporting periods
-  - Support project development & community
+    - No ads
+    - 3-5x more requests per minute compared to free tier
+    - Full access to all financial reporting periods
+    - Support project development & community
 
 **📌 Sign in with Google to create account and get free API key at:** https://vnstocks.com/login
 
