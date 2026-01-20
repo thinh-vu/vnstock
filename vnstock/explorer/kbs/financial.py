@@ -162,13 +162,32 @@ class Finance:
         
         # Build DataFrame from report data
         rows = []
+        item_id_counter = {}  # Track collisions
+        
         for record in report_data:
             item = record.get('Name', '')
             item_en = record.get('NameEn', '')
+            
+            # Generate item_id: use English if available, fallback to Vietnamese
+            if item_en and item_en.strip():
+                item_id = normalize_english_text_to_snake_case(item_en, preserve_hierarchy=True)
+            elif item and item.strip():
+                from vnstock.core.utils.parser import normalize_vietnamese_text_to_snake_case
+                item_id = normalize_vietnamese_text_to_snake_case(item, preserve_hierarchy=True)
+            else:
+                item_id = ""
+            
+            # Handle collisions - append counter if duplicate
+            if item_id and item_id in item_id_counter:
+                item_id_counter[item_id] += 1
+                item_id = f"{item_id}_{item_id_counter[item_id]}"
+            elif item_id:
+                item_id_counter[item_id] = 1
+            
             row = {
                 'item': item,
                 'item_en': item_en,
-                'item_id': normalize_english_text_to_snake_case(item_en),
+                'item_id': item_id,
                 'unit': record.get('Unit', ''),
                 'levels': record.get('Levels', 0),
                 'row_number': record.get('ID', 0),  # Use ID as row ordering (RowNumber is always None in API)
@@ -225,6 +244,50 @@ class Finance:
                 logger.info(f'Applied schema standardization: {len(rename_dict)} columns renamed')
         
         return df
+    
+    def _filter_columns_by_lang(self, df: pd.DataFrame, lang: Optional[str] = 'vi') -> pd.DataFrame:
+        """
+        Filter DataFrame columns based on language preference.
+        
+        Args:
+            df: DataFrame to filter
+            lang: Language preference ('vi', 'en', or None)
+                - 'vi': Keep only 'item' and 'item_id' columns (Vietnamese names)
+                - 'en': Keep only 'item' and 'item_id' columns (English names, renamed to 'item')
+                - None: Keep all item columns (item, item_en, item_id)
+            
+        Returns:
+            DataFrame with filtered columns
+        """
+        if df.empty:
+            return df
+        
+        # Get metadata columns (non-period columns)
+        period_cols = df.attrs.get('periods', [])
+        metadata_cols = [col for col in df.columns if col not in period_cols]
+        
+        # Create a copy to avoid SettingWithCopyWarning
+        df_filtered = df.copy()
+        
+        if lang is None:
+            # Keep all metadata columns
+            cols_to_keep = metadata_cols
+        else:
+            # Keep only item and item_id columns
+            cols_to_keep = [col for col in metadata_cols if col in ['item', 'item_id']]
+            
+            # If lang='en', rename item_en to item and drop the original item column
+            if lang == 'en' and 'item_en' in df_filtered.columns:
+                df_filtered['item'] = df_filtered['item_en']
+                cols_to_keep = ['item', 'item_id']
+        
+        # Add period columns
+        cols_to_keep.extend(period_cols)
+        
+        # Filter to only existing columns
+        cols_to_keep = [col for col in cols_to_keep if col in df_filtered.columns]
+        
+        return df_filtered[cols_to_keep]
 
     def _fetch_financial_data(
         self,
@@ -297,6 +360,7 @@ class Finance:
     def income_statement(
         self,
         period: str = 'year',
+        lang: Optional[str] = 'vi',
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
@@ -304,6 +368,10 @@ class Finance:
 
         Args:
             period: Loại kỳ báo cáo ('year' hoặc 'quarter'). Mặc định 'year'.
+            lang: Ngôn ngữ cho cột item ('vi', 'en', hoặc None). Mặc định 'vi'.
+                - 'vi': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Việt)
+                - 'en': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Anh)
+                - None: Giữ tất cả cột item (item, item_en, item_id)
             show_log: Hiển thị log debug.
 
         Returns:
@@ -311,8 +379,10 @@ class Finance:
 
         Examples:
             >>> finance = Finance('ACB')
-            >>> df = finance.income_statement(period='year')
-            >>> # Returns DataFrame with columns: item, item_en, item_id, unit, periods...
+            >>> df = finance.income_statement(period='year', lang='vi')
+            >>> # Returns DataFrame with columns: item, item_id, unit, periods...
+            >>> df_en = finance.income_statement(period='year', lang='en')
+            >>> # Returns DataFrame with English names in 'item' column
         """
         # Map period to termType (1=year, 2=quarter)
         period_type = 1 if period == 'year' else 2
@@ -340,6 +410,9 @@ class Finance:
         if self.standardize_columns:
             df = self._apply_schema_standardization(df, 'income_statement')
 
+        # Filter columns by language preference
+        df = self._filter_columns_by_lang(df, lang)
+
         # Add metadata
         df.attrs['symbol'] = self.symbol
         df.attrs['source'] = self.data_source
@@ -357,6 +430,7 @@ class Finance:
     def balance_sheet(
         self,
         period: str = 'year',
+        lang: Optional[str] = 'vi',
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
@@ -364,6 +438,10 @@ class Finance:
 
         Args:
             period: Loại kỳ báo cáo ('year' hoặc 'quarter'). Mặc định 'year'.
+            lang: Ngôn ngữ cho cột item ('vi', 'en', hoặc None). Mặc định 'vi'.
+                - 'vi': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Việt)
+                - 'en': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Anh)
+                - None: Giữ tất cả cột item (item, item_en, item_id)
             show_log: Hiển thị log debug.
 
         Returns:
@@ -371,7 +449,9 @@ class Finance:
 
         Examples:
             >>> finance = Finance('ACB')
-            >>> df = finance.balance_sheet(period='year')
+            >>> df = finance.balance_sheet(period='year', lang='vi')
+            >>> df_en = finance.balance_sheet(period='year', lang='en')
+            >>> # Both return DataFrame with 'item' and 'item_id' columns only
         """
         # Map period to termType (1=year, 2=quarter)
         period_type = 1 if period == 'year' else 2
@@ -400,6 +480,9 @@ class Finance:
         if self.standardize_columns:
             df = self._apply_schema_standardization(df, 'balance_sheet')
 
+        # Filter columns by language preference
+        df = self._filter_columns_by_lang(df, lang)
+
         # Add metadata
         df.attrs['symbol'] = self.symbol
         df.attrs['source'] = self.data_source
@@ -417,6 +500,7 @@ class Finance:
     def cash_flow(
         self,
         period: str = 'year',
+        lang: Optional[str] = 'vi',
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
@@ -424,6 +508,10 @@ class Finance:
 
         Args:
             period: Loại kỳ báo cáo ('year' hoặc 'quarter'). Mặc định 'year'.
+            lang: Ngôn ngữ cho cột item ('vi', 'en', hoặc None). Mặc định 'vi'.
+                - 'vi': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Việt)
+                - 'en': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Anh)
+                - None: Giữ tất cả cột item (item, item_en, item_id)
             show_log: Hiển thị log debug.
 
         Returns:
@@ -431,7 +519,9 @@ class Finance:
 
         Examples:
             >>> finance = Finance('ACB')
-            >>> df = finance.cash_flow(period='year')
+            >>> df = finance.cash_flow(period='year', lang='vi')
+            >>> df_en = finance.cash_flow(period='year', lang='en')
+            >>> # Both return DataFrame with 'item' and 'item_id' columns only
         """
         # Map period to termType (1=year, 2=quarter)
         period_type = 1 if period == 'year' else 2
@@ -473,6 +563,9 @@ class Finance:
         if self.standardize_columns:
             df = self._apply_schema_standardization(df, 'cash_flow')
 
+        # Filter columns by language preference
+        df = self._filter_columns_by_lang(df, lang)
+
         # Add metadata
         df.attrs['symbol'] = self.symbol
         df.attrs['source'] = self.data_source
@@ -490,6 +583,7 @@ class Finance:
     def ratio(
         self,
         period: str = 'year',
+        lang: Optional[str] = 'vi',
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
@@ -497,6 +591,10 @@ class Finance:
 
         Args:
             period: Loại kỳ báo cáo ('year' hoặc 'quarter'). Mặc định 'year'.
+            lang: Ngôn ngữ cho cột item ('vi', 'en', hoặc None). Mặc định 'vi'.
+                - 'vi': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Việt)
+                - 'en': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Anh)
+                - None: Giữ tất cả cột item (item, item_en, item_id)
             show_log: Hiển thị log debug.
 
         Returns:
@@ -504,7 +602,9 @@ class Finance:
 
         Examples:
             >>> finance = Finance('ACB')
-            >>> df = finance.ratio(period='year')
+            >>> df = finance.ratio(period='year', lang='vi')
+            >>> df_en = finance.ratio(period='year', lang='en')
+            >>> # Both return DataFrame with 'item' and 'item_id' columns only
         """
         # Map period to termType (1=year, 2=quarter)
         period_type = 1 if period == 'year' else 2
@@ -580,13 +680,32 @@ class Finance:
         
         # Build DataFrame from ratio data
         rows = []
+        item_id_counter = {}  # Track collisions
+        
         for record in all_ratio_data:
             item = record.get('Name', '')
             item_en = record.get('NameEn', '')
+            
+            # Generate item_id: use English if available, fallback to Vietnamese
+            if item_en and item_en.strip():
+                item_id = normalize_english_text_to_snake_case(item_en, preserve_hierarchy=True)
+            elif item and item.strip():
+                from vnstock.core.utils.parser import normalize_vietnamese_text_to_snake_case
+                item_id = normalize_vietnamese_text_to_snake_case(item, preserve_hierarchy=True)
+            else:
+                item_id = ""
+            
+            # Handle collisions - append counter if duplicate
+            if item_id and item_id in item_id_counter:
+                item_id_counter[item_id] += 1
+                item_id = f"{item_id}_{item_id_counter[item_id]}"
+            elif item_id:
+                item_id_counter[item_id] = 1
+            
             row = {
                 'item': item,
                 'item_en': item_en,
-                'item_id': normalize_english_text_to_snake_case(item_en),
+                'item_id': item_id,
                 'unit': record.get('Unit', ''),
                 'levels': record.get('Levels', 0),
                 'row_number': record.get('ID', 0),  # Use ID as row ordering (RowNumber is always None in API)
@@ -623,6 +742,9 @@ class Finance:
         # Apply schema standardization if enabled
         if self.standardize_columns:
             df = self._apply_schema_standardization(df, 'financial_ratios')
+
+        # Filter columns by language preference
+        df = self._filter_columns_by_lang(df, lang)
 
         # Add metadata
         df.attrs['symbol'] = self.symbol

@@ -1,6 +1,7 @@
 # vnstock/core/utils/parser.py
 
 import re
+import unicodedata
 import requests
 import pandas as pd
 import numpy as np
@@ -276,54 +277,256 @@ def camel_to_snake(name):
     output = output.replace('.', '_')
     return output
 
-def normalize_vietnamese_text_to_snake_case(text: str) -> str:
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                    VIETNAMESE TEXT NORMALIZATION MODULE                      ║
+# ║                                                                              ║
+# ║  This module provides robust Vietnamese text normalization for financial     ║
+# ║  data processing, with accurate accent removal and database-friendly output.   ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# Vietnamese character mapping for better accuracy
+VIETNAMESE_CHAR_MAP: Dict[str, str] = {
+    'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+    'ă': 'a', 'ằ': 'a', 'ắ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+    'â': 'a', 'ầ': 'a', 'ấ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+    'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+    'ê': 'e', 'ề': 'e', 'ế': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+    'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+    'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+    'ô': 'o', 'ồ': 'o', 'ố': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
+    'ơ': 'o', 'ờ': 'o', 'ớ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+    'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+    'ư': 'u', 'ừ': 'u', 'ứ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+    'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+    'đ': 'd', 'Đ': 'd',
+}
+
+
+def remove_vietnamese_accents(text: str, use_map: bool = True) -> str:
     """
-    Convert Vietnamese text to ASCII-compatible snake_case identifier.
-    Useful for creating database-friendly column names from Vietnamese financial line items.
+    Remove Vietnamese accents/diacritics from text.
     
     Args:
-        text: Vietnamese text to normalize (typically English or Vietnamese)
+        text: Vietnamese text with diacritics
+        use_map: Use predefined character map for accuracy (default: True)
+        
+    Returns:
+        Text with accents removed
+    """
+    if use_map:
+        # Use predefined mapping for Vietnamese characters (more accurate)
+        result = []
+        for char in text:
+            if char.lower() in VIETNAMESE_CHAR_MAP:
+                mapped = VIETNAMESE_CHAR_MAP[char.lower()]
+                result.append(mapped.upper() if char.isupper() else mapped)
+            else:
+                result.append(char)
+        return ''.join(result)
+    else:
+        # Fallback: Unicode normalization (may miss some Vietnamese chars)
+        nfd = unicodedata.normalize('NFD', text)
+        return ''.join(c for c in nfd if unicodedata.category(c) != 'Mn')
+
+
+def normalize_vietnamese_text_to_snake_case(
+    text: str,
+    keep_numbers: bool = True,
+    max_length: Optional[int] = None,
+    remove_common_words: bool = False,
+    preserve_acronyms: bool = False
+) -> str:
+    """
+    Convert Vietnamese text to ASCII-compatible snake_case identifier.
+    Robust normalization for Vietnamese financial line items and field names.
+    
+    Args:
+        text: Vietnamese or English text to normalize
+        keep_numbers: Whether to keep numeric digits (default: True)
+        max_length: Maximum length of output (default: None/unlimited)
+        remove_common_words: Remove Vietnamese stop words like 'của', 'và', 'các' (default: False)
+        preserve_acronyms: Try to preserve acronyms in uppercase before conversion
         
     Returns:
         Snake_case identifier suitable for database column names
         
     Examples:
-        >>> normalize_vietnamese_text_to_snake_case("1. Revenue")
-        'revenue'
+        >>> normalize_vietnamese_text_to_snake_case("1. Doanh thu")
+        'doanh_thu'
         >>> normalize_vietnamese_text_to_snake_case("Doanh thu bán hàng và cung cấp dịch vụ")
         'doanh_thu_ban_hang_va_cung_cap_dich_vu'
+        >>> normalize_vietnamese_text_to_snake_case("Chi phí (2023-2024)")
+        'chi_phi_2023_2024'
+        >>> normalize_vietnamese_text_to_snake_case("Lợi nhuận sau thuế", remove_common_words=True)
+        'loi_nhuan_sau_thue'
+        >>> normalize_vietnamese_text_to_snake_case("EBITDA (Lãi trước thuế)")
+        'ebitda_lai_truoc_thue'
     """
-    if not text:
+    if not text or not text.strip():
         return ""
     
-    # Remove numbering (e.g., "1. ", "I. ", "A. ")
-    text = re.sub(r'^[\d\w]+\.\s+', '', text)
+    original_text = text
     
-    # Normalize Vietnamese diacritics to ASCII equivalents
-    nfd = unicodedata.normalize('NFD', text)
-    text = ''.join(c for c in nfd if unicodedata.category(c) != 'Mn')
+    # Step 1: Remove leading numbering patterns
+    # Handle: "1.", "I.", "A.", "1.1.2.", "1)", "(1)", etc.
+    text = re.sub(r'^[\dIVXivx]+(\.\d+)*[\.)]\s*', '', text)
+    text = re.sub(r'^\([0-9]+\)\s*', '', text)
+    text = re.sub(r'^[A-Za-z][\.)]\s*', '', text)
     
-    # Convert to lowercase
+    # Step 2: Handle parenthetical content intelligently
+    # Option 1: Remove content in parentheses entirely (uncomment if preferred)
+    # text = re.sub(r'\([^)]*\)', '', text)
+    # Option 2: Keep parenthetical content (current behavior)
+    text = re.sub(r'[()]', ' ', text)
+    
+    # Step 3: Remove quotes, apostrophes, and other punctuation
+    text = re.sub(r"['\"`''""*&%$#@!?;:,.]", '', text)
+    
+    # Step 4: Remove Vietnamese accents/diacritics
+    text = remove_vietnamese_accents(text, use_map=True)
+    
+    # Step 5: Handle camelCase/PascalCase before lowercasing
+    if preserve_acronyms:
+        text = re.sub(r'([a-z])([A-Z])', r'\1_\2', text)
+    else:
+        text = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', text)
+    
+    # Step 6: Convert to lowercase
     text = text.lower()
     
-    # Replace spaces and special characters with underscore
-    text = re.sub(r'[\s\-/()]+', '_', text)
+    # Step 7: Remove common Vietnamese stop words (optional)
+    if remove_common_words:
+        # Common Vietnamese words that don't add meaning to field names
+        stop_words = [
+            'cua', 'va', 'cac', 'cho', 'tren', 'duoi', 'trong', 'ngoai',
+            'tai', 'den', 'tu', 'voi', 'ma', 'la', 'thi', 'hay', 'hoac',
+            'nhung', 'moi', 'nam', 'thang', 'ngay', 'ky', 'dot', 'lan'
+        ]
+        # Create pattern to match whole words only
+        pattern = r'\b(' + '|'.join(stop_words) + r')\b'
+        text = re.sub(pattern, ' ', text)
     
-    # Remove consecutive underscores
+    # Step 8: Replace special characters and spaces with underscores
+    if keep_numbers:
+        # Keep alphanumeric + spaces/hyphens/underscores
+        text = re.sub(r'[^a-z0-9\s_-]', ' ', text)
+    else:
+        # Keep only alphabetic + spaces/hyphens/underscores
+        text = re.sub(r'[^a-z\s_-]', ' ', text)
+    
+    # Step 9: Normalize whitespace and separators to underscores
+    text = re.sub(r'[\s\-/\\]+', '_', text)
+    
+    # Step 10: Remove consecutive underscores
     text = re.sub(r'_+', '_', text)
     
-    # Remove leading/trailing underscores
+    # Step 11: Remove leading/trailing underscores
     text = text.strip('_')
+    
+    # Step 12: Ensure it doesn't start with a number (invalid Python/SQL identifier)
+    if text and text[0].isdigit():
+        text = f"n_{text}"  # 'n' for 'number' prefix
+    
+    # Step 13: Apply max length constraint if specified
+    if max_length and len(text) > max_length:
+        text = text[:max_length].rstrip('_')
+    
+    # Step 14: Fallback for empty result
+    if not text:
+        # Try to extract at least something from original text
+        fallback = re.sub(r'[^a-zA-Z0-9]', '', original_text)
+        if fallback:
+            text = fallback.lower()[:20]
+        else:
+            return ""  # Return empty string instead of 'unnamed_field'
     
     return text
 
-def normalize_english_text_to_snake_case(text: str) -> str:
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                      HELPER FUNCTIONS FOR VIETNAMESE                          ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+def normalize_vietnamese_text_strict(text: str) -> str:
     """
-    Convert English text to snake_case identifier.
-    Optimized for English financial line items (no Vietnamese diacritic handling).
+    Strict version: Only alphabetic characters, no numbers.
+    Best for database column names that must be purely alphabetic.
+    
+    Examples:
+        >>> normalize_vietnamese_text_strict("2024 - Doanh thu thuần")
+        'doanh_thu_thuan'
+    """
+    if not text or not text.strip():
+        return ""
+    
+    # Remove accents
+    text = remove_vietnamese_accents(text)
+    
+    # Remove all non-alphabetic characters
+    text = re.sub(r'[^a-zA-Z\s]', ' ', text)
+    
+    # Convert to lowercase and normalize spaces
+    text = text.lower()
+    text = re.sub(r'\s+', '_', text)
+    text = re.sub(r'_+', '_', text)
+    text = text.strip('_')
+    
+    return text or "unnamed_field"
+
+
+def batch_normalize_vietnamese_fields(
+    texts: list[str],
+    **kwargs
+) -> Dict[str, str]:
+    """
+    Batch normalize multiple Vietnamese texts with collision detection.
+    
+    Args:
+        texts: List of Vietnamese texts to normalize
+        **kwargs: Arguments to pass to normalize_vietnamese_text_to_snake_case
+        
+    Returns:
+        Dictionary mapping original text to normalized snake_case
+        
+    Examples:
+        >>> batch_normalize_vietnamese_fields(["Doanh thu", "Doanh thu thuần"])
+        {'Doanh thu': 'doanh_thu', 'Doanh thu thuần': 'doanh_thu_thuan'}
+    """
+    result = {}
+    seen = {}
+    
+    for text in texts:
+        normalized = normalize_vietnamese_text_to_snake_case(text, **kwargs)
+        
+        # Handle collisions by appending counter
+        if normalized in seen:
+            counter = 2
+            base_normalized = normalized
+            while normalized in seen:
+                normalized = f"{base_normalized}_{counter}"
+                counter += 1
+        
+        result[text] = normalized
+        seen[normalized] = text
+    
+    return result
+
+def normalize_english_text_to_snake_case(
+    text: str,
+    keep_numbers: bool = True,
+    max_length: Optional[int] = None,
+    preserve_acronyms: bool = False,
+    preserve_hierarchy: bool = False
+) -> str:
+    """
+    Convert English text to snake_case identifier with robust normalization.
     
     Args:
         text: English text to normalize
+        keep_numbers: Whether to keep numeric digits (default: True)
+        max_length: Maximum length of output (default: None/unlimited)
+        preserve_acronyms: Try to preserve acronyms like "API" -> "api" instead of breaking them
+        preserve_hierarchy: Preserve numbering prefixes for hierarchical structure (default: False)
         
     Returns:
         Snake_case identifier suitable for database column names
@@ -331,22 +534,256 @@ def normalize_english_text_to_snake_case(text: str) -> str:
     Examples:
         >>> normalize_english_text_to_snake_case("1. Revenue")
         'revenue'
-        >>> normalize_english_text_to_snake_case("Cost of goods sold")
-        'cost_of_goods_sold'
-        >>> normalize_english_text_to_snake_case("Net profit for the year")
-        'net_profit_for_the_year'
+        >>> normalize_english_text_to_snake_case("1. Revenue", preserve_hierarchy=True)
+        '1.revenue'
+        >>> normalize_english_text_to_snake_case("A. ASSETS")
+        'assets'
+        >>> normalize_english_text_to_snake_case("A. ASSETS", preserve_hierarchy=True)
+        'a.assets'
+        >>> normalize_english_text_to_snake_case("Cash & cash equivalents")
+        'cash_and_cash_equivalents'
+        >>> normalize_english_text_to_snake_case("Shareholders' equity")
+        'shareholders_equity'
     """
-    if not text:
+    if not text or not text.strip():
         return ""
     
-    # Remove numbering (e.g., "1. ", "I. ", "A. ")
-    text = re.sub(r'^[\d\w]+\.\s+', '', text)
+    original_text = text
     
-    # Convert to lowercase
+    # Step 1: Extract hierarchy prefix if preservation is enabled
+    hierarchy_prefix = ""
+    if preserve_hierarchy:
+        # Extract numbering patterns: "1.", "I.", "A.", "1.1.2", etc.
+        hierarchy_match = re.match(r'^([\dIVXivx]+(\.\d+)*|[A-Za-z])\.\s*', text)
+        if hierarchy_match:
+            hierarchy_prefix = hierarchy_match.group(1).lower() + '.'
+            text = text[len(hierarchy_match.group(0)):]  # Remove the prefix from text
+    
+    # Step 2: Normalize unicode (handle any accented characters)
+    text = unicodedata.normalize('NFKD', text)
+    text = text.encode('ascii', 'ignore').decode('ascii')
+    
+    # Step 3: Remove any remaining numbering patterns (only if not preserving hierarchy)
+    if not preserve_hierarchy:
+        text = re.sub(r'^\d+(\.\d+)*\.\s*', '', text)  # Handle 1., 1.1., 1.1.2., etc.
+        text = re.sub(r'^[IVXivx]+(\.\d+)*\.\s*', '', text)  # Handle Roman numerals
+        text = re.sub(r'^[A-Za-z]\.\s*', '', text)  # Handle A., B., etc.
+    
+    # Step 4: Convert to lowercase BEFORE processing special characters
     text = text.lower()
     
-    # Replace spaces and special characters with underscore
-    text = re.sub(r'[\s\-/()]+', '_', text)
+    # Step 5: Replace & with 'and' for better readability (handle spaces properly)
+    text = re.sub(r'\s*&\s*', ' and ', text)
+    text = re.sub(r'^&', 'and ', text)  # Handle & at start
+    text = re.sub(r'&$', ' and', text)  # Handle & at end
+    
+    # Step 6: Remove apostrophes and quotes completely (BEFORE other processing)
+    text = re.sub(r"['\"`]", '', text)
+    
+    # Step 7: Handle camelCase/PascalCase by inserting underscores
+    if preserve_acronyms:
+        text = re.sub(r'([a-z])([A-Z])', r'\1_\2', text)
+        text = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', text)
+    else:
+        text = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', text)
+        text = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', text)
+    
+    # Step 8: Replace special characters with spaces (keep alphanumeric, spaces, hyphens)
+    if keep_numbers:
+        text = re.sub(r'[^a-z0-9\s_-]', ' ', text)
+    else:
+        text = re.sub(r'[^a-z\s_-]', ' ', text)
+    
+    # Step 9: Normalize whitespace and separators to underscores
+    text = re.sub(r'[\s\-/\\]+', '_', text)
+    
+    # Step 10: Remove consecutive underscores
+    text = re.sub(r'_+', '_', text)
+    
+    # Step 11: Remove leading/trailing underscores
+    text = text.strip('_')
+    
+    # Step 12: Combine hierarchy prefix with normalized text
+    if hierarchy_prefix and text:
+        text = hierarchy_prefix + text
+    
+    # Step 13: Ensure it doesn't start with a number (invalid identifier)
+    if text and text[0].isdigit():
+        text = f"n_{text}"
+    
+    # Step 14: Apply max length if specified
+    if max_length and len(text) > max_length:
+        text = text[:max_length].rstrip('_')
+    
+    # Step 15: Fallback for empty result - extract meaningful part from original
+    if not text:
+        fallback = re.sub(r'[^a-zA-Z0-9]', '', original_text)
+        if fallback:
+            text = fallback.lower()[:20]
+        else:
+            return ""  # Return empty string instead of 'unnamed_field'
+    
+    return text
+
+
+def normalize_vietnamese_text_to_snake_case(
+    text: str,
+    keep_numbers: bool = True,
+    max_length: Optional[int] = None,
+    remove_common_words: bool = False,
+    preserve_acronyms: bool = False,
+    preserve_hierarchy: bool = False
+) -> str:
+    """
+    Convert Vietnamese text to ASCII-compatible snake_case identifier.
+    Robust normalization for Vietnamese financial line items and field names.
+    
+    Args:
+        text: Vietnamese or English text to normalize
+        keep_numbers: Whether to keep numeric digits (default: True)
+        max_length: Maximum length of output (default: None/unlimited)
+        remove_common_words: Remove Vietnamese stop words like 'của', 'và', 'các' (default: False)
+        preserve_acronyms: Try to preserve acronyms in uppercase before conversion
+        preserve_hierarchy: Preserve numbering prefixes for hierarchical structure (default: False)
+        
+    Returns:
+        Snake_case identifier suitable for database column names
+        
+    Examples:
+        >>> normalize_vietnamese_text_to_snake_case("1. Doanh thu")
+        'doanh_thu'
+        >>> normalize_vietnamese_text_to_snake_case("1. Doanh thu", preserve_hierarchy=True)
+        '1.doanh_thu'
+        >>> normalize_vietnamese_text_to_snake_case("A. TÀI SẢN")
+        'tai_san'
+        >>> normalize_vietnamese_text_to_snake_case("A. TÀI SẢN", preserve_hierarchy=True)
+        'a.tai_san'
+        >>> normalize_vietnamese_text_to_snake_case("Doanh thu bán hàng và cung cấp dịch vụ")
+        'doanh_thu_ban_hang_va_cung_cap_dich_vu'
+        >>> normalize_vietnamese_text_to_snake_case("Chi phí (2023-2024)")
+        'chi_phi_2023_2024'
+        >>> normalize_vietnamese_text_to_snake_case("Lợi nhuận sau thuế", remove_common_words=True)
+        'loi_nhuan_sau_thue'
+        >>> normalize_vietnamese_text_to_snake_case("EBITDA (Lãi trước thuế)")
+        'ebitda_lai_truoc_thue'
+    """
+    if not text or not text.strip():
+        return ""
+    
+    original_text = text
+    
+    # Step 1: Extract hierarchy prefix if preservation is enabled
+    hierarchy_prefix = ""
+    if preserve_hierarchy:
+        # Extract numbering patterns: "1.", "I.", "A.", "1.1.2", etc.
+        hierarchy_match = re.match(r'^([\dIVXivx]+(\.\d+)*|[A-Za-z])\.\s*', text)
+        if hierarchy_match:
+            hierarchy_prefix = hierarchy_match.group(1).lower() + '.'
+            text = text[len(hierarchy_match.group(0)):]  # Remove the prefix from text
+    
+    # Step 2: Remove leading numbering patterns (only if not preserving hierarchy)
+    if not preserve_hierarchy:
+        # Handle: "1.", "I.", "A.", "1.1.2.", "1)", "(1)", etc.
+        text = re.sub(r'^[\dIVXivx]+(\.\d+)*[\.)]\s*', '', text)
+        text = re.sub(r'^\([0-9]+\)\s*', '', text)
+        text = re.sub(r'^[A-Za-z][\.)]\s*', '', text)
+    
+    # Step 3: Handle parenthetical content intelligently
+    # Option 1: Remove content in parentheses entirely (uncomment if preferred)
+    # text = re.sub(r'\([^)]*\)', '', text)
+    # Option 2: Keep parenthetical content (current behavior)
+    text = re.sub(r'[()]', ' ', text)
+    
+    # Step 4: Remove quotes, apostrophes, and other punctuation
+    text = re.sub(r"['\"`''""*&%$#@!?;:,.]", '', text)
+    
+    # Step 5: Remove Vietnamese accents/diacritics
+    text = remove_vietnamese_accents(text, use_map=True)
+    
+    # Step 6: Handle camelCase/PascalCase before lowercasing
+    if preserve_acronyms:
+        text = re.sub(r'([a-z])([A-Z])', r'\1_\2', text)
+        # Also handle consecutive uppercase letters followed by lowercase (e.g., XMLHttp)
+        text = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', text)
+    else:
+        text = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', text)
+        # Also handle consecutive uppercase letters followed by lowercase (e.g., XMLHttp)
+        text = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', text)
+    
+    # Step 7: Convert to lowercase
+    text = text.lower()
+    
+    # Step 8: Remove common Vietnamese stop words (optional)
+    if remove_common_words:
+        # Common Vietnamese words that don't add meaning to field names
+        stop_words = [
+            'cua', 'va', 'cac', 'cho', 'tren', 'duoi', 'trong', 'ngoai',
+            'tai', 'den', 'tu', 'voi', 'ma', 'la', 'thi', 'hay', 'hoac',
+            'nhung', 'moi', 'nam', 'thang', 'ngay', 'ky', 'dot', 'lan'
+        ]
+        # Create pattern to match whole words only
+        pattern = r'\b(' + '|'.join(stop_words) + r')\b'
+        text = re.sub(pattern, ' ', text)
+    
+    # Step 9: Replace special characters and spaces with underscores
+    if keep_numbers:
+        # Keep alphanumeric + spaces/hyphens/underscores
+        text = re.sub(r'[^a-z0-9\s_-]', ' ', text)
+    else:
+        # Keep only alphabetic + spaces/hyphens/underscores
+        text = re.sub(r'[^a-z\s_-]', ' ', text)
+    
+    # Step 10: Normalize whitespace and separators to underscores
+    text = re.sub(r'[\s\-/\\]+', '_', text)
+    
+    # Step 11: Remove consecutive underscores
+    text = re.sub(r'_+', '_', text)
+    
+    # Step 12: Remove leading/trailing underscores
+    text = text.strip('_')
+    
+    # Step 13: Combine hierarchy prefix with normalized text
+    if hierarchy_prefix and text:
+        text = hierarchy_prefix + text
+    
+    # Step 14: Ensure it doesn't start with a number (invalid Python/SQL identifier)
+    if text and text[0].isdigit():
+        text = f"n_{text}"  # 'n' for 'number' prefix
+    
+    # Step 15: Apply max length constraint if specified
+    if max_length and len(text) > max_length:
+        text = text[:max_length].rstrip('_')
+    
+    # Step 16: Fallback for empty result
+    if not text:
+        # Try to extract at least something from original text
+        fallback = re.sub(r'[^a-zA-Z0-9]', '', original_text)
+        if fallback:
+            text = fallback.lower()[:20]
+        else:
+            return ""  # Return empty string instead of 'unnamed_field'
+    
+    return text
+
+
+def normalize_text_to_snake_case_strict(text: str) -> str:
+    """
+    Strict version: Only keeps alphabetic characters.
+    Best for database column names that should be purely alphabetic.
+    """
+    if not text or not text.strip():
+        return ""
+    
+    # Normalize unicode
+    text = unicodedata.normalize('NFKD', text)
+    text = text.encode('ascii', 'ignore').decode('ascii')
+    
+    # Remove all non-alphabetic characters except spaces
+    text = re.sub(r'[^a-zA-Z\s]', ' ', text)
+    
+    # Convert to lowercase and replace spaces with underscores
+    text = text.lower()
+    text = re.sub(r'\s+', '_', text)
     
     # Remove consecutive underscores
     text = re.sub(r'_+', '_', text)
@@ -354,7 +791,15 @@ def normalize_english_text_to_snake_case(text: str) -> str:
     # Remove leading/trailing underscores
     text = text.strip('_')
     
-    return text
+    return text or "unnamed_field"
+
+
+def is_valid_identifier(name: str) -> bool:
+    """Check if string is a valid Python/SQL identifier."""
+    if not name:
+        return False
+    return name.isidentifier() and not name[0].isdigit()
+
 
 def flatten_data(json_data, parent_key='', sep='_'):
     """
