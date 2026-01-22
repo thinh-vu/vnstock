@@ -26,6 +26,7 @@ from vnstock.explorer.vci.financial import Finance
 class TestVCICompanyComprehensive:
     """Comprehensive test suite for VCI Company."""
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_overview_diverse_symbols(self, diverse_test_symbols):
         """Test overview() with diverse symbols."""
         all_symbols = diverse_test_symbols['all'][:5]
@@ -45,6 +46,7 @@ class TestVCICompanyComprehensive:
             except Exception as e:
                 pytest.fail(f"Company overview {symbol} failed: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_profile_diverse_symbols(self, diverse_test_symbols):
         """Test profile() with diverse symbols."""
         all_symbols = diverse_test_symbols['all'][:5]
@@ -64,6 +66,7 @@ class TestVCICompanyComprehensive:
             except Exception as e:
                 print(f"Profile not available for {symbol}: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_officers_sample_symbols(self, random_hose_symbols):
         """Test officers() with HOSE samples."""
         test_symbols = random_hose_symbols[:5]
@@ -83,6 +86,7 @@ class TestVCICompanyComprehensive:
             except Exception as e:
                 print(f"Officers not available for {symbol}: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_shareholders_sample_symbols(self, random_hose_symbols):
         """Test shareholders() with HOSE samples."""
         test_symbols = random_hose_symbols[:5]
@@ -109,6 +113,7 @@ class TestVCICompanyComprehensive:
 class TestVCIFinanceComprehensive:
     """Comprehensive test suite for VCI Finance."""
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     @pytest.mark.parametrize("period", ['year', 'quarter'])
     @pytest.mark.parametrize("lang", ['vi', 'en'])
     def test_balance_sheet_params(
@@ -132,6 +137,7 @@ class TestVCIFinanceComprehensive:
         assert isinstance(df, pd.DataFrame), \
             f"balance_sheet failed for period={period}, lang={lang}"
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     @pytest.mark.parametrize("period", ['year', 'quarter'])
     @pytest.mark.parametrize("lang", ['vi', 'en'])
     def test_income_statement_params(
@@ -155,6 +161,7 @@ class TestVCIFinanceComprehensive:
         assert isinstance(df, pd.DataFrame), \
             f"income_statement failed for period={period}, lang={lang}"
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     @pytest.mark.parametrize("period", ['year', 'quarter'])
     def test_cash_flow_periods(self, diverse_test_symbols, period):
         """Test cash_flow() with different periods."""
@@ -170,6 +177,7 @@ class TestVCIFinanceComprehensive:
         
         assert isinstance(df, pd.DataFrame)
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     @pytest.mark.parametrize("period", ['year', 'quarter'])
     @pytest.mark.parametrize("lang", ['vi', 'en'])
     def test_ratio_params(self, diverse_test_symbols, period, lang):
@@ -186,6 +194,7 @@ class TestVCIFinanceComprehensive:
         
         assert isinstance(df, pd.DataFrame)
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_all_financial_statements_hose(self, random_hose_symbols):
         """Test all financial statements for HOSE samples."""
         test_symbols = random_hose_symbols[:3]
@@ -215,6 +224,7 @@ class TestVCIFinanceComprehensive:
                     f"Financial statements failed for {symbol}: {e}"
                 )
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_all_financial_statements_hnx(self, random_hnx_symbols):
         """Test all financial statements for HNX samples."""
         test_symbols = random_hnx_symbols[:3]
@@ -233,6 +243,7 @@ class TestVCIFinanceComprehensive:
             except Exception as e:
                 print(f"Financial data not available for {symbol}: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_all_financial_statements_upcom(self, random_upcom_symbols):
         """Test all financial statements for UPCOM samples."""
         test_symbols = random_upcom_symbols[:3]
@@ -251,6 +262,7 @@ class TestVCIFinanceComprehensive:
             except Exception as e:
                 print(f"Financial data not available for {symbol}: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_get_all_parameter(self, diverse_test_symbols):
         """Test Finance with get_all parameter."""
         symbol = diverse_test_symbols['hose'][0]
@@ -265,6 +277,7 @@ class TestVCIFinanceComprehensive:
         df = finance.balance_sheet(period='year', dropna=True)
         assert isinstance(df, pd.DataFrame)
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_dropna_parameter(self, diverse_test_symbols):
         """Test dropna parameter effect."""
         symbol = diverse_test_symbols['hose'][0]

@@ -90,10 +90,10 @@ class TestQuoteAdapter:
         # Symbol should be accessible (implementation dependent)
         assert hasattr(quote, 'symbol') or hasattr(quote.client, 'symbol')
 
-    def test_quote_default_source_is_vci(self):
-        """Test Quote defaults to VCI source."""
+    def test_quote_default_source_is_kbs(self):
+        """Test Quote defaults to KBS source."""
         quote = Quote(symbol='ACB', show_log=False)
-        assert quote.source.lower() == 'vci'
+        assert quote.source.lower() == 'kbs'
 
     @pytest.mark.parametrize("source", ['VCI', 'TCBS'])
     def test_quote_supports_multiple_sources(self, source):

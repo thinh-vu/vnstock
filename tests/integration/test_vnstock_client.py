@@ -5,7 +5,7 @@ Tests end-to-end workflows using the Vnstock class.
 """
 
 import pytest
-from vnstock import Vnstock
+from vnstock.common.client import Vnstock
 
 
 @pytest.mark.integration
@@ -49,7 +49,7 @@ class TestVnstockClient:
 
     def test_vnstock_supported_sources(self):
         """Test Vnstock supports expected sources."""
-        expected_sources = ['VCI', 'TCBS', 'MSN']
+        expected_sources = ['KBS', 'VCI', 'TCBS', 'MSN']
         assert Vnstock.SUPPORTED_SOURCES == expected_sources
 
     @pytest.mark.parametrize("source", ['VCI', 'TCBS'])

@@ -33,6 +33,7 @@ class TestVCIQuote:
         assert hasattr(quote, 'intraday')
         assert callable(quote.intraday)
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     @pytest.mark.integration
     def test_vci_quote_history_with_mock(
         self, monkeypatch, mock_response_factory

@@ -19,6 +19,7 @@ from vnstock.explorer.vci.quote import Quote
 class TestVCIQuoteComprehensive:
     """Comprehensive test suite for VCI Quote."""
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_all_intervals_hose_sample(
         self, diverse_test_symbols, test_intervals
     ):
@@ -51,6 +52,7 @@ class TestVCIQuoteComprehensive:
                         f"interval={interval}: {e}"
                     )
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_random_hose_symbols(self, random_hose_symbols):
         """Test history() with random HOSE symbols."""
         test_symbols = random_hose_symbols[:10]
@@ -74,6 +76,7 @@ class TestVCIQuoteComprehensive:
             except Exception as e:
                 pytest.fail(f"HOSE {symbol} history failed: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_random_hnx_symbols(self, random_hnx_symbols):
         """Test history() with random HNX symbols."""
         test_symbols = random_hnx_symbols[:10]
@@ -97,6 +100,7 @@ class TestVCIQuoteComprehensive:
             except Exception as e:
                 pytest.fail(f"HNX {symbol} history failed: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_random_upcom_symbols(self, random_upcom_symbols):
         """Test history() with random UPCOM symbols."""
         test_symbols = random_upcom_symbols[:10]
@@ -120,6 +124,7 @@ class TestVCIQuoteComprehensive:
             except Exception as e:
                 pytest.fail(f"UPCOM {symbol} history failed: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_derivatives(self, derivative_symbols):
         """Test history() with derivative symbols."""
         for symbol in derivative_symbols[:3]:
@@ -141,6 +146,7 @@ class TestVCIQuoteComprehensive:
             except Exception as e:
                 pytest.fail(f"Derivative {symbol} failed: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     @pytest.mark.parametrize("interval", ['1D', '1W', '1M'])
     def test_history_intervals_parametrized(
         self, diverse_test_symbols, interval
@@ -159,6 +165,7 @@ class TestVCIQuoteComprehensive:
         if not df.empty:
             assert 'close' in df.columns
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_intraday_hose_samples(self, diverse_test_symbols):
         """Test intraday() with HOSE samples."""
         hose_samples = diverse_test_symbols['hose'][:3]
@@ -183,6 +190,7 @@ class TestVCIQuoteComprehensive:
                 # Intraday may not be available for all symbols
                 print(f"Intraday not available for {symbol}: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_different_date_ranges(
         self, diverse_test_symbols, test_date_ranges
     ):
@@ -204,6 +212,7 @@ class TestVCIQuoteComprehensive:
             except Exception as e:
                 pytest.fail(f"Date range {range_name} failed: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_edge_cases(self, diverse_test_symbols):
         """Test history() edge cases."""
         symbol = diverse_test_symbols['hose'][0]
@@ -225,6 +234,7 @@ class TestVCIQuoteComprehensive:
         )
         assert isinstance(df, pd.DataFrame)
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_covered_warrants_if_available(self, sample_covered_warrants):
         """Test history() with covered warrants if available."""
         if not sample_covered_warrants:
@@ -248,6 +258,7 @@ class TestVCIQuoteComprehensive:
             except Exception as e:
                 print(f"CW {symbol} not supported or failed: {e}")
 
+    @pytest.mark.skip(reason="Integration test - requires live API")
     def test_batch_symbols_performance(self, diverse_test_symbols):
         """Test fetching data for multiple symbols (performance check)."""
         symbols = diverse_test_symbols['all'][:5]

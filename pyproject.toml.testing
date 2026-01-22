@@ -1,0 +1,121 @@
+# Testing and code quality configuration for vnstock
+# This file contains additional tool configurations for testing and linting
+
+[tool.black]
+line-length = 127
+target-version = ['py310', 'py311', 'py312', 'py313']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | tests/fixtures
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 127
+multi_line_mode = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+skip_glob = ["*/migrations/*", "*/tests/fixtures/*"]
+known_first_party = ["vnstock"]
+known_third_party = ["pandas", "requests", "beautifulsoup4", "seaborn"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+strict_optional = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "vnstock.explorer.*",
+    "vnstock.connector.*",
+]
+ignore_errors = true
+
+[tool.pylint.messages_control]
+disable = [
+    "C0330",
+    "C0326",
+    "R0913",
+    "R0914",
+    "W0212",
+    "C0103",
+]
+
+[tool.pylint.format]
+max-line-length = 127
+
+[tool.pylint.design]
+max-attributes = 10
+max-arguments = 8
+
+[tool.coverage.run]
+source = ["vnstock"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+]
+
+[tool.coverage.report]
+precision = 2
+skip_covered = false
+skip_empty = true
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "@abstractmethod",
+    "if TYPE_CHECKING:",
+    "@runtime_checkable",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--disable-warnings",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow tests",
+    "api: API tests",
+    "explorer: Explorer tests",
+    "vci: VCI tests",
+    "tcbs: TCBS tests",
+    "kbs: KBS tests",
+    "smoke: Smoke tests",
+    "regression: Regression tests",
+]
