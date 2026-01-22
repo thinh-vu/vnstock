@@ -313,11 +313,9 @@ class Quote:
         df.attrs['symbol'] = self.symbol
         df.attrs['source'] = self.data_source
         df.attrs['interval'] = interval
-        df.attrs['start'] = start  # Use calculated start
-        df.attrs['end'] = end
         df.attrs['length'] = length
-        df.attrs['count_back'] = count_back
-        df.attrs['get_all'] = get_all
+        df.attrs['start'] = start 
+        df.attrs['end'] = end
 
         if show_log or self.show_log:
             logger.info(
