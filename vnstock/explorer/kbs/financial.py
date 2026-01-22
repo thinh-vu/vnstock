@@ -73,7 +73,10 @@ class Finance:
         self.standardize_columns = standardize_columns
         
         # Initialize field handler for advanced field processing
-        self.field_handler = FieldHandler(data_source='KBS')
+        # Don't pass reference_dir to avoid file loading warnings
+        self.field_handler = FieldHandler(reference_dir=None, data_source='KBS')
+        # Ensure mappings are loaded from built-in KBS mappings
+        self.field_handler._load_reference_data('')
         
         # Handle proxy configuration
         if proxy_config is None:
@@ -182,9 +185,9 @@ class Finance:
             
             # Generate item_id using field handler
             if item_en and item_en.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(item_en, preserve_hierarchy=True)
+                item_id = self.field_handler.normalizer.normalize_field_name(item_en, language='en')
             elif item and item.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(item, preserve_hierarchy=True)
+                item_id = self.field_handler.normalizer.normalize_field_name(item, language='vi')
             else:
                 item_id = ""
             
@@ -731,9 +734,9 @@ class Finance:
             
             # Generate item_id using field handler
             if item_en and item_en.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(item_en, preserve_hierarchy=True)
+                item_id = self.field_handler.normalizer.normalize_field_name(item_en, language='en')
             elif item and item.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(item, preserve_hierarchy=True)
+                item_id = self.field_handler.normalizer.normalize_field_name(item, language='vi')
             else:
                 item_id = ""
             
