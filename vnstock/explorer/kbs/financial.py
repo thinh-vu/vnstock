@@ -2,10 +2,12 @@
 
 import json
 import pandas as pd
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Tuple, Union
+from enum import Enum
 from vnai import agg_execution
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.parser import get_asset_type, normalize_english_text_to_snake_case
+from vnstock.core.utils.field import FieldHandler
 from vnstock.core.utils.client import send_request, ProxyConfig
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.explorer.kbs.const import (
@@ -19,6 +21,13 @@ from vnstock.explorer.kbs.const import (
 )
 
 logger = get_logger(__name__)
+
+
+class FieldDisplayMode(Enum):
+    """Field display modes."""
+    STD = "std"
+    ALL = "all"
+    AUTO = "auto"
 
 
 class Finance:
@@ -62,6 +71,9 @@ class Finance:
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.show_log = show_log
         self.standardize_columns = standardize_columns
+        
+        # Initialize field handler for advanced field processing
+        self.field_handler = FieldHandler(data_source='KBS')
         
         # Handle proxy configuration
         if proxy_config is None:
@@ -168,12 +180,11 @@ class Finance:
             item = record.get('Name', '')
             item_en = record.get('NameEn', '')
             
-            # Generate item_id: use English if available, fallback to Vietnamese
+            # Generate item_id using field handler
             if item_en and item_en.strip():
-                item_id = normalize_english_text_to_snake_case(item_en, preserve_hierarchy=True)
+                item_id = self.field_handler.normalizer.normalize_field_name(item_en, preserve_hierarchy=True)
             elif item and item.strip():
-                from vnstock.core.utils.parser import normalize_vietnamese_text_to_snake_case
-                item_id = normalize_vietnamese_text_to_snake_case(item, preserve_hierarchy=True)
+                item_id = self.field_handler.normalizer.normalize_field_name(item, preserve_hierarchy=True)
             else:
                 item_id = ""
             
@@ -245,22 +256,34 @@ class Finance:
         
         return df
     
-    def _filter_columns_by_lang(self, df: pd.DataFrame, lang: Optional[str] = 'vi') -> pd.DataFrame:
+    def _filter_columns_by_lang(self, df: pd.DataFrame, display_mode: Optional[Union[str, FieldDisplayMode]] = FieldDisplayMode.STD) -> pd.DataFrame:
         """
-        Filter DataFrame columns based on language preference.
+        Filter DataFrame columns based on field display mode.
         
         Args:
             df: DataFrame to filter
-            lang: Language preference ('vi', 'en', or None)
-                - 'vi': Keep only 'item' and 'item_id' columns (Vietnamese names)
-                - 'en': Keep only 'item' and 'item_id' columns (English names, renamed to 'item')
-                - None: Keep all item columns (item, item_en, item_id)
+            display_mode: Field display mode
+                - FieldDisplayMode.STD: Keep only 'item' and 'item_id' columns (standardized)
+                - FieldDisplayMode.ALL: Keep all item columns (item, item_en, item_id)
+                - FieldDisplayMode.AUTO: Auto-convert based on data type
+                - 'vi': Keep Vietnamese names only (backward compatibility)
+                - 'en': Keep English names only (backward compatibility)
+                - None: Keep all item columns (backward compatibility)
             
         Returns:
             DataFrame with filtered columns
         """
         if df.empty:
             return df
+        
+        # Convert string to enum for backward compatibility
+        if isinstance(display_mode, str):
+            if display_mode == 'vi':
+                display_mode = FieldDisplayMode.STD
+            elif display_mode == 'en':
+                display_mode = FieldDisplayMode.STD
+            else:
+                display_mode = FieldDisplayMode.ALL
         
         # Get metadata columns (non-period columns)
         period_cols = df.attrs.get('periods', [])
@@ -269,15 +292,18 @@ class Finance:
         # Create a copy to avoid SettingWithCopyWarning
         df_filtered = df.copy()
         
-        if lang is None:
+        if display_mode == FieldDisplayMode.ALL:
             # Keep all metadata columns
             cols_to_keep = metadata_cols
-        else:
+        elif display_mode == FieldDisplayMode.AUTO:
+            # Auto-convert logic (for future implementation)
+            cols_to_keep = metadata_cols
+        else:  # STD
             # Keep only item and item_id columns
             cols_to_keep = [col for col in metadata_cols if col in ['item', 'item_id']]
             
-            # If lang='en', rename item_en to item and drop the original item column
-            if lang == 'en' and 'item_en' in df_filtered.columns:
+            # Handle English preference (backward compatibility)
+            if isinstance(display_mode, str) and display_mode == 'en' and 'item_en' in df_filtered.columns:
                 df_filtered['item'] = df_filtered['item_en']
                 cols_to_keep = ['item', 'item_id']
         
@@ -360,7 +386,7 @@ class Finance:
     def income_statement(
         self,
         period: str = 'year',
-        lang: Optional[str] = 'vi',
+        display_mode: Optional[Union[str, FieldDisplayMode]] = FieldDisplayMode.STD,
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
@@ -368,10 +394,12 @@ class Finance:
 
         Args:
             period: Loại kỳ báo cáo ('year' hoặc 'quarter'). Mặc định 'year'.
-            lang: Ngôn ngữ cho cột item ('vi', 'en', hoặc None). Mặc định 'vi'.
-                - 'vi': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Việt)
-                - 'en': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Anh)
-                - None: Giữ tất cả cột item (item, item_en, item_id)
+            display_mode: Chế độ hiển thị trường dữ liệu. Mặc định FieldDisplayMode.STD.
+                - FieldDisplayMode.STD: Chỉ giữ cột 'item' và 'item_id' (đã chuẩn hóa)
+                - FieldDisplayMode.ALL: Giữ tất cả cột item (item, item_en, item_id)
+                - 'vi': Chỉ giữ tên tiếng Việt (tương thích ngược)
+                - 'en': Chỉ giữ tên tiếng Anh (tương thích ngược)
+                - None: Giữ tất cả cột (tương thích ngược)
             show_log: Hiển thị log debug.
 
         Returns:
@@ -379,10 +407,13 @@ class Finance:
 
         Examples:
             >>> finance = Finance('ACB')
-            >>> df = finance.income_statement(period='year', lang='vi')
+            >>> df = finance.income_statement(period='year', display_mode=FieldDisplayMode.STD)
             >>> # Returns DataFrame with columns: item, item_id, unit, periods...
-            >>> df_en = finance.income_statement(period='year', lang='en')
-            >>> # Returns DataFrame with English names in 'item' column
+            >>> df_all = finance.income_statement(period='year', display_mode=FieldDisplayMode.ALL)
+            >>> # Returns DataFrame with all item columns
+            >>> # Backward compatibility:
+            >>> df_vi = finance.income_statement(period='year', display_mode='vi')
+            >>> df_en = finance.income_statement(period='year', display_mode='en')
         """
         # Map period to termType (1=year, 2=quarter)
         period_type = 1 if period == 'year' else 2
@@ -410,8 +441,8 @@ class Finance:
         if self.standardize_columns:
             df = self._apply_schema_standardization(df, 'income_statement')
 
-        # Filter columns by language preference
-        df = self._filter_columns_by_lang(df, lang)
+        # Filter columns by display mode
+        df = self._filter_columns_by_lang(df, display_mode)
 
         # Add metadata
         df.attrs['symbol'] = self.symbol
@@ -430,7 +461,7 @@ class Finance:
     def balance_sheet(
         self,
         period: str = 'year',
-        lang: Optional[str] = 'vi',
+        display_mode: Optional[Union[str, FieldDisplayMode]] = FieldDisplayMode.STD,
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
@@ -438,10 +469,12 @@ class Finance:
 
         Args:
             period: Loại kỳ báo cáo ('year' hoặc 'quarter'). Mặc định 'year'.
-            lang: Ngôn ngữ cho cột item ('vi', 'en', hoặc None). Mặc định 'vi'.
-                - 'vi': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Việt)
-                - 'en': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Anh)
-                - None: Giữ tất cả cột item (item, item_en, item_id)
+            display_mode: Chế độ hiển thị trường dữ liệu. Mặc định FieldDisplayMode.STD.
+                - FieldDisplayMode.STD: Chỉ giữ cột 'item' và 'item_id' (đã chuẩn hóa)
+                - FieldDisplayMode.ALL: Giữ tất cả cột item (item, item_en, item_id)
+                - 'vi': Chỉ giữ tên tiếng Việt (tương thích ngược)
+                - 'en': Chỉ giữ tên tiếng Anh (tương thích ngược)
+                - None: Giữ tất cả cột (tương thích ngược)
             show_log: Hiển thị log debug.
 
         Returns:
@@ -449,9 +482,11 @@ class Finance:
 
         Examples:
             >>> finance = Finance('ACB')
-            >>> df = finance.balance_sheet(period='year', lang='vi')
-            >>> df_en = finance.balance_sheet(period='year', lang='en')
-            >>> # Both return DataFrame with 'item' and 'item_id' columns only
+            >>> df = finance.balance_sheet(period='year', display_mode=FieldDisplayMode.STD)
+            >>> df_all = finance.balance_sheet(period='year', display_mode=FieldDisplayMode.ALL)
+            >>> # Backward compatibility:
+            >>> df_vi = finance.balance_sheet(period='year', display_mode='vi')
+            >>> df_en = finance.balance_sheet(period='year', display_mode='en')
         """
         # Map period to termType (1=year, 2=quarter)
         period_type = 1 if period == 'year' else 2
@@ -480,8 +515,8 @@ class Finance:
         if self.standardize_columns:
             df = self._apply_schema_standardization(df, 'balance_sheet')
 
-        # Filter columns by language preference
-        df = self._filter_columns_by_lang(df, lang)
+        # Filter columns by display mode
+        df = self._filter_columns_by_lang(df, display_mode)
 
         # Add metadata
         df.attrs['symbol'] = self.symbol
@@ -500,7 +535,7 @@ class Finance:
     def cash_flow(
         self,
         period: str = 'year',
-        lang: Optional[str] = 'vi',
+        display_mode: Optional[Union[str, FieldDisplayMode]] = FieldDisplayMode.STD,
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
@@ -508,10 +543,12 @@ class Finance:
 
         Args:
             period: Loại kỳ báo cáo ('year' hoặc 'quarter'). Mặc định 'year'.
-            lang: Ngôn ngữ cho cột item ('vi', 'en', hoặc None). Mặc định 'vi'.
-                - 'vi': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Việt)
-                - 'en': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Anh)
-                - None: Giữ tất cả cột item (item, item_en, item_id)
+            display_mode: Chế độ hiển thị trường dữ liệu. Mặc định FieldDisplayMode.STD.
+                - FieldDisplayMode.STD: Chỉ giữ cột 'item' và 'item_id' (đã chuẩn hóa)
+                - FieldDisplayMode.ALL: Giữ tất cả cột item (item, item_en, item_id)
+                - 'vi': Chỉ giữ tên tiếng Việt (tương thích ngược)
+                - 'en': Chỉ giữ tên tiếng Anh (tương thích ngược)
+                - None: Giữ tất cả cột (tương thích ngược)
             show_log: Hiển thị log debug.
 
         Returns:
@@ -519,9 +556,11 @@ class Finance:
 
         Examples:
             >>> finance = Finance('ACB')
-            >>> df = finance.cash_flow(period='year', lang='vi')
-            >>> df_en = finance.cash_flow(period='year', lang='en')
-            >>> # Both return DataFrame with 'item' and 'item_id' columns only
+            >>> df = finance.cash_flow(period='year', display_mode=FieldDisplayMode.STD)
+            >>> df_all = finance.cash_flow(period='year', display_mode=FieldDisplayMode.ALL)
+            >>> # Backward compatibility:
+            >>> df_vi = finance.cash_flow(period='year', display_mode='vi')
+            >>> df_en = finance.cash_flow(period='year', display_mode='en')
         """
         # Map period to termType (1=year, 2=quarter)
         period_type = 1 if period == 'year' else 2
@@ -563,8 +602,8 @@ class Finance:
         if self.standardize_columns:
             df = self._apply_schema_standardization(df, 'cash_flow')
 
-        # Filter columns by language preference
-        df = self._filter_columns_by_lang(df, lang)
+        # Filter columns by display mode
+        df = self._filter_columns_by_lang(df, display_mode)
 
         # Add metadata
         df.attrs['symbol'] = self.symbol
@@ -583,7 +622,7 @@ class Finance:
     def ratio(
         self,
         period: str = 'year',
-        lang: Optional[str] = 'vi',
+        display_mode: Optional[Union[str, FieldDisplayMode]] = FieldDisplayMode.STD,
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
@@ -591,10 +630,12 @@ class Finance:
 
         Args:
             period: Loại kỳ báo cáo ('year' hoặc 'quarter'). Mặc định 'year'.
-            lang: Ngôn ngữ cho cột item ('vi', 'en', hoặc None). Mặc định 'vi'.
-                - 'vi': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Việt)
-                - 'en': Chỉ giữ cột 'item' và 'item_id' (tên tiếng Anh)
-                - None: Giữ tất cả cột item (item, item_en, item_id)
+            display_mode: Chế độ hiển thị trường dữ liệu. Mặc định FieldDisplayMode.STD.
+                - FieldDisplayMode.STD: Chỉ giữ cột 'item' và 'item_id' (đã chuẩn hóa)
+                - FieldDisplayMode.ALL: Giữ tất cả cột item (item, item_en, item_id)
+                - 'vi': Chỉ giữ tên tiếng Việt (tương thích ngược)
+                - 'en': Chỉ giữ tên tiếng Anh (tương thích ngược)
+                - None: Giữ tất cả cột (tương thích ngược)
             show_log: Hiển thị log debug.
 
         Returns:
@@ -602,9 +643,11 @@ class Finance:
 
         Examples:
             >>> finance = Finance('ACB')
-            >>> df = finance.ratio(period='year', lang='vi')
-            >>> df_en = finance.ratio(period='year', lang='en')
-            >>> # Both return DataFrame with 'item' and 'item_id' columns only
+            >>> df = finance.ratio(period='year', display_mode=FieldDisplayMode.STD)
+            >>> df_all = finance.ratio(period='year', display_mode=FieldDisplayMode.ALL)
+            >>> # Backward compatibility:
+            >>> df_vi = finance.ratio(period='year', display_mode='vi')
+            >>> df_en = finance.ratio(period='year', display_mode='en')
         """
         # Map period to termType (1=year, 2=quarter)
         period_type = 1 if period == 'year' else 2
@@ -686,12 +729,11 @@ class Finance:
             item = record.get('Name', '')
             item_en = record.get('NameEn', '')
             
-            # Generate item_id: use English if available, fallback to Vietnamese
+            # Generate item_id using field handler
             if item_en and item_en.strip():
-                item_id = normalize_english_text_to_snake_case(item_en, preserve_hierarchy=True)
+                item_id = self.field_handler.normalizer.normalize_field_name(item_en, preserve_hierarchy=True)
             elif item and item.strip():
-                from vnstock.core.utils.parser import normalize_vietnamese_text_to_snake_case
-                item_id = normalize_vietnamese_text_to_snake_case(item, preserve_hierarchy=True)
+                item_id = self.field_handler.normalizer.normalize_field_name(item, preserve_hierarchy=True)
             else:
                 item_id = ""
             
@@ -743,8 +785,8 @@ class Finance:
         if self.standardize_columns:
             df = self._apply_schema_standardization(df, 'financial_ratios')
 
-        # Filter columns by language preference
-        df = self._filter_columns_by_lang(df, lang)
+        # Filter columns by display mode
+        df = self._filter_columns_by_lang(df, display_mode)
 
         # Add metadata
         df.attrs['symbol'] = self.symbol
