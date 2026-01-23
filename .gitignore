@@ -1,5 +1,5 @@
 .DS_Store
-
+/vnstock_data/
 tests/report
 
 # Byte-compiled / optimized / DLL files

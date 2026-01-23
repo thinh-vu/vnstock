@@ -249,36 +249,6 @@ class Listing:
     def all_bonds(self, show_log: Optional[bool] = False) -> pd.Series:
         return self.symbols_by_group(group='BOND', show_log=show_log)
 
-    # =========================================================================
-    # STANDARDIZED MARKET INDICES (Wrapper functions)
-    # =========================================================================
-    # Provide access to standardized indices across all data sources
-    # (VCI, TCBS, MSN, etc.). Sector indices include mapping to ICB
-    # sector_id for industry filtering and analysis.
-
-    def all_indices(self) -> pd.DataFrame:
-        """
-        Lấy danh sách tất cả các chỉ số tiêu chuẩn hóa với thông tin đầy đủ.
-
-        Returns:
-            pd.DataFrame: Columns [symbol, name, description, full_name,
-                                   group, index_id, sector_id (for sectors)]
-        """
-        return market_indices.get_all_indices()
-
-    def indices_by_group(self, group: str) -> Optional[pd.DataFrame]:
-        """
-        Lấy danh sách chỉ số theo nhóm tiêu chuẩn hóa.
-
-        Args:
-            group: Tên nhóm (VD: 'HOSE Indices', 'Sector Indices', etc.)
-
-        Returns:
-            pd.DataFrame: Danh sách chỉ số trong nhóm hoặc None
-                          (Sector indices include sector_id mapping)
-        """
-        return market_indices.get_indices_by_group(group)
-
 
 # Register provider
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
