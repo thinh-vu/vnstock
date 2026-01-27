@@ -35,11 +35,11 @@ class FieldMapper:
     
     def _load_builtin_mappings(self):
         """Load built-in KBS standardized field mappings."""
-        # Import complete mappings from separate file
-        from .kbs_complete_mappings import KBS_COMPLETE_MAPPINGS
+        # Import built-in mappings from separate file
+        from .kbs_mappings import KBS_BUILTIN_MAPPINGS
         
         # Load built-in mappings
-        self.mappings = KBS_COMPLETE_MAPPINGS
+        self.mappings = KBS_BUILTIN_MAPPINGS
         self._create_reverse_mappings()
         
         logger.info(f"Loaded {len(self.mappings)} built-in KBS field mappings")
@@ -55,8 +55,19 @@ class FieldMapper:
             mapping_path = Path(mapping_file)
             if mapping_path.exists():
                 with open(mapping_path, 'r', encoding='utf-8') as f:
-                    self.mappings = json.load(f)
+                    data = json.load(f)
+                
+                # Handle different mapping formats
+                if isinstance(data, dict):
+                    # Format: {field_id: {snake_case: ..., original_vi: ..., original_en: ...}}
+                    self.mappings = data
+                elif isinstance(data, list):
+                    # Format: [{field_id: ..., snake_case: ..., ...}]
+                    self.mappings = {str(item['field_id']): item for item in data}
+                
+                # Create reverse mappings
                 self._create_reverse_mappings()
+                
                 logger.info(f"Loaded {len(self.mappings)} field mappings from {mapping_file}")
             else:
                 logger.warning(f"Mapping file not found: {mapping_file}")
@@ -79,22 +90,10 @@ class FieldMapper:
             field_id: Field identifier
             
         Returns:
-            Snake case field name or None
+            Snake_case field name or None
         """
-        mapping = self.mappings.get(field_id)
+        mapping = self.mappings.get(str(field_id))
         return mapping.get('snake_case') if mapping else None
-    
-    def get_field_id(self, snake_case: str) -> Optional[str]:
-        """
-        Get field_id for snake_case name.
-        
-        Args:
-            snake_case: Snake case field name
-            
-        Returns:
-            Field identifier or None
-        """
-        return self.reverse_mappings.get(snake_case)
     
     def get_field_info(self, field_id: str) -> Optional[Dict]:
         """
@@ -106,44 +105,132 @@ class FieldMapper:
         Returns:
             Field information dictionary or None
         """
-        return self.mappings.get(field_id)
+        return self.mappings.get(str(field_id))
     
-    def normalize_field(self, field_name: str) -> str:
+    def get_field_id(self, snake_case: str) -> Optional[str]:
         """
-        Normalize field name using field normalizer.
+        Get field_id from snake_case name.
         
         Args:
-            field_name: Field name to normalize
+            snake_case: Snake_case field name
             
         Returns:
-            Normalized field name
+            Field identifier or None
         """
-        return self.normalizer.normalize_field_name(field_name)
+        return self.reverse_mappings.get(snake_case)
     
-    def create_mapping(self, field_id: str, item_vi: str, item_en: str = "") -> Dict:
+    def normalize_field(self, field_name: str, language: str = 'auto') -> str:
         """
-        Create field mapping dictionary.
+        Normalize field name to snake_case.
+        
+        Args:
+            field_name: Original field name
+            language: Language hint ('vi', 'en', 'auto')
+            
+        Returns:
+            Normalized snake_case name
+        """
+        return self.normalizer.normalize_field_name(field_name, language)
+    
+    def create_mapping(self, field_id: str, original_vi: str, original_en: str = "", 
+                      snake_case: str = "") -> Dict:
+        """
+        Create a field mapping entry.
         
         Args:
             field_id: Field identifier
-            item_vi: Vietnamese field name
-            item_en: English field name
+            original_vi: Vietnamese field name
+            original_en: English field name
+            snake_case: Snake_case name (auto-generated if empty)
             
         Returns:
             Field mapping dictionary
         """
-        snake_case = self.normalize_field(item_vi if item_vi else item_en)
+        if not snake_case:
+            # Auto-generate snake_case from Vietnamese name
+            snake_case = self.normalizer.normalize_field_name(original_vi, 'vi')
         
         mapping = {
-            'original_vi': item_vi,
-            'original_en': item_en,
-            'snake_case': snake_case,
-            'base_name': snake_case,
-            'was_conflict': False,
-            'was_standardized': False
+            'field_id': field_id,
+            'original_vi': original_vi,
+            'original_en': original_en,
+            'snake_case': snake_case
         }
         
         return mapping
+    
+    def add_mapping(self, field_id: str, original_vi: str, original_en: str = "", 
+                   snake_case: str = ""):
+        """
+        Add a field mapping.
+        
+        Args:
+            field_id: Field identifier
+            original_vi: Vietnamese field name
+            original_en: English field name
+            snake_case: Snake_case name (auto-generated if empty)
+        """
+        mapping = self.create_mapping(field_id, original_vi, original_en, snake_case)
+        self.mappings[str(field_id)] = mapping
+        self._create_reverse_mappings()
+    
+    def save_mappings(self, output_file: str):
+        """
+        Save field mappings to JSON file.
+        
+        Args:
+            output_file: Output file path
+        """
+        try:
+            output_path = Path(output_file)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(self.mappings, f, ensure_ascii=False, indent=2)
+            
+            logger.info(f"Saved {len(self.mappings)} field mappings to {output_file}")
+        except Exception as e:
+            logger.error(f"Error saving mappings to {output_file}: {e}")
+    
+    def get_all_mappings(self) -> Dict:
+        """Get all field mappings."""
+        return self.mappings.copy()
+    
+    def filter_by_report_type(self, report_type: str) -> Dict:
+        """
+        Filter mappings by report type (if available).
+        
+        Args:
+            report_type: Report type to filter by
+            
+        Returns:
+            Filtered mappings
+        """
+        filtered = {}
+        for field_id, mapping in self.mappings.items():
+            # This would need report_type information in the mapping
+            # For now, return all mappings
+            filtered[field_id] = mapping
+        
+        return filtered
+    
+    def get_statistics(self) -> Dict:
+        """Get mapping statistics."""
+        stats = {
+            'total_mappings': len(self.mappings),
+            'unique_snake_cases': len(self.reverse_mappings),
+            'has_vietnamese': 0,
+            'has_english': 0,
+            'auto_generated': 0
+        }
+        
+        for mapping in self.mappings.values():
+            if mapping.get('original_vi'):
+                stats['has_vietnamese'] += 1
+            if mapping.get('original_en'):
+                stats['has_english'] += 1
+        
+        return stats
     
     def validate_mappings(self) -> List[str]:
         """
@@ -155,15 +242,11 @@ class FieldMapper:
         warnings = []
         
         # Check for duplicate snake_case names
-        snake_case_counts = {}
-        for field_id, mapping in self.mappings.items():
-            snake_case = mapping.get('snake_case')
-            if snake_case:
-                snake_case_counts[snake_case] = snake_case_counts.get(snake_case, 0) + 1
+        snake_cases = [m.get('snake_case') for m in self.mappings.values()]
+        duplicates = [name for name in snake_cases if snake_cases.count(name) > 1]
         
-        for snake_case, count in snake_case_counts.items():
-            if count > 1:
-                warnings.append(f"Duplicate snake_case '{snake_case}' found {count} times")
+        if duplicates:
+            warnings.append(f"Duplicate snake_case names found: {duplicates}")
         
         # Check for empty field names
         for field_id, mapping in self.mappings.items():
@@ -184,11 +267,11 @@ class KBSFieldMapper(FieldMapper):
     
     def _load_builtin_mappings(self):
         """Load built-in KBS standardized field mappings."""
-        # Import complete mappings from separate file
-        from .kbs_complete_mappings import KBS_COMPLETE_MAPPINGS
+        # Import built-in mappings from separate file
+        from .kbs_mappings import KBS_BUILTIN_MAPPINGS
         
         # Load built-in mappings
-        self.mappings = KBS_COMPLETE_MAPPINGS
+        self.mappings = KBS_BUILTIN_MAPPINGS
         self._create_reverse_mappings()
         
         logger.info(f"Loaded {len(self.mappings)} built-in KBS field mappings")
@@ -229,7 +312,7 @@ class KBSFieldMapper(FieldMapper):
     
     def get_standardized_fields(self, report_type: Optional[str] = None) -> List[str]:
         """
-        Get list of standardized field names.
+        Get standardized field names.
         
         Args:
             report_type: Optional report type filter
@@ -237,4 +320,8 @@ class KBSFieldMapper(FieldMapper):
         Returns:
             List of standardized field names
         """
+        if report_type:
+            # This would need report type filtering logic
+            pass
+        
         return list(self.reverse_mappings.keys())

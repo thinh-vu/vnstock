@@ -12,7 +12,6 @@ import pandas as pd
 from .normalizer import FieldNormalizer, FieldDisplayMode
 from .mapper import FieldMapper, KBSFieldMapper
 from .validator import FieldValidator, FieldMismatchDetector
-from .kbs_complete_mappings import KBS_COMPLETE_MAPPINGS
 
 logger = logging.getLogger(__name__)
 
@@ -48,10 +47,9 @@ class FieldHandler:
         """Load reference data from directory."""
         try:
             if self.data_source == 'KBS':
-                # Load KBS mappings from kbs_complete_mappings.py
-                self.field_mapper.mappings = KBS_COMPLETE_MAPPINGS.copy()
-                self.field_mapper._create_reverse_mappings()
-                logger.info(f"Loaded {len(KBS_COMPLETE_MAPPINGS)} KBS field mappings from kbs_complete_mappings.py")
+                mapping_file = f"{reference_dir}/field_snake_case_standardized.json"
+                self.field_mapper.load_mappings(mapping_file)
+                logger.info(f"Loaded KBS field mappings from {mapping_file}")
         except Exception as e:
             logger.warning(f"Could not load reference data from {reference_dir}: {e}")
     

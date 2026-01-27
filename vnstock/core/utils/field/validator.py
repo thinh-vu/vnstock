@@ -71,7 +71,7 @@ class FieldValidator:
         is_standardized = field_name in self.field_mapper.reverse_mappings
         
         # Try to normalize the field name
-        normalized = self.field_mapper.normalize_field_name(field_name)
+        normalized = self.field_mapper.normalize_field(field_name)
         
         validation = {
             'field_name': field_name,

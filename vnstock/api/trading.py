@@ -40,7 +40,7 @@ class Trading(BaseAdapter):
         
         # Validate to accept vci, tcbs as source
         if source.lower() not in ["kbs", "vci", "tcbs"]:
-            raise ValueError("Lớp Trading chỉ nhận giá trị tham số source là 'VCI' hoặc 'TCBS'.")
+            raise ValueError("Lớp Trading chỉ nhận giá trị tham số source là 'KBS', 'VCI' hoặc 'TCBS'.")
         
         super().__init__(
             source=source,

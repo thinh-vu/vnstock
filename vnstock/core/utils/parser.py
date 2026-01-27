@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from pytz import timezone
 from datetime import date, datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from typing import Dict, Union, Literal, Any, Optional
 from vnstock.core.utils.logger import get_logger
 
@@ -625,7 +626,6 @@ def normalize_english_text_to_snake_case(
     
     return text
 
-
 def normalize_vietnamese_text_to_snake_case(
     text: str,
     keep_numbers: bool = True,
@@ -765,7 +765,6 @@ def normalize_vietnamese_text_to_snake_case(
     
     return text
 
-
 def normalize_text_to_snake_case_strict(text: str) -> str:
     """
     Strict version: Only keeps alphabetic characters.
@@ -793,13 +792,11 @@ def normalize_text_to_snake_case_strict(text: str) -> str:
     
     return text or "unnamed_field"
 
-
 def is_valid_identifier(name: str) -> bool:
     """Check if string is a valid Python/SQL identifier."""
     if not name:
         return False
     return name.isidentifier() and not name[0].isdigit()
-
 
 def flatten_data(json_data, parent_key='', sep='_'):
     """
@@ -835,7 +832,90 @@ def decd(byte_data):
     cipher = Fernet(kb64)
     return cipher.decrypt(byte_data).decode('utf-8')
 
-# VN30 Future contract parser
+def convert_time_flexible(
+    time_value: Optional[Union[str, int, float]],
+    time_format: Optional[str] = None,
+    to_iso: bool = False,
+    output_format: str = '%Y-%m-%d %H:%M:%S'
+) -> Optional[Union[str, int]]:
+    """
+    Flexibly convert time between different formats.
+
+    Parameters:
+        - time_value: Time value input (str, int, float, or None).
+          If string is epoch timestamp, will automatically convert to ISO.
+        - time_format: Custom format for input string (optional).
+        - to_iso: If True, convert from epoch timestamp to ISO string.
+                  If False (default), convert to epoch timestamp.
+        - output_format: Output string format when to_iso=True
+                        (default '%Y-%m-%d %H:%M:%S').
+
+    Returns:
+        - Epoch timestamp as string if to_iso=False.
+        - Datetime string if to_iso=True.
+        - None if time_value is None.
+    """
+    if time_value is None:
+        return None
+
+    if to_iso:
+        # Convert from epoch to ISO string
+        if isinstance(time_value, (int, float)):
+            dt = datetime.fromtimestamp(int(time_value))
+            return dt.strftime(output_format)
+        elif isinstance(time_value, str):
+            # Try parsing epoch string
+            try:
+                epoch = int(float(time_value))
+                dt = datetime.fromtimestamp(epoch)
+                return dt.strftime(output_format)
+            except (ValueError, OverflowError):
+                raise ValueError(
+                    f"Cannot parse epoch timestamp: {time_value}"
+                )
+        else:
+            raise ValueError(
+                f"For to_iso=True, time_value must be int, float, "
+                f"or epoch string, got {type(time_value)}"
+            )
+    else:
+        # Convert to epoch
+        if isinstance(time_value, (int, float)):
+            return str(int(time_value))
+
+        if isinstance(time_value, str):
+            if time_format:
+                try:
+                    dt = datetime.strptime(time_value, time_format)
+                    return str(int(dt.timestamp()))
+                except ValueError:
+                    raise ValueError(
+                        f"Invalid time_value format: {time_value} "
+                        f"with format {time_format}"
+                    )
+            else:
+                # Try default formats
+                for fmt in ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]:
+                    try:
+                        dt = datetime.strptime(time_value, fmt)
+                        return str(int(dt.timestamp()))
+                    except ValueError:
+                        continue
+                raise ValueError(
+                    f"Cannot parse time_value: {time_value}. "
+                    f"Use 'YYYY-MM-DD' or "
+                    f"'YYYY-MM-DD HH:MM:SS' format or provide time_format."
+                )
+
+        raise ValueError(
+            f"time_value must be str, int, or float, "
+            f"got {type(time_value)}"
+        )
+
+
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                           FUTURE CONTRACT PARSER.                            ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
 
 _QUARTER_MONTHS = [3, 6, 9, 12]
 
@@ -937,82 +1017,161 @@ def vn30_abbrev_contract(full: str, today: date) -> str:
 
     return f"VN30F{n}{cycle}"
 
-def convert_time_flexible(
-    time_value: Optional[Union[str, int, float]],
-    time_format: Optional[str] = None,
-    to_iso: bool = False,
-    output_format: str = '%Y-%m-%d %H:%M:%S'
-) -> Optional[Union[str, int]]:
+def get_derivative_maturity_date(symbol_suffix: str, reference_date: date = None) -> date:
     """
-    Flexibly convert time between different formats.
-
-    Parameters:
-        - time_value: Time value input (str, int, float, or None).
-          If string is epoch timestamp, will automatically convert to ISO.
-        - time_format: Custom format for input string (optional).
-        - to_iso: If True, convert from epoch timestamp to ISO string.
-                  If False (default), convert to epoch timestamp.
-        - output_format: Output string format when to_iso=True
-                        (default '%Y-%m-%d %H:%M:%S').
-
+    Calculate the maturity date for a derivative symbol suffix.
+    
+    Args:
+        symbol_suffix: Suffix like 'F2506' (explicit) or 'F1M', 'F1Q' (relative).
+        reference_date: Reference date for relative calculation (default: today).
+        
     Returns:
-        - Epoch timestamp as string if to_iso=False.
-        - Datetime string if to_iso=True.
-        - None if time_value is None.
+        date: The maturity date (3rd Thursday of the month).
     """
-    if time_value is None:
-        return None
-
-    if to_iso:
-        # Convert from epoch to ISO string
-        if isinstance(time_value, (int, float)):
-            dt = datetime.fromtimestamp(int(time_value))
-            return dt.strftime(output_format)
-        elif isinstance(time_value, str):
-            # Try parsing epoch string
-            try:
-                epoch = int(float(time_value))
-                dt = datetime.fromtimestamp(epoch)
-                return dt.strftime(output_format)
-            except (ValueError, OverflowError):
-                raise ValueError(
-                    f"Cannot parse epoch timestamp: {time_value}"
-                )
+    if reference_date is None:
+        reference_date = date.today()
+        
+    maturity_month = reference_date.month
+    maturity_year = reference_date.year
+    
+    # Parse explicit format FyyMM (e.g., F2506)
+    if len(symbol_suffix) == 5 and symbol_suffix.startswith('F') and symbol_suffix[1:].isdigit():
+        yy = int(symbol_suffix[1:3])
+        mm = int(symbol_suffix[3:5])
+        maturity_year = 2000 + yy
+        maturity_month = mm
+    
+    # Parse relative format FnM/FnQ
+    elif symbol_suffix.startswith('F') and len(symbol_suffix) == 3:
+        # Determine current month's expiry to decide baseline
+        # Calculate 3rd Thursday of reference month
+        def get_expiry(y, m):
+            d = date(y, m, 1)
+            days_to_thursday = (3 - d.weekday() + 7) % 7
+            return d + timedelta(days=days_to_thursday + 14)
+            
+        current_expiry = get_expiry(reference_date.year, reference_date.month)
+        
+        # If today > expiry, start counting from next month
+        base_date = reference_date
+        if reference_date > current_expiry:
+             base_date = reference_date + relativedelta(months=1)
+        
+        if symbol_suffix == 'F1M':
+             target_date = base_date
+        elif symbol_suffix == 'F2M':
+             target_date = base_date + relativedelta(months=1)
+        elif symbol_suffix == 'F1Q':
+             # Next quarter month in [3, 6, 9, 12]
+             # Find first quarter month >= base_date month
+             current_month = base_date.month
+             quarter_months = [3, 6, 9, 12]
+             target_month = next((m for m in quarter_months if m >= current_month), None)
+             
+             if target_month is None:
+                 # Next year March
+                 target_date = date(base_date.year + 1, 3, 1)
+             else:
+                 target_date = date(base_date.year, target_month, 1)
+                 
+        elif symbol_suffix == 'F2Q':
+             # Find F1Q then next quarter
+             current_month = base_date.month
+             quarter_months = [3, 6, 9, 12]
+             target_month = next((m for m in quarter_months if m >= current_month), None)
+             
+             if target_month is None:
+                 # F1Q is next year Mar -> F2Q is Jun
+                 target_date = date(base_date.year + 1, 6, 1)
+             else:
+                 # Move to next quarter month
+                 idx = quarter_months.index(target_month)
+                 if idx + 1 < len(quarter_months):
+                      target_date = date(base_date.year, quarter_months[idx+1], 1)
+                 else:
+                      # Next year Mar
+                      target_date = date(base_date.year + 1, 3, 1)
         else:
-            raise ValueError(
-                f"For to_iso=True, time_value must be int, float, "
-                f"or epoch string, got {type(time_value)}"
-            )
+             # Default fallback if unknown suffix
+             return reference_date
+
+        if 'target_date' in locals():
+            maturity_year = target_date.year
+            maturity_month = target_date.month
+
+    # Calculate 3rd Thursday of the determined maturity month
+    d = date(maturity_year, maturity_month, 1)
+    days_to_thursday = (3 - d.weekday() + 7) % 7
+    maturity_date = d + timedelta(days=days_to_thursday + 14)
+    
+    return maturity_date
+
+def convert_derivative_symbol(symbol: str, reference_date: date = None) -> str:
+    """
+    Convert old derivative symbol (e.g. VN30F2506, GB05F2506) to new KRX format (e.g. 41I1F7000).
+    Effective from May 2025.
+    
+    Format: 41 + Underlying + Year + Month + 000
+    Length: 9 chars.
+    Reference: https://owa.hnx.vn/ftp//PORTALNEW/HEADER_IMAGES/20250428/21.04.2025_Tai%20lieu%20huong%20dan%20quy%20uoc%20ma%20giao%20dich%20moi%20ckps_final.pdf
+    """
+    symbol = symbol.upper()
+    
+    # 1. Parse Segments
+    # Underlying mappings
+    underlying_map = {
+        'VN30': 'I1',
+        'VN100': 'I2', 
+        'GB05': 'B5', # Gov Bond 5Y
+        'GB10': 'BA', # Gov Bond 10Y
+    }
+    
+    underlying_code = None
+    suffix = None
+    
+    # Find underlying code by matching prefix
+    for prefix, code in underlying_map.items():
+        if symbol.startswith(prefix):
+            underlying_code = code
+            suffix = symbol[len(prefix):]
+            break
+            
+    if not underlying_code:
+        raise ValueError(f"Unknown underlying asset for symbol {symbol}. Supported prefixes: {', '.join(underlying_map.keys())}")
+        
+    # 2. Determine Maturity Year/Month
+    if reference_date is None:
+        # Check if suffix implies year/month directly first to avoid unnecessary date logic dependence if explicit
+        pass 
+        
+    mat_date = get_derivative_maturity_date(suffix, reference_date)
+    mat_year = mat_date.year
+    mat_month = mat_date.month
+        
+    # 3. Map to KRX Codes
+    
+    # Year Code (30 year cycle)
+    year_cycle_index = (mat_year - 2010) % 30 # 0 to 29
+    
+    # Alphabet: A-W excluding I, O, U
+    # A B C D E F G H J K L M N P Q R S T V W
+    alphabet = "ABCDEFGHJKLMNPQRSTVW" 
+    
+    if 0 <= year_cycle_index <= 9:
+        year_code = str(year_cycle_index)
     else:
-        # Convert to epoch
-        if isinstance(time_value, (int, float)):
-            return str(int(time_value))
-
-        if isinstance(time_value, str):
-            if time_format:
-                try:
-                    dt = datetime.strptime(time_value, time_format)
-                    return str(int(dt.timestamp()))
-                except ValueError:
-                    raise ValueError(
-                        f"Invalid time_value format: {time_value} "
-                        f"with format {time_format}"
-                    )
-            else:
-                # Try default formats
-                for fmt in ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]:
-                    try:
-                        dt = datetime.strptime(time_value, fmt)
-                        return str(int(dt.timestamp()))
-                    except ValueError:
-                        continue
-                raise ValueError(
-                    f"Cannot parse time_value: {time_value}. "
-                    f"Use 'YYYY-MM-DD' or "
-                    f"'YYYY-MM-DD HH:MM:SS' format or provide time_format."
-                )
-
-        raise ValueError(
-            f"time_value must be str, int, or float, "
-            f"got {type(time_value)}"
-        )
+        # Index 10 -> A (index 0 in alphabet)
+        year_code = alphabet[year_cycle_index - 10]
+        
+    # Month Code
+    if 1 <= mat_month <= 9:
+        month_code = str(mat_month)
+    else:
+        month_codes = {10: 'A', 11: 'B', 12: 'C'}
+        month_code = month_codes[mat_month]
+        
+    # 4. Construct
+    # Mẫu: 41 + Underlying + Year + Month + 000
+    krx_symbol = f"41{underlying_code}{year_code}{month_code}000"
+    
+    return krx_symbol

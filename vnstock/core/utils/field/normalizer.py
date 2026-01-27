@@ -10,7 +10,7 @@ from enum import Enum
 from typing import Dict, Optional, Tuple
 
 # Import Vietnamese text normalization functions from parser module for consistency
-from vnstock.core.utils.parser import VIETNAMESE_CHAR_MAP, normalize_vietnamese_text_to_snake_case
+from vnstock.core.utils.parser import VIETNAMESE_CHAR_MAP, normalize_vietnamese_text_to_snake_case, normalize_english_text_to_snake_case
 
 
 class FieldDisplayMode(Enum):
@@ -121,12 +121,13 @@ class FieldNormalizer:
             'tang_giam_con_no_hoat_dong': 'change_other_operating_liabilities',
         }
     
-    def normalize_vietnamese_to_snake_case(self, text: str) -> str:
+    def normalize_vietnamese_to_snake_case(self, text: str, **kwargs) -> str:
         """
         Convert Vietnamese text to snake_case using parser module for consistency.
         
         Args:
             text: Vietnamese text to normalize
+            **kwargs: Additional arguments passed to normalize_vietnamese_text_to_snake_case
             
         Returns:
             Normalized snake_case string
@@ -137,17 +138,19 @@ class FieldNormalizer:
         # Use the robust Vietnamese normalization from parser module
         return normalize_vietnamese_text_to_snake_case(
             text, 
-            keep_numbers=True, 
-            remove_common_words=False,
-            preserve_acronyms=False
+            keep_numbers=kwargs.get('keep_numbers', True), 
+            remove_common_words=kwargs.get('remove_common_words', False),
+            preserve_acronyms=kwargs.get('preserve_acronyms', False),
+            preserve_hierarchy=kwargs.get('preserve_hierarchy', False)
         )
     
-    def normalize_english_to_snake_case(self, text: str) -> str:
+    def normalize_english_to_snake_case(self, text: str, **kwargs) -> str:
         """
-        Convert English text to snake_case.
+        Convert English text to snake_case using parser module for consistency.
         
         Args:
             text: English text to normalize
+            **kwargs: Additional arguments passed to normalize_english_text_to_snake_case
             
         Returns:
             Normalized snake_case string
@@ -155,27 +158,22 @@ class FieldNormalizer:
         if not text:
             return ""
         
-        # Remove numbering and special characters
-        text = re.sub(r'^[\d\.\s]*', '', text.strip())
-        
-        # Handle parentheses content
-        text = re.sub(r'\([^)]*\)', '', text)
-        
-        # Remove special characters and convert to snake_case
-        text = re.sub(r'[^\w\s]', '', text)
-        text = re.sub(r'\s+', '_', text.strip())
-        text = re.sub(r'_+', '_', text)
-        text = text.lower()
-        
-        return text
+        # Use robust English normalization from parser module
+        return normalize_english_text_to_snake_case(
+            text,
+            keep_numbers=kwargs.get('keep_numbers', True),
+            preserve_acronyms=kwargs.get('preserve_acronyms', False),
+            preserve_hierarchy=kwargs.get('preserve_hierarchy', False)
+        )
     
-    def normalize_field_name(self, text: str, language: str = 'auto') -> str:
+    def normalize_field_name(self, text: str, language: str = 'auto', **kwargs) -> str:
         """
         Normalize field name to snake_case using parser module for consistency.
         
         Args:
             text: Field name to normalize
             language: Language hint ('vi', 'en', 'auto')
+            **kwargs: Additional arguments passed to normalization functions
             
         Returns:
             Normalized snake_case string
@@ -193,16 +191,15 @@ class FieldNormalizer:
         
         # Normalize based on language
         if language == 'vi':
-            normalized = self.normalize_vietnamese_to_snake_case(text)
+            normalized = self.normalize_vietnamese_to_snake_case(text, **kwargs)
         else:
-            normalized = self.normalize_english_to_snake_case(text)
+            normalized = self.normalize_english_to_snake_case(text, **kwargs)
         
         # Check for special mappings
         if normalized in self.special_mappings:
             return self.special_mappings[normalized]
         
-        return normalized
-    
+        return normalized    
     def create_unique_name(self, base_name: str, field_id: str, used_names: set) -> str:
         """
         Create unique field name to avoid conflicts.
