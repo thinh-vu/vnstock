@@ -40,6 +40,26 @@ def real_symbols_dataset():
             hose_symbols = hose_df['symbol'].tolist()
             hnx_symbols = hnx_df['symbol'].tolist()
             upcom_symbols = upcom_df['symbol'].tolist()
+        else:
+            # Fallback to fetching by exchange explicitly if column missing
+            try:
+                hose_df = listing.symbols_by_exchange(exchange='HOSE', show_log=False)
+                if 'type' in hose_df.columns:
+                    hose_df = hose_df[hose_df['type'] == 'STOCK']
+                hose_symbols = hose_df['symbol'].tolist()
+                
+                hnx_df = listing.symbols_by_exchange(exchange='HNX', show_log=False)
+                if 'type' in hnx_df.columns:
+                    hnx_df = hnx_df[hnx_df['type'] == 'STOCK']
+                hnx_symbols = hnx_df['symbol'].tolist()
+                
+                upcom_df = listing.symbols_by_exchange(exchange='UPCOM', show_log=False)
+                if 'type' in upcom_df.columns:
+                    upcom_df = upcom_df[upcom_df['type'] == 'STOCK']
+                upcom_symbols = upcom_df['symbol'].tolist()
+            except Exception:
+                # If explicit fetch fails, trigger main exception handler to use fallback
+                raise ValueError("Could not fetch symbols by exchange")
         
         # Get derivatives
         derivatives = []
