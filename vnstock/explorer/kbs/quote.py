@@ -177,26 +177,25 @@ class Quote:
         if start is None:
             # Check if length defines bars
             if length is not None:
-                length_str = str(length)
-                if length_str.endswith('b'):
-                    # Length defines number of bars
-                    count_back = int(length_str[:-1])
-                    # For bars-based length, we need to estimate start date
-                    # This is approximate and will be refined by count_back later
-                    start = get_start_date_from_lookback(lookback_length=length_str, end_date=end)
+                bars_from_len, len_remainder = interpret_lookback_length(length)
+                if bars_from_len is not None:
+                    count_back = bars_from_len
+                    length = None # Consumed as bars
                 else:
-                    # Length defines time period
-                    start = get_start_date_from_lookback(lookback_length=length_str, end_date=end)
+                    length = len_remainder
+            
+            if length is not None:
+                start = get_start_date_from_lookback(
+                    lookback_length=length,
+                    end_date=end
+                )
             elif count_back is not None:
-                # For count_back, estimate start date based on interval
-                if interval == '1D':
-                    start = (datetime.strptime(end, "%Y-%m-%d") - timedelta(days=count_back * 2)).strftime("%Y-%m-%d")
-                elif interval == '1H':
-                    start = (datetime.strptime(end, "%Y-%m-%d") - timedelta(days=count_back // 6)).strftime("%Y-%m-%d")
-                elif interval == '1m':
-                    start = (datetime.strptime(end, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
-                else:
-                    start = get_start_date_from_lookback(lookback_length='1M', end_date=end)
+                # For count_back, calculate start date based on interval and bars
+                start = get_start_date_from_lookback(
+                    bars=count_back,
+                    interval=interval,
+                    end_date=end
+                )
             else:
                 raise ValueError(
                     "Tham số 'start' là bắt buộc nếu không cung cấp "
@@ -300,7 +299,9 @@ class Quote:
         ohlc_cols = ['open', 'high', 'low', 'close']
         for col in ohlc_cols:
             if col in df.columns:
-                df[col] = df[col].round(floating)
+                df[col] = df[col] / 1000
+                if floating is not None:
+                    df[col] = df[col].round(floating)
 
         # Trim data to start time if needed
         df = df[df['time'] >= pd.to_datetime(start)].reset_index(drop=True)
@@ -333,6 +334,7 @@ class Quote:
         to_df: Optional[bool] = True,
         get_all: Optional[bool] = False,
         show_log: Optional[bool] = False,
+        floating: Optional[int] = 2,
     ) -> Union[pd.DataFrame, str]:
         """
         Truy xuất dữ liệu khớp lệnh intraday (real-time matching data) của mã chứng khoán từ KBS.
@@ -347,6 +349,7 @@ class Quote:
             to_df: Trả về DataFrame. Mặc định True. False để trả về JSON.
             get_all: Lấy tất cả các cột từ API response. Mặc định False (chỉ lấy cột chuẩn hóa).
             show_log: Hiển thị log debug.
+            floating: Số chữ số thập phân cho giá. Mặc định 2. Nếu None sẽ không làm tròn.
 
         Returns:
             DataFrame hoặc JSON string chứa dữ liệu khớp lệnh intraday.
@@ -448,7 +451,9 @@ class Quote:
         
         # price: Match price
         if 'price' in df.columns:
-            standardized_df['price'] = df['price']
+            standardized_df['price'] = df['price'] / 1000
+            if floating is not None:
+                standardized_df['price'] = standardized_df['price'].round(floating)
         
         # volume: Match volume (KBS uses 'match_volume')
         if 'match_volume' in df.columns:

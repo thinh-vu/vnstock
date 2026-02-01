@@ -191,3 +191,4 @@ vnstock/.DS_Store
 vnstock/common/.DS_Store
 vnstock/explorer/.DS_Store
 vnstock/core/.DS_Store
+debug_*.py

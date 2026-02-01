@@ -2,7 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [2025-02-01]
+
+### Fixed
+- Fixed `Listing` tests to correctly handle `pd.Series` return types from `all_future_indices` and related methods
+- Fixed `Quote` integration tests to handle missing data and expired derivatives gracefully without failing the entire suite
+- Fixed `KBS Quote` to correctly interpret bar-based lookback lengths (e.g., '500b') using `interpret_lookback_length` logic
+- Enabled full integration test suite for `vnstock.explorer` module
+
+### Changed
+- Consolidated test documentation into `tests/docs/` directory
+- Updated `.gitignore` to include debug scripts
+- Standardized KBS Quote price data to use decimal values (thousands unit) instead of VND in `history` and `intraday` methods
+
+### Removed
+- Removed `price_depth` method from `vnstock.explorer.vci.quote`
+
 
 ## [2026-01-22]
 

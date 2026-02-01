@@ -433,66 +433,6 @@ class Quote:
 
         return df
 
-    @optimize_execution("VCI")
-    def price_depth(
-        self,
-        show_log: Optional[bool] = False
-    ) -> pd.DataFrame:
-        """
-        Truy xuất thống kê độ bước giá & khối lượng khớp lệnh của mã
-        chứng khoán bất kỳ từ nguồn dữ liệu VCI.
-
-        Tham số:
-            - show_log (tùy chọn): Hiển thị thông tin log giúp debug
-              dễ dàng. Mặc định là False.
-        """
-        market_status = trading_hours("HOSE")
-        if (
-            market_status['is_trading_hour'] is False and
-            market_status['data_status'] == 'preparing'
-        ):
-            raise ValueError(
-                f"{market_status['time']}: Dữ liệu khớp lệnh không "
-                f"thể truy cập trong thời gian chuẩn bị phiên mới. "
-                f"Vui lòng quay lại sau."
-            )
-
-        if self.symbol is None:
-            raise ValueError(
-                "Vui lòng nhập mã chứng khoán cần truy xuất khi "
-                "khởi tạo Trading Class."
-            )
-
-        url = (
-            f'{self.base_url}{_INTRADAY_URL}/'
-            f'AccumulatedPriceStepVol/getSymbolData'
-        )
-        payload = {"symbol": self.symbol}
-
-        # Fetch data using the send_request utility
-        data = send_request(
-            url=url,
-            headers=self.headers,
-            method="POST",
-            payload=payload,
-            show_log=show_log if show_log is not None else False,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode
-        )
-
-        # Process the data to DataFrame
-        df = pd.DataFrame(data)
-
-        # Select columns in _PRICE_DEPTH_MAP and rename them
-        df = df[_PRICE_DEPTH_MAP.keys()]
-        df.rename(columns=_PRICE_DEPTH_MAP, inplace=True)
-
-        df.source = self.data_source
-
-        return df
-
-
 # Register VCI Quote provider
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
 ProviderRegistry.register('quote', 'vci', Quote)

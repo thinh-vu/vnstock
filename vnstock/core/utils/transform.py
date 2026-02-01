@@ -133,7 +133,10 @@ def process_match_types(df, asset_type, source):
             return day_df
         
         # Apply the processing function to each trading day
-        df = df.groupby('date', group_keys=False).apply(process_day, include_groups=False)
+        try:
+            df = df.groupby('date', group_keys=False).apply(process_day, include_groups=False)
+        except TypeError:
+            df = df.groupby('date', group_keys=False).apply(process_day)
         # Drop date column if it exists
         if 'date' in df.columns:
             df.drop(columns=['date'], inplace=True)
