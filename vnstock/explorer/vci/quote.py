@@ -372,6 +372,10 @@ class Quote:
             - show_log (tùy chọn): Hiển thị thông tin log giúp debug
               dễ dàng. Mặc định là False.
         """
+        # Validator: Intraday data is not supported for indices
+        if self.asset_type == 'index':
+            raise ValueError(f"Dữ liệu intraday không được hỗ trợ cho chỉ số {self.symbol}.")
+
         market_status = trading_hours("HOSE")
         if (
             market_status['is_trading_hour'] is False and

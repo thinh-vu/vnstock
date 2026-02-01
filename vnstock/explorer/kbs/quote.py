@@ -7,16 +7,16 @@ from typing import Optional, Union, List
 from vnai import agg_execution
 from vnstock.core.models import TickerModel
 from vnstock.core.utils.logger import get_logger
-from vnstock.core.utils.parser import get_asset_type
+from vnstock.core.utils.parser import get_asset_type, convert_derivative_symbol
 from vnstock.core.utils.lookback import get_start_date_from_lookback, interpret_lookback_length
 from vnstock.core.utils.client import send_request, ProxyConfig
 from vnstock.core.utils.transform import process_match_types
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
 from vnstock.explorer.kbs.const import (
-    _IIS_BASE_URL, _STOCK_DATA_URL, _SAS_HISTORICAL_QUOTES_URL,
+    _IIS_BASE_URL, _SAS_HISTORICAL_QUOTES_URL,
     _OHLC_MAP, _OHLC_DTYPE, _INTERVAL_MAP, _RESAMPLE_MAP,
-    _INTRADAY_MAP, _INTRADAY_DTYPE
+    _INTRADAY_MAP, _INTRADAY_DTYPE, _INDEX_MAPPING
 )
 
 logger = get_logger(__name__)
@@ -50,6 +50,19 @@ class Quote:
         self.symbol = symbol.upper()
         self.data_source = 'KBS'
         self.asset_type = get_asset_type(self.symbol)
+        
+        # Auto-convert derivative symbols to new KRX format
+        if self.asset_type == 'derivative':
+            try:
+                # Try to convert if it matches old patterns (e.g. starts with VN30F)
+                # The parser handles checks internally or via try/except
+                new_symbol = convert_derivative_symbol(self.symbol)
+                logger.info(f"Converted derivative symbol {self.symbol} to {new_symbol} (KRX format)")
+                self.symbol = new_symbol
+            except Exception as e:
+                # If conversion fails (e.g. already new format or unsupported), keep original
+                logger.debug(f"Symbol conversion skipped for {self.symbol}: {e}")
+                
         self.base_url = _IIS_BASE_URL
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.show_log = show_log
@@ -74,6 +87,16 @@ class Quote:
 
         if not show_log:
             logger.setLevel('CRITICAL')
+
+
+        # Validate index symbols
+        if self.asset_type == 'index':
+            if self.symbol not in _INDEX_MAPPING:
+                valid_indices = ', '.join(_INDEX_MAPPING.keys())
+                raise ValueError(
+                    f"Mã chỉ số '{self.symbol}' không được hỗ trợ bởi KBS. "
+                    f"Các chỉ số hợp lệ: {valid_indices}"
+                )
 
     def _input_validation(self, start: Optional[str], end: str, interval: str) -> TickerModel:
         """
@@ -219,8 +242,11 @@ class Quote:
         # Get the KBS API endpoint suffix for the interval
         interval_suffix = self.interval_map[interval]
         
-        # Build URL based on interval
-        url = f'{_STOCK_DATA_URL}/{self.symbol}/data_{interval_suffix}'
+        # Build URL based on asset type
+        if self.asset_type == 'index':
+             url = f'{_IIS_BASE_URL}/index/{self.symbol}/data_{interval_suffix}'
+        else:
+             url = f'{_IIS_BASE_URL}/stocks/{self.symbol}/data_{interval_suffix}'
         params = {
             'sdate': start_date_kbs,
             'edate': end_date_kbs,
@@ -266,19 +292,16 @@ class Quote:
         df = pd.DataFrame(ohlc_data)
 
         # Handle 'va' column - remove from standard output, keep as 'value' if get_all=True
-        va_column = None
-        if 'va' in df.columns:
-            va_column = df['va'].copy()
-            if not get_all:
-                # Remove 'va' column from standard output
-                df = df.drop(columns=['va'])
-
-        # Rename columns
+        # Rename columns first
         df = df.rename(columns=_OHLC_MAP)
-
-        # Add 'value' column if get_all=True and 'va' was present
-        if get_all and va_column is not None:
-            df['value'] = va_column
+        
+        # If not get_all, strictly keep only standard columns
+        if not get_all:
+             base_cols = ['time', 'open', 'high', 'low', 'close', 'volume']
+             existing_cols = [c for c in base_cols if c in df.columns]
+             df = df[existing_cols]
+        # logic for 'value' column is already handled by _OHLC_MAP if 'va' maps to 'value', 
+        # or we accept that strict mode excludes it unless 'value' is inherently part of standard set (usually not)
 
         # Convert time column to datetime
         df['time'] = pd.to_datetime(df['time'])
@@ -289,7 +312,11 @@ class Quote:
         # Set data types
         for col, dtype in _OHLC_DTYPE.items():
             if col in df.columns:
-                df[col] = df[col].astype(dtype)
+                try:
+                    df[col] = df[col].astype(dtype)
+                except ValueError:
+                    # Handle cases where API returns float string for int (e.g. '100.0')
+                    df[col] = df[col].astype(float).astype(dtype)
         
         # Set data type for 'value' column if present
         if 'value' in df.columns:
@@ -314,9 +341,9 @@ class Quote:
         df.attrs['symbol'] = self.symbol
         df.attrs['source'] = self.data_source
         df.attrs['interval'] = interval
-        df.attrs['length'] = length
-        df.attrs['start'] = start 
+        df.attrs['start'] = start
         df.attrs['end'] = end
+        df.attrs['length'] = length
 
         if show_log or self.show_log:
             logger.info(
@@ -380,6 +407,10 @@ class Quote:
             >>> # Lấy tất cả các cột
             >>> df_all = quote.intraday(get_all=True)
         """
+        # Validator: Intraday data is not supported for indices
+        if self.asset_type == 'index':
+            raise ValueError(f"Dữ liệu intraday không được hỗ trợ cho chỉ số {self.symbol}.")
+
         # Build URL for intraday trade history
         url = f'{_IIS_BASE_URL}/trade/history/{self.symbol}'
         

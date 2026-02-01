@@ -19,6 +19,20 @@ All notable changes to this project will be documented in this file.
 - Removed `price_depth` method from `vnstock.explorer.vci.quote`
 
 
+## [3.4.2] - 2026-01-27
+
+### Added
+
+- **Derivatives Support**: Implemented `convert_derivative_symbol` and `get_derivative_maturity_date` to support the new KRX derivative symbol format (effective May 2025), automatically converting old symbols (e.g., VN30F2506) to the new standard.
+- **KBS Index Support**: Added `_INDEX_MAPPING` and validation logic to fully support market indices in KBS Quote module, ensuring correct API endpoint routing.
+- **VCI Listing**: Added `all_indices()` and `indices_by_group()` wrapper methods in `Listing` class to provide standardized access to market indices.
+
+### Changed
+
+- **KBS Financial**: Optimized `get_financial_report` to use `page_size=8` (fetching 2 years of quarterly data) and improved field normalization with `preserve_hierarchy=True`.
+- **Quote Validation**: Added strict validation to prevent `intraday` data requests for Index symbols in both KBS and VCI sources (`ValueError` raised).
+- **Refactoring**: Simplified `FieldHandler` initialization and removed file-based referencing in favor of built-in mappings for better performance.
+
 ## [2026-01-22]
 
 ### Added
@@ -60,7 +74,6 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Optimized code performance in KBS trading module
-
 
 ## [2026-01-16]
 

@@ -8,13 +8,11 @@ _SAS_BASE_URL = 'https://kbbuddywts.kbsec.com.vn/sas'
 _SEARCH_URL = f'{_IIS_BASE_URL}/stock/search/data'
 _SECTOR_ALL_URL = f'{_IIS_BASE_URL}/sector/all'
 _SECTOR_STOCK_URL = f'{_IIS_BASE_URL}/sector/stock'
-_INDEX_URL = f'{_IIS_BASE_URL}/index'
-
-# IIS Server Endpoints - Stock Data
-_STOCK_DATA_URL = f'{_IIS_BASE_URL}/stocks'
 _STOCK_INFO_URL = f'{_IIS_BASE_URL}/stockinfo'
 _STOCK_TRADE_HISTORY_URL = f'{_IIS_BASE_URL}/trade/history'
 _STOCK_MATCHED_BY_PRICE_URL = f'{_IIS_BASE_URL}/stock/matched-by-price'
+# Index URL for listing/groups
+_INDEX_URL = f'{_IIS_BASE_URL}/index'
 
 # IIS Server Endpoints - Price Board (ISS)
 _STOCK_ISS_URL = f'{_IIS_BASE_URL}/stock/iss'
@@ -32,6 +30,16 @@ _SAS_CTKH_INFO_URL = f'{_SAS_STOCK_URL}/ctkh-info'
 
 # SAS Endpoints - News
 _SAS_NEWS_URL = f'{_SAS_BASE_URL}/kbsv-news/api/v2/news'
+
+# Index Mapping (Strictly supported indices)
+_INDEX_MAPPING = {
+    'VNINDEX': 'VNINDEX',
+    'HNXINDEX': 'HNXINDEX',
+    'UPCOMINDEX': 'UPCOMINDEX',
+    'VN30': 'VN30',
+    'HNX30': 'HNX30',
+    'VN100': 'VN100',
+}
 
 # Group codes mapping
 _GROUP_CODE = {
@@ -97,6 +105,18 @@ _OHLC_MAP = {
     'l': 'low',
     'c': 'close',
     'v': 'volume',
+    # Derivative / Extended fields
+    're': 'reference_price',
+    'ptq': 'put_through_volume',
+    'ptv': 'put_through_value',
+    'cl': 'ceiling_price',
+    'fl': 'floor_price',
+    'fb': 'foreign_buy_volume',
+    'fs': 'foreign_sell_volume',
+    'fnet': 'foreign_net_volume',
+    'oi': 'open_interest',
+    'tt': 'total_trades',
+    'tv': 'total_value',
 }
 
 # Data type mapping for OHLC data

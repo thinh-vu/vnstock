@@ -73,10 +73,7 @@ class Finance:
         self.standardize_columns = standardize_columns
         
         # Initialize field handler for advanced field processing
-        # Don't pass reference_dir to avoid file loading warnings
-        self.field_handler = FieldHandler(reference_dir=None, data_source='KBS')
-        # Ensure mappings are loaded from built-in KBS mappings
-        self.field_handler._load_reference_data('')
+        self.field_handler = FieldHandler(data_source='KBS')
         
         # Handle proxy configuration
         if proxy_config is None:
@@ -185,9 +182,9 @@ class Finance:
             
             # Generate item_id using field handler
             if item_en and item_en.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(item_en, language='en')
+                item_id = self.field_handler.normalizer.normalize_field_name(item_en, preserve_hierarchy=True)
             elif item and item.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(item, language='vi')
+                item_id = self.field_handler.normalizer.normalize_field_name(item, preserve_hierarchy=True)
             else:
                 item_id = ""
             
@@ -323,7 +320,6 @@ class Finance:
         report_type: str = 'KQKD',
         period_type: int = 1,
         page: int = 1,
-        page_size: int = 4,
         show_log: Optional[bool] = False
     ) -> Dict:
         """
@@ -333,12 +329,12 @@ class Finance:
             report_type: Loại báo cáo (CDKT, KQKD, LCTT, CSTC, CTKH, BCTT)
             period_type: Loại kỳ báo cáo (1=năm, 2=quý)
             page: Trang (mặc định 1)
-            page_size: Số bản ghi trên trang (mặc định 4)
             show_log: Hiển thị log debug.
 
         Returns:
             Dictionary chứa dữ liệu tài chính đầy đủ.
         """
+        page_size: int = 8
         url = f'{_SAS_FINANCE_INFO_URL}/{self.symbol}'
         
         # Build params based on report type
@@ -734,9 +730,9 @@ class Finance:
             
             # Generate item_id using field handler
             if item_en and item_en.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(item_en, language='en')
+                item_id = self.field_handler.normalizer.normalize_field_name(item_en, preserve_hierarchy=True)
             elif item and item.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(item, language='vi')
+                item_id = self.field_handler.normalizer.normalize_field_name(item, preserve_hierarchy=True)
             else:
                 item_id = ""
             
