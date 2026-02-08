@@ -1,22 +1,19 @@
 """
-Thu thập dữ liệu lịch sử 18 chỉ số chứng khoán Việt Nam + biểu đồ trực quan.
+Thu thập dữ liệu lịch sử chỉ số chứng khoán Việt Nam + biểu đồ trực quan.
 
-Chỉ số chính:  VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30
-Quy mô:        VN100, VNMIDCAP, VNSML
-Ngành:          VNFIN, VNREAL, VNIT, VNHEAL, VNENE, VNCONS, VNMAT, VNCOND
-Đầu tư:        VNDIAMOND, VNFINSELECT
+Chỉ số chính (KBS):  VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30, VN100
+Chỉ số ngành/quy mô/đầu tư (VCI direct API): VNMID, VNSML, VNFIN, VNREAL,
+    VNIT, VNHEAL, VNENE, VNCONS, VNMAT, VNCOND, VNDIAMOND, VNFINSELECT
 
 Output:
     data/indices/
-    ├── VNINDEX.csv ... (18 file CSV, mỗi chỉ số 1 file)
+    ├── VNINDEX.csv ... (CSV từng chỉ số)
     ├── all_indices.csv
     └── charts/
-        ├── overview_main.png       # So sánh 5 chỉ số chính
-        ├── overview_size.png       # So sánh quy mô (VN100, MidCap, SmallCap)
-        ├── overview_sectors.png    # So sánh 8 chỉ số ngành
-        ├── overview_invest.png     # So sánh Diamond, FinSelect
-        ├── overview_all.png        # Tất cả 18 chỉ số
-        ├── VNINDEX.png ... (18 chart chi tiết: Price+MA+RSI+MACD)
+        ├── overview_main.png       # So sánh chỉ số chính
+        ├── overview_sectors.png    # So sánh chỉ số ngành
+        ├── overview_all.png        # Tất cả
+        ├── VNINDEX.png ...         # Chart chi tiết: Price+MA+RSI+MACD
         └── volume_comparison.png
 
 Cách chạy:
@@ -29,6 +26,7 @@ import sys
 import time
 import logging
 import argparse
+import requests
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -47,16 +45,16 @@ import matplotlib.ticker as mticker
 # CẤU HÌNH
 # ============================================================
 
-# Chỉ số chính
+# Chỉ số chính (KBS hỗ trợ)
 MAIN_INDICES = ["VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"]
 
-# Chỉ số quy mô
-SIZE_INDICES = ["VN100", "VNMIDCAP", "VNSML"]
+# Chỉ số quy mô (VCI direct)
+SIZE_INDICES = ["VN100", "VNMID", "VNSML"]
 
-# Chỉ số ngành
+# Chỉ số ngành (VCI direct)
 SECTOR_INDICES = ["VNFIN", "VNREAL", "VNIT", "VNHEAL", "VNENE", "VNCONS", "VNMAT", "VNCOND"]
 
-# Chỉ số đầu tư
+# Chỉ số đầu tư (VCI direct)
 INVEST_INDICES = ["VNDIAMOND", "VNFINSELECT"]
 
 # Toàn bộ 18 chỉ số
@@ -71,7 +69,7 @@ INDEX_LABELS = {
     "HNX30": "HNX30",
     # Quy mô
     "VN100": "VN100",
-    "VNMIDCAP": "VN-MidCap",
+    "VNMID": "VN-MidCap",
     "VNSML": "VN-SmallCap",
     # Ngành
     "VNFIN": "Tai chinh",
@@ -96,7 +94,7 @@ INDEX_COLORS = {
     "HNX30": "#8E24AA",
     # Quy mô
     "VN100": "#00ACC1",
-    "VNMIDCAP": "#5E35B1",
+    "VNMID": "#5E35B1",
     "VNSML": "#F4511E",
     # Ngành
     "VNFIN": "#C62828",
@@ -115,8 +113,21 @@ INDEX_COLORS = {
 DATA_DIR = PROJECT_ROOT / "data" / "indices"
 CHART_DIR = DATA_DIR / "charts"
 
-# Dùng KBS vì hỗ trợ đủ 5 chỉ số (VCI thiếu VN30, HNX30)
-SOURCE = "KBS"
+# KBS hỗ trợ 6 chỉ số chính
+KBS_INDICES = {"VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30", "VN100"}
+
+# VCI API endpoint (gọi trực tiếp, bỏ qua validation của vnstock)
+_VCI_CHART_URL = "https://trading.vietcap.com.vn/api/chart/OHLCChart/gap-chart"
+_VCI_HEADERS = {
+    "Content-Type": "application/json",
+    "Origin": "https://trading.vietcap.com.vn/",
+    "Referer": "https://trading.vietcap.com.vn/",
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+}
 
 REQUEST_DELAY = 0.5
 
@@ -131,33 +142,121 @@ logger = logging.getLogger("indices")
 # THU THẬP DỮ LIỆU
 # ============================================================
 
-def fetch_index_history(symbol: str, start: str, end: str) -> pd.DataFrame:
-    """Lấy dữ liệu OHLCV lịch sử cho 1 chỉ số."""
+def _fetch_kbs(symbol: str, start: str, end: str) -> pd.DataFrame:
+    """Lấy dữ liệu index qua vnstock KBS (chỉ hỗ trợ 6 chỉ số chính)."""
     from vnstock.common.client import Vnstock
 
-    logger.info(f"  Đang lấy {symbol} ({start} -> {end})...")
-    client = Vnstock(source=SOURCE, show_log=False)
-    stock = client.stock(symbol=symbol, source=SOURCE)
+    client = Vnstock(source="KBS", show_log=False)
+    stock = client.stock(symbol=symbol, source="KBS")
     df = stock.quote.history(start=start, end=end, interval="1D")
+    return df
+
+
+def _fetch_vci_direct(symbol: str, start: str, end: str) -> pd.DataFrame:
+    """
+    Lấy dữ liệu OHLCV từ VCI API trực tiếp (bỏ qua validation của vnstock).
+    Dùng cho các chỉ số ngành/quy mô/đầu tư mà vnstock chưa hỗ trợ chính thức.
+    """
+    start_dt = datetime.strptime(start, "%Y-%m-%d")
+    end_dt = datetime.strptime(end, "%Y-%m-%d") + timedelta(days=1)
+    end_stamp = int(end_dt.timestamp())
+
+    # Tính số phiên giao dịch (business days)
+    bdays = len(pd.bdate_range(start=start_dt, end=end_dt))
+    count_back = bdays + 10  # Thêm buffer
+
+    payload = {
+        "timeFrame": "ONE_DAY",
+        "symbols": [symbol],
+        "to": end_stamp,
+        "countBack": count_back,
+    }
+
+    resp = requests.post(_VCI_CHART_URL, json=payload, headers=_VCI_HEADERS, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+
+    if not data or not isinstance(data, list) or len(data) == 0:
+        logger.warning(f"  {symbol}: VCI API trả về rỗng")
+        return pd.DataFrame()
+
+    item = data[0]
+
+    # VCI trả về dạng vector: {t: [...], o: [...], h: [...], l: [...], c: [...], v: [...]}
+    times = item.get("t", [])
+    opens = item.get("o", [])
+    highs = item.get("h", [])
+    lows = item.get("l", [])
+    closes = item.get("c", [])
+    volumes = item.get("v", [])
+
+    if not times:
+        logger.warning(f"  {symbol}: Không có dữ liệu từ VCI")
+        return pd.DataFrame()
+
+    df = pd.DataFrame({
+        "time": pd.to_datetime(times, unit="s"),
+        "open": opens,
+        "high": highs,
+        "low": lows,
+        "close": closes,
+        "volume": volumes,
+    })
+
+    # Lọc theo khoảng thời gian
+    df = df[(df["time"] >= start) & (df["time"] <= end)]
+    df = df.sort_values("time").reset_index(drop=True)
+
+    # Đảm bảo dtype
+    for col in ["open", "high", "low", "close"]:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    df["volume"] = pd.to_numeric(df["volume"], errors="coerce").fillna(0).astype("int64")
+
+    return df
+
+
+def fetch_index_history(symbol: str, start: str, end: str) -> pd.DataFrame:
+    """
+    Lấy dữ liệu OHLCV lịch sử cho 1 chỉ số.
+    - KBS cho 6 chỉ số chính (VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30, VN100)
+    - VCI direct API cho chỉ số ngành/quy mô/đầu tư
+    """
+    if symbol in KBS_INDICES:
+        source = "KBS"
+        logger.info(f"  Dang lay {symbol} [{source}] ({start} -> {end})...")
+        df = _fetch_kbs(symbol, start, end)
+    else:
+        source = "VCI-direct"
+        logger.info(f"  Dang lay {symbol} [{source}] ({start} -> {end})...")
+        df = _fetch_vci_direct(symbol, start, end)
+
     if df is not None and not df.empty:
         df["symbol"] = symbol
-        logger.info(f"  {symbol}: {len(df)} phiên giao dịch")
+        logger.info(f"  {symbol}: {len(df)} phien giao dich")
     else:
-        logger.warning(f"  {symbol}: Không có dữ liệu")
+        logger.warning(f"  {symbol}: Khong co du lieu")
     return df
 
 
 def collect_all_indices(start: str, end: str) -> dict:
     """Lấy dữ liệu tất cả chỉ số. Trả về dict {symbol: DataFrame}."""
     results = {}
+    failed = []
     for symbol in INDICES:
         try:
             df = fetch_index_history(symbol, start, end)
-            if df is not None and not df.empty:
+            if df is not None and not df.empty and len(df) > 1:
                 results[symbol] = df
+            else:
+                failed.append(symbol)
         except Exception as e:
-            logger.error(f"  Lỗi {symbol}: {e}")
+            failed.append(symbol)
+            logger.error(f"  Loi {symbol}: {e}")
         time.sleep(REQUEST_DELAY)
+
+    if failed:
+        logger.warning(f"  Khong lay duoc: {', '.join(failed)}")
+    logger.info(f"  Thanh cong: {len(results)}/{len(INDICES)} chi so")
     return results
 
 
@@ -281,8 +380,8 @@ def chart_single_index(symbol: str, df: pd.DataFrame):
                              height_ratios=[4, 1, 1.2, 1.2],
                              gridspec_kw={"hspace": 0.25})
 
-    color = INDEX_COLORS[symbol]
-    label = INDEX_LABELS[symbol]
+    color = INDEX_COLORS.get(symbol, "#333333")
+    label = INDEX_LABELS.get(symbol, symbol)
 
     # --- Panel 1: Price + Bollinger + MA ---
     ax1 = axes[0]
@@ -387,6 +486,8 @@ def main():
     logger.info(f"THU THAP CHI SO CHUNG KHOAN VIET NAM")
     logger.info(f"Thoi gian: {start} -> {end}")
     logger.info(f"Chi so: {', '.join(INDICES)}")
+    logger.info(f"KBS (6 chinh): {', '.join(sorted(KBS_INDICES))}")
+    logger.info(f"VCI direct (12 nganh/quy mo/dau tu): {', '.join(s for s in INDICES if s not in KBS_INDICES)}")
     logger.info("=" * 60)
 
     # 1. Lấy dữ liệu
