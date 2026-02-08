@@ -39,6 +39,21 @@ _INDEX_MAPPING = {
     'VN30': 'VN30',
     'HNX30': 'HNX30',
     'VN100': 'VN100',
+    # Size indices
+    'VNMIDCAP': 'VNMIDCAP',
+    'VNSML': 'VNSML',
+    # Sector indices
+    'VNREAL': 'VNREAL',
+    'VNIT': 'VNIT',
+    'VNHEAL': 'VNHEAL',
+    'VNFIN': 'VNFIN',
+    'VNENE': 'VNENE',
+    'VNCONS': 'VNCONS',
+    'VNMAT': 'VNMAT',
+    'VNCOND': 'VNCOND',
+    # Investment indices
+    'VNFINSELECT': 'VNFINSELECT',
+    'VNDIAMOND': 'VNDIAMOND',
 }
 
 # Group codes mapping
