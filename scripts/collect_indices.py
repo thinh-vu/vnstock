@@ -2,9 +2,8 @@
 Thu thập dữ liệu lịch sử chỉ số chứng khoán Việt Nam + biểu đồ trực quan.
 
 Nguồn dữ liệu:
-  - KBS (5 chỉ số chính):  VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30
-  - VNDirect dchart API (13 chỉ số còn lại): VN100, VNMID, VNSML, VNFIN,
-    VNREAL, VNIT, VNHEAL, VNENE, VNCONS, VNMAT, VNCOND, VNDIAMOND, VNFINSELECT
+  - VNDirect dchart API (TradingView UDF format) cho tất cả 18 chỉ số.
+    Full OHLCV, không cần auth.
 
 Output:
     data/indices/
@@ -46,16 +45,16 @@ import matplotlib.ticker as mticker
 # CẤU HÌNH
 # ============================================================
 
-# Chỉ số chính (KBS hỗ trợ OHLCV)
+# Chỉ số chính
 MAIN_INDICES = ["VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"]
 
-# Chỉ số quy mô (VNDirect dchart)
+# Chỉ số quy mô
 SIZE_INDICES = ["VN100", "VNMID", "VNSML"]
 
-# Chỉ số ngành (VNDirect dchart)
+# Chỉ số ngành
 SECTOR_INDICES = ["VNFIN", "VNREAL", "VNIT", "VNHEAL", "VNENE", "VNCONS", "VNMAT", "VNCOND"]
 
-# Chỉ số đầu tư (VNDirect dchart)
+# Chỉ số đầu tư
 INVEST_INDICES = ["VNDIAMOND", "VNFINSELECT"]
 
 # Toàn bộ 18 chỉ số
@@ -84,11 +83,7 @@ INDEX_COLORS = {
 DATA_DIR = PROJECT_ROOT / "data" / "indices"
 CHART_DIR = DATA_DIR / "charts"
 
-# KBS hỗ trợ 5 chỉ số chính (full OHLCV)
-KBS_INDICES = {"VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"}
-
-# VNDirect dchart API - nguồn dữ liệu chỉ số ngành/quy mô/đầu tư (full OHLCV)
-# Đây chính là Data Explorer / TradingView UDF backend mà vnstock-data sử dụng
+# VNDirect dchart API - TradingView UDF backend, full OHLCV cho tất cả chỉ số
 _VND_CHART_URL = "https://dchart-api.vndirect.com.vn/dchart/history"
 _VND_HEADERS = {
     "User-Agent": (
@@ -112,16 +107,6 @@ logger = logging.getLogger("indices")
 # ============================================================
 # THU THẬP DỮ LIỆU
 # ============================================================
-
-def _fetch_kbs(symbol: str, start: str, end: str) -> pd.DataFrame:
-    """Lấy dữ liệu index qua vnstock KBS (chỉ hỗ trợ 5 chỉ số chính, full OHLCV)."""
-    from vnstock.common.client import Vnstock
-
-    client = Vnstock(source="KBS", show_log=False)
-    stock = client.stock(symbol=symbol, source="KBS")
-    df = stock.quote.history(start=start, end=end, interval="1D")
-    return df
-
 
 def _fetch_vnd(symbol: str, start: str, end: str) -> pd.DataFrame:
     """
@@ -197,23 +182,19 @@ def _fetch_vnd(symbol: str, start: str, end: str) -> pd.DataFrame:
 
 
 def fetch_index_history(symbol: str, start: str, end: str) -> pd.DataFrame:
-    """
-    Lấy dữ liệu lịch sử cho 1 chỉ số.
-    - KBS cho 5 chỉ số chính (full OHLCV)
-    - VNDirect dchart cho 13 chỉ số ngành/quy mô/đầu tư (full OHLCV)
-    """
-    if symbol in KBS_INDICES:
-        source = "KBS"
-        logger.info(f"  Dang lay {symbol} [{source}] ({start} -> {end})...")
-        df = _fetch_kbs(symbol, start, end)
-    else:
-        source = "VNDirect"
-        logger.info(f"  Dang lay {symbol} [{source}] ({start} -> {end})...")
-        df = _fetch_vnd(symbol, start, end)
+    """Lấy dữ liệu lịch sử cho 1 chỉ số từ VNDirect dchart API (full OHLCV)."""
+    logger.info(f"  Dang lay {symbol} [VNDirect] ({start} -> {end})...")
+    df = _fetch_vnd(symbol, start, end)
 
     if df is not None and not df.empty:
         df["symbol"] = symbol
-        logger.info(f"  {symbol}: {len(df)} phien giao dich")
+        last = df.iloc[-1]
+        logger.info(
+            f"  {symbol}: {len(df)} phien | "
+            f"Last: {last['time'].strftime('%Y-%m-%d')} "
+            f"O={last['open']:.2f} H={last['high']:.2f} "
+            f"L={last['low']:.2f} C={last['close']:.2f} V={last['volume']}"
+        )
     else:
         logger.warning(f"  {symbol}: Khong co du lieu")
     return df
@@ -456,9 +437,8 @@ def main():
     logger.info("=" * 60)
     logger.info("THU THAP CHI SO CHUNG KHOAN VIET NAM")
     logger.info(f"Thoi gian: {start} -> {end}")
-    logger.info(f"Chi so: {', '.join(INDICES)}")
-    logger.info(f"KBS (5 chinh, OHLCV): {', '.join(sorted(KBS_INDICES))}")
-    logger.info(f"VNDirect dchart (13 nganh/quy mo): {', '.join(s for s in INDICES if s not in KBS_INDICES)}")
+    logger.info(f"Nguon: VNDirect dchart API (full OHLCV)")
+    logger.info(f"Chi so ({len(INDICES)}): {', '.join(INDICES)}")
     logger.info("=" * 60)
 
     # 1. Lấy dữ liệu
