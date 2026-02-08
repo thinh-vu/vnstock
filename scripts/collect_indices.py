@@ -1,28 +1,27 @@
 """
-Thu thập dữ liệu lịch sử các chỉ số chứng khoán Việt Nam + biểu đồ trực quan.
+Thu thập dữ liệu lịch sử 18 chỉ số chứng khoán Việt Nam + biểu đồ trực quan.
 
-Chỉ số: VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30
+Chỉ số chính:  VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30
+Quy mô:        VN100, VNMIDCAP, VNSML
+Ngành:          VNFIN, VNREAL, VNIT, VNHEAL, VNENE, VNCONS, VNMAT, VNCOND
+Đầu tư:        VNDIAMOND, VNFINSELECT
 
 Output:
     data/indices/
-    ├── VNINDEX.csv
-    ├── HNXINDEX.csv
-    ├── UPCOMINDEX.csv
-    ├── VN30.csv
-    ├── HNX30.csv
-    ├── all_indices.csv          # Gộp tất cả
+    ├── VNINDEX.csv ... (18 file CSV, mỗi chỉ số 1 file)
+    ├── all_indices.csv
     └── charts/
-        ├── overview.png         # Tổng quan tất cả chỉ số
-        ├── VNINDEX.png          # Chart riêng từng chỉ số
-        ├── HNXINDEX.png
-        ├── UPCOMINDEX.png
-        ├── VN30.png
-        ├── HNX30.png
+        ├── overview_main.png       # So sánh 5 chỉ số chính
+        ├── overview_size.png       # So sánh quy mô (VN100, MidCap, SmallCap)
+        ├── overview_sectors.png    # So sánh 8 chỉ số ngành
+        ├── overview_invest.png     # So sánh Diamond, FinSelect
+        ├── overview_all.png        # Tất cả 18 chỉ số
+        ├── VNINDEX.png ... (18 chart chi tiết: Price+MA+RSI+MACD)
         └── volume_comparison.png
 
 Cách chạy:
-    python scripts/collect_indices.py                                    # 1 năm gần nhất
-    python scripts/collect_indices.py --start 2024-01-01                 # Từ ngày cụ thể
+    python scripts/collect_indices.py                                      # 1 năm gần nhất
+    python scripts/collect_indices.py --start 2024-01-01                   # Từ ngày cụ thể
     python scripts/collect_indices.py --start 2020-01-01 --end 2026-02-08  # Khoảng thời gian
 """
 
@@ -48,22 +47,69 @@ import matplotlib.ticker as mticker
 # CẤU HÌNH
 # ============================================================
 
-INDICES = ["VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"]
+# Chỉ số chính
+MAIN_INDICES = ["VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"]
+
+# Chỉ số quy mô
+SIZE_INDICES = ["VN100", "VNMIDCAP", "VNSML"]
+
+# Chỉ số ngành
+SECTOR_INDICES = ["VNFIN", "VNREAL", "VNIT", "VNHEAL", "VNENE", "VNCONS", "VNMAT", "VNCOND"]
+
+# Chỉ số đầu tư
+INVEST_INDICES = ["VNDIAMOND", "VNFINSELECT"]
+
+# Toàn bộ 18 chỉ số
+INDICES = MAIN_INDICES + SIZE_INDICES + SECTOR_INDICES + INVEST_INDICES
 
 INDEX_LABELS = {
+    # Chính
     "VNINDEX": "VN-Index",
     "HNXINDEX": "HNX-Index",
     "UPCOMINDEX": "UPCOM-Index",
     "VN30": "VN30",
     "HNX30": "HNX30",
+    # Quy mô
+    "VN100": "VN100",
+    "VNMIDCAP": "VN-MidCap",
+    "VNSML": "VN-SmallCap",
+    # Ngành
+    "VNFIN": "Tai chinh",
+    "VNREAL": "Bat dong san",
+    "VNIT": "Cong nghe",
+    "VNHEAL": "Y te",
+    "VNENE": "Nang luong",
+    "VNCONS": "Tieu dung",
+    "VNMAT": "Vat lieu",
+    "VNCOND": "Hang tieu dung",
+    # Đầu tư
+    "VNDIAMOND": "VN Diamond",
+    "VNFINSELECT": "VN FinSelect",
 }
 
 INDEX_COLORS = {
+    # Chính
     "VNINDEX": "#E53935",
     "HNXINDEX": "#1E88E5",
     "UPCOMINDEX": "#43A047",
     "VN30": "#FB8C00",
     "HNX30": "#8E24AA",
+    # Quy mô
+    "VN100": "#00ACC1",
+    "VNMIDCAP": "#5E35B1",
+    "VNSML": "#F4511E",
+    # Ngành
+    "VNFIN": "#C62828",
+    "VNREAL": "#AD1457",
+    "VNIT": "#1565C0",
+    "VNHEAL": "#2E7D32",
+    "VNENE": "#EF6C00",
+    "VNCONS": "#6A1B9A",
+    "VNMAT": "#4E342E",
+    "VNCOND": "#00838F",
+    # Đầu tư
+    "VNDIAMOND": "#FFD600",
+    "VNFINSELECT": "#00C853",
 }
 
 DATA_DIR = PROJECT_ROOT / "data" / "indices"
@@ -175,47 +221,57 @@ def setup_chart_style():
     })
 
 
-def chart_overview(data: dict, start: str, end: str):
-    """Biểu đồ tổng quan: normalize tất cả chỉ số về cùng điểm xuất phát."""
+def _chart_group(data: dict, symbols: list, title: str, filename: str, start: str, end: str):
+    """Vẽ biểu đồ so sánh cho 1 nhóm chỉ số (normalize %)."""
     setup_chart_style()
-    fig, axes = plt.subplots(2, 1, figsize=(16, 10), height_ratios=[3, 1],
-                             gridspec_kw={"hspace": 0.3})
+    group_data = {s: data[s] for s in symbols if s in data and not data[s].empty}
+    if not group_data:
+        return
 
-    # --- Panel 1: Giá chuẩn hóa (%) ---
-    ax1 = axes[0]
-    for symbol, df in data.items():
-        if df.empty:
-            continue
+    fig, ax = plt.subplots(figsize=(16, 7))
+
+    for symbol, df in group_data.items():
         base = df["close"].iloc[0]
         normalized = (df["close"] / base - 1) * 100
-        ax1.plot(df["time"], normalized,
-                 label=INDEX_LABELS[symbol],
-                 color=INDEX_COLORS[symbol],
-                 linewidth=1.5)
+        ax.plot(df["time"], normalized,
+                label=INDEX_LABELS.get(symbol, symbol),
+                color=INDEX_COLORS.get(symbol, "#333333"),
+                linewidth=1.5)
 
-    ax1.set_title(f"So sanh cac chi so chung khoan Viet Nam ({start} - {end})")
-    ax1.set_ylabel("Thay doi (%)")
-    ax1.legend(loc="upper left", framealpha=0.9)
-    ax1.axhline(y=0, color="black", linewidth=0.5, linestyle="-")
-    ax1.xaxis.set_major_formatter(mdates.DateFormatter("%m/%Y"))
-    ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+    ax.set_title(f"{title} ({start} - {end})")
+    ax.set_ylabel("Thay doi (%)")
+    ax.legend(loc="upper left", framealpha=0.9, fontsize=9)
+    ax.axhline(y=0, color="black", linewidth=0.5, linestyle="-")
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%Y"))
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
     fig.autofmt_xdate(rotation=45)
 
-    # --- Panel 2: VNINDEX volume ---
-    ax2 = axes[1]
-    if "VNINDEX" in data and not data["VNINDEX"].empty:
-        vn_df = data["VNINDEX"]
-        colors = ["#E53935" if c < o else "#43A047"
-                  for c, o in zip(vn_df["close"], vn_df["open"])]
-        ax2.bar(vn_df["time"], vn_df["volume"], color=colors, alpha=0.6, width=1)
-        ax2.set_ylabel("VNINDEX Volume")
-        ax2.yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{x/1e6:.0f}M"))
-        ax2.xaxis.set_major_formatter(mdates.DateFormatter("%m/%Y"))
-        ax2.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
-
-    plt.savefig(CHART_DIR / "overview.png", dpi=150, bbox_inches="tight")
+    plt.savefig(CHART_DIR / filename, dpi=150, bbox_inches="tight")
     plt.close()
-    logger.info("  Saved: overview.png")
+    logger.info(f"  Saved: {filename}")
+
+
+def chart_overview(data: dict, start: str, end: str):
+    """Vẽ nhiều biểu đồ tổng quan theo nhóm."""
+    # 1. Chỉ số chính
+    _chart_group(data, MAIN_INDICES,
+                 "Chi so chinh", "overview_main.png", start, end)
+
+    # 2. Chỉ số quy mô
+    _chart_group(data, SIZE_INDICES,
+                 "Chi so quy mo", "overview_size.png", start, end)
+
+    # 3. Chỉ số ngành
+    _chart_group(data, SECTOR_INDICES,
+                 "Chi so nganh", "overview_sectors.png", start, end)
+
+    # 4. Chỉ số đầu tư
+    _chart_group(data, INVEST_INDICES,
+                 "Chi so dau tu", "overview_invest.png", start, end)
+
+    # 5. Tổng hợp tất cả
+    _chart_group(data, INDICES,
+                 "Toan bo chi so", "overview_all.png", start, end)
 
 
 def chart_single_index(symbol: str, df: pd.DataFrame):
@@ -278,17 +334,21 @@ def chart_single_index(symbol: str, df: pd.DataFrame):
 
 
 def chart_volume_comparison(data: dict):
-    """So sánh khối lượng giao dịch giữa các sàn."""
+    """So sánh khối lượng giao dịch giữa các chỉ số chính."""
     setup_chart_style()
-    fig, axes = plt.subplots(len(data), 1, figsize=(16, 3 * len(data)),
+    # Chỉ vẽ volume cho chỉ số chính (5 cái), tránh quá nhiều subplot
+    vol_symbols = [s for s in MAIN_INDICES if s in data and not data[s].empty]
+    if not vol_symbols:
+        return
+
+    fig, axes = plt.subplots(len(vol_symbols), 1, figsize=(16, 3 * len(vol_symbols)),
                              gridspec_kw={"hspace": 0.4})
 
-    if len(data) == 1:
+    if len(vol_symbols) == 1:
         axes = [axes]
 
-    for ax, (symbol, df) in zip(axes, data.items()):
-        if df.empty:
-            continue
+    for ax, symbol in zip(axes, vol_symbols):
+        df = data[symbol]
         colors = ["#E53935" if c < o else "#43A047"
                   for c, o in zip(df["close"], df["open"])]
         ax.bar(df["time"], df["volume"], color=colors, alpha=0.6, width=1)
