@@ -173,6 +173,13 @@ Thumbs.db
 *.sqlite
 *.sqlite3
 
+# Allow collected data (CSV) in data/ directory
+!data/
+!data/**/*.csv
+
+# Ignore logs from collector
+logs/
+
 # Project specific
 dev/temp
 dev/temp_*

@@ -1,0 +1,118 @@
+name: Daily Stock & Gold Data Collector
+
+on:
+  schedule:
+    # 15:30 giờ Việt Nam (UTC+7) = 08:30 UTC, thứ 2-6
+    - cron: '30 8 * * 1-5'
+  workflow_dispatch:
+    # Cho phép chạy tay từ GitHub UI
+    inputs:
+      date:
+        description: 'Ngày thu thập (YYYY-MM-DD), bỏ trống = hôm nay'
+        required: false
+        default: ''
+      skip_ohlcv:
+        description: 'Bỏ qua OHLCV từng mã (chỉ lấy price board)'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytz
+
+      - name: Set timezone to Vietnam
+        run: echo "TZ=Asia/Ho_Chi_Minh" >> $GITHUB_ENV
+
+      - name: Determine collection date
+        id: date
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            echo "date=${{ github.event.inputs.date }}" >> $GITHUB_OUTPUT
+          else
+            echo "date=$(TZ=Asia/Ho_Chi_Minh date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check if weekday (skip weekends for scheduled runs)
+        id: check_day
+        run: |
+          DAY_OF_WEEK=$(TZ=Asia/Ho_Chi_Minh date +%u)
+          if [ "$DAY_OF_WEEK" -gt 5 ] && [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Hôm nay là cuối tuần, bỏ qua."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Collect data
+        if: steps.check_day.outputs.skip != 'true'
+        run: |
+          SKIP_FLAG=""
+          if [ "${{ github.event.inputs.skip_ohlcv }}" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+            SKIP_FLAG="--skip-ohlcv"
+          fi
+          python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} $SKIP_FLAG
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+
+      - name: Show collected files
+        if: steps.check_day.outputs.skip != 'true'
+        run: |
+          echo "=== Dữ liệu thu thập được ==="
+          if [ -d "data/${{ steps.date.outputs.date }}" ]; then
+            ls -lh data/${{ steps.date.outputs.date }}/
+            echo ""
+            for f in data/${{ steps.date.outputs.date }}/*.csv; do
+              echo "--- $(basename $f): $(wc -l < $f) dòng ---"
+              head -3 "$f"
+              echo ""
+            done
+          else
+            echo "Không có thư mục data."
+          fi
+
+      - name: Commit and push data
+        if: steps.check_day.outputs.skip != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --staged --quiet; then
+            echo "Không có dữ liệu mới."
+          else
+            git commit -m "data: thu thập dữ liệu ngày ${{ steps.date.outputs.date }}"
+            git push
+          fi
+
+      - name: Upload data as artifact
+        if: steps.check_day.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stock-data-${{ steps.date.outputs.date }}
+          path: data/${{ steps.date.outputs.date }}/
+          retention-days: 90
