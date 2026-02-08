@@ -53,11 +53,11 @@ LOG_DIR = PROJECT_ROOT / "logs"
 # Nguồn dữ liệu mặc định
 DEFAULT_SOURCE = "VCI"
 
-# Số request tối đa mỗi phút (Guest: 20, Community: 60)
-# Chia batch để không vượt giới hạn
-BATCH_SIZE = 15         # Số mã cổ phiếu mỗi batch khi lấy OHLCV
-BATCH_DELAY = 3.5       # Giây chờ giữa các batch (để không bị rate limit)
-REQUEST_DELAY = 0.3     # Giây chờ giữa mỗi request đơn lẻ
+# Golden Sponsor: 500 req/phút (~8 req/giây)
+# Tăng batch size và giảm delay để tận dụng tối đa
+BATCH_SIZE = 50         # Số mã cổ phiếu mỗi batch khi lấy OHLCV
+BATCH_DELAY = 0.5       # Giây chờ giữa các batch
+REQUEST_DELAY = 0.12    # Giây chờ giữa mỗi request (~8 req/s)
 
 # Logging
 logging.basicConfig(

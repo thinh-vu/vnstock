@@ -14,11 +14,11 @@ on:
       skip_ohlcv:
         description: 'Bỏ qua OHLCV từng mã (chỉ lấy price board)'
         required: false
-        default: 'true'
+        default: 'false'
         type: choice
         options:
-          - 'true'
           - 'false'
+          - 'true'
 
 permissions:
   contents: write
@@ -26,7 +26,7 @@ permissions:
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repo
@@ -48,6 +48,20 @@ jobs:
 
       - name: Set timezone to Vietnam
         run: echo "TZ=Asia/Ho_Chi_Minh" >> $GITHUB_ENV
+
+      - name: Register API key
+        if: ${{ env.VNSTOCK_API_KEY != '' }}
+        run: |
+          python -c "
+          from vnstock.core.utils.auth import register_user
+          import os
+          key = os.environ.get('VNSTOCK_API_KEY', '')
+          if key:
+              register_user(api_key=key)
+              print('API key registered (Golden Sponsor: 500 req/min)')
+          "
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
       - name: Determine collection date
         id: date
@@ -73,7 +87,7 @@ jobs:
         if: steps.check_day.outputs.skip != 'true'
         run: |
           SKIP_FLAG=""
-          if [ "${{ github.event.inputs.skip_ohlcv }}" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${{ github.event.inputs.skip_ohlcv }}" = "true" ]; then
             SKIP_FLAG="--skip-ohlcv"
           fi
           python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} $SKIP_FLAG
