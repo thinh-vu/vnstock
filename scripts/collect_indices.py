@@ -179,7 +179,7 @@ def _fetch_vnd(symbol: str, start: str, end: str) -> pd.DataFrame:
             "high": pd.to_numeric(highs, errors="coerce"),
             "low": pd.to_numeric(lows, errors="coerce"),
             "close": pd.to_numeric(closes, errors="coerce"),
-            "volume": pd.to_numeric(volumes, errors="coerce").fillna(0).astype("int64"),
+            "volume": np.nan_to_num(pd.to_numeric(volumes, errors="coerce"), nan=0).astype("int64"),
         })
 
         # Lọc theo khoảng thời gian
