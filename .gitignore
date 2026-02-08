@@ -173,9 +173,10 @@ Thumbs.db
 *.sqlite
 *.sqlite3
 
-# Allow collected data (CSV) in data/ directory
+# Allow collected data (CSV, PNG charts) in data/ directory
 !data/
 !data/**/*.csv
+!data/**/*.png
 
 # Ignore logs from collector
 logs/
