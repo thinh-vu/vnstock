@@ -113,8 +113,8 @@ INDEX_COLORS = {
 DATA_DIR = PROJECT_ROOT / "data" / "indices"
 CHART_DIR = DATA_DIR / "charts"
 
-# KBS hỗ trợ 6 chỉ số chính
-KBS_INDICES = {"VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30", "VN100"}
+# KBS hỗ trợ 5 chỉ số chính (VN100 qua KBS chỉ trả 1 dòng -> dùng VCI)
+KBS_INDICES = {"VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"}
 
 # VCI API endpoint (gọi trực tiếp, bỏ qua validation của vnstock)
 _VCI_CHART_URL = "https://trading.vietcap.com.vn/api/chart/OHLCChart/gap-chart"
@@ -152,6 +152,30 @@ def _fetch_kbs(symbol: str, start: str, end: str) -> pd.DataFrame:
     return df
 
 
+def _parse_timestamps(times):
+    """
+    Tự động detect format timestamp từ VCI API.
+    VCI có thể trả timestamps dạng: seconds, milliseconds, hoặc string.
+    """
+    if not times:
+        return pd.Series(dtype="datetime64[ns]")
+
+    sample = times[0]
+
+    # Nếu là string -> parse trực tiếp
+    if isinstance(sample, str):
+        return pd.to_datetime(times, errors="coerce")
+
+    # Nếu là số -> detect seconds vs milliseconds
+    val = abs(int(sample))
+    if val > 1e12:
+        # Milliseconds (> year 2001 as ms)
+        return pd.to_datetime(times, unit="ms", errors="coerce")
+    else:
+        # Seconds
+        return pd.to_datetime(times, unit="s", errors="coerce")
+
+
 def _fetch_vci_direct(symbol: str, start: str, end: str) -> pd.DataFrame:
     """
     Lấy dữ liệu OHLCV từ VCI API trực tiếp (bỏ qua validation của vnstock).
@@ -172,11 +196,41 @@ def _fetch_vci_direct(symbol: str, start: str, end: str) -> pd.DataFrame:
         "countBack": count_back,
     }
 
-    resp = requests.post(_VCI_CHART_URL, json=payload, headers=_VCI_HEADERS, timeout=30)
-    resp.raise_for_status()
-    data = resp.json()
+    logger.info(f"    VCI payload: to={end_stamp}, countBack={count_back}")
 
-    if not data or not isinstance(data, list) or len(data) == 0:
+    resp = requests.post(_VCI_CHART_URL, json=payload, headers=_VCI_HEADERS, timeout=30)
+
+    # Log response status và nội dung nếu lỗi
+    logger.info(f"    VCI response: status={resp.status_code}, content-type={resp.headers.get('content-type', 'unknown')}")
+
+    if resp.status_code != 200:
+        body_preview = resp.text[:500] if resp.text else "(empty)"
+        logger.error(f"    VCI HTTP {resp.status_code}: {body_preview}")
+        return pd.DataFrame()
+
+    try:
+        data = resp.json()
+    except Exception as e:
+        logger.error(f"    VCI JSON parse error: {e}. Body: {resp.text[:300]}")
+        return pd.DataFrame()
+
+    # Log response structure
+    if isinstance(data, list):
+        logger.info(f"    VCI data: list len={len(data)}")
+        if data:
+            keys = list(data[0].keys()) if isinstance(data[0], dict) else str(type(data[0]))
+            logger.info(f"    VCI data[0] keys: {keys}")
+    elif isinstance(data, dict):
+        logger.info(f"    VCI data: dict keys={list(data.keys())}")
+        # Nếu response là dict (có thể là error object)
+        if "error" in data or "message" in data:
+            logger.error(f"    VCI API error: {data}")
+        return pd.DataFrame()
+    else:
+        logger.warning(f"    VCI data: unexpected type={type(data)}")
+        return pd.DataFrame()
+
+    if not data:
         logger.warning(f"  {symbol}: VCI API trả về rỗng")
         return pd.DataFrame()
 
@@ -191,17 +245,27 @@ def _fetch_vci_direct(symbol: str, start: str, end: str) -> pd.DataFrame:
     volumes = item.get("v", [])
 
     if not times:
-        logger.warning(f"  {symbol}: Không có dữ liệu từ VCI")
+        logger.warning(f"  {symbol}: Không có dữ liệu từ VCI (t=[])")
         return pd.DataFrame()
 
+    # Log timestamp sample để debug
+    sample_t = times[0] if times else None
+    logger.info(f"    Timestamps: count={len(times)}, sample={sample_t}, type={type(sample_t).__name__}")
+
+    # Parse timestamps tự động
+    time_series = _parse_timestamps(times)
+
     df = pd.DataFrame({
-        "time": pd.to_datetime(times, unit="s"),
+        "time": time_series,
         "open": opens,
         "high": highs,
         "low": lows,
         "close": closes,
         "volume": volumes,
     })
+
+    # Bỏ hàng có time NaT
+    df = df.dropna(subset=["time"])
 
     # Lọc theo khoảng thời gian
     df = df[(df["time"] >= start) & (df["time"] <= end)]
