@@ -3,8 +3,8 @@ Thu thập dữ liệu lịch sử chỉ số chứng khoán Việt Nam + biểu
 
 Nguồn dữ liệu:
   - KBS (5 chỉ số chính):  VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30
-  - SSI FiinTrade (13 chỉ số còn lại): VN100, VNMID, VNSML, VNFIN, VNREAL,
-    VNIT, VNHEAL, VNENE, VNCONS, VNMAT, VNCOND, VNDIAMOND, VNFINSELECT
+  - VNDirect dchart API (13 chỉ số còn lại): VN100, VNMID, VNSML, VNFIN,
+    VNREAL, VNIT, VNHEAL, VNENE, VNCONS, VNMAT, VNCOND, VNDIAMOND, VNFINSELECT
 
 Output:
     data/indices/
@@ -49,13 +49,13 @@ import matplotlib.ticker as mticker
 # Chỉ số chính (KBS hỗ trợ OHLCV)
 MAIN_INDICES = ["VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"]
 
-# Chỉ số quy mô (SSI FiinTrade)
+# Chỉ số quy mô (VNDirect dchart)
 SIZE_INDICES = ["VN100", "VNMID", "VNSML"]
 
-# Chỉ số ngành (SSI FiinTrade)
+# Chỉ số ngành (VNDirect dchart)
 SECTOR_INDICES = ["VNFIN", "VNREAL", "VNIT", "VNHEAL", "VNENE", "VNCONS", "VNMAT", "VNCOND"]
 
-# Chỉ số đầu tư (SSI FiinTrade)
+# Chỉ số đầu tư (VNDirect dchart)
 INVEST_INDICES = ["VNDIAMOND", "VNFINSELECT"]
 
 # Toàn bộ 18 chỉ số
@@ -87,31 +87,17 @@ CHART_DIR = DATA_DIR / "charts"
 # KBS hỗ trợ 5 chỉ số chính (full OHLCV)
 KBS_INDICES = {"VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"}
 
-# SSI FiinTrade API - nguồn dữ liệu cho chỉ số ngành/quy mô/đầu tư
-# Đây là API mà vnstock v0.x sử dụng thành công cho tất cả chỉ số
-_SSI_INDEX_URL = "https://fiin-market.ssi.com.vn/MarketInDepth/GetIndexSeries"
-_SSI_HEADERS = {
-    "Connection": "keep-alive",
-    "sec-ch-ua": '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
-    "DNT": "1",
-    "sec-ch-ua-mobile": "?0",
-    "X-Fiin-Key": "KEY",
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "X-Fiin-User-ID": "ID",
+# VNDirect dchart API - nguồn dữ liệu chỉ số ngành/quy mô/đầu tư (full OHLCV)
+# Đây chính là Data Explorer / TradingView UDF backend mà vnstock-data sử dụng
+_VND_CHART_URL = "https://dchart-api.vndirect.com.vn/dchart/history"
+_VND_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/120.0.0.0 Safari/537.36"
     ),
-    "X-Fiin-Seed": "SEED",
-    "sec-ch-ua-platform": '"Windows"',
-    "Origin": "https://iboard.ssi.com.vn",
-    "Sec-Fetch-Site": "same-site",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Dest": "empty",
-    "Referer": "https://iboard.ssi.com.vn/",
-    "Accept-Language": "en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7",
+    "Referer": "https://dchart.vndirect.com.vn",
+    "Origin": "https://dchart.vndirect.com.vn",
 }
 
 REQUEST_DELAY = 0.5
@@ -137,123 +123,76 @@ def _fetch_kbs(symbol: str, start: str, end: str) -> pd.DataFrame:
     return df
 
 
-def _get_ssi_time_range(start: str, end: str) -> str:
-    """Chọn TimeRange phù hợp dựa trên khoảng thời gian yêu cầu."""
-    start_dt = datetime.strptime(start, "%Y-%m-%d")
-    end_dt = datetime.strptime(end, "%Y-%m-%d")
-    days = (end_dt - start_dt).days
-
-    if days <= 7:
-        return "OneWeek"
-    elif days <= 30:
-        return "OneMonth"
-    elif days <= 90:
-        return "ThreeMonth"
-    elif days <= 180:
-        return "SixMonths"
-    elif days <= 365:
-        return "OneYear"
-    elif days <= 1095:
-        return "ThreeYears"
-    else:
-        return "FiveYears"
-
-
-def _fetch_ssi(symbol: str, start: str, end: str) -> pd.DataFrame:
+def _fetch_vnd(symbol: str, start: str, end: str) -> pd.DataFrame:
     """
-    Lấy dữ liệu lịch sử chỉ số từ SSI FiinTrade API.
-    API trả về: tradingDate, indexValue (close), totalMatchVolume, totalMatchValue.
-    Đặt open=high=low=close vì API không cung cấp OHLC.
+    Lấy dữ liệu OHLCV lịch sử từ VNDirect dchart API (TradingView UDF format).
+    Hỗ trợ tất cả chỉ số bao gồm ngành, quy mô, đầu tư - full OHLCV.
     """
-    time_range = _get_ssi_time_range(start, end)
+    start_ts = int(datetime.strptime(start, "%Y-%m-%d").timestamp())
+    end_ts = int((datetime.strptime(end, "%Y-%m-%d") + timedelta(days=1)).timestamp())
+
     params = {
-        "language": "vi",
-        "ComGroupCode": symbol,
-        "TimeRange": time_range,
-        "id": "1",
+        "resolution": "D",
+        "symbol": symbol,
+        "from": start_ts,
+        "to": end_ts,
     }
 
-    logger.info(f"    SSI params: ComGroupCode={symbol}, TimeRange={time_range}")
+    logger.info(f"    VND params: symbol={symbol}, from={start_ts}, to={end_ts}")
 
     try:
         resp = requests.get(
-            _SSI_INDEX_URL, params=params, headers=_SSI_HEADERS, timeout=30
+            _VND_CHART_URL, params=params, headers=_VND_HEADERS, timeout=30
         )
-        logger.info(f"    SSI response: status={resp.status_code}")
+        logger.info(f"    VND response: status={resp.status_code}")
 
         if resp.status_code != 200:
-            logger.error(f"    SSI HTTP {resp.status_code}: {resp.text[:300]}")
+            logger.error(f"    VND HTTP {resp.status_code}: {resp.text[:300]}")
             return pd.DataFrame()
 
         data = resp.json()
 
-        # SSI trả về dạng: {"items": [{...}, ...], "totalCount": N, ...}
-        items = data.get("items", [])
-        if not items:
-            logger.warning(f"    SSI: {symbol} - items rỗng. Response keys: {list(data.keys())}")
-            # Log thêm chi tiết để debug
-            if "status" in data:
-                logger.warning(f"    SSI status: {data.get('status')}, message: {data.get('message', 'N/A')}")
+        # TradingView UDF format: {s: "ok", t: [...], o: [...], h: [...], l: [...], c: [...], v: [...]}
+        status = data.get("s", "")
+        if status != "ok":
+            logger.warning(f"    VND: {symbol} - status={status}")
+            if "nextTime" in data:
+                logger.info(f"    VND: nextTime={data['nextTime']}")
             return pd.DataFrame()
 
-        logger.info(f"    SSI: {symbol} - {len(items)} records, keys: {list(items[0].keys())[:8]}")
+        times = data.get("t", [])
+        opens = data.get("o", [])
+        highs = data.get("h", [])
+        lows = data.get("l", [])
+        closes = data.get("c", [])
+        volumes = data.get("v", [])
 
-        df = pd.DataFrame(items)
-
-        # Parse columns (tên cột có thể khác nhau tùy version)
-        # Các cột phổ biến: tradingDate/TradingDate, indexValue/IndexValue,
-        #   totalMatchVolume/TotalMatchVolume, totalMatchValue/TotalMatchValue
-        col_map = {}
-        for col in df.columns:
-            lower = col.lower()
-            if "tradingdate" in lower or "trading_date" in lower:
-                col_map[col] = "time"
-            elif "indexvalue" in lower or "index_value" in lower or "closevalue" in lower:
-                col_map[col] = "close"
-            elif "matchvolume" in lower or "match_volume" in lower or "totalmatchvol" in lower:
-                col_map[col] = "volume"
-            elif "matchvalue" in lower or "match_value" in lower:
-                col_map[col] = "value"
-
-        if col_map:
-            df = df.rename(columns=col_map)
-
-        # Đảm bảo có cột time và close
-        if "time" not in df.columns or "close" not in df.columns:
-            logger.error(f"    SSI: Thiếu cột time/close. Columns: {list(df.columns)}")
+        if not times:
+            logger.warning(f"    VND: {symbol} - không có dữ liệu")
             return pd.DataFrame()
 
-        # Parse time
-        df["time"] = pd.to_datetime(df["time"], errors="coerce")
-        df = df.dropna(subset=["time"])
+        logger.info(f"    VND: {symbol} - {len(times)} bars")
 
-        # Parse close
-        df["close"] = pd.to_numeric(df["close"], errors="coerce")
-
-        # OHLC = close (SSI không cung cấp Open/High/Low cho index series)
-        df["open"] = df["close"]
-        df["high"] = df["close"]
-        df["low"] = df["close"]
-
-        # Volume
-        if "volume" not in df.columns:
-            df["volume"] = 0
-        df["volume"] = pd.to_numeric(df["volume"], errors="coerce").fillna(0).astype("int64")
+        df = pd.DataFrame({
+            "time": pd.to_datetime(times, unit="s"),
+            "open": pd.to_numeric(opens, errors="coerce"),
+            "high": pd.to_numeric(highs, errors="coerce"),
+            "low": pd.to_numeric(lows, errors="coerce"),
+            "close": pd.to_numeric(closes, errors="coerce"),
+            "volume": pd.to_numeric(volumes, errors="coerce").fillna(0).astype("int64"),
+        })
 
         # Lọc theo khoảng thời gian
         df = df[(df["time"] >= start) & (df["time"] <= end)]
         df = df.sort_values("time").reset_index(drop=True)
 
-        # Chỉ giữ cột cần thiết
-        df = df[["time", "open", "high", "low", "close", "volume"]]
-
         return df
 
     except requests.exceptions.RequestException as e:
-        logger.error(f"    SSI request error: {e}")
+        logger.error(f"    VND request error: {e}")
         return pd.DataFrame()
     except Exception as e:
-        logger.error(f"    SSI error: {e}")
+        logger.error(f"    VND error: {e}")
         return pd.DataFrame()
 
 
@@ -261,16 +200,16 @@ def fetch_index_history(symbol: str, start: str, end: str) -> pd.DataFrame:
     """
     Lấy dữ liệu lịch sử cho 1 chỉ số.
     - KBS cho 5 chỉ số chính (full OHLCV)
-    - SSI FiinTrade cho 13 chỉ số ngành/quy mô/đầu tư (close + volume)
+    - VNDirect dchart cho 13 chỉ số ngành/quy mô/đầu tư (full OHLCV)
     """
     if symbol in KBS_INDICES:
         source = "KBS"
         logger.info(f"  Dang lay {symbol} [{source}] ({start} -> {end})...")
         df = _fetch_kbs(symbol, start, end)
     else:
-        source = "SSI-FiinTrade"
+        source = "VNDirect"
         logger.info(f"  Dang lay {symbol} [{source}] ({start} -> {end})...")
-        df = _fetch_ssi(symbol, start, end)
+        df = _fetch_vnd(symbol, start, end)
 
     if df is not None and not df.empty:
         df["symbol"] = symbol
@@ -519,7 +458,7 @@ def main():
     logger.info(f"Thoi gian: {start} -> {end}")
     logger.info(f"Chi so: {', '.join(INDICES)}")
     logger.info(f"KBS (5 chinh, OHLCV): {', '.join(sorted(KBS_INDICES))}")
-    logger.info(f"SSI FiinTrade (13 nganh/quy mo): {', '.join(s for s in INDICES if s not in KBS_INDICES)}")
+    logger.info(f"VNDirect dchart (13 nganh/quy mo): {', '.join(s for s in INDICES if s not in KBS_INDICES)}")
     logger.info("=" * 60)
 
     # 1. Lấy dữ liệu
