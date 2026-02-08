@@ -1,8 +1,9 @@
 """
 Thu thập dữ liệu lịch sử chỉ số chứng khoán Việt Nam + biểu đồ trực quan.
 
-Chỉ số chính (KBS):  VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30, VN100
-Chỉ số ngành/quy mô/đầu tư (VCI direct API): VNMID, VNSML, VNFIN, VNREAL,
+Nguồn dữ liệu:
+  - KBS (5 chỉ số chính):  VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30
+  - SSI FiinTrade (13 chỉ số còn lại): VN100, VNMID, VNSML, VNFIN, VNREAL,
     VNIT, VNHEAL, VNENE, VNCONS, VNMAT, VNCOND, VNDIAMOND, VNFINSELECT
 
 Output:
@@ -45,88 +46,72 @@ import matplotlib.ticker as mticker
 # CẤU HÌNH
 # ============================================================
 
-# Chỉ số chính (KBS hỗ trợ)
+# Chỉ số chính (KBS hỗ trợ OHLCV)
 MAIN_INDICES = ["VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"]
 
-# Chỉ số quy mô (VCI direct)
+# Chỉ số quy mô (SSI FiinTrade)
 SIZE_INDICES = ["VN100", "VNMID", "VNSML"]
 
-# Chỉ số ngành (VCI direct)
+# Chỉ số ngành (SSI FiinTrade)
 SECTOR_INDICES = ["VNFIN", "VNREAL", "VNIT", "VNHEAL", "VNENE", "VNCONS", "VNMAT", "VNCOND"]
 
-# Chỉ số đầu tư (VCI direct)
+# Chỉ số đầu tư (SSI FiinTrade)
 INVEST_INDICES = ["VNDIAMOND", "VNFINSELECT"]
 
 # Toàn bộ 18 chỉ số
 INDICES = MAIN_INDICES + SIZE_INDICES + SECTOR_INDICES + INVEST_INDICES
 
 INDEX_LABELS = {
-    # Chính
-    "VNINDEX": "VN-Index",
-    "HNXINDEX": "HNX-Index",
-    "UPCOMINDEX": "UPCOM-Index",
-    "VN30": "VN30",
-    "HNX30": "HNX30",
-    # Quy mô
-    "VN100": "VN100",
-    "VNMID": "VN-MidCap",
-    "VNSML": "VN-SmallCap",
-    # Ngành
-    "VNFIN": "Tai chinh",
-    "VNREAL": "Bat dong san",
-    "VNIT": "Cong nghe",
-    "VNHEAL": "Y te",
-    "VNENE": "Nang luong",
-    "VNCONS": "Tieu dung",
-    "VNMAT": "Vat lieu",
-    "VNCOND": "Hang tieu dung",
-    # Đầu tư
-    "VNDIAMOND": "VN Diamond",
-    "VNFINSELECT": "VN FinSelect",
+    "VNINDEX": "VN-Index", "HNXINDEX": "HNX-Index", "UPCOMINDEX": "UPCOM-Index",
+    "VN30": "VN30", "HNX30": "HNX30",
+    "VN100": "VN100", "VNMID": "VN-MidCap", "VNSML": "VN-SmallCap",
+    "VNFIN": "Tai chinh", "VNREAL": "Bat dong san", "VNIT": "Cong nghe",
+    "VNHEAL": "Y te", "VNENE": "Nang luong", "VNCONS": "Tieu dung",
+    "VNMAT": "Vat lieu", "VNCOND": "Hang tieu dung",
+    "VNDIAMOND": "VN Diamond", "VNFINSELECT": "VN FinSelect",
 }
 
 INDEX_COLORS = {
-    # Chính
-    "VNINDEX": "#E53935",
-    "HNXINDEX": "#1E88E5",
-    "UPCOMINDEX": "#43A047",
-    "VN30": "#FB8C00",
-    "HNX30": "#8E24AA",
-    # Quy mô
-    "VN100": "#00ACC1",
-    "VNMID": "#5E35B1",
-    "VNSML": "#F4511E",
-    # Ngành
-    "VNFIN": "#C62828",
-    "VNREAL": "#AD1457",
-    "VNIT": "#1565C0",
-    "VNHEAL": "#2E7D32",
-    "VNENE": "#EF6C00",
-    "VNCONS": "#6A1B9A",
-    "VNMAT": "#4E342E",
-    "VNCOND": "#00838F",
-    # Đầu tư
-    "VNDIAMOND": "#FFD600",
-    "VNFINSELECT": "#00C853",
+    "VNINDEX": "#E53935", "HNXINDEX": "#1E88E5", "UPCOMINDEX": "#43A047",
+    "VN30": "#FB8C00", "HNX30": "#8E24AA",
+    "VN100": "#00ACC1", "VNMID": "#5E35B1", "VNSML": "#F4511E",
+    "VNFIN": "#C62828", "VNREAL": "#AD1457", "VNIT": "#1565C0",
+    "VNHEAL": "#2E7D32", "VNENE": "#EF6C00", "VNCONS": "#6A1B9A",
+    "VNMAT": "#4E342E", "VNCOND": "#00838F",
+    "VNDIAMOND": "#FFD600", "VNFINSELECT": "#00C853",
 }
 
 DATA_DIR = PROJECT_ROOT / "data" / "indices"
 CHART_DIR = DATA_DIR / "charts"
 
-# KBS hỗ trợ 5 chỉ số chính (VN100 qua KBS chỉ trả 1 dòng -> dùng VCI)
+# KBS hỗ trợ 5 chỉ số chính (full OHLCV)
 KBS_INDICES = {"VNINDEX", "HNXINDEX", "UPCOMINDEX", "VN30", "HNX30"}
 
-# VCI API endpoint (gọi trực tiếp, bỏ qua validation của vnstock)
-_VCI_CHART_URL = "https://trading.vietcap.com.vn/api/chart/OHLCChart/gap-chart"
-_VCI_HEADERS = {
+# SSI FiinTrade API - nguồn dữ liệu cho chỉ số ngành/quy mô/đầu tư
+# Đây là API mà vnstock v0.x sử dụng thành công cho tất cả chỉ số
+_SSI_INDEX_URL = "https://fiin-market.ssi.com.vn/MarketInDepth/GetIndexSeries"
+_SSI_HEADERS = {
+    "Connection": "keep-alive",
+    "sec-ch-ua": '"Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
+    "DNT": "1",
+    "sec-ch-ua-mobile": "?0",
+    "X-Fiin-Key": "KEY",
     "Content-Type": "application/json",
-    "Origin": "https://trading.vietcap.com.vn/",
-    "Referer": "https://trading.vietcap.com.vn/",
+    "Accept": "application/json",
+    "X-Fiin-User-ID": "ID",
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/120.0.0.0 Safari/537.36"
     ),
+    "X-Fiin-Seed": "SEED",
+    "sec-ch-ua-platform": '"Windows"',
+    "Origin": "https://iboard.ssi.com.vn",
+    "Sec-Fetch-Site": "same-site",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Dest": "empty",
+    "Referer": "https://iboard.ssi.com.vn/",
+    "Accept-Language": "en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7",
 }
 
 REQUEST_DELAY = 0.5
@@ -143,7 +128,7 @@ logger = logging.getLogger("indices")
 # ============================================================
 
 def _fetch_kbs(symbol: str, start: str, end: str) -> pd.DataFrame:
-    """Lấy dữ liệu index qua vnstock KBS (chỉ hỗ trợ 6 chỉ số chính)."""
+    """Lấy dữ liệu index qua vnstock KBS (chỉ hỗ trợ 5 chỉ số chính, full OHLCV)."""
     from vnstock.common.client import Vnstock
 
     client = Vnstock(source="KBS", show_log=False)
@@ -152,147 +137,140 @@ def _fetch_kbs(symbol: str, start: str, end: str) -> pd.DataFrame:
     return df
 
 
-def _parse_timestamps(times):
-    """
-    Tự động detect format timestamp từ VCI API.
-    VCI có thể trả timestamps dạng: seconds, milliseconds, hoặc string.
-    """
-    if not times:
-        return pd.Series(dtype="datetime64[ns]")
-
-    sample = times[0]
-
-    # Nếu là string -> parse trực tiếp
-    if isinstance(sample, str):
-        return pd.to_datetime(times, errors="coerce")
-
-    # Nếu là số -> detect seconds vs milliseconds
-    val = abs(int(sample))
-    if val > 1e12:
-        # Milliseconds (> year 2001 as ms)
-        return pd.to_datetime(times, unit="ms", errors="coerce")
-    else:
-        # Seconds
-        return pd.to_datetime(times, unit="s", errors="coerce")
-
-
-def _fetch_vci_direct(symbol: str, start: str, end: str) -> pd.DataFrame:
-    """
-    Lấy dữ liệu OHLCV từ VCI API trực tiếp (bỏ qua validation của vnstock).
-    Dùng cho các chỉ số ngành/quy mô/đầu tư mà vnstock chưa hỗ trợ chính thức.
-    """
+def _get_ssi_time_range(start: str, end: str) -> str:
+    """Chọn TimeRange phù hợp dựa trên khoảng thời gian yêu cầu."""
     start_dt = datetime.strptime(start, "%Y-%m-%d")
-    end_dt = datetime.strptime(end, "%Y-%m-%d") + timedelta(days=1)
-    end_stamp = int(end_dt.timestamp())
+    end_dt = datetime.strptime(end, "%Y-%m-%d")
+    days = (end_dt - start_dt).days
 
-    # Tính số phiên giao dịch (business days)
-    bdays = len(pd.bdate_range(start=start_dt, end=end_dt))
-    count_back = bdays + 10  # Thêm buffer
+    if days <= 7:
+        return "OneWeek"
+    elif days <= 30:
+        return "OneMonth"
+    elif days <= 90:
+        return "ThreeMonth"
+    elif days <= 180:
+        return "SixMonths"
+    elif days <= 365:
+        return "OneYear"
+    elif days <= 1095:
+        return "ThreeYears"
+    else:
+        return "FiveYears"
 
-    payload = {
-        "timeFrame": "ONE_DAY",
-        "symbols": [symbol],
-        "to": end_stamp,
-        "countBack": count_back,
+
+def _fetch_ssi(symbol: str, start: str, end: str) -> pd.DataFrame:
+    """
+    Lấy dữ liệu lịch sử chỉ số từ SSI FiinTrade API.
+    API trả về: tradingDate, indexValue (close), totalMatchVolume, totalMatchValue.
+    Đặt open=high=low=close vì API không cung cấp OHLC.
+    """
+    time_range = _get_ssi_time_range(start, end)
+    params = {
+        "language": "vi",
+        "ComGroupCode": symbol,
+        "TimeRange": time_range,
+        "id": "1",
     }
 
-    logger.info(f"    VCI payload: to={end_stamp}, countBack={count_back}")
-
-    resp = requests.post(_VCI_CHART_URL, json=payload, headers=_VCI_HEADERS, timeout=30)
-
-    # Log response status và nội dung nếu lỗi
-    logger.info(f"    VCI response: status={resp.status_code}, content-type={resp.headers.get('content-type', 'unknown')}")
-
-    if resp.status_code != 200:
-        body_preview = resp.text[:500] if resp.text else "(empty)"
-        logger.error(f"    VCI HTTP {resp.status_code}: {body_preview}")
-        return pd.DataFrame()
+    logger.info(f"    SSI params: ComGroupCode={symbol}, TimeRange={time_range}")
 
     try:
+        resp = requests.get(
+            _SSI_INDEX_URL, params=params, headers=_SSI_HEADERS, timeout=30
+        )
+        logger.info(f"    SSI response: status={resp.status_code}")
+
+        if resp.status_code != 200:
+            logger.error(f"    SSI HTTP {resp.status_code}: {resp.text[:300]}")
+            return pd.DataFrame()
+
         data = resp.json()
+
+        # SSI trả về dạng: {"items": [{...}, ...], "totalCount": N, ...}
+        items = data.get("items", [])
+        if not items:
+            logger.warning(f"    SSI: {symbol} - items rỗng. Response keys: {list(data.keys())}")
+            # Log thêm chi tiết để debug
+            if "status" in data:
+                logger.warning(f"    SSI status: {data.get('status')}, message: {data.get('message', 'N/A')}")
+            return pd.DataFrame()
+
+        logger.info(f"    SSI: {symbol} - {len(items)} records, keys: {list(items[0].keys())[:8]}")
+
+        df = pd.DataFrame(items)
+
+        # Parse columns (tên cột có thể khác nhau tùy version)
+        # Các cột phổ biến: tradingDate/TradingDate, indexValue/IndexValue,
+        #   totalMatchVolume/TotalMatchVolume, totalMatchValue/TotalMatchValue
+        col_map = {}
+        for col in df.columns:
+            lower = col.lower()
+            if "tradingdate" in lower or "trading_date" in lower:
+                col_map[col] = "time"
+            elif "indexvalue" in lower or "index_value" in lower or "closevalue" in lower:
+                col_map[col] = "close"
+            elif "matchvolume" in lower or "match_volume" in lower or "totalmatchvol" in lower:
+                col_map[col] = "volume"
+            elif "matchvalue" in lower or "match_value" in lower:
+                col_map[col] = "value"
+
+        if col_map:
+            df = df.rename(columns=col_map)
+
+        # Đảm bảo có cột time và close
+        if "time" not in df.columns or "close" not in df.columns:
+            logger.error(f"    SSI: Thiếu cột time/close. Columns: {list(df.columns)}")
+            return pd.DataFrame()
+
+        # Parse time
+        df["time"] = pd.to_datetime(df["time"], errors="coerce")
+        df = df.dropna(subset=["time"])
+
+        # Parse close
+        df["close"] = pd.to_numeric(df["close"], errors="coerce")
+
+        # OHLC = close (SSI không cung cấp Open/High/Low cho index series)
+        df["open"] = df["close"]
+        df["high"] = df["close"]
+        df["low"] = df["close"]
+
+        # Volume
+        if "volume" not in df.columns:
+            df["volume"] = 0
+        df["volume"] = pd.to_numeric(df["volume"], errors="coerce").fillna(0).astype("int64")
+
+        # Lọc theo khoảng thời gian
+        df = df[(df["time"] >= start) & (df["time"] <= end)]
+        df = df.sort_values("time").reset_index(drop=True)
+
+        # Chỉ giữ cột cần thiết
+        df = df[["time", "open", "high", "low", "close", "volume"]]
+
+        return df
+
+    except requests.exceptions.RequestException as e:
+        logger.error(f"    SSI request error: {e}")
+        return pd.DataFrame()
     except Exception as e:
-        logger.error(f"    VCI JSON parse error: {e}. Body: {resp.text[:300]}")
+        logger.error(f"    SSI error: {e}")
         return pd.DataFrame()
-
-    # Log response structure
-    if isinstance(data, list):
-        logger.info(f"    VCI data: list len={len(data)}")
-        if data:
-            keys = list(data[0].keys()) if isinstance(data[0], dict) else str(type(data[0]))
-            logger.info(f"    VCI data[0] keys: {keys}")
-    elif isinstance(data, dict):
-        logger.info(f"    VCI data: dict keys={list(data.keys())}")
-        # Nếu response là dict (có thể là error object)
-        if "error" in data or "message" in data:
-            logger.error(f"    VCI API error: {data}")
-        return pd.DataFrame()
-    else:
-        logger.warning(f"    VCI data: unexpected type={type(data)}")
-        return pd.DataFrame()
-
-    if not data:
-        logger.warning(f"  {symbol}: VCI API trả về rỗng")
-        return pd.DataFrame()
-
-    item = data[0]
-
-    # VCI trả về dạng vector: {t: [...], o: [...], h: [...], l: [...], c: [...], v: [...]}
-    times = item.get("t", [])
-    opens = item.get("o", [])
-    highs = item.get("h", [])
-    lows = item.get("l", [])
-    closes = item.get("c", [])
-    volumes = item.get("v", [])
-
-    if not times:
-        logger.warning(f"  {symbol}: Không có dữ liệu từ VCI (t=[])")
-        return pd.DataFrame()
-
-    # Log timestamp sample để debug
-    sample_t = times[0] if times else None
-    logger.info(f"    Timestamps: count={len(times)}, sample={sample_t}, type={type(sample_t).__name__}")
-
-    # Parse timestamps tự động
-    time_series = _parse_timestamps(times)
-
-    df = pd.DataFrame({
-        "time": time_series,
-        "open": opens,
-        "high": highs,
-        "low": lows,
-        "close": closes,
-        "volume": volumes,
-    })
-
-    # Bỏ hàng có time NaT
-    df = df.dropna(subset=["time"])
-
-    # Lọc theo khoảng thời gian
-    df = df[(df["time"] >= start) & (df["time"] <= end)]
-    df = df.sort_values("time").reset_index(drop=True)
-
-    # Đảm bảo dtype
-    for col in ["open", "high", "low", "close"]:
-        df[col] = pd.to_numeric(df[col], errors="coerce")
-    df["volume"] = pd.to_numeric(df["volume"], errors="coerce").fillna(0).astype("int64")
-
-    return df
 
 
 def fetch_index_history(symbol: str, start: str, end: str) -> pd.DataFrame:
     """
-    Lấy dữ liệu OHLCV lịch sử cho 1 chỉ số.
-    - KBS cho 6 chỉ số chính (VNINDEX, HNXINDEX, UPCOMINDEX, VN30, HNX30, VN100)
-    - VCI direct API cho chỉ số ngành/quy mô/đầu tư
+    Lấy dữ liệu lịch sử cho 1 chỉ số.
+    - KBS cho 5 chỉ số chính (full OHLCV)
+    - SSI FiinTrade cho 13 chỉ số ngành/quy mô/đầu tư (close + volume)
     """
     if symbol in KBS_INDICES:
         source = "KBS"
         logger.info(f"  Dang lay {symbol} [{source}] ({start} -> {end})...")
         df = _fetch_kbs(symbol, start, end)
     else:
-        source = "VCI-direct"
+        source = "SSI-FiinTrade"
         logger.info(f"  Dang lay {symbol} [{source}] ({start} -> {end})...")
-        df = _fetch_vci_direct(symbol, start, end)
+        df = _fetch_ssi(symbol, start, end)
 
     if df is not None and not df.empty:
         df["symbol"] = symbol
@@ -416,23 +394,14 @@ def _chart_group(data: dict, symbols: list, title: str, filename: str, start: st
 
 def chart_overview(data: dict, start: str, end: str):
     """Vẽ nhiều biểu đồ tổng quan theo nhóm."""
-    # 1. Chỉ số chính
     _chart_group(data, MAIN_INDICES,
                  "Chi so chinh", "overview_main.png", start, end)
-
-    # 2. Chỉ số quy mô
     _chart_group(data, SIZE_INDICES,
                  "Chi so quy mo", "overview_size.png", start, end)
-
-    # 3. Chỉ số ngành
     _chart_group(data, SECTOR_INDICES,
                  "Chi so nganh", "overview_sectors.png", start, end)
-
-    # 4. Chỉ số đầu tư
     _chart_group(data, INVEST_INDICES,
                  "Chi so dau tu", "overview_invest.png", start, end)
-
-    # 5. Tổng hợp tất cả
     _chart_group(data, INDICES,
                  "Toan bo chi so", "overview_all.png", start, end)
 
@@ -462,9 +431,9 @@ def chart_single_index(symbol: str, df: pd.DataFrame):
 
     # --- Panel 2: Volume ---
     ax2 = axes[1]
-    colors = ["#E53935" if c < o else "#43A047"
-              for c, o in zip(df["close"], df["open"])]
-    ax2.bar(df["time"], df["volume"], color=colors, alpha=0.6, width=1)
+    colors_vol = ["#E53935" if c < o else "#43A047"
+                  for c, o in zip(df["close"], df["open"])]
+    ax2.bar(df["time"], df["volume"], color=colors_vol, alpha=0.6, width=1)
     ax2.set_ylabel("Volume")
     ax2.yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{x/1e6:.0f}M"))
     ax2.xaxis.set_major_formatter(mdates.DateFormatter("%m/%Y"))
@@ -499,7 +468,6 @@ def chart_single_index(symbol: str, df: pd.DataFrame):
 def chart_volume_comparison(data: dict):
     """So sánh khối lượng giao dịch giữa các chỉ số chính."""
     setup_chart_style()
-    # Chỉ vẽ volume cho chỉ số chính (5 cái), tránh quá nhiều subplot
     vol_symbols = [s for s in MAIN_INDICES if s in data and not data[s].empty]
     if not vol_symbols:
         return
@@ -512,9 +480,9 @@ def chart_volume_comparison(data: dict):
 
     for ax, symbol in zip(axes, vol_symbols):
         df = data[symbol]
-        colors = ["#E53935" if c < o else "#43A047"
-                  for c, o in zip(df["close"], df["open"])]
-        ax.bar(df["time"], df["volume"], color=colors, alpha=0.6, width=1)
+        colors_vol = ["#E53935" if c < o else "#43A047"
+                      for c, o in zip(df["close"], df["open"])]
+        ax.bar(df["time"], df["volume"], color=colors_vol, alpha=0.6, width=1)
         ax.set_title(f"{INDEX_LABELS[symbol]} - Khoi luong giao dich", fontsize=11)
         ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{x/1e6:.0f}M"))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%Y"))
@@ -547,11 +515,11 @@ def main():
     CHART_DIR.mkdir(parents=True, exist_ok=True)
 
     logger.info("=" * 60)
-    logger.info(f"THU THAP CHI SO CHUNG KHOAN VIET NAM")
+    logger.info("THU THAP CHI SO CHUNG KHOAN VIET NAM")
     logger.info(f"Thoi gian: {start} -> {end}")
     logger.info(f"Chi so: {', '.join(INDICES)}")
-    logger.info(f"KBS (6 chinh): {', '.join(sorted(KBS_INDICES))}")
-    logger.info(f"VCI direct (12 nganh/quy mo/dau tu): {', '.join(s for s in INDICES if s not in KBS_INDICES)}")
+    logger.info(f"KBS (5 chinh, OHLCV): {', '.join(sorted(KBS_INDICES))}")
+    logger.info(f"SSI FiinTrade (13 nganh/quy mo): {', '.join(s for s in INDICES if s not in KBS_INDICES)}")
     logger.info("=" * 60)
 
     # 1. Lấy dữ liệu
@@ -567,12 +535,11 @@ def main():
     all_dfs = []
     for symbol, df in data.items():
         df = add_indicators(df)
-        data[symbol] = df  # Cập nhật lại với indicators
+        data[symbol] = df
         df.to_csv(DATA_DIR / f"{symbol}.csv", index=False, encoding="utf-8-sig")
         all_dfs.append(df)
         logger.info(f"  Saved: {symbol}.csv ({len(df)} dong)")
 
-    # Gộp tất cả
     combined = pd.concat(all_dfs, ignore_index=True)
     combined.to_csv(DATA_DIR / "all_indices.csv", index=False, encoding="utf-8-sig")
     logger.info(f"  Saved: all_indices.csv ({len(combined)} dong)")
@@ -585,7 +552,7 @@ def main():
     chart_volume_comparison(data)
 
     logger.info("\n" + "=" * 60)
-    logger.info(f"HOAN TAT!")
+    logger.info("HOAN TAT!")
     logger.info(f"Du lieu: {DATA_DIR}")
     logger.info(f"Bieu do: {CHART_DIR}")
     logger.info("=" * 60)
