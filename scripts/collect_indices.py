@@ -182,15 +182,48 @@ def _fetch_vnd(symbol: str, start: str, end: str) -> pd.DataFrame:
 
 
 def fetch_index_history(symbol: str, start: str, end: str) -> pd.DataFrame:
-    """Lấy dữ liệu lịch sử cho 1 chỉ số từ VNDirect dchart API (full OHLCV)."""
-    logger.info(f"  Dang lay {symbol} [VNDirect] ({start} -> {end})...")
-    df = _fetch_vnd(symbol, start, end)
+    """
+    Lấy dữ liệu lịch sử cho 1 chỉ số.
+    Sử dụng SQLite cache: chỉ fetch API cho ngày chưa có trong cache.
+    """
+    from db_cache import (
+        get_cached_index, save_index_data, compute_fetch_range
+    )
+
+    # Kiểm tra cache
+    fetch_start, fetch_end = compute_fetch_range(
+        symbol, start, end, table="index_ohlcv", fresh_days=3
+    )
+
+    if fetch_start is None:
+        # Cache đầy đủ, không cần gọi API
+        df = get_cached_index(symbol, start, end)
+        df["symbol"] = symbol
+        logger.info(f"  {symbol}: {len(df)} phien (cache)")
+        return df
+
+    # Fetch dữ liệu mới từ API
+    cached = get_cached_index(symbol, start, end)
+    cached_count = len(cached)
+    logger.info(
+        f"  Dang lay {symbol} [VNDirect] "
+        f"({fetch_start} -> {fetch_end}, cache: {cached_count} phien)..."
+    )
+    new_data = _fetch_vnd(symbol, fetch_start, fetch_end)
+
+    # Lưu vào cache
+    if new_data is not None and not new_data.empty:
+        save_index_data(symbol, new_data)
+
+    # Đọc lại toàn bộ từ cache (merged)
+    df = get_cached_index(symbol, start, end)
 
     if df is not None and not df.empty:
         df["symbol"] = symbol
         last = df.iloc[-1]
+        api_note = f"API: {len(new_data) if new_data is not None else 0} moi"
         logger.info(
-            f"  {symbol}: {len(df)} phien | "
+            f"  {symbol}: {len(df)} phien ({api_note}) | "
             f"Last: {last['time'].strftime('%Y-%m-%d')} "
             f"O={last['open']:.2f} H={last['high']:.2f} "
             f"L={last['low']:.2f} C={last['close']:.2f} V={last['volume']}"
@@ -434,11 +467,17 @@ def main():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     CHART_DIR.mkdir(parents=True, exist_ok=True)
 
+    # Cache stats
+    from db_cache import get_cache_stats
+    stats = get_cache_stats()
+    idx_stats = stats.get("index_ohlcv", {})
+
     logger.info("=" * 60)
     logger.info("THU THAP CHI SO CHUNG KHOAN VIET NAM")
     logger.info(f"Thoi gian: {start} -> {end}")
-    logger.info(f"Nguon: VNDirect dchart API (full OHLCV)")
+    logger.info(f"Nguon: VNDirect dchart API (full OHLCV) + SQLite cache")
     logger.info(f"Chi so ({len(INDICES)}): {', '.join(INDICES)}")
+    logger.info(f"Cache: {idx_stats.get('rows', 0)} rows, {idx_stats.get('symbols', 0)} symbols")
     logger.info("=" * 60)
 
     # 1. Lấy dữ liệu
