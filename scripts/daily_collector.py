@@ -139,32 +139,46 @@ def get_daily_ohlcv_batch(symbols: list, date_str: str, source: str = DEFAULT_SO
 def get_daily_ohlcv_history(symbols: list, date_str: str, source: str = DEFAULT_SOURCE) -> pd.DataFrame:
     """
     Lấy dữ liệu OHLCV lịch sử từng mã (chính xác hơn price_board).
-    Dùng cho trường hợp cần dữ liệu OHLCV chuẩn.
+    Sử dụng SQLite cache: bỏ qua mã đã có dữ liệu trong cache cho ngày này.
     """
     from vnstock.common.client import Vnstock
+    from db_cache import get_cached_stock, save_stock_data
 
     client = Vnstock(source=source, show_log=False)
     all_data = []
     total = len(symbols)
     errors = []
+    cached_count = 0
+    api_count = 0
 
     for idx, symbol in enumerate(symbols):
-        if (idx + 1) % 50 == 0 or idx == 0:
-            logger.info(f"  Đang xử lý {idx + 1}/{total} ({symbol})...")
+        if (idx + 1) % 100 == 0 or idx == 0:
+            logger.info(f"  Đang xử lý {idx + 1}/{total} ({symbol})... (cache: {cached_count}, API: {api_count})")
 
+        # Kiểm tra cache trước
+        cached = get_cached_stock(symbol, date_str, date_str)
+        if not cached.empty:
+            cached["symbol"] = symbol
+            all_data.append(cached)
+            cached_count += 1
+            continue
+
+        # Chưa có trong cache → gọi API
         try:
             stock = client.stock(symbol=symbol, source=source)
             df = stock.quote.history(start=date_str, end=date_str, interval="1D")
             if df is not None and not df.empty:
                 df["symbol"] = symbol
                 all_data.append(df)
+                save_stock_data(symbol, df)
+                api_count += 1
         except Exception as e:
             errors.append(symbol)
             if len(errors) <= 10:
                 logger.debug(f"  Lỗi {symbol}: {e}")
 
-        # Rate limiting
-        if (idx + 1) % BATCH_SIZE == 0:
+        # Rate limiting (chỉ khi gọi API)
+        if (api_count) % BATCH_SIZE == 0 and api_count > 0:
             time.sleep(BATCH_DELAY)
         else:
             time.sleep(REQUEST_DELAY)
@@ -172,9 +186,10 @@ def get_daily_ohlcv_history(symbols: list, date_str: str, source: str = DEFAULT_
     if errors:
         logger.warning(f"  {len(errors)} mã bị lỗi: {errors[:20]}{'...' if len(errors) > 20 else ''}")
 
+    logger.info(f"OHLCV: {len(all_data)} mã (cache: {cached_count}, API: {api_count}, lỗi: {len(errors)})")
+
     if all_data:
         result = pd.concat(all_data, ignore_index=True)
-        logger.info(f"Đã lấy OHLCV cho {len(result)} mã ({len(errors)} lỗi).")
         return result
     else:
         logger.warning("Không lấy được dữ liệu OHLCV nào.")
