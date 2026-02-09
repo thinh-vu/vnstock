@@ -5,9 +5,10 @@ Chạy hàng ngày sau 15h (sau khi sàn đóng cửa) để lấy:
 1. Danh sách toàn bộ mã cổ phiếu niêm yết (HOSE, HNX, UPCOM)
 2. Dữ liệu OHLCV trong ngày của tất cả mã
 3. Top 30 cổ phiếu tăng/giảm mạnh nhất (trong top 500 vốn hóa)
-4. Giá vàng SJC
-5. Giá vàng BTMC
-6. Tỷ giá ngoại tệ VCB
+4. Market breadth (số mã tăng/giảm/đứng giá)
+5. Foreign flow (khối ngoại mua/bán ròng)
+6. Giá vàng SJC/BTMC
+7. Tỷ giá ngoại tệ VCB
 
 Dữ liệu được lưu vào thư mục data/ theo cấu trúc:
     data/
@@ -17,6 +18,10 @@ Dữ liệu được lưu vào thư mục data/ theo cấu trúc:
     │   ├── price_board.csv
     │   ├── top_gainers.csv
     │   ├── top_losers.csv
+    │   ├── market_breadth.csv
+    │   ├── foreign_flow.csv
+    │   ├── foreign_top_buy.csv
+    │   ├── foreign_top_sell.csv
     │   ├── sjc_gold.csv
     │   ├── btmc_gold.csv
     │   └── exchange_rate.csv
@@ -196,17 +201,17 @@ def get_daily_ohlcv_history(symbols: list, date_str: str, source: str = DEFAULT_
         return pd.DataFrame()
 
 
-def get_top_movers(stock_symbols: list, top_n: int = 500, movers_n: int = 30):
+def fetch_kbs_full_board(stock_symbols: list) -> pd.DataFrame:
     """
-    Lấy top cổ phiếu tăng/giảm mạnh nhất trong top N vốn hóa lớn nhất.
-    Sử dụng KBS price_board (flat data, có symbol + percent_change + listed_shares).
+    Fetch bảng giá KBS đầy đủ cho toàn bộ mã cổ phiếu.
+    Dữ liệu này được dùng chung cho: top movers, market breadth, foreign flow.
 
     Returns:
-        (top_gainers_df, top_losers_df)
+        DataFrame with all KBS price_board columns (get_all=True).
     """
     from vnstock.common.client import Vnstock
 
-    logger.info(f"Đang lấy bảng giá KBS cho top movers ({len(stock_symbols)} mã)...")
+    logger.info(f"Đang lấy bảng giá KBS ({len(stock_symbols)} mã)...")
     client = Vnstock(source="KBS", show_log=False)
     stock = client.stock(symbol="ACB", source="KBS")
 
@@ -222,45 +227,67 @@ def get_top_movers(stock_symbols: list, top_n: int = 500, movers_n: int = 30):
             if df is not None and not df.empty:
                 all_data.append(df)
         except Exception as e:
-            logger.warning(f"  Top movers batch {batch_num}/{total_batches} lỗi: {e}")
+            logger.warning(f"  KBS batch {batch_num}/{total_batches} lỗi: {e}")
 
         if i + BATCH_SIZE < total:
             time.sleep(BATCH_DELAY)
 
     if not all_data:
-        logger.warning("Không lấy được dữ liệu bảng giá KBS cho top movers.")
-        return pd.DataFrame(), pd.DataFrame()
+        logger.warning("Không lấy được dữ liệu bảng giá KBS.")
+        return pd.DataFrame()
 
     board = pd.concat(all_data, ignore_index=True)
     logger.info(f"Bảng giá KBS: {len(board)} mã")
 
-    # Ensure numeric types
-    for col in ['close_price', 'percent_change', 'total_value', 'total_trades']:
+    # Ensure numeric types for key columns
+    numeric_cols = ['close_price', 'percent_change', 'total_value', 'total_trades',
+                    'foreign_buy_volume', 'foreign_sell_volume',
+                    'total_listed_qty', 'listed_shares']
+    for col in numeric_cols:
         if col in board.columns:
             board[col] = pd.to_numeric(board[col], errors='coerce')
+
+    return board
+
+
+def get_top_movers(board: pd.DataFrame, top_n: int = 500, movers_n: int = 30):
+    """
+    Lấy top cổ phiếu tăng/giảm mạnh nhất trong top N vốn hóa lớn nhất.
+
+    Args:
+        board: KBS price_board DataFrame (from fetch_kbs_full_board)
+        top_n: Số mã vốn hóa lớn nhất để lọc
+        movers_n: Số mã tăng/giảm mạnh nhất
+
+    Returns:
+        (top_gainers_df, top_losers_df)
+    """
+    if board.empty:
+        return pd.DataFrame(), pd.DataFrame()
+
+    df = board.copy()
 
     # Compute market_cap for ranking (close_price * listed shares)
     shares_col = None
     for col in ['total_listed_qty', 'listed_shares']:
-        if col in board.columns:
-            board[col] = pd.to_numeric(board[col], errors='coerce')
+        if col in df.columns:
             shares_col = col
             break
 
-    if shares_col and 'close_price' in board.columns:
-        board['market_cap'] = board['close_price'] * board[shares_col]
+    if shares_col and 'close_price' in df.columns:
+        df['market_cap'] = df['close_price'] * df[shares_col]
         logger.info(f"  Market cap computed from close_price * {shares_col}")
-    elif 'total_value' in board.columns:
-        board['market_cap'] = board['total_value']
+    elif 'total_value' in df.columns:
+        df['market_cap'] = df['total_value']
         logger.info("  Market cap approximated from total_value")
     else:
         logger.warning("  Không tìm thấy cột để tính vốn hóa, lấy toàn bộ")
-        board['market_cap'] = 1  # no filtering
+        df['market_cap'] = 1
 
     # Filter top N by market cap
-    board = board.dropna(subset=['market_cap', 'percent_change'])
-    board = board[board['market_cap'] > 0]
-    top_cap = board.nlargest(top_n, 'market_cap')
+    df = df.dropna(subset=['market_cap', 'percent_change'])
+    df = df[df['market_cap'] > 0]
+    top_cap = df.nlargest(top_n, 'market_cap')
     logger.info(f"  Top {top_n} vốn hóa: {len(top_cap)} mã")
 
     # Filter valid percent_change (exclude 0 = giá đứng)
@@ -292,6 +319,179 @@ def get_top_movers(stock_symbols: list, top_n: int = 500, movers_n: int = 30):
         logger.info(f"  Top giảm: {bot['symbol']} ({bot['percent_change']:+.2f}%)")
 
     return gainers, losers
+
+
+def compute_market_breadth(board: pd.DataFrame) -> pd.DataFrame:
+    """
+    Tính market breadth (độ rộng thị trường) từ bảng giá KBS.
+
+    Đếm số mã tăng/giảm/đứng giá theo từng sàn (HOSE, HNX, UPCOM) và tổng.
+
+    Returns:
+        DataFrame with columns: exchange, advancing, declining, unchanged,
+                                total_stocks, advance_decline_ratio
+    """
+    if board.empty or 'percent_change' not in board.columns:
+        logger.warning("Không có dữ liệu percent_change để tính market breadth.")
+        return pd.DataFrame()
+
+    df = board.copy()
+
+    # Classify each stock
+    df['_status'] = 'unchanged'
+    df.loc[df['percent_change'] > 0, '_status'] = 'advancing'
+    df.loc[df['percent_change'] < 0, '_status'] = 'declining'
+
+    rows = []
+
+    # Per-exchange breadth
+    exchanges = ['HOSE', 'HNX', 'UPCOM']
+    if 'exchange' in df.columns:
+        for ex in exchanges:
+            ex_df = df[df['exchange'] == ex]
+            if ex_df.empty:
+                continue
+            adv = (ex_df['_status'] == 'advancing').sum()
+            dec = (ex_df['_status'] == 'declining').sum()
+            unc = (ex_df['_status'] == 'unchanged').sum()
+            total = len(ex_df)
+            rows.append({
+                'exchange': ex,
+                'advancing': int(adv),
+                'declining': int(dec),
+                'unchanged': int(unc),
+                'total_stocks': int(total),
+                'net_ad': int(adv - dec),
+            })
+
+    # Total across all exchanges
+    adv = (df['_status'] == 'advancing').sum()
+    dec = (df['_status'] == 'declining').sum()
+    unc = (df['_status'] == 'unchanged').sum()
+    total = len(df)
+    rows.append({
+        'exchange': 'ALL',
+        'advancing': int(adv),
+        'declining': int(dec),
+        'unchanged': int(unc),
+        'total_stocks': int(total),
+        'net_ad': int(adv - dec),
+    })
+
+    result = pd.DataFrame(rows)
+
+    # Log summary
+    all_row = result[result['exchange'] == 'ALL'].iloc[0]
+    logger.info(
+        f"  Market breadth: {all_row['advancing']} tăng / "
+        f"{all_row['declining']} giảm / {all_row['unchanged']} đứng "
+        f"(net A/D: {all_row['net_ad']:+d})"
+    )
+
+    return result
+
+
+def compute_foreign_flow(board: pd.DataFrame, top_n: int = 20):
+    """
+    Tính dòng tiền khối ngoại từ bảng giá KBS.
+
+    Returns:
+        (flow_summary_df, top_net_buy_df, top_net_sell_df)
+        - flow_summary: aggregate mua/bán ròng theo sàn
+        - top_net_buy: top N mã khối ngoại mua ròng nhiều nhất
+        - top_net_sell: top N mã khối ngoại bán ròng nhiều nhất
+    """
+    buy_col = 'foreign_buy_volume'
+    sell_col = 'foreign_sell_volume'
+
+    if board.empty or buy_col not in board.columns or sell_col not in board.columns:
+        logger.warning("Không có dữ liệu foreign buy/sell volume.")
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+
+    df = board.copy()
+    df[buy_col] = df[buy_col].fillna(0)
+    df[sell_col] = df[sell_col].fillna(0)
+    df['foreign_net_volume'] = df[buy_col] - df[sell_col]
+
+    # Compute foreign net value (volume * close_price)
+    if 'close_price' in df.columns:
+        df['foreign_buy_value'] = df[buy_col] * df['close_price']
+        df['foreign_sell_value'] = df[sell_col] * df['close_price']
+        df['foreign_net_value'] = df['foreign_buy_value'] - df['foreign_sell_value']
+
+    # ---- 1. Aggregate per exchange ----
+    rows = []
+    exchanges = ['HOSE', 'HNX', 'UPCOM']
+    if 'exchange' in df.columns:
+        for ex in exchanges:
+            ex_df = df[df['exchange'] == ex]
+            if ex_df.empty:
+                continue
+            row = {
+                'exchange': ex,
+                'foreign_buy_volume': int(ex_df[buy_col].sum()),
+                'foreign_sell_volume': int(ex_df[sell_col].sum()),
+                'foreign_net_volume': int(ex_df['foreign_net_volume'].sum()),
+            }
+            if 'foreign_net_value' in ex_df.columns:
+                row['foreign_buy_value'] = float(ex_df['foreign_buy_value'].sum())
+                row['foreign_sell_value'] = float(ex_df['foreign_sell_value'].sum())
+                row['foreign_net_value'] = float(ex_df['foreign_net_value'].sum())
+            rows.append(row)
+
+    # Total
+    total_row = {
+        'exchange': 'ALL',
+        'foreign_buy_volume': int(df[buy_col].sum()),
+        'foreign_sell_volume': int(df[sell_col].sum()),
+        'foreign_net_volume': int(df['foreign_net_volume'].sum()),
+    }
+    if 'foreign_net_value' in df.columns:
+        total_row['foreign_buy_value'] = float(df['foreign_buy_value'].sum())
+        total_row['foreign_sell_value'] = float(df['foreign_sell_value'].sum())
+        total_row['foreign_net_value'] = float(df['foreign_net_value'].sum())
+    rows.append(total_row)
+
+    flow_summary = pd.DataFrame(rows)
+
+    # ---- 2. Top N net buyers/sellers ----
+    # Filter stocks with meaningful foreign activity
+    active = df[df['foreign_net_volume'] != 0].copy()
+
+    value_col = 'foreign_net_value' if 'foreign_net_value' in active.columns else 'foreign_net_volume'
+    out_cols = ['symbol', 'exchange', 'close_price',
+                'foreign_buy_volume', 'foreign_sell_volume', 'foreign_net_volume']
+    if 'foreign_net_value' in active.columns:
+        out_cols.append('foreign_net_value')
+    out_cols = [c for c in out_cols if c in active.columns]
+
+    # Convert close_price from KBS raw (VND * 1000) to VND for display
+    if 'close_price' in active.columns:
+        active['close_price'] = active['close_price'] / 1000
+
+    top_buy = active.nlargest(top_n, value_col)[out_cols].reset_index(drop=True)
+    top_buy.index = top_buy.index + 1
+    top_buy.index.name = 'rank'
+
+    top_sell = active.nsmallest(top_n, value_col)[out_cols].reset_index(drop=True)
+    top_sell.index = top_sell.index + 1
+    top_sell.index.name = 'rank'
+
+    # Log summary
+    net = total_row['foreign_net_volume']
+    direction = "MUA RÒNG" if net > 0 else "BÁN RÒNG"
+    logger.info(f"  Foreign flow: {direction} {abs(net):,.0f} CP")
+    if 'foreign_net_value' in total_row:
+        net_val = total_row['foreign_net_value']
+        logger.info(f"  Foreign net value: {net_val/1e9:,.1f} tỷ VND (KBS units)")
+    if not top_buy.empty:
+        t = top_buy.iloc[0]
+        logger.info(f"  Top NN mua: {t['symbol']} (net: {t['foreign_net_volume']:+,.0f})")
+    if not top_sell.empty:
+        t = top_sell.iloc[0]
+        logger.info(f"  Top NN bán: {t['symbol']} (net: {t['foreign_net_volume']:+,.0f})")
+
+    return flow_summary, top_buy, top_sell
 
 
 def get_sjc_gold(date_str: str) -> pd.DataFrame:
@@ -399,7 +599,7 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     logger.info("=" * 60)
 
     # 1. Danh sách mã cổ phiếu
-    logger.info("\n[1/6] DANH SÁCH MÃ CỔ PHIẾU")
+    logger.info("\n[1/8] DANH SÁCH MÃ CỔ PHIẾU")
     symbols_df = get_all_symbols(source=source)
     save_data(symbols_df, date_dir, "all_symbols.csv")
 
@@ -412,29 +612,52 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     logger.info(f"Tổng số mã sẽ xử lý: {len(stock_symbols)}")
 
     # 2. Bảng giá (price board) - nhanh, lấy batch
-    logger.info("\n[2/6] BẢNG GIÁ (PRICE BOARD)")
+    logger.info("\n[2/8] BẢNG GIÁ (PRICE BOARD)")
     price_board_df = get_daily_ohlcv_batch(stock_symbols, date_str, source=source)
     save_data(price_board_df, date_dir, "price_board.csv")
 
     # 3. OHLCV lịch sử từng mã (tùy chọn, chậm hơn nhưng chính xác)
     if not skip_ohlcv_history:
-        logger.info("\n[3/6] DỮ LIỆU OHLCV LỊCH SỬ")
+        logger.info("\n[3/8] DỮ LIỆU OHLCV LỊCH SỬ")
         ohlcv_df = get_daily_ohlcv_history(stock_symbols, date_str, source=source)
         save_data(ohlcv_df, date_dir, "daily_ohlcv.csv")
     else:
-        logger.info("\n[3/6] DỮ LIỆU OHLCV LỊCH SỬ - BỎ QUA (--skip-ohlcv)")
+        logger.info("\n[3/8] DỮ LIỆU OHLCV LỊCH SỬ - BỎ QUA (--skip-ohlcv)")
 
-    # 4. Top cổ phiếu tăng/giảm (trong top 500 vốn hóa)
-    logger.info("\n[4/6] TOP TĂNG/GIẢM (TOP 500 VỐN HÓA)")
+    # 4-6. KBS price_board → top movers + market breadth + foreign flow
+    logger.info("\n[4/8] BẢNG GIÁ KBS (cho top movers, breadth, foreign flow)")
+    kbs_board = pd.DataFrame()
     try:
-        gainers_df, losers_df = get_top_movers(stock_symbols, top_n=500, movers_n=30)
+        kbs_board = fetch_kbs_full_board(stock_symbols)
+    except Exception as e:
+        logger.error(f"Lỗi fetch KBS price_board: {e}")
+
+    logger.info("\n[5/8] TOP TĂNG/GIẢM (TOP 500 VỐN HÓA)")
+    try:
+        gainers_df, losers_df = get_top_movers(kbs_board, top_n=500, movers_n=30)
         save_data(gainers_df, date_dir, "top_gainers.csv")
         save_data(losers_df, date_dir, "top_losers.csv")
     except Exception as e:
         logger.error(f"Lỗi lấy top movers: {e}")
 
-    # 5. Giá vàng
-    logger.info("\n[5/6] GIÁ VÀNG")
+    logger.info("\n[6/8] MARKET BREADTH (ĐỘ RỘNG THỊ TRƯỜNG)")
+    try:
+        breadth_df = compute_market_breadth(kbs_board)
+        save_data(breadth_df, date_dir, "market_breadth.csv")
+    except Exception as e:
+        logger.error(f"Lỗi tính market breadth: {e}")
+
+    logger.info("\n[7/8] FOREIGN FLOW (DÒNG TIỀN KHỐI NGOẠI)")
+    try:
+        flow_df, top_buy_df, top_sell_df = compute_foreign_flow(kbs_board, top_n=20)
+        save_data(flow_df, date_dir, "foreign_flow.csv")
+        save_data(top_buy_df, date_dir, "foreign_top_buy.csv")
+        save_data(top_sell_df, date_dir, "foreign_top_sell.csv")
+    except Exception as e:
+        logger.error(f"Lỗi tính foreign flow: {e}")
+
+    # 8. Giá vàng + Tỷ giá
+    logger.info("\n[8/8] GIÁ VÀNG & TỶ GIÁ")
     sjc_df = get_sjc_gold(date_str)
     save_data(sjc_df, date_dir, "sjc_gold.csv")
 
@@ -443,8 +666,6 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     btmc_df = get_btmc_gold()
     save_data(btmc_df, date_dir, "btmc_gold.csv")
 
-    # 6. Tỷ giá
-    logger.info("\n[6/6] TỶ GIÁ NGOẠI TỆ")
     fx_df = get_exchange_rate(date_str)
     save_data(fx_df, date_dir, "exchange_rate.csv")
 
