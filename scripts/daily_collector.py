@@ -4,9 +4,10 @@ Script tự động thu thập dữ liệu chứng khoán Việt Nam và giá v�
 Chạy hàng ngày sau 15h (sau khi sàn đóng cửa) để lấy:
 1. Danh sách toàn bộ mã cổ phiếu niêm yết (HOSE, HNX, UPCOM)
 2. Dữ liệu OHLCV trong ngày của tất cả mã
-3. Giá vàng SJC
-4. Giá vàng BTMC
-5. Tỷ giá ngoại tệ VCB
+3. Top 30 cổ phiếu tăng/giảm mạnh nhất (trong top 500 vốn hóa)
+4. Giá vàng SJC
+5. Giá vàng BTMC
+6. Tỷ giá ngoại tệ VCB
 
 Dữ liệu được lưu vào thư mục data/ theo cấu trúc:
     data/
@@ -14,6 +15,8 @@ Dữ liệu được lưu vào thư mục data/ theo cấu trúc:
     │   ├── all_symbols.csv
     │   ├── daily_ohlcv.csv
     │   ├── price_board.csv
+    │   ├── top_gainers.csv
+    │   ├── top_losers.csv
     │   ├── sjc_gold.csv
     │   ├── btmc_gold.csv
     │   └── exchange_rate.csv
@@ -178,6 +181,104 @@ def get_daily_ohlcv_history(symbols: list, date_str: str, source: str = DEFAULT_
         return pd.DataFrame()
 
 
+def get_top_movers(stock_symbols: list, top_n: int = 500, movers_n: int = 30):
+    """
+    Lấy top cổ phiếu tăng/giảm mạnh nhất trong top N vốn hóa lớn nhất.
+    Sử dụng KBS price_board (flat data, có symbol + percent_change + listed_shares).
+
+    Returns:
+        (top_gainers_df, top_losers_df)
+    """
+    from vnstock.common.client import Vnstock
+
+    logger.info(f"Đang lấy bảng giá KBS cho top movers ({len(stock_symbols)} mã)...")
+    client = Vnstock(source="KBS", show_log=False)
+    stock = client.stock(symbol="ACB", source="KBS")
+
+    all_data = []
+    total = len(stock_symbols)
+    for i in range(0, total, BATCH_SIZE):
+        batch = stock_symbols[i:i + BATCH_SIZE]
+        batch_num = i // BATCH_SIZE + 1
+        total_batches = (total + BATCH_SIZE - 1) // BATCH_SIZE
+
+        try:
+            df = stock.trading.price_board(symbols_list=batch, get_all=True)
+            if df is not None and not df.empty:
+                all_data.append(df)
+        except Exception as e:
+            logger.warning(f"  Top movers batch {batch_num}/{total_batches} lỗi: {e}")
+
+        if i + BATCH_SIZE < total:
+            time.sleep(BATCH_DELAY)
+
+    if not all_data:
+        logger.warning("Không lấy được dữ liệu bảng giá KBS cho top movers.")
+        return pd.DataFrame(), pd.DataFrame()
+
+    board = pd.concat(all_data, ignore_index=True)
+    logger.info(f"Bảng giá KBS: {len(board)} mã")
+
+    # Ensure numeric types
+    for col in ['close_price', 'percent_change', 'total_value', 'total_trades']:
+        if col in board.columns:
+            board[col] = pd.to_numeric(board[col], errors='coerce')
+
+    # Compute market_cap for ranking (close_price * listed shares)
+    shares_col = None
+    for col in ['total_listed_qty', 'listed_shares']:
+        if col in board.columns:
+            board[col] = pd.to_numeric(board[col], errors='coerce')
+            shares_col = col
+            break
+
+    if shares_col and 'close_price' in board.columns:
+        board['market_cap'] = board['close_price'] * board[shares_col]
+        logger.info(f"  Market cap computed from close_price * {shares_col}")
+    elif 'total_value' in board.columns:
+        board['market_cap'] = board['total_value']
+        logger.info("  Market cap approximated from total_value")
+    else:
+        logger.warning("  Không tìm thấy cột để tính vốn hóa, lấy toàn bộ")
+        board['market_cap'] = 1  # no filtering
+
+    # Filter top N by market cap
+    board = board.dropna(subset=['market_cap', 'percent_change'])
+    board = board[board['market_cap'] > 0]
+    top_cap = board.nlargest(top_n, 'market_cap')
+    logger.info(f"  Top {top_n} vốn hóa: {len(top_cap)} mã")
+
+    # Filter valid percent_change (exclude 0 = giá đứng)
+    valid = top_cap[top_cap['percent_change'] != 0].copy()
+
+    # Convert close_price from KBS raw units (VND * 1000) to VND
+    if 'close_price' in valid.columns:
+        valid['close_price'] = valid['close_price'] / 1000
+
+    # Select output columns
+    out_cols = ['symbol', 'close_price', 'percent_change', 'total_trades', 'total_value']
+    out_cols = [c for c in out_cols if c in valid.columns]
+
+    # Top gainers (tăng mạnh nhất)
+    gainers = valid.nlargest(movers_n, 'percent_change')[out_cols].reset_index(drop=True)
+    gainers.index = gainers.index + 1
+    gainers.index.name = 'rank'
+
+    # Top losers (giảm mạnh nhất)
+    losers = valid.nsmallest(movers_n, 'percent_change')[out_cols].reset_index(drop=True)
+    losers.index = losers.index + 1
+    losers.index.name = 'rank'
+
+    if not gainers.empty:
+        top = gainers.iloc[0]
+        logger.info(f"  Top tăng: {top['symbol']} ({top['percent_change']:+.2f}%)")
+    if not losers.empty:
+        bot = losers.iloc[0]
+        logger.info(f"  Top giảm: {bot['symbol']} ({bot['percent_change']:+.2f}%)")
+
+    return gainers, losers
+
+
 def get_sjc_gold(date_str: str) -> pd.DataFrame:
     """Lấy giá vàng SJC."""
     from vnstock.explorer.misc.gold_price import sjc_gold_price
@@ -283,7 +384,7 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     logger.info("=" * 60)
 
     # 1. Danh sách mã cổ phiếu
-    logger.info("\n[1/5] DANH SÁCH MÃ CỔ PHIẾU")
+    logger.info("\n[1/6] DANH SÁCH MÃ CỔ PHIẾU")
     symbols_df = get_all_symbols(source=source)
     save_data(symbols_df, date_dir, "all_symbols.csv")
 
@@ -296,20 +397,29 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     logger.info(f"Tổng số mã sẽ xử lý: {len(stock_symbols)}")
 
     # 2. Bảng giá (price board) - nhanh, lấy batch
-    logger.info("\n[2/5] BẢNG GIÁ (PRICE BOARD)")
+    logger.info("\n[2/6] BẢNG GIÁ (PRICE BOARD)")
     price_board_df = get_daily_ohlcv_batch(stock_symbols, date_str, source=source)
     save_data(price_board_df, date_dir, "price_board.csv")
 
     # 3. OHLCV lịch sử từng mã (tùy chọn, chậm hơn nhưng chính xác)
     if not skip_ohlcv_history:
-        logger.info("\n[3/5] DỮ LIỆU OHLCV LỊCH SỬ")
+        logger.info("\n[3/6] DỮ LIỆU OHLCV LỊCH SỬ")
         ohlcv_df = get_daily_ohlcv_history(stock_symbols, date_str, source=source)
         save_data(ohlcv_df, date_dir, "daily_ohlcv.csv")
     else:
-        logger.info("\n[3/5] DỮ LIỆU OHLCV LỊCH SỬ - BỎ QUA (--skip-ohlcv)")
+        logger.info("\n[3/6] DỮ LIỆU OHLCV LỊCH SỬ - BỎ QUA (--skip-ohlcv)")
 
-    # 4. Giá vàng
-    logger.info("\n[4/5] GIÁ VÀNG")
+    # 4. Top cổ phiếu tăng/giảm (trong top 500 vốn hóa)
+    logger.info("\n[4/6] TOP TĂNG/GIẢM (TOP 500 VỐN HÓA)")
+    try:
+        gainers_df, losers_df = get_top_movers(stock_symbols, top_n=500, movers_n=30)
+        save_data(gainers_df, date_dir, "top_gainers.csv")
+        save_data(losers_df, date_dir, "top_losers.csv")
+    except Exception as e:
+        logger.error(f"Lỗi lấy top movers: {e}")
+
+    # 5. Giá vàng
+    logger.info("\n[5/6] GIÁ VÀNG")
     sjc_df = get_sjc_gold(date_str)
     save_data(sjc_df, date_dir, "sjc_gold.csv")
 
@@ -318,8 +428,8 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     btmc_df = get_btmc_gold()
     save_data(btmc_df, date_dir, "btmc_gold.csv")
 
-    # 5. Tỷ giá
-    logger.info("\n[5/5] TỶ GIÁ NGOẠI TỆ")
+    # 6. Tỷ giá
+    logger.info("\n[6/6] TỶ GIÁ NGOẠI TỆ")
     fx_df = get_exchange_rate(date_str)
     save_data(fx_df, date_dir, "exchange_rate.csv")
 
