@@ -7,8 +7,9 @@ Chạy hàng ngày sau 15h (sau khi sàn đóng cửa) để lấy:
 3. Top 30 cổ phiếu tăng/giảm mạnh nhất (trong top 500 vốn hóa)
 4. Market breadth (số mã tăng/giảm/đứng giá)
 5. Foreign flow (khối ngoại mua/bán ròng)
-6. Giá vàng SJC/BTMC
-7. Tỷ giá ngoại tệ VCB
+6. Index impact (cổ phiếu ảnh hưởng VNINDEX)
+7. Giá vàng SJC/BTMC
+8. Tỷ giá ngoại tệ VCB
 
 Dữ liệu được lưu vào thư mục data/ theo cấu trúc:
     data/
@@ -22,6 +23,8 @@ Dữ liệu được lưu vào thư mục data/ theo cấu trúc:
     │   ├── foreign_flow.csv
     │   ├── foreign_top_buy.csv
     │   ├── foreign_top_sell.csv
+    │   ├── index_impact_positive.csv
+    │   ├── index_impact_negative.csv
     │   ├── sjc_gold.csv
     │   ├── btmc_gold.csv
     │   └── exchange_rate.csv
@@ -494,6 +497,84 @@ def compute_foreign_flow(board: pd.DataFrame, top_n: int = 20):
     return flow_summary, top_buy, top_sell
 
 
+def compute_index_impact(board: pd.DataFrame, top_n: int = 20):
+    """
+    Tính cổ phiếu ảnh hưởng lớn nhất đến chỉ số (index drivers).
+
+    Xấp xỉ impact = market_cap * price_change (tỷ trọng vốn hóa * biến động giá).
+    Chỉ tính cho sàn HOSE (ảnh hưởng VNINDEX).
+
+    Returns:
+        (top_positive_df, top_negative_df)
+        - top_positive: top N mã đóng góp tích cực nhất (kéo tăng)
+        - top_negative: top N mã đóng góp tiêu cực nhất (kéo giảm)
+    """
+    if board.empty:
+        return pd.DataFrame(), pd.DataFrame()
+
+    df = board.copy()
+
+    # Chỉ tính cho HOSE (VNINDEX)
+    if 'exchange' in df.columns:
+        df = df[df['exchange'] == 'HOSE'].copy()
+
+    if df.empty or 'percent_change' not in df.columns or 'close_price' not in df.columns:
+        logger.warning("Không đủ dữ liệu để tính index impact.")
+        return pd.DataFrame(), pd.DataFrame()
+
+    # Compute market_cap
+    shares_col = None
+    for col in ['total_listed_qty', 'listed_shares']:
+        if col in df.columns:
+            shares_col = col
+            break
+
+    if not shares_col:
+        logger.warning("Không tìm thấy cột listed shares để tính impact.")
+        return pd.DataFrame(), pd.DataFrame()
+
+    df['market_cap'] = df['close_price'] * df[shares_col]
+    df = df.dropna(subset=['market_cap', 'percent_change'])
+    df = df[df['market_cap'] > 0]
+
+    # Impact ~ market_cap * price_change (absolute change, not percent)
+    # price_change from KBS = giá thay đổi (VND * 1000)
+    if 'price_change' in df.columns:
+        df['price_change'] = pd.to_numeric(df['price_change'], errors='coerce').fillna(0)
+        df['impact'] = df['market_cap'] * df['price_change']
+    else:
+        # Fallback: use percent_change * market_cap
+        df['impact'] = df['market_cap'] * df['percent_change'] / 100
+
+    # Convert close_price to VND for display
+    df['close_price'] = df['close_price'] / 1000
+
+    out_cols = ['symbol', 'close_price', 'percent_change', 'market_cap', 'impact']
+    out_cols = [c for c in out_cols if c in df.columns]
+
+    # Filter stocks with non-zero impact
+    active = df[df['impact'] != 0].copy()
+
+    # Top positive impact (kéo tăng)
+    top_pos = active.nlargest(top_n, 'impact')[out_cols].reset_index(drop=True)
+    top_pos.index = top_pos.index + 1
+    top_pos.index.name = 'rank'
+
+    # Top negative impact (kéo giảm)
+    top_neg = active.nsmallest(top_n, 'impact')[out_cols].reset_index(drop=True)
+    top_neg.index = top_neg.index + 1
+    top_neg.index.name = 'rank'
+
+    if not top_pos.empty:
+        t = top_pos.iloc[0]
+        logger.info(f"  Top kéo tăng: {t['symbol']} ({t['percent_change']:+.2f}%)")
+    if not top_neg.empty:
+        t = top_neg.iloc[0]
+        logger.info(f"  Top kéo giảm: {t['symbol']} ({t['percent_change']:+.2f}%)")
+
+    return top_pos, top_neg
+
+
 def get_sjc_gold(date_str: str) -> pd.DataFrame:
     """Lấy giá vàng SJC."""
     from vnstock.explorer.misc.gold_price import sjc_gold_price
@@ -599,7 +680,7 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     logger.info("=" * 60)
 
     # 1. Danh sách mã cổ phiếu
-    logger.info("\n[1/8] DANH SÁCH MÃ CỔ PHIẾU")
+    logger.info("\n[1/9] DANH SÁCH MÃ CỔ PHIẾU")
     symbols_df = get_all_symbols(source=source)
     save_data(symbols_df, date_dir, "all_symbols.csv")
 
@@ -612,27 +693,27 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     logger.info(f"Tổng số mã sẽ xử lý: {len(stock_symbols)}")
 
     # 2. Bảng giá (price board) - nhanh, lấy batch
-    logger.info("\n[2/8] BẢNG GIÁ (PRICE BOARD)")
+    logger.info("\n[2/9] BẢNG GIÁ (PRICE BOARD)")
     price_board_df = get_daily_ohlcv_batch(stock_symbols, date_str, source=source)
     save_data(price_board_df, date_dir, "price_board.csv")
 
     # 3. OHLCV lịch sử từng mã (tùy chọn, chậm hơn nhưng chính xác)
     if not skip_ohlcv_history:
-        logger.info("\n[3/8] DỮ LIỆU OHLCV LỊCH SỬ")
+        logger.info("\n[3/9] DỮ LIỆU OHLCV LỊCH SỬ")
         ohlcv_df = get_daily_ohlcv_history(stock_symbols, date_str, source=source)
         save_data(ohlcv_df, date_dir, "daily_ohlcv.csv")
     else:
-        logger.info("\n[3/8] DỮ LIỆU OHLCV LỊCH SỬ - BỎ QUA (--skip-ohlcv)")
+        logger.info("\n[3/9] DỮ LIỆU OHLCV LỊCH SỬ - BỎ QUA (--skip-ohlcv)")
 
     # 4-6. KBS price_board → top movers + market breadth + foreign flow
-    logger.info("\n[4/8] BẢNG GIÁ KBS (cho top movers, breadth, foreign flow)")
+    logger.info("\n[4/9] BẢNG GIÁ KBS (cho top movers, breadth, foreign flow, impact)")
     kbs_board = pd.DataFrame()
     try:
         kbs_board = fetch_kbs_full_board(stock_symbols)
     except Exception as e:
         logger.error(f"Lỗi fetch KBS price_board: {e}")
 
-    logger.info("\n[5/8] TOP TĂNG/GIẢM (TOP 500 VỐN HÓA)")
+    logger.info("\n[5/9] TOP TĂNG/GIẢM (TOP 500 VỐN HÓA)")
     try:
         gainers_df, losers_df = get_top_movers(kbs_board, top_n=500, movers_n=30)
         save_data(gainers_df, date_dir, "top_gainers.csv")
@@ -640,14 +721,14 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     except Exception as e:
         logger.error(f"Lỗi lấy top movers: {e}")
 
-    logger.info("\n[6/8] MARKET BREADTH (ĐỘ RỘNG THỊ TRƯỜNG)")
+    logger.info("\n[6/9] MARKET BREADTH (ĐỘ RỘNG THỊ TRƯỜNG)")
     try:
         breadth_df = compute_market_breadth(kbs_board)
         save_data(breadth_df, date_dir, "market_breadth.csv")
     except Exception as e:
         logger.error(f"Lỗi tính market breadth: {e}")
 
-    logger.info("\n[7/8] FOREIGN FLOW (DÒNG TIỀN KHỐI NGOẠI)")
+    logger.info("\n[7/9] FOREIGN FLOW (DÒNG TIỀN KHỐI NGOẠI)")
     try:
         flow_df, top_buy_df, top_sell_df = compute_foreign_flow(kbs_board, top_n=20)
         save_data(flow_df, date_dir, "foreign_flow.csv")
@@ -656,8 +737,16 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     except Exception as e:
         logger.error(f"Lỗi tính foreign flow: {e}")
 
-    # 8. Giá vàng + Tỷ giá
-    logger.info("\n[8/8] GIÁ VÀNG & TỶ GIÁ")
+    logger.info("\n[8/9] INDEX IMPACT (CỔ PHIẾU ẢNH HƯỞNG CHỈ SỐ)")
+    try:
+        impact_pos_df, impact_neg_df = compute_index_impact(kbs_board, top_n=20)
+        save_data(impact_pos_df, date_dir, "index_impact_positive.csv")
+        save_data(impact_neg_df, date_dir, "index_impact_negative.csv")
+    except Exception as e:
+        logger.error(f"Lỗi tính index impact: {e}")
+
+    # 9. Giá vàng + Tỷ giá
+    logger.info("\n[9/9] GIÁ VÀNG & TỶ GIÁ")
     sjc_df = get_sjc_gold(date_str)
     save_data(sjc_df, date_dir, "sjc_gold.csv")
 
