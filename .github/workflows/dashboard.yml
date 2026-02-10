@@ -83,7 +83,7 @@ jobs:
           fi
 
       # ========== PHẦN 1: THU THẬP DỮ LIỆU CỔ PHIẾU ==========
-      - name: "[1/2] Thu thập dữ liệu cổ phiếu + vàng + tỷ giá"
+      - name: "[1/2] Thu thập dữ liệu cổ phiếu"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} --skip-ohlcv
@@ -138,7 +138,7 @@ jobs:
             echo "Không có dữ liệu mới."
           else
             DATE=${{ steps.date.outputs.date }}
-            git commit -m "data: dashboard $DATE (cổ phiếu + 18 chỉ số + vàng + tỷ giá)"
+            git commit -m "data: dashboard $DATE (cổ phiếu + 18 chỉ số)"
             git push
           fi
 
