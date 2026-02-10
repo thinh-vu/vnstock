@@ -10,14 +10,6 @@ on:
         description: 'Ngày thu thập (YYYY-MM-DD), bỏ trống = hôm nay'
         required: false
         default: ''
-      skip_ohlcv:
-        description: 'Bỏ qua OHLCV từng mã (chỉ lấy price board)'
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - 'false'
-          - 'true'
       indices_start:
         description: 'Ngày bắt đầu chỉ số (YYYY-MM-DD). Mặc định: 1 năm trước'
         required: false
@@ -94,11 +86,7 @@ jobs:
       - name: "[1/2] Thu thập dữ liệu cổ phiếu + vàng + tỷ giá"
         if: steps.check_day.outputs.skip != 'true'
         run: |
-          SKIP_FLAG=""
-          if [ "${{ github.event.inputs.skip_ohlcv }}" = "true" ]; then
-            SKIP_FLAG="--skip-ohlcv"
-          fi
-          python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} $SKIP_FLAG
+          python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} --skip-ohlcv
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
