@@ -2,16 +2,14 @@
 Script tự động thu thập dữ liệu chứng khoán Việt Nam cho Dashboard.
 
 Chạy hàng ngày sau 15h (sau khi sàn đóng cửa) để lấy:
-1. Bảng giá (price board) toàn bộ mã
-2. Top 30 cổ phiếu tăng/giảm mạnh nhất (trong top 500 vốn hóa)
-3. Market breadth (số mã tăng/giảm/đứng giá)
-4. Foreign flow (khối ngoại mua/bán ròng)
-5. Index impact (cổ phiếu ảnh hưởng VNINDEX)
+1. Top 30 cổ phiếu tăng/giảm mạnh nhất (trong top 500 vốn hóa)
+2. Market breadth (số mã tăng/giảm/đứng giá)
+3. Foreign flow (khối ngoại mua/bán ròng)
+4. Index impact (cổ phiếu ảnh hưởng VNINDEX)
 
 Dữ liệu được lưu vào thư mục data/ theo cấu trúc:
     data/
     ├── YYYY-MM-DD/
-    │   ├── price_board.csv
     │   ├── top_gainers.csv
     │   ├── top_losers.csv
     │   ├── market_breadth.csv
@@ -96,44 +94,6 @@ def get_all_symbols(source: str = DEFAULT_SOURCE) -> pd.DataFrame:
     logger.info(f"Tìm thấy {len(df)} mã cổ phiếu.")
     return df
 
-
-def get_daily_ohlcv_batch(symbols: list, date_str: str, source: str = DEFAULT_SOURCE) -> pd.DataFrame:
-    """
-    Lấy dữ liệu OHLCV trong ngày cho một danh sách mã cổ phiếu.
-
-    Sử dụng price_board để lấy dữ liệu batch (nhanh hơn gọi từng mã).
-    """
-    from vnstock.common.client import Vnstock
-
-    client = Vnstock(source=source, show_log=False)
-    stock = client.stock(symbol=symbols[0], source=source)
-
-    all_data = []
-    total = len(symbols)
-
-    for i in range(0, total, BATCH_SIZE):
-        batch = symbols[i:i + BATCH_SIZE]
-        batch_num = i // BATCH_SIZE + 1
-        total_batches = (total + BATCH_SIZE - 1) // BATCH_SIZE
-        logger.info(f"  Batch {batch_num}/{total_batches}: {len(batch)} mã ({batch[0]}...{batch[-1]})")
-
-        try:
-            df = stock.trading.price_board(symbols_list=batch, show_log=False)
-            if df is not None and not df.empty:
-                all_data.append(df)
-        except Exception as e:
-            logger.warning(f"  Lỗi batch {batch_num}: {e}")
-
-        if i + BATCH_SIZE < total:
-            time.sleep(BATCH_DELAY)
-
-    if all_data:
-        result = pd.concat(all_data, ignore_index=True)
-        logger.info(f"Đã lấy dữ liệu price board cho {len(result)} mã.")
-        return result
-    else:
-        logger.warning("Không lấy được dữ liệu price board nào.")
-        return pd.DataFrame()
 
 
 def get_daily_ohlcv_history(symbols: list, date_str: str, source: str = DEFAULT_SOURCE) -> pd.DataFrame:
@@ -628,21 +588,16 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     stock_symbols = symbols_df["symbol"].tolist()
     logger.info(f"Tổng số mã: {len(stock_symbols)}")
 
-    # 1. Bảng giá (price board) - nhanh, lấy batch
-    logger.info("\n[1/6] BẢNG GIÁ (PRICE BOARD)")
-    price_board_df = get_daily_ohlcv_batch(stock_symbols, date_str, source=source)
-    save_data(price_board_df, date_dir, "price_board.csv")
-
-    # 2. KBS price_board → dùng chung cho top movers, breadth, foreign flow, impact
-    logger.info("\n[2/6] BẢNG GIÁ KBS (cho top movers, breadth, foreign flow, impact)")
+    # 1. KBS price_board → dùng chung cho top movers, breadth, foreign flow, impact
+    logger.info("\n[1/5] BẢNG GIÁ KBS (cho top movers, breadth, foreign flow, impact)")
     kbs_board = pd.DataFrame()
     try:
         kbs_board = fetch_kbs_full_board(stock_symbols)
     except Exception as e:
         logger.error(f"Lỗi fetch KBS price_board: {e}")
 
-    # 3. Top cổ phiếu tăng/giảm (trong top 500 vốn hóa)
-    logger.info("\n[3/6] TOP TĂNG/GIẢM (TOP 500 VỐN HÓA)")
+    # 2. Top cổ phiếu tăng/giảm (trong top 500 vốn hóa)
+    logger.info("\n[2/5] TOP TĂNG/GIẢM (TOP 500 VỐN HÓA)")
     try:
         gainers_df, losers_df = get_top_movers(kbs_board, top_n=500, movers_n=30)
         save_data(gainers_df, date_dir, "top_gainers.csv")
@@ -650,16 +605,16 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     except Exception as e:
         logger.error(f"Lỗi lấy top movers: {e}")
 
-    # 4. Market breadth
-    logger.info("\n[4/6] MARKET BREADTH (ĐỘ RỘNG THỊ TRƯỜNG)")
+    # 3. Market breadth
+    logger.info("\n[3/5] MARKET BREADTH (ĐỘ RỘNG THỊ TRƯỜNG)")
     try:
         breadth_df = compute_market_breadth(kbs_board)
         save_data(breadth_df, date_dir, "market_breadth.csv")
     except Exception as e:
         logger.error(f"Lỗi tính market breadth: {e}")
 
-    # 5. Foreign flow
-    logger.info("\n[5/6] FOREIGN FLOW (DÒNG TIỀN KHỐI NGOẠI)")
+    # 4. Foreign flow
+    logger.info("\n[4/5] FOREIGN FLOW (DÒNG TIỀN KHỐI NGOẠI)")
     try:
         flow_df, top_buy_df, top_sell_df = compute_foreign_flow(kbs_board, top_n=20)
         save_data(flow_df, date_dir, "foreign_flow.csv")
@@ -668,8 +623,8 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     except Exception as e:
         logger.error(f"Lỗi tính foreign flow: {e}")
 
-    # 6. Index impact
-    logger.info("\n[6/6] INDEX IMPACT (CỔ PHIẾU ẢNH HƯỞNG CHỈ SỐ)")
+    # 5. Index impact
+    logger.info("\n[5/5] INDEX IMPACT (CỔ PHIẾU ẢNH HƯỞNG CHỈ SỐ)")
     try:
         impact_pos_df, impact_neg_df = compute_index_impact(kbs_board, top_n=20)
         save_data(impact_pos_df, date_dir, "index_impact_positive.csv")
