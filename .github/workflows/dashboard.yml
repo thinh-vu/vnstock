@@ -83,15 +83,23 @@ jobs:
           fi
 
       # ========== PHẦN 1: THU THẬP DỮ LIỆU CỔ PHIẾU ==========
-      - name: "[1/2] Thu thập dữ liệu cổ phiếu"
+      - name: "[1/3] Thu thập dữ liệu cổ phiếu"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} --skip-ohlcv
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
-      # ========== PHẦN 2: THU THẬP DỮ LIỆU CHỈ SỐ ==========
-      - name: "[2/2] Thu thập 18 chỉ số thị trường + charts"
+      # ========== PHẦN 2: THU THẬP OHLCV TOP 500 CỔ PHIẾU ==========
+      - name: "[2/3] Thu thập OHLCV top 500 cổ phiếu vốn hóa"
+        if: steps.check_day.outputs.skip != 'true'
+        run: |
+          python scripts/collect_stocks.py
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+
+      # ========== PHẦN 3: THU THẬP DỮ LIỆU CHỈ SỐ ==========
+      - name: "[3/3] Thu thập 18 chỉ số thị trường + charts"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           START_FLAG=""
@@ -120,6 +128,12 @@ jobs:
           fi
           echo ""
           echo "=========================================="
+          echo "  OHLCV TOP 500 CỔ PHIẾU"
+          echo "=========================================="
+          ls data/stocks/*.csv 2>/dev/null | wc -l | xargs -I{} echo "{} files"
+          ls -lh data/stocks/*.csv 2>/dev/null | head -10
+          echo ""
+          echo "=========================================="
           echo "  DỮ LIỆU CHỈ SỐ (18 indices)"
           echo "=========================================="
           ls -lh data/indices/*.csv 2>/dev/null || echo "No CSV files"
@@ -138,7 +152,7 @@ jobs:
             echo "Không có dữ liệu mới."
           else
             DATE=${{ steps.date.outputs.date }}
-            git commit -m "data: dashboard $DATE (cổ phiếu + 18 chỉ số)"
+            git commit -m "data: dashboard $DATE (cổ phiếu + OHLCV 500 mã + 18 chỉ số)"
             git push
           fi
 
@@ -149,5 +163,6 @@ jobs:
           name: dashboard-data-${{ steps.date.outputs.date }}
           path: |
             data/${{ steps.date.outputs.date }}/
+            data/stocks/
             data/indices/
           retention-days: 90
