@@ -97,6 +97,13 @@ _VND_HEADERS = {
 
 REQUEST_DELAY = 0.5
 
+# VNDirect dùng tên symbol khác cho một số chỉ số
+# Nếu tên gốc fail, thử các tên thay thế
+_VND_SYMBOL_MAP = {
+    "HNXINDEX": ["HNX-INDEX", "HNX", "HASTC"],
+    "UPCOMINDEX": ["UPCOM-INDEX", "UPCOM"],
+}
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -112,73 +119,89 @@ def _fetch_vnd(symbol: str, start: str, end: str) -> pd.DataFrame:
     """
     Lấy dữ liệu OHLCV lịch sử từ VNDirect dchart API (TradingView UDF format).
     Hỗ trợ tất cả chỉ số bao gồm ngành, quy mô, đầu tư - full OHLCV.
+    Tự động thử các tên thay thế nếu symbol gốc fail (HNXINDEX, UPCOMINDEX).
     """
     start_ts = int(datetime.strptime(start, "%Y-%m-%d").timestamp())
     end_ts = int((datetime.strptime(end, "%Y-%m-%d") + timedelta(days=1)).timestamp())
 
-    params = {
-        "resolution": "D",
-        "symbol": symbol,
-        "from": start_ts,
-        "to": end_ts,
-    }
+    # Danh sách symbol cần thử: symbol gốc + các tên thay thế
+    symbols_to_try = [symbol] + _VND_SYMBOL_MAP.get(symbol, [])
 
-    logger.info(f"    VND params: symbol={symbol}, from={start_ts}, to={end_ts}")
+    for try_symbol in symbols_to_try:
+        params = {
+            "resolution": "D",
+            "symbol": try_symbol,
+            "from": start_ts,
+            "to": end_ts,
+        }
 
-    try:
-        resp = requests.get(
-            _VND_CHART_URL, params=params, headers=_VND_HEADERS, timeout=30
-        )
-        logger.info(f"    VND response: status={resp.status_code}")
+        logger.info(f"    VND params: symbol={try_symbol}, from={start_ts}, to={end_ts}")
 
-        if resp.status_code != 200:
-            logger.error(f"    VND HTTP {resp.status_code}: {resp.text[:300]}")
-            return pd.DataFrame()
+        try:
+            resp = requests.get(
+                _VND_CHART_URL, params=params, headers=_VND_HEADERS, timeout=30
+            )
+            logger.info(f"    VND response: status={resp.status_code}")
 
-        data = resp.json()
+            if resp.status_code != 200:
+                logger.error(f"    VND HTTP {resp.status_code}: {resp.text[:300]}")
+                continue
 
-        # TradingView UDF format: {s: "ok", t: [...], o: [...], h: [...], l: [...], c: [...], v: [...]}
-        status = data.get("s", "")
-        if status != "ok":
-            logger.warning(f"    VND: {symbol} - status={status}")
-            if "nextTime" in data:
-                logger.info(f"    VND: nextTime={data['nextTime']}")
-            return pd.DataFrame()
+            # Check if response body is valid JSON
+            if not resp.text or not resp.text.strip():
+                logger.warning(f"    VND: {try_symbol} - empty response, thử tên khác...")
+                continue
 
-        times = data.get("t", [])
-        opens = data.get("o", [])
-        highs = data.get("h", [])
-        lows = data.get("l", [])
-        closes = data.get("c", [])
-        volumes = data.get("v", [])
+            data = resp.json()
 
-        if not times:
-            logger.warning(f"    VND: {symbol} - không có dữ liệu")
-            return pd.DataFrame()
+            # TradingView UDF format: {s: "ok", t: [...], o: [...], h: [...], l: [...], c: [...], v: [...]}
+            status = data.get("s", "")
+            if status != "ok":
+                logger.warning(f"    VND: {try_symbol} - status={status}")
+                if "nextTime" in data:
+                    logger.info(f"    VND: nextTime={data['nextTime']}")
+                continue
 
-        logger.info(f"    VND: {symbol} - {len(times)} bars")
+            times = data.get("t", [])
+            opens = data.get("o", [])
+            highs = data.get("h", [])
+            lows = data.get("l", [])
+            closes = data.get("c", [])
+            volumes = data.get("v", [])
 
-        df = pd.DataFrame({
-            "time": pd.to_datetime(times, unit="s"),
-            "open": pd.to_numeric(opens, errors="coerce"),
-            "high": pd.to_numeric(highs, errors="coerce"),
-            "low": pd.to_numeric(lows, errors="coerce"),
-            "close": pd.to_numeric(closes, errors="coerce"),
-            "volume": np.nan_to_num(pd.to_numeric(volumes, errors="coerce"), nan=0).astype("int64"),
-        })
+            if not times:
+                logger.warning(f"    VND: {try_symbol} - không có dữ liệu, thử tên khác...")
+                continue
 
-        # Lọc theo khoảng thời gian
-        df = df[(df["time"] >= start) & (df["time"] <= end)]
-        df = df.sort_values("time").reset_index(drop=True)
+            if try_symbol != symbol:
+                logger.info(f"    VND: {symbol} → dùng tên '{try_symbol}' thành công")
 
-        return df
+            logger.info(f"    VND: {symbol} - {len(times)} bars")
 
-    except requests.exceptions.RequestException as e:
-        logger.error(f"    VND request error: {e}")
-        return pd.DataFrame()
-    except Exception as e:
-        logger.error(f"    VND error: {e}")
-        return pd.DataFrame()
+            df = pd.DataFrame({
+                "time": pd.to_datetime(times, unit="s"),
+                "open": pd.to_numeric(opens, errors="coerce"),
+                "high": pd.to_numeric(highs, errors="coerce"),
+                "low": pd.to_numeric(lows, errors="coerce"),
+                "close": pd.to_numeric(closes, errors="coerce"),
+                "volume": np.nan_to_num(pd.to_numeric(volumes, errors="coerce"), nan=0).astype("int64"),
+            })
+
+            # Lọc theo khoảng thời gian
+            df = df[(df["time"] >= start) & (df["time"] <= end)]
+            df = df.sort_values("time").reset_index(drop=True)
+
+            return df
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"    VND request error: {e}")
+            continue
+        except Exception as e:
+            logger.error(f"    VND error ({try_symbol}): {e}")
+            continue
+
+    logger.warning(f"    VND: {symbol} - tất cả tên thay thế đều fail")
+    return pd.DataFrame()
 
 
 def fetch_index_history(symbol: str, start: str, end: str) -> pd.DataFrame:
