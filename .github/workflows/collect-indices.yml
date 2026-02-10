@@ -87,7 +87,8 @@ jobs:
           if git diff --staged --quiet; then
             echo "Không có dữ liệu mới."
           else
-            git commit -m "data: cập nhật chỉ số VNINDEX, HNX, UPCOM, VN30, HNX30"
+            DATE=$(date +%Y-%m-%d)
+            git commit -m "data: cập nhật 18 chỉ số thị trường ($DATE)"
             git push
           fi
 
