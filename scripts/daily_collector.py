@@ -1,21 +1,16 @@
 """
-Script tự động thu thập dữ liệu chứng khoán Việt Nam và giá vàng SJC.
+Script tự động thu thập dữ liệu chứng khoán Việt Nam cho Dashboard.
 
 Chạy hàng ngày sau 15h (sau khi sàn đóng cửa) để lấy:
-1. Danh sách toàn bộ mã cổ phiếu niêm yết (HOSE, HNX, UPCOM)
-2. Dữ liệu OHLCV trong ngày của tất cả mã
-3. Top 30 cổ phiếu tăng/giảm mạnh nhất (trong top 500 vốn hóa)
-4. Market breadth (số mã tăng/giảm/đứng giá)
-5. Foreign flow (khối ngoại mua/bán ròng)
-6. Index impact (cổ phiếu ảnh hưởng VNINDEX)
-7. Giá vàng SJC/BTMC
-8. Tỷ giá ngoại tệ VCB
+1. Bảng giá (price board) toàn bộ mã
+2. Top 30 cổ phiếu tăng/giảm mạnh nhất (trong top 500 vốn hóa)
+3. Market breadth (số mã tăng/giảm/đứng giá)
+4. Foreign flow (khối ngoại mua/bán ròng)
+5. Index impact (cổ phiếu ảnh hưởng VNINDEX)
 
 Dữ liệu được lưu vào thư mục data/ theo cấu trúc:
     data/
     ├── YYYY-MM-DD/
-    │   ├── all_symbols.csv
-    │   ├── daily_ohlcv.csv
     │   ├── price_board.csv
     │   ├── top_gainers.csv
     │   ├── top_losers.csv
@@ -24,10 +19,7 @@ Dữ liệu được lưu vào thư mục data/ theo cấu trúc:
     │   ├── foreign_top_buy.csv
     │   ├── foreign_top_sell.csv
     │   ├── index_impact_positive.csv
-    │   ├── index_impact_negative.csv
-    │   ├── sjc_gold.csv
-    │   ├── btmc_gold.csv
-    │   └── exchange_rate.csv
+    │   └── index_impact_negative.csv
     └── latest -> YYYY-MM-DD/  (symlink)
 
 Cách chạy:
@@ -575,60 +567,6 @@ def compute_index_impact(board: pd.DataFrame, top_n: int = 20):
     return top_pos, top_neg
 
 
-def get_sjc_gold(date_str: str) -> pd.DataFrame:
-    """Lấy giá vàng SJC."""
-    from vnstock.explorer.misc.gold_price import sjc_gold_price
-
-    logger.info("Đang lấy giá vàng SJC...")
-    try:
-        df = sjc_gold_price(date=date_str)
-        if df is not None and not df.empty:
-            logger.info(f"Đã lấy {len(df)} dòng giá vàng SJC.")
-            return df
-        else:
-            logger.warning("Không có dữ liệu giá vàng SJC.")
-            return pd.DataFrame()
-    except Exception as e:
-        logger.error(f"Lỗi lấy giá vàng SJC: {e}")
-        return pd.DataFrame()
-
-
-def get_btmc_gold() -> pd.DataFrame:
-    """Lấy giá vàng BTMC."""
-    from vnstock.explorer.misc.gold_price import btmc_goldprice
-
-    logger.info("Đang lấy giá vàng BTMC...")
-    try:
-        df = btmc_goldprice()
-        if df is not None and not df.empty:
-            logger.info(f"Đã lấy {len(df)} dòng giá vàng BTMC.")
-            return df
-        else:
-            logger.warning("Không có dữ liệu giá vàng BTMC.")
-            return pd.DataFrame()
-    except Exception as e:
-        logger.error(f"Lỗi lấy giá vàng BTMC: {e}")
-        return pd.DataFrame()
-
-
-def get_exchange_rate(date_str: str) -> pd.DataFrame:
-    """Lấy tỷ giá ngoại tệ VCB."""
-    from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
-
-    logger.info("Đang lấy tỷ giá VCB...")
-    try:
-        df = vcb_exchange_rate(date=date_str)
-        if df is not None and not df.empty:
-            logger.info(f"Đã lấy {len(df)} dòng tỷ giá.")
-            return df
-        else:
-            logger.warning("Không có dữ liệu tỷ giá.")
-            return pd.DataFrame()
-    except Exception as e:
-        logger.error(f"Lỗi lấy tỷ giá: {e}")
-        return pd.DataFrame()
-
-
 # ============================================================
 # LƯU DỮ LIỆU
 # ============================================================
@@ -679,41 +617,32 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     logger.info(f"Nguồn: {source} | Thư mục: {date_dir}")
     logger.info("=" * 60)
 
-    # 1. Danh sách mã cổ phiếu
-    logger.info("\n[1/9] DANH SÁCH MÃ CỔ PHIẾU")
+    # Lấy danh sách mã cổ phiếu (nội bộ, không lưu file)
+    logger.info("\nLấy danh sách mã cổ phiếu...")
     symbols_df = get_all_symbols(source=source)
-    save_data(symbols_df, date_dir, "all_symbols.csv")
 
     if symbols_df.empty:
         logger.error("Không lấy được danh sách mã. Dừng lại.")
         return
 
-    # Lọc chỉ lấy cổ phiếu (loại bỏ ETF, CW, bond nếu có)
     stock_symbols = symbols_df["symbol"].tolist()
-    logger.info(f"Tổng số mã sẽ xử lý: {len(stock_symbols)}")
+    logger.info(f"Tổng số mã: {len(stock_symbols)}")
 
-    # 2. Bảng giá (price board) - nhanh, lấy batch
-    logger.info("\n[2/9] BẢNG GIÁ (PRICE BOARD)")
+    # 1. Bảng giá (price board) - nhanh, lấy batch
+    logger.info("\n[1/6] BẢNG GIÁ (PRICE BOARD)")
     price_board_df = get_daily_ohlcv_batch(stock_symbols, date_str, source=source)
     save_data(price_board_df, date_dir, "price_board.csv")
 
-    # 3. OHLCV lịch sử từng mã (tùy chọn, chậm hơn nhưng chính xác)
-    if not skip_ohlcv_history:
-        logger.info("\n[3/9] DỮ LIỆU OHLCV LỊCH SỬ")
-        ohlcv_df = get_daily_ohlcv_history(stock_symbols, date_str, source=source)
-        save_data(ohlcv_df, date_dir, "daily_ohlcv.csv")
-    else:
-        logger.info("\n[3/9] DỮ LIỆU OHLCV LỊCH SỬ - BỎ QUA (--skip-ohlcv)")
-
-    # 4-6. KBS price_board → top movers + market breadth + foreign flow
-    logger.info("\n[4/9] BẢNG GIÁ KBS (cho top movers, breadth, foreign flow, impact)")
+    # 2. KBS price_board → dùng chung cho top movers, breadth, foreign flow, impact
+    logger.info("\n[2/6] BẢNG GIÁ KBS (cho top movers, breadth, foreign flow, impact)")
     kbs_board = pd.DataFrame()
     try:
         kbs_board = fetch_kbs_full_board(stock_symbols)
     except Exception as e:
         logger.error(f"Lỗi fetch KBS price_board: {e}")
 
-    logger.info("\n[5/9] TOP TĂNG/GIẢM (TOP 500 VỐN HÓA)")
+    # 3. Top cổ phiếu tăng/giảm (trong top 500 vốn hóa)
+    logger.info("\n[3/6] TOP TĂNG/GIẢM (TOP 500 VỐN HÓA)")
     try:
         gainers_df, losers_df = get_top_movers(kbs_board, top_n=500, movers_n=30)
         save_data(gainers_df, date_dir, "top_gainers.csv")
@@ -721,14 +650,16 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     except Exception as e:
         logger.error(f"Lỗi lấy top movers: {e}")
 
-    logger.info("\n[6/9] MARKET BREADTH (ĐỘ RỘNG THỊ TRƯỜNG)")
+    # 4. Market breadth
+    logger.info("\n[4/6] MARKET BREADTH (ĐỘ RỘNG THỊ TRƯỜNG)")
     try:
         breadth_df = compute_market_breadth(kbs_board)
         save_data(breadth_df, date_dir, "market_breadth.csv")
     except Exception as e:
         logger.error(f"Lỗi tính market breadth: {e}")
 
-    logger.info("\n[7/9] FOREIGN FLOW (DÒNG TIỀN KHỐI NGOẠI)")
+    # 5. Foreign flow
+    logger.info("\n[5/6] FOREIGN FLOW (DÒNG TIỀN KHỐI NGOẠI)")
     try:
         flow_df, top_buy_df, top_sell_df = compute_foreign_flow(kbs_board, top_n=20)
         save_data(flow_df, date_dir, "foreign_flow.csv")
@@ -737,26 +668,14 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
     except Exception as e:
         logger.error(f"Lỗi tính foreign flow: {e}")
 
-    logger.info("\n[8/9] INDEX IMPACT (CỔ PHIẾU ẢNH HƯỞNG CHỈ SỐ)")
+    # 6. Index impact
+    logger.info("\n[6/6] INDEX IMPACT (CỔ PHIẾU ẢNH HƯỞNG CHỈ SỐ)")
     try:
         impact_pos_df, impact_neg_df = compute_index_impact(kbs_board, top_n=20)
         save_data(impact_pos_df, date_dir, "index_impact_positive.csv")
         save_data(impact_neg_df, date_dir, "index_impact_negative.csv")
     except Exception as e:
         logger.error(f"Lỗi tính index impact: {e}")
-
-    # 9. Giá vàng + Tỷ giá
-    logger.info("\n[9/9] GIÁ VÀNG & TỶ GIÁ")
-    sjc_df = get_sjc_gold(date_str)
-    save_data(sjc_df, date_dir, "sjc_gold.csv")
-
-    time.sleep(REQUEST_DELAY)
-
-    btmc_df = get_btmc_gold()
-    save_data(btmc_df, date_dir, "btmc_gold.csv")
-
-    fx_df = get_exchange_rate(date_str)
-    save_data(fx_df, date_dir, "exchange_rate.csv")
 
     # Cập nhật symlink
     update_latest_symlink(date_dir)
