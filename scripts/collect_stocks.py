@@ -211,6 +211,48 @@ def fetch_stock_with_cache(symbol: str, start: str, end: str) -> pd.DataFrame:
 
 
 # ============================================================
+# CHỈ BÁO KỸ THUẬT
+# ============================================================
+
+def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
+    """Thêm các chỉ báo kỹ thuật: SMA, RSI, MACD, Bollinger Bands."""
+    df = df.copy()
+    close = df["close"]
+
+    # Moving Averages
+    for p in [20, 50, 200]:
+        df[f"sma_{p}"] = close.rolling(window=p, min_periods=1).mean()
+
+    # RSI 14
+    delta = close.diff()
+    gain = delta.where(delta > 0, 0.0)
+    loss = (-delta).where(delta < 0, 0.0)
+    avg_gain = gain.ewm(alpha=1/14, min_periods=14).mean()
+    avg_loss = loss.ewm(alpha=1/14, min_periods=14).mean()
+    rs = avg_gain / avg_loss
+    df["rsi_14"] = 100 - (100 / (1 + rs))
+
+    # MACD
+    ema12 = close.ewm(span=12, adjust=False).mean()
+    ema26 = close.ewm(span=26, adjust=False).mean()
+    df["macd"] = ema12 - ema26
+    df["macd_signal"] = df["macd"].ewm(span=9, adjust=False).mean()
+    df["macd_hist"] = df["macd"] - df["macd_signal"]
+
+    # Bollinger Bands
+    sma20 = close.rolling(20).mean()
+    std20 = close.rolling(20).std()
+    df["bb_upper"] = sma20 + 2 * std20
+    df["bb_lower"] = sma20 - 2 * std20
+
+    # Biến động
+    df["daily_return"] = close.pct_change() * 100
+    df["volatility_20d"] = df["daily_return"].rolling(20).std()
+
+    return df
+
+
+# ============================================================
 # MAIN COLLECTOR
 # ============================================================
 
@@ -238,7 +280,8 @@ def collect_stocks(symbols: list, start: str, end: str):
             df = fetch_stock_with_cache(symbol, start, end)
 
             if df is not None and not df.empty:
-                # Lưu CSV (ghi đè toàn bộ lịch sử từ cache)
+                # Tính chỉ báo kỹ thuật
+                df = add_indicators(df)
                 df["symbol"] = symbol
                 csv_path = DATA_DIR / f"{symbol}.csv"
                 df.to_csv(csv_path, index=False, encoding="utf-8-sig")
