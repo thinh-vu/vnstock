@@ -1,11 +1,10 @@
-name: Daily Stock & Gold Data Collector
+name: Dashboard Data Collector
 
 on:
   schedule:
     # 15:30 giờ Việt Nam (UTC+7) = 08:30 UTC, thứ 2-6
     - cron: '30 8 * * 1-5'
   workflow_dispatch:
-    # Cho phép chạy tay từ GitHub UI
     inputs:
       date:
         description: 'Ngày thu thập (YYYY-MM-DD), bỏ trống = hôm nay'
@@ -19,14 +18,22 @@ on:
         options:
           - 'false'
           - 'true'
+      indices_start:
+        description: 'Ngày bắt đầu chỉ số (YYYY-MM-DD). Mặc định: 1 năm trước'
+        required: false
+        default: ''
+      indices_end:
+        description: 'Ngày kết thúc chỉ số (YYYY-MM-DD). Mặc định: hôm nay'
+        required: false
+        default: ''
 
 permissions:
   contents: write
 
 jobs:
-  collect:
+  dashboard:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repo
@@ -44,7 +51,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e .
-          pip install pytz
+          pip install pytz matplotlib
 
       - name: Set timezone to Vietnam
         run: echo "TZ=Asia/Ho_Chi_Minh" >> $GITHUB_ENV
@@ -83,7 +90,8 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Collect data
+      # ========== PHẦN 1: THU THẬP DỮ LIỆU CỔ PHIẾU ==========
+      - name: "[1/2] Thu thập dữ liệu cổ phiếu + vàng + tỷ giá"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           SKIP_FLAG=""
@@ -94,23 +102,45 @@ jobs:
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
+      # ========== PHẦN 2: THU THẬP DỮ LIỆU CHỈ SỐ ==========
+      - name: "[2/2] Thu thập 18 chỉ số thị trường + charts"
+        if: steps.check_day.outputs.skip != 'true'
+        run: |
+          START_FLAG=""
+          END_FLAG=""
+          if [ -n "${{ github.event.inputs.indices_start }}" ]; then
+            START_FLAG="--start ${{ github.event.inputs.indices_start }}"
+          fi
+          if [ -n "${{ github.event.inputs.indices_end }}" ]; then
+            END_FLAG="--end ${{ github.event.inputs.indices_end }}"
+          fi
+          python scripts/collect_indices.py $START_FLAG $END_FLAG
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+
+      # ========== HIỂN THỊ KẾT QUẢ ==========
       - name: Show collected files
         if: steps.check_day.outputs.skip != 'true'
         run: |
-          echo "=== Dữ liệu thu thập được ==="
+          echo "=========================================="
+          echo "  DỮ LIỆU CỔ PHIẾU (${{ steps.date.outputs.date }})"
+          echo "=========================================="
           if [ -d "data/${{ steps.date.outputs.date }}" ]; then
             ls -lh data/${{ steps.date.outputs.date }}/
-            echo ""
-            for f in data/${{ steps.date.outputs.date }}/*.csv; do
-              echo "--- $(basename $f): $(wc -l < $f) dòng ---"
-              head -3 "$f"
-              echo ""
-            done
           else
             echo "Không có thư mục data."
           fi
+          echo ""
+          echo "=========================================="
+          echo "  DỮ LIỆU CHỈ SỐ (18 indices)"
+          echo "=========================================="
+          ls -lh data/indices/*.csv 2>/dev/null || echo "No CSV files"
+          echo ""
+          echo "=== Charts ==="
+          ls -lh data/indices/charts/*.png 2>/dev/null || echo "No chart files"
 
-      - name: Commit and push data
+      # ========== COMMIT & PUSH ==========
+      - name: Commit and push all data
         if: steps.check_day.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
@@ -119,14 +149,17 @@ jobs:
           if git diff --staged --quiet; then
             echo "Không có dữ liệu mới."
           else
-            git commit -m "data: thu thập dữ liệu ngày ${{ steps.date.outputs.date }}"
+            DATE=${{ steps.date.outputs.date }}
+            git commit -m "data: dashboard $DATE (cổ phiếu + 18 chỉ số + vàng + tỷ giá)"
             git push
           fi
 
-      - name: Upload data as artifact
+      - name: Upload artifacts
         if: steps.check_day.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: stock-data-${{ steps.date.outputs.date }}
-          path: data/${{ steps.date.outputs.date }}/
+          name: dashboard-data-${{ steps.date.outputs.date }}
+          path: |
+            data/${{ steps.date.outputs.date }}/
+            data/indices/
           retention-days: 90
