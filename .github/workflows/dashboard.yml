@@ -2,8 +2,8 @@ name: Dashboard Data Collector
 
 on:
   schedule:
-    # 15:30 giờ Việt Nam (UTC+7) = 08:30 UTC, thứ 2-6
-    - cron: '30 8 * * 1-5'
+    # 15:00 giờ Việt Nam (UTC+7) = 08:00 UTC, thứ 2-6
+    - cron: '0 8 * * 1-5'
   workflow_dispatch:
     inputs:
       date:
