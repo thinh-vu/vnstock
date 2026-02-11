@@ -1,9 +1,6 @@
 name: Financial Data Collector
 
 on:
-  schedule:
-    # Chạy hàng tuần: Thứ 2, 08:30 UTC = 15:30 VN
-    - cron: '30 8 * * 1'
   workflow_dispatch:
     inputs:
       top_n:
