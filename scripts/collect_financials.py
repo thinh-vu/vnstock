@@ -43,7 +43,7 @@ import pandas as pd
 # ============================================================
 
 DATA_DIR = PROJECT_ROOT / "data" / "financials"
-REQUEST_DELAY = 0.15  # ~7 req/s
+REQUEST_DELAY = 0.05  # ~20 req/s (KBS handles fine)
 
 # KBS SAS Finance API (same domain as price_board - works on GitHub Actions)
 _KBS_FINANCE_URL = "https://kbbuddywts.kbsec.com.vn/sas/kbsv-stock-data-store/stock/finance-info"
@@ -54,6 +54,10 @@ _KBS_HEADERS = {
         "Chrome/120.0.0.0 Safari/537.36"
     ),
 }
+
+# Reuse HTTP session for connection pooling (much faster)
+_session = requests.Session()
+_session.headers.update(_KBS_HEADERS)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -269,7 +273,7 @@ def fetch_financials(symbol: str, period: str = 'year') -> dict:
             else:
                 params['languageid'] = 1
 
-            resp = requests.get(url, params=params, headers=_KBS_HEADERS, timeout=30)
+            resp = _session.get(url, params=params, timeout=30)
             if resp.status_code != 200:
                 logger.debug(f"  {symbol}/{report_name}: HTTP {resp.status_code}")
                 continue
@@ -314,7 +318,7 @@ def collect_financials(symbols: list, periods: list):
     errors = []
 
     for idx, symbol in enumerate(symbols):
-        if (idx + 1) % 50 == 0 or idx == 0:
+        if (idx + 1) % 25 == 0 or idx == 0:
             logger.info(f"  [{idx + 1}/{total}] {symbol}... (OK: {success}, lỗi: {len(errors)})")
 
         symbol_ok = False
