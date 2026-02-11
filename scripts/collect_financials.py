@@ -94,15 +94,28 @@ def get_top_symbols(top_n: int = 500) -> list:
         return all_symbols[:top_n]
 
     board = pd.concat(all_data, ignore_index=True)
+    logger.info(f"KBS board: {len(board)} mã, columns: {list(board.columns)[:15]}")
+
     for col in ['close_price', 'listed_shares', 'total_listed_qty']:
         if col in board.columns:
             board[col] = pd.to_numeric(board[col], errors='coerce')
 
-    shares_col = 'total_listed_qty' if 'total_listed_qty' in board.columns else 'listed_shares'
-    if shares_col in board.columns and 'close_price' in board.columns:
+    shares_col = None
+    for col in ['total_listed_qty', 'listed_shares']:
+        if col in board.columns and board[col].sum() > 0:
+            shares_col = col
+            break
+
+    if shares_col and 'close_price' in board.columns:
         board['market_cap'] = board['close_price'] * board[shares_col]
+        logger.info(f"Market cap: close_price * {shares_col}")
+    elif 'total_value' in board.columns:
+        board['total_value'] = pd.to_numeric(board['total_value'], errors='coerce')
+        board['market_cap'] = board['total_value']
+        logger.info("Market cap: fallback to total_value")
     else:
-        board['market_cap'] = 0
+        logger.warning("Không tính được market cap, dùng thứ tự mặc định.")
+        return all_symbols[:top_n]
 
     board = board.dropna(subset=['market_cap'])
     board = board[board['market_cap'] > 0]
