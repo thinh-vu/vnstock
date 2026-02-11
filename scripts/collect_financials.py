@@ -1,16 +1,20 @@
 """
 Thu thập dữ liệu tài chính cho top 500 cổ phiếu vốn hóa lớn nhất.
 
-Nguồn: VCI API (hỗ trợ tiếng Anh, đầy đủ nhất).
-Dữ liệu chỉ thay đổi theo quý → chạy hàng tuần hoặc khi cần.
+Nguồn: KBS SAS Finance API (REST, ổn định, không cần auth).
+Dữ liệu chỉ thay đổi theo quý → chạy khi cần.
 
 Output:
     data/financials/
     ├── VCB/
-    │   ├── balance_sheet.csv
-    │   ├── income_statement.csv
-    │   ├── cash_flow.csv
-    │   └── ratios.csv
+    │   ├── balance_sheet_year.csv
+    │   ├── balance_sheet_quarter.csv
+    │   ├── income_statement_year.csv
+    │   ├── income_statement_quarter.csv
+    │   ├── cash_flow_year.csv
+    │   ├── cash_flow_quarter.csv
+    │   ├── ratio_year.csv
+    │   └── ratio_quarter.csv
     ├── FPT/
     │   └── ...
     └── ... (500 thư mục)
@@ -25,6 +29,7 @@ import sys
 import time
 import logging
 import argparse
+import requests
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -39,7 +44,16 @@ import pandas as pd
 
 DATA_DIR = PROJECT_ROOT / "data" / "financials"
 REQUEST_DELAY = 0.15  # ~7 req/s
-SOURCE = "VCI"
+
+# KBS SAS Finance API (same domain as price_board - works on GitHub Actions)
+_KBS_FINANCE_URL = "https://kbbuddywts.kbsec.com.vn/sas/kbsv-stock-data-store/stock/finance-info"
+_KBS_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+}
 
 logging.basicConfig(
     level=logging.INFO,
@@ -47,17 +61,17 @@ logging.basicConfig(
 )
 logger = logging.getLogger("financials")
 
-# Các loại báo cáo cần lấy
+# Các loại báo cáo cần lấy: (report_name, kbs_type, content_key)
 REPORT_TYPES = [
-    ("balance_sheet", "Bảng CĐKT"),
-    ("income_statement", "KQKD"),
-    ("cash_flow", "Lưu chuyển tiền tệ"),
-    ("ratio", "Chỉ số tài chính"),
+    ("balance_sheet", "CDKT", "Cân đối kế toán"),
+    ("income_statement", "KQKD", "Kết quả kinh doanh"),
+    ("cash_flow", "LCTT", None),  # Cash flow key varies (gián tiếp/trực tiếp)
+    ("ratio", "CSTC", None),  # Ratios have multiple groups
 ]
 
 
 # ============================================================
-# LẤY TOP N VỐN HÓA (tái sử dụng từ collect_stocks.py)
+# LẤY TOP N VỐN HÓA
 # ============================================================
 
 def get_top_symbols(top_n: int = 500) -> list:
@@ -96,22 +110,38 @@ def get_top_symbols(top_n: int = 500) -> list:
     board = pd.concat(all_data, ignore_index=True)
     logger.info(f"KBS board: {len(board)} mã, columns: {list(board.columns)[:15]}")
 
-    for col in ['close_price', 'listed_shares', 'total_listed_qty']:
+    # Convert numeric columns
+    for col in ['close_price', 'reference_price', 'listed_shares', 'total_listed_qty']:
         if col in board.columns:
             board[col] = pd.to_numeric(board[col], errors='coerce')
 
+    # Determine price: use close_price, fallback to reference_price if close=0
+    # (close_price = 0 ngoài giờ giao dịch, reference_price luôn có giá trị)
+    if 'close_price' in board.columns and 'reference_price' in board.columns:
+        board['price'] = board['close_price'].where(
+            board['close_price'] > 0, board['reference_price']
+        )
+    elif 'close_price' in board.columns:
+        board['price'] = board['close_price']
+    elif 'reference_price' in board.columns:
+        board['price'] = board['reference_price']
+    else:
+        logger.warning("Không có cột giá, dùng thứ tự mặc định.")
+        return all_symbols[:top_n]
+
+    # Determine shares column
     shares_col = None
     for col in ['total_listed_qty', 'listed_shares']:
         if col in board.columns and board[col].sum() > 0:
             shares_col = col
             break
 
-    if shares_col and 'close_price' in board.columns:
-        board['market_cap'] = board['close_price'] * board[shares_col]
-        logger.info(f"Market cap: close_price * {shares_col}")
-        # Debug: log sample values
-        sample = board[['close_price', shares_col]].head(3)
-        logger.info(f"  Sample: {sample.to_dict('records')}")
+    if shares_col:
+        board['market_cap'] = board['price'] * board[shares_col]
+        logger.info(f"Market cap: price * {shares_col}")
+        sample = board[board['market_cap'] > 0].nlargest(3, 'market_cap')
+        if not sample.empty:
+            logger.info(f"  Top 3: {sample[['symbol', 'price', shares_col, 'market_cap']].to_dict('records')}")
     elif 'total_value' in board.columns:
         board['total_value'] = pd.to_numeric(board['total_value'], errors='coerce')
         board['market_cap'] = board['total_value']
@@ -124,7 +154,7 @@ def get_top_symbols(top_n: int = 500) -> list:
     board = board[board['market_cap'] > 0]
 
     if board.empty:
-        logger.warning(f"Market cap tính ra 0 kết quả, dùng thứ tự mặc định (top {top_n}).")
+        logger.warning(f"Market cap = 0 cho tất cả mã, dùng thứ tự mặc định (top {top_n}).")
         return all_symbols[:top_n]
 
     top = board.nlargest(top_n, 'market_cap')
@@ -134,35 +164,118 @@ def get_top_symbols(top_n: int = 500) -> list:
 
 
 # ============================================================
-# FETCH DỮ LIỆU TÀI CHÍNH
+# FETCH DỮ LIỆU TÀI CHÍNH TỪ KBS (Direct REST API)
 # ============================================================
+
+def _parse_kbs_response(json_data: dict, report_name: str) -> pd.DataFrame:
+    """
+    Parse KBS financial API response thành DataFrame.
+
+    Returns:
+        DataFrame với columns: item, item_en, + period columns (2024, 2023, ...)
+    """
+    if not json_data:
+        return pd.DataFrame()
+
+    head_list = json_data.get('Head', [])
+    content = json_data.get('Content', {})
+
+    # Extract period labels from Head
+    periods = []
+    if head_list:
+        for head in head_list:
+            if isinstance(head, dict):
+                year = head.get('YearPeriod', '')
+                term_name = head.get('TermName', '')
+                if term_name and 'Quý' in term_name:
+                    quarter_num = term_name.replace('Quý', '').strip()
+                    periods.append(f"{year}-Q{quarter_num}")
+                else:
+                    periods.append(str(year))
+
+    # Determine content key
+    if report_name == "cash_flow":
+        # Cash flow có 2 loại: gián tiếp (phổ biến) và trực tiếp
+        report_data = (
+            content.get('Lưu chuyển tiền tệ gián tiếp', [])
+            or content.get('Lưu chuyển tiền tệ trực tiếp', [])
+        )
+    elif report_name == "ratio":
+        # Ratios có nhiều nhóm, gộp lại
+        report_data = []
+        ratio_groups = [
+            'Nhóm chỉ số Định giá',
+            'Nhóm chỉ số Sinh lợi',
+            'Nhóm chỉ số Tăng trưởng',
+            'Nhóm chỉ số Thanh khoản',
+            'Nhóm chỉ số Chất lượng tài sản',
+        ]
+        for group_key in ratio_groups:
+            report_data.extend(content.get(group_key, []))
+    elif report_name == "balance_sheet":
+        report_data = content.get('Cân đối kế toán', [])
+    elif report_name == "income_statement":
+        report_data = content.get('Kết quả kinh doanh', [])
+    else:
+        return pd.DataFrame()
+
+    if not report_data:
+        return pd.DataFrame()
+
+    # Build rows
+    rows = []
+    for record in report_data:
+        row = {
+            'item': record.get('Name', ''),
+            'item_en': record.get('NameEn', ''),
+        }
+        for i, period_label in enumerate(periods, 1):
+            value = record.get(f'Value{i}')
+            if value is not None:
+                try:
+                    value = float(value)
+                except (ValueError, TypeError):
+                    pass
+            row[period_label] = value
+        rows.append(row)
+
+    return pd.DataFrame(rows)
+
 
 def fetch_financials(symbol: str, period: str = 'year') -> dict:
     """
-    Lấy toàn bộ báo cáo tài chính cho 1 mã từ VCI.
+    Lấy toàn bộ báo cáo tài chính cho 1 mã từ KBS REST API.
 
     Returns:
         dict {report_name: DataFrame}
     """
-    from vnstock.common.client import Vnstock
-
-    client = Vnstock(source=SOURCE, show_log=False)
-    stock = client.stock(symbol=symbol, source=SOURCE)
-
     results = {}
+    period_type = 1 if period == 'year' else 2
 
-    for report_name, label in REPORT_TYPES:
+    for report_name, kbs_type, _ in REPORT_TYPES:
         try:
-            if report_name == "balance_sheet":
-                df = stock.finance.balance_sheet(period=period, lang='en', dropna=True, show_log=False)
-            elif report_name == "income_statement":
-                df = stock.finance.income_statement(period=period, lang='en', dropna=True, show_log=False)
-            elif report_name == "cash_flow":
-                df = stock.finance.cash_flow(period=period, lang='en', dropna=True, show_log=False)
-            elif report_name == "ratio":
-                df = stock.finance.ratio(period=period, lang='en', dropna=True, show_log=False)
+            url = f"{_KBS_FINANCE_URL}/{symbol}"
+            params = {
+                'page': 1,
+                'pageSize': 20,  # Lấy 20 kỳ (nhiều hơn mặc định 8)
+                'type': kbs_type,
+                'unit': 1000,
+                'termtype': period_type,
+            }
+            # Cash flow uses different param names
+            if kbs_type == 'LCTT':
+                params['code'] = symbol
+                params['termType'] = period_type
             else:
+                params['languageid'] = 1
+
+            resp = requests.get(url, params=params, headers=_KBS_HEADERS, timeout=30)
+            if resp.status_code != 200:
+                logger.debug(f"  {symbol}/{report_name}: HTTP {resp.status_code}")
                 continue
+
+            json_data = resp.json()
+            df = _parse_kbs_response(json_data, report_name)
 
             if df is not None and not df.empty:
                 results[report_name] = df
@@ -181,10 +294,6 @@ def save_financial_data(symbol: str, data: dict, period: str):
     symbol_dir.mkdir(parents=True, exist_ok=True)
 
     for report_name, df in data.items():
-        # Xử lý MultiIndex columns (ratio có thể trả về MultiIndex)
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = ['_'.join(str(c) for c in col if str(c) != '').strip('_') for col in df.columns]
-
         filename = f"{report_name}_{period}.csv"
         filepath = symbol_dir / filename
         df.to_csv(filepath, index=False, encoding="utf-8-sig")
@@ -248,8 +357,8 @@ def main():
     logger.info("=" * 60)
     logger.info("THU THẬP DỮ LIỆU TÀI CHÍNH")
     logger.info(f"Top: {args.top_n} vốn hóa lớn nhất")
-    logger.info(f"Nguồn: VCI | Kỳ: {', '.join(periods)}")
-    logger.info(f"Báo cáo: {', '.join(r[1] for r in REPORT_TYPES)}")
+    logger.info(f"Nguồn: KBS SAS Finance API | Kỳ: {', '.join(periods)}")
+    logger.info(f"Báo cáo: {', '.join(r[0] for r in REPORT_TYPES)}")
     logger.info(f"Output: {DATA_DIR}")
     logger.info("=" * 60)
 
