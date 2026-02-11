@@ -82,8 +82,17 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
+      # ========== PHẦN 0: CÀI VNSTOCK_DATA (NẾU CÓ) ==========
+      - name: "[0] Install vnstock_data (if available)"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          pip install vnstock_data 2>/dev/null || echo "vnstock_data not available (Insiders Program)"
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+
       # ========== PHẦN 1: THU THẬP DỮ LIỆU CỔ PHIẾU ==========
-      - name: "[1/5] Thu thập dữ liệu cổ phiếu"
+      - name: "[1/8] Thu thập dữ liệu cổ phiếu"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} --skip-ohlcv
@@ -91,7 +100,7 @@ jobs:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
       # ========== PHẦN 2: THU THẬP OHLCV TOP 500 CỔ PHIẾU ==========
-      - name: "[2/5] Thu thập OHLCV top 500 cổ phiếu vốn hóa"
+      - name: "[2/8] Thu thập OHLCV top 500 cổ phiếu vốn hóa"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           python scripts/collect_stocks.py
@@ -99,7 +108,7 @@ jobs:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
       # ========== PHẦN 3: THU THẬP DỮ LIỆU CHỈ SỐ ==========
-      - name: "[3/5] Thu thập 18 chỉ số thị trường + charts"
+      - name: "[3/8] Thu thập 18 chỉ số thị trường + charts"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           START_FLAG=""
@@ -115,7 +124,7 @@ jobs:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
       # ========== PHẦN 4: GIÁ VÀNG + TỶ GIÁ + COMPANY DATA ==========
-      - name: "[4/5] Thu thập giá vàng, tỷ giá, company data, events, insider"
+      - name: "[4/8] Thu thập giá vàng, tỷ giá, company data, events, insider"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           python scripts/collect_extras.py --date ${{ steps.date.outputs.date }}
@@ -123,10 +132,37 @@ jobs:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
       # ========== PHẦN 5: FX + CRYPTO + WORLD INDICES + FUND ==========
-      - name: "[5/5] Thu thập FX, Crypto, World Indices, Fund, Listing"
+      - name: "[5/8] Thu thập FX, Crypto, World Indices, Fund, Listing"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           python scripts/collect_market.py
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+
+      # ========== PHẦN 6: GIÁ HÀNG HÓA (vnstock_data) ==========
+      - name: "[6/8] Thu thập giá hàng hóa (CommodityPrice)"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/collect_commodity.py
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+
+      # ========== PHẦN 7: DỮ LIỆU VĨ MÔ (vnstock_data) ==========
+      - name: "[7/8] Thu thập dữ liệu vĩ mô (Macro)"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/collect_macro.py
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+
+      # ========== PHẦN 8: MARKET INSIGHTS (vnstock_data) ==========
+      - name: "[8/8] Thu thập thống kê thị trường (Market Insights)"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/collect_insights.py
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
@@ -175,6 +211,21 @@ jobs:
           echo "  LISTING METADATA"
           echo "=========================================="
           ls -lh data/metadata/*.csv 2>/dev/null || echo "No metadata files"
+          echo ""
+          echo "=========================================="
+          echo "  HÀNG HÓA (vnstock_data)"
+          echo "=========================================="
+          ls -lh data/commodity/*.csv 2>/dev/null || echo "No commodity files"
+          echo ""
+          echo "=========================================="
+          echo "  KINH TẾ VĨ MÔ (vnstock_data)"
+          echo "=========================================="
+          ls -lh data/macro/*.csv 2>/dev/null || echo "No macro files"
+          echo ""
+          echo "=========================================="
+          echo "  MARKET INSIGHTS (vnstock_data)"
+          echo "=========================================="
+          ls -lh data/insights/*.csv 2>/dev/null || echo "No insights files"
 
       # ========== COMMIT & PUSH ==========
       - name: Commit and push all data
