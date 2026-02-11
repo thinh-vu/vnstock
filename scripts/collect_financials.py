@@ -109,6 +109,9 @@ def get_top_symbols(top_n: int = 500) -> list:
     if shares_col and 'close_price' in board.columns:
         board['market_cap'] = board['close_price'] * board[shares_col]
         logger.info(f"Market cap: close_price * {shares_col}")
+        # Debug: log sample values
+        sample = board[['close_price', shares_col]].head(3)
+        logger.info(f"  Sample: {sample.to_dict('records')}")
     elif 'total_value' in board.columns:
         board['total_value'] = pd.to_numeric(board['total_value'], errors='coerce')
         board['market_cap'] = board['total_value']
@@ -119,6 +122,11 @@ def get_top_symbols(top_n: int = 500) -> list:
 
     board = board.dropna(subset=['market_cap'])
     board = board[board['market_cap'] > 0]
+
+    if board.empty:
+        logger.warning(f"Market cap tính ra 0 kết quả, dùng thứ tự mặc định (top {top_n}).")
+        return all_symbols[:top_n]
+
     top = board.nlargest(top_n, 'market_cap')
     symbols = top['symbol'].tolist()
     logger.info(f"Top {top_n} vốn hóa: {len(symbols)} mã")
