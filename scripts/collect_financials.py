@@ -37,6 +37,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import pandas as pd
+from utils import init_rate_limiter, get_limiter
 
 # ============================================================
 # CẤU HÌNH
@@ -105,7 +106,7 @@ def get_top_symbols(top_n: int = 500) -> list:
         except Exception as e:
             logger.warning(f"  KBS batch lỗi: {e}")
         if i + batch_size < total:
-            time.sleep(0.5)
+            get_limiter().wait()
 
     if not all_data:
         logger.warning("Không lấy được KBS board, dùng thứ tự mặc định.")
@@ -357,6 +358,9 @@ def main():
     args = parser.parse_args()
 
     periods = [args.period] if args.period else ["year", "quarter"]
+
+    # Initialize rate limiter (auto-detects tier from VNSTOCK_API_KEY)
+    init_rate_limiter()
 
     logger.info("=" * 60)
     logger.info("THU THẬP DỮ LIỆU TÀI CHÍNH")

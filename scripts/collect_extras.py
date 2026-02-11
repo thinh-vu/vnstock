@@ -31,6 +31,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import pandas as pd
+from utils import init_rate_limiter, get_limiter
 
 # ============================================================
 # CẤU HÌNH
@@ -217,7 +218,7 @@ def collect_company_overview(top_n: int = 500):
                 pass
 
             success += 1
-            time.sleep(0.05)
+            get_limiter().wait()
 
         except Exception:
             errors += 1
@@ -280,7 +281,7 @@ def collect_company_events(top_n: int = 100):
                 pass
 
             success += 1
-            time.sleep(0.05)
+            get_limiter().wait()
 
         except Exception:
             errors += 1
@@ -334,7 +335,7 @@ def collect_insider_trading(top_n: int = 100):
                 pass
 
             success += 1
-            time.sleep(0.05)
+            get_limiter().wait()
 
         except Exception:
             errors += 1
@@ -388,7 +389,7 @@ def collect_shareholders(top_n: int = 100):
                 pass
 
             success += 1
-            time.sleep(0.05)
+            get_limiter().wait()
 
         except Exception:
             errors += 1
@@ -423,6 +424,9 @@ def main():
 
     date_str = args.date or datetime.now().strftime("%Y-%m-%d")
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Initialize rate limiter (auto-detects tier from VNSTOCK_API_KEY)
+    init_rate_limiter()
 
     total_steps = 2
     if not args.skip_company:

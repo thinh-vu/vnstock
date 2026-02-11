@@ -31,6 +31,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import pandas as pd
+from utils import init_rate_limiter, get_limiter
 
 # ============================================================
 # CẤU HÌNH
@@ -410,7 +411,7 @@ def collect_fund_data():
                         all_navs.append(nav_df)
                 except Exception:
                     pass
-                time.sleep(0.2)
+                get_limiter().wait()
 
             if all_navs:
                 nav_combined = pd.concat(all_navs, ignore_index=True)
@@ -432,7 +433,7 @@ def collect_fund_data():
                         all_holdings.append(hold_df)
                 except Exception:
                     pass
-                time.sleep(0.2)
+                get_limiter().wait()
 
             if all_holdings:
                 hold_combined = pd.concat(all_holdings, ignore_index=True)
@@ -512,6 +513,9 @@ def main():
     end = args.end or datetime.now().strftime("%Y-%m-%d")
     start = args.start or (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Initialize rate limiter (auto-detects tier from VNSTOCK_API_KEY)
+    init_rate_limiter()
 
     # Run Fund + Listing first (independent of MSN)
     # Then MSN-dependent sections (FX, Crypto, World)

@@ -41,8 +41,10 @@ from pathlib import Path
 # Thêm thư mục gốc project vào path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 import pandas as pd
+from utils import init_rate_limiter, get_limiter
 
 # ============================================================
 # CẤU HÌNH
@@ -138,10 +140,7 @@ def get_daily_ohlcv_history(symbols: list, date_str: str, source: str = DEFAULT_
                 logger.debug(f"  Lỗi {symbol}: {e}")
 
         # Rate limiting (chỉ khi gọi API)
-        if (api_count) % BATCH_SIZE == 0 and api_count > 0:
-            time.sleep(BATCH_DELAY)
-        else:
-            time.sleep(REQUEST_DELAY)
+        get_limiter().wait()
 
     if errors:
         logger.warning(f"  {len(errors)} mã bị lỗi: {errors[:20]}{'...' if len(errors) > 20 else ''}")
@@ -185,7 +184,7 @@ def fetch_kbs_full_board(stock_symbols: list) -> pd.DataFrame:
             logger.warning(f"  KBS batch {batch_num}/{total_batches} lỗi: {e}")
 
         if i + BATCH_SIZE < total:
-            time.sleep(BATCH_DELAY)
+            get_limiter().wait()
 
     if not all_data:
         logger.warning("Không lấy được dữ liệu bảng giá KBS.")
@@ -565,6 +564,9 @@ def collect_daily_data(date_str: str, source: str = DEFAULT_SOURCE, skip_ohlcv_h
         skip_ohlcv_history: Bỏ qua lấy OHLCV từng mã (chỉ dùng price_board)
     """
     start_time = time.time()
+
+    # Initialize rate limiter (auto-detects tier from VNSTOCK_API_KEY)
+    init_rate_limiter()
 
     # Tạo thư mục
     date_dir = DATA_DIR / date_str

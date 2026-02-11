@@ -32,6 +32,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 import numpy as np
 import pandas as pd
+from utils import init_rate_limiter, get_limiter
 
 # ============================================================
 # CẤU HÌNH
@@ -96,7 +97,7 @@ def get_top_symbols(top_n: int = 500) -> list:
         except Exception as e:
             logger.warning(f"  KBS batch lỗi: {e}")
         if i + batch_size < total:
-            time.sleep(0.5)
+            get_limiter().wait()
 
     if not all_data:
         logger.error("Không lấy được bảng giá KBS.")
@@ -362,6 +363,9 @@ def main():
 
     end = args.end or datetime.now().strftime("%Y-%m-%d")
     start = args.start or (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+
+    # Initialize rate limiter (auto-detects tier from VNSTOCK_API_KEY)
+    init_rate_limiter()
 
     # Count existing CSV files
     existing_count = len(list(DATA_DIR.glob("*.csv"))) if DATA_DIR.exists() else 0

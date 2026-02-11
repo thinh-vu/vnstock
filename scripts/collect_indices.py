@@ -32,9 +32,11 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 import numpy as np
 import pandas as pd
+from utils import init_rate_limiter
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -489,6 +491,9 @@ def main():
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     CHART_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Initialize rate limiter (registers API key for proper tier detection)
+    init_rate_limiter()
 
     # Cache stats
     from db_cache import get_cache_stats

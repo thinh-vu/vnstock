@@ -34,8 +34,10 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 import pandas as pd
+from utils import init_rate_limiter
 
 # ============================================================
 # CẤU HÌNH
@@ -165,6 +167,9 @@ def main():
 
     end = args.end or datetime.now().strftime("%Y-%m-%d")
     start = args.start or (datetime.now() - timedelta(days=365 * 3)).strftime("%Y-%m-%d")
+
+    # Initialize rate limiter (registers API key for proper tier detection)
+    init_rate_limiter()
 
     logger.info("=" * 60)
     logger.info("THU THẬP GIÁ HÀNG HÓA")

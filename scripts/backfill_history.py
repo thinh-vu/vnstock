@@ -26,8 +26,10 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 import pandas as pd
+from utils import init_rate_limiter, get_limiter
 
 # ============================================================
 # CẤU HÌNH
@@ -108,7 +110,7 @@ def fetch_sjc_gold_history(start: str, end: str) -> pd.DataFrame:
             except Exception:
                 pass
 
-            time.sleep(REQUEST_DELAY)
+            get_limiter().wait()
 
         current += timedelta(days=1)
 
@@ -126,6 +128,9 @@ def fetch_sjc_gold_history(start: str, end: str) -> pd.DataFrame:
 def run_backfill(start: str, end: str, symbols: list, source: str, per_symbol: bool):
     """Chạy backfill dữ liệu lịch sử."""
     start_time = time.time()
+
+    # Initialize rate limiter (auto-detects tier from VNSTOCK_API_KEY)
+    init_rate_limiter()
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -172,10 +177,7 @@ def run_backfill(start: str, end: str, symbols: list, source: str, per_symbol: b
                 logger.debug(f"  Lỗi {symbol}: {e}")
 
         # Rate limiting
-        if (idx + 1) % BATCH_SIZE == 0:
-            time.sleep(BATCH_DELAY)
-        else:
-            time.sleep(REQUEST_DELAY)
+        get_limiter().wait()
 
     if errors:
         logger.warning(f"  {len(errors)} mã lỗi: {errors[:20]}{'...' if len(errors) > 20 else ''}")

@@ -28,8 +28,10 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 import pandas as pd
+from utils import init_rate_limiter
 
 # ============================================================
 # CẤU HÌNH
@@ -127,6 +129,9 @@ def main():
     parser.add_argument("--only", nargs="+", default=None,
                         help="Chỉ lấy 1 số chỉ số cụ thể")
     args = parser.parse_args()
+
+    # Initialize rate limiter (registers API key for proper tier detection)
+    init_rate_limiter()
 
     logger.info("=" * 60)
     logger.info("THU THẬP DỮ LIỆU KINH TẾ VĨ MÔ")
