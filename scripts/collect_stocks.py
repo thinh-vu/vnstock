@@ -2,7 +2,7 @@
 Thu thập dữ liệu OHLCV lịch sử cho top 500 cổ phiếu vốn hóa lớn nhất.
 
 Nguồn: VNDirect dchart API (TradingView UDF format) - full OHLCV, không cần auth.
-Cache: SQLite (data/cache.db) - lần đầu fetch full, hàng ngày chỉ fetch ngày mới.
+Cache: Đọc file CSV đã commit trong repo, chỉ fetch phần mới.
 
 Output:
     data/stocks/
@@ -12,9 +12,10 @@ Output:
     └── ... (500 files)
 
 Cách chạy:
-    python scripts/collect_stocks.py                        # Hàng ngày: fetch phiên mới nhất
+    python scripts/collect_stocks.py                        # Hàng ngày: chỉ fetch phần mới
     python scripts/collect_stocks.py --start 2025-01-01     # Backfill từ ngày cụ thể
     python scripts/collect_stocks.py --top-n 100            # Chỉ lấy top 100 vốn hóa
+    python scripts/collect_stocks.py --full                 # Force fetch lại toàn bộ
 """
 
 import sys
@@ -50,8 +51,12 @@ _VND_HEADERS = {
     "Origin": "https://dchart.vndirect.com.vn",
 }
 
-REQUEST_DELAY = 0.15  # ~7 req/s (Golden Sponsor: 500 req/min)
+REQUEST_DELAY = 0.05  # ~20 req/s
 BATCH_SIZE = 50       # Log progress mỗi 50 mã
+
+# Reuse HTTP session for connection pooling
+_session = requests.Session()
+_session.headers.update(_VND_HEADERS)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -65,23 +70,17 @@ logger = logging.getLogger("stocks")
 # ============================================================
 
 def get_top_symbols(top_n: int = 500) -> list:
-    """
-    Lấy top N mã cổ phiếu vốn hóa lớn nhất từ KBS price_board.
-
-    Returns:
-        List of symbol strings sorted by market cap descending.
-    """
+    """Lấy top N mã cổ phiếu vốn hóa lớn nhất từ KBS price_board."""
     from vnstock.common.client import Vnstock
 
-    logger.info(f"Đang lấy danh sách mã cổ phiếu...")
+    logger.info("Đang lấy danh sách mã cổ phiếu...")
     client = Vnstock(source="VCI", show_log=False)
     stock = client.stock(symbol="ACB", source="VCI")
     symbols_df = stock.listing.symbols_by_exchange(show_log=False)
     all_symbols = symbols_df["symbol"].tolist()
     logger.info(f"Tổng: {len(all_symbols)} mã")
 
-    # Fetch KBS board để xác định vốn hóa
-    logger.info(f"Đang lấy bảng giá KBS để xếp hạng vốn hóa...")
+    logger.info("Đang lấy bảng giá KBS để xếp hạng vốn hóa...")
     client_kbs = Vnstock(source="KBS", show_log=False)
     stock_kbs = client_kbs.stock(symbol="ACB", source="KBS")
 
@@ -104,15 +103,14 @@ def get_top_symbols(top_n: int = 500) -> list:
         return all_symbols[:top_n]
 
     board = pd.concat(all_data, ignore_index=True)
-    logger.info(f"KBS board: {len(board)} mã, columns: {list(board.columns)[:15]}")
+    logger.info(f"KBS board: {len(board)} mã")
 
-    # Tính market cap
+    # Convert numeric columns
     for col in ['close_price', 'reference_price', 'listed_shares', 'total_listed_qty']:
         if col in board.columns:
             board[col] = pd.to_numeric(board[col], errors='coerce')
 
-    # Determine price: use close_price, fallback to reference_price if close=0
-    # (close_price = 0 ngoài giờ giao dịch, reference_price luôn có giá trị)
+    # Use close_price, fallback to reference_price when close=0 (outside trading hours)
     if 'close_price' in board.columns and 'reference_price' in board.columns:
         board['price'] = board['close_price'].where(
             board['close_price'] > 0, board['reference_price']
@@ -146,11 +144,10 @@ def get_top_symbols(top_n: int = 500) -> list:
     board = board[board['market_cap'] > 0]
 
     if board.empty:
-        logger.warning(f"Market cap tính ra 0 kết quả, dùng thứ tự mặc định (top {top_n}).")
+        logger.warning(f"Market cap = 0, dùng thứ tự mặc định (top {top_n}).")
         return all_symbols[:top_n]
 
     top = board.nlargest(top_n, 'market_cap')
-
     symbols = top['symbol'].tolist()
     logger.info(f"Top {top_n} vốn hóa: {len(symbols)} mã ({symbols[0]}...{symbols[-1]})")
     return symbols
@@ -161,9 +158,7 @@ def get_top_symbols(top_n: int = 500) -> list:
 # ============================================================
 
 def fetch_stock_ohlcv(symbol: str, start: str, end: str) -> pd.DataFrame:
-    """
-    Lấy OHLCV lịch sử cho 1 mã cổ phiếu từ VNDirect dchart API.
-    """
+    """Lấy OHLCV lịch sử cho 1 mã từ VNDirect dchart API."""
     start_ts = int(datetime.strptime(start, "%Y-%m-%d").timestamp())
     end_ts = int((datetime.strptime(end, "%Y-%m-%d") + timedelta(days=1)).timestamp())
 
@@ -175,9 +170,7 @@ def fetch_stock_ohlcv(symbol: str, start: str, end: str) -> pd.DataFrame:
     }
 
     try:
-        resp = requests.get(
-            _VND_CHART_URL, params=params, headers=_VND_HEADERS, timeout=30
-        )
+        resp = _session.get(_VND_CHART_URL, params=params, timeout=30)
         if resp.status_code != 200:
             return pd.DataFrame()
 
@@ -210,35 +203,6 @@ def fetch_stock_ohlcv(symbol: str, start: str, end: str) -> pd.DataFrame:
     except Exception as e:
         logger.debug(f"  {symbol}: lỗi - {e}")
         return pd.DataFrame()
-
-
-def fetch_stock_with_cache(symbol: str, start: str, end: str) -> pd.DataFrame:
-    """
-    Fetch OHLCV cho 1 mã, sử dụng SQLite cache.
-    Chỉ gọi API cho ngày chưa có trong cache.
-    """
-    from db_cache import (
-        get_cached_stock, save_stock_data, compute_fetch_range
-    )
-
-    fetch_start, fetch_end = compute_fetch_range(
-        symbol, start, end, table="stock_ohlcv", fresh_days=3
-    )
-
-    if fetch_start is None:
-        # Cache đầy đủ
-        df = get_cached_stock(symbol, start, end)
-        return df
-
-    # Fetch dữ liệu mới
-    new_data = fetch_stock_ohlcv(symbol, fetch_start, fetch_end)
-
-    if new_data is not None and not new_data.empty:
-        save_stock_data(symbol, new_data)
-
-    # Đọc lại từ cache (merged)
-    df = get_cached_stock(symbol, start, end)
-    return df
 
 
 # ============================================================
@@ -287,52 +251,93 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
 # MAIN COLLECTOR
 # ============================================================
 
-def collect_stocks(symbols: list, start: str, end: str):
+CORE_COLS = ["time", "open", "high", "low", "close", "volume"]
+
+
+def collect_stocks(symbols: list, start: str, end: str, force_full: bool = False):
     """
     Thu thập OHLCV cho danh sách mã cổ phiếu.
-    Lưu mỗi mã thành 1 file CSV riêng.
+
+    Nếu file CSV đã tồn tại → chỉ fetch dữ liệu mới (incremental).
+    Nếu chưa có hoặc --full → fetch toàn bộ.
     """
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     total = len(symbols)
     success = 0
-    cached = 0
-    api_calls = 0
+    incremental = 0
+    full_fetch = 0
     errors = []
 
     for idx, symbol in enumerate(symbols):
         if (idx + 1) % BATCH_SIZE == 0 or idx == 0:
-            logger.info(f"  [{idx + 1}/{total}] {symbol}... (OK: {success}, cache: {cached}, API: {api_calls})")
+            logger.info(
+                f"  [{idx + 1}/{total}] {symbol}... "
+                f"(OK: {success}, incremental: {incremental}, full: {full_fetch})"
+            )
 
-        from db_cache import get_last_cached_date
-        had_cache = get_last_cached_date(symbol, "stock_ohlcv") is not None
+        csv_path = DATA_DIR / f"{symbol}.csv"
+        existing_df = None
+        fetch_start = start
+        is_incremental = False
+
+        # Check existing CSV for incremental update
+        if not force_full and csv_path.exists():
+            try:
+                existing_df = pd.read_csv(csv_path, parse_dates=["time"])
+                if not existing_df.empty and "time" in existing_df.columns:
+                    last_date = existing_df["time"].max()
+                    # Fetch from 3 days before last date (overlap for accuracy)
+                    fetch_start = (last_date - timedelta(days=3)).strftime("%Y-%m-%d")
+                    is_incremental = True
+                else:
+                    existing_df = None
+            except Exception:
+                existing_df = None
 
         try:
-            df = fetch_stock_with_cache(symbol, start, end)
+            new_data = fetch_stock_ohlcv(symbol, fetch_start, end)
 
-            if df is not None and not df.empty:
-                # Tính chỉ báo kỹ thuật
-                df = add_indicators(df)
-                df["symbol"] = symbol
-                csv_path = DATA_DIR / f"{symbol}.csv"
-                df.to_csv(csv_path, index=False, encoding="utf-8-sig")
+            if new_data is not None and not new_data.empty:
+                if existing_df is not None and not existing_df.empty:
+                    # Merge: keep only core columns from existing, add new data
+                    existing_core = existing_df[CORE_COLS].copy()
+                    combined = pd.concat([existing_core, new_data])
+                    combined = (
+                        combined
+                        .drop_duplicates("time", keep="last")
+                        .sort_values("time")
+                        .reset_index(drop=True)
+                    )
+                else:
+                    combined = new_data
+
+                # Recalculate indicators on full dataset
+                combined = add_indicators(combined)
+                combined["symbol"] = symbol
+                combined.to_csv(csv_path, index=False, encoding="utf-8-sig")
                 success += 1
 
-                if had_cache:
-                    cached += 1
+                if is_incremental:
+                    incremental += 1
                 else:
-                    api_calls += 1
+                    full_fetch += 1
+
+            elif existing_df is not None and not existing_df.empty:
+                # No new data but existing file is fine (weekend/holiday)
+                success += 1
+                incremental += 1
             else:
                 errors.append(symbol)
+
         except Exception as e:
             errors.append(symbol)
             logger.debug(f"  {symbol}: lỗi - {e}")
 
-        # Rate limiting
         time.sleep(REQUEST_DELAY)
 
     logger.info(f"\nKết quả: {success}/{total} mã thành công")
-    logger.info(f"  Cache hit: {cached} | API fetch: {api_calls} | Lỗi: {len(errors)}")
+    logger.info(f"  Incremental: {incremental} | Full fetch: {full_fetch} | Lỗi: {len(errors)}")
     if errors:
         logger.warning(f"  Mã lỗi: {errors[:20]}{'...' if len(errors) > 20 else ''}")
 
@@ -351,22 +356,22 @@ def main():
                         help="Ngày kết thúc (YYYY-MM-DD). Mặc định: hôm nay")
     parser.add_argument("--top-n", type=int, default=500,
                         help="Số mã vốn hóa lớn nhất (mặc định: 500)")
+    parser.add_argument("--full", action="store_true",
+                        help="Force fetch lại toàn bộ lịch sử (bỏ qua CSV cũ)")
     args = parser.parse_args()
 
     end = args.end or datetime.now().strftime("%Y-%m-%d")
     start = args.start or (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
 
-    # Cache stats
-    from db_cache import get_cache_stats
-    stats = get_cache_stats()
-    stock_stats = stats.get("stock_ohlcv", {})
+    # Count existing CSV files
+    existing_count = len(list(DATA_DIR.glob("*.csv"))) if DATA_DIR.exists() else 0
 
     logger.info("=" * 60)
     logger.info("THU THẬP OHLCV CỔ PHIẾU")
     logger.info(f"Thời gian: {start} -> {end}")
     logger.info(f"Top: {args.top_n} vốn hóa lớn nhất")
-    logger.info(f"Nguồn: VNDirect dchart API + SQLite cache")
-    logger.info(f"Cache: {stock_stats.get('rows', 0)} rows, {stock_stats.get('symbols', 0)} symbols")
+    logger.info(f"Nguồn: VNDirect dchart API")
+    logger.info(f"CSV đã có: {existing_count} files {'(sẽ cập nhật incremental)' if existing_count > 0 and not args.full else '(fetch full)'}")
     logger.info(f"Output: {DATA_DIR}")
     logger.info("=" * 60)
 
@@ -380,7 +385,7 @@ def main():
 
     # 2. Fetch OHLCV
     logger.info(f"\n[2/2] FETCH OHLCV ({len(symbols)} mã)")
-    collect_stocks(symbols, start, end)
+    collect_stocks(symbols, start, end, force_full=args.full)
 
     logger.info("\n" + "=" * 60)
     logger.info("HOÀN TẤT!")
