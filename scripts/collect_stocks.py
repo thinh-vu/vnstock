@@ -130,6 +130,11 @@ def get_top_symbols(top_n: int = 500) -> list:
 
     board = board.dropna(subset=['market_cap'])
     board = board[board['market_cap'] > 0]
+
+    if board.empty:
+        logger.warning(f"Market cap tính ra 0 kết quả, dùng thứ tự mặc định (top {top_n}).")
+        return all_symbols[:top_n]
+
     top = board.nlargest(top_n, 'market_cap')
 
     symbols = top['symbol'].tolist()
