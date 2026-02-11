@@ -83,11 +83,25 @@ jobs:
           fi
 
       # ========== PHẦN 0: CÀI VNSTOCK_DATA (NẾU CÓ) ==========
-      - name: "[0] Install vnstock_data (if available)"
+      - name: "[0] Install vnstock premium packages (if available)"
         if: steps.check_day.outputs.skip != 'true'
         continue-on-error: true
         run: |
-          pip install vnstock_data 2>/dev/null || echo "vnstock_data not available (Insiders Program)"
+          echo "Trying to install vnstock premium packages from vnstocks.com..."
+          pip install --extra-index-url https://vnstocks.com/api/simple vnstock_data vnstock_news 2>&1 || \
+            echo "vnstock premium packages not available (check Insiders Program access)"
+          python -c "
+          try:
+              import vnstock_data
+              print(f'vnstock_data: {vnstock_data.__version__}')
+          except ImportError:
+              print('vnstock_data: NOT installed')
+          try:
+              import vnstock_news
+              print(f'vnstock_news: {vnstock_news.__version__}')
+          except ImportError:
+              print('vnstock_news: NOT installed')
+          "
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
