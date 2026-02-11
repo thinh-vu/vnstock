@@ -107,9 +107,23 @@ def get_top_symbols(top_n: int = 500) -> list:
     logger.info(f"KBS board: {len(board)} mã, columns: {list(board.columns)[:15]}")
 
     # Tính market cap
-    for col in ['close_price', 'listed_shares', 'total_listed_qty']:
+    for col in ['close_price', 'reference_price', 'listed_shares', 'total_listed_qty']:
         if col in board.columns:
             board[col] = pd.to_numeric(board[col], errors='coerce')
+
+    # Determine price: use close_price, fallback to reference_price if close=0
+    # (close_price = 0 ngoài giờ giao dịch, reference_price luôn có giá trị)
+    if 'close_price' in board.columns and 'reference_price' in board.columns:
+        board['price'] = board['close_price'].where(
+            board['close_price'] > 0, board['reference_price']
+        )
+    elif 'close_price' in board.columns:
+        board['price'] = board['close_price']
+    elif 'reference_price' in board.columns:
+        board['price'] = board['reference_price']
+    else:
+        logger.warning("Không có cột giá, dùng thứ tự mặc định.")
+        return all_symbols[:top_n]
 
     shares_col = None
     for col in ['total_listed_qty', 'listed_shares']:
@@ -117,9 +131,9 @@ def get_top_symbols(top_n: int = 500) -> list:
             shares_col = col
             break
 
-    if shares_col and 'close_price' in board.columns:
-        board['market_cap'] = board['close_price'] * board[shares_col]
-        logger.info(f"Market cap: close_price * {shares_col}")
+    if shares_col:
+        board['market_cap'] = board['price'] * board[shares_col]
+        logger.info(f"Market cap: price * {shares_col}")
     elif 'total_value' in board.columns:
         board['total_value'] = pd.to_numeric(board['total_value'], errors='coerce')
         board['market_cap'] = board['total_value']
