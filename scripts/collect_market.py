@@ -22,6 +22,7 @@ import sys
 import time
 import logging
 import argparse
+import requests
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -36,6 +37,8 @@ import pandas as pd
 # ============================================================
 
 DATA_DIR = PROJECT_ROOT / "data"
+MAX_RETRIES = 3
+RETRY_DELAY = 5  # seconds
 
 logging.basicConfig(
     level=logging.INFO,
@@ -70,13 +73,144 @@ WORLD_INDICES = {
 
 
 # ============================================================
+# MSN API KEY (fetch once, reuse for all MSN calls)
+# ============================================================
+
+_msn_apikey_cache = None
+
+
+def get_msn_apikey():
+    """Lấy MSN API key với retry logic. Cache kết quả."""
+    global _msn_apikey_cache
+    if _msn_apikey_cache is not None:
+        return _msn_apikey_cache
+
+    from vnstock.core.utils.user_agent import get_headers
+    headers = get_headers(data_source='MSN', random_agent=False)
+
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            logger.info(f"  Đang lấy MSN API key (lần {attempt}/{MAX_RETRIES})...")
+            from vnstock.explorer.msn.helper import msn_apikey
+            key = msn_apikey(headers=headers, version='20240430')
+            _msn_apikey_cache = key
+            logger.info("  MSN API key: OK")
+            return key
+        except Exception as e:
+            logger.warning(f"  MSN API key lần {attempt} lỗi: {e}")
+            if attempt < MAX_RETRIES:
+                wait = RETRY_DELAY * attempt
+                logger.info(f"  Chờ {wait}s rồi thử lại...")
+                time.sleep(wait)
+
+    logger.error("  MSN API key: THẤT BẠI sau 3 lần thử. Bỏ qua FX/Crypto/World.")
+    return None
+
+
+def msn_fetch_history(symbol_id: str, start: str, end: str, asset_type: str = "currency"):
+    """Fetch OHLCV trực tiếp từ MSN API, dùng API key đã cache."""
+    apikey = get_msn_apikey()
+    if apikey is None:
+        return None
+
+    from vnstock.core.utils.user_agent import get_headers
+    headers = get_headers(data_source='MSN', random_agent=False)
+
+    if asset_type == "crypto":
+        url = "https://assets.msn.com/service/Finance/Cryptocurrency/chart"
+    else:
+        url = "https://assets.msn.com/service/Finance/Charts/TimeRange"
+
+    params = {
+        "apikey": apikey,
+        'StartTime': f'{start}T17:00:00.000Z',
+        'EndTime': f'{end}T16:59:00.858Z',
+        'timeframe': 1,
+        "ocid": "finance-utils-peregrine",
+        "cm": "vi-vn",
+        "it": "web",
+        "scn": "ANON",
+        "ids": symbol_id.lower(),
+        "type": "All",
+        "wrapodata": "false",
+        "disableSymbol": "false",
+    }
+
+    resp = requests.get(url, headers=headers, params=params, timeout=30)
+    if resp.status_code != 200:
+        raise ConnectionError(f"MSN HTTP {resp.status_code}")
+
+    json_data = resp.json()[0]['series']
+
+    # Convert to DataFrame
+    df = pd.DataFrame(json_data)
+    col_map = {
+        'timeStamps': 'time', 'openPrices': 'open',
+        'pricesHigh': 'high', 'pricesLow': 'low',
+        'prices': 'close', 'volumes': 'volume',
+    }
+    df.rename(columns=col_map, inplace=True)
+    drop_cols = [c for c in ['priceHigh', 'priceLow', 'startTime', 'endTime'] if c in df.columns]
+    if drop_cols:
+        df.drop(columns=drop_cols, inplace=True)
+
+    df["time"] = pd.to_datetime(df["time"], errors='coerce')
+    df['time'] = df['time'] + pd.Timedelta(hours=7)
+    df['time'] = df['time'].dt.floor('D')
+    for col in ["open", "high", "low", "close"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce').round(2)
+    if "volume" in df.columns:
+        df["volume"] = pd.to_numeric(df["volume"], errors='coerce').fillna(0).astype(int)
+
+    keep_cols = [c for c in ['time', 'open', 'high', 'low', 'close', 'volume'] if c in df.columns]
+    df = df[keep_cols]
+
+    # Filter by date range
+    df = df[(df['time'] >= start) & (df['time'] <= end)]
+    df = df.replace(-99999901.0, None).dropna(subset=['open', 'high', 'low'])
+
+    if asset_type == "currency" and "volume" in df.columns:
+        df.drop(columns=['volume'], inplace=True)
+
+    return df
+
+
+# ============================================================
+# INCREMENTAL MERGE HELPER
+# ============================================================
+
+def incremental_merge(csv_path, new_df, date_col="time"):
+    """Merge new data with existing CSV file."""
+    if csv_path.exists():
+        try:
+            existing = pd.read_csv(csv_path, parse_dates=[date_col])
+            if not existing.empty:
+                combined = pd.concat([existing, new_df])
+                combined = (
+                    combined.drop_duplicates(date_col, keep="last")
+                    .sort_values(date_col).reset_index(drop=True)
+                )
+                return combined
+        except Exception:
+            pass
+    return new_df.sort_values(date_col).reset_index(drop=True)
+
+
+# ============================================================
 # 1. FX RATES (MSN)
 # ============================================================
 
 def collect_fx(start: str, end: str):
     """Thu thập tỷ giá FX OHLCV từ MSN."""
     logger.info("Đang lấy tỷ giá FX từ MSN...")
-    from vnstock.common.client import Vnstock
+
+    # Test MSN API key first
+    if get_msn_apikey() is None:
+        logger.warning("  MSN không khả dụng, bỏ qua FX.")
+        return False
+
+    from vnstock.explorer.msn.const import _CURRENCY_ID_MAP
 
     fx_dir = DATA_DIR / "fx"
     fx_dir.mkdir(parents=True, exist_ok=True)
@@ -86,38 +220,26 @@ def collect_fx(start: str, end: str):
 
     for pair in FX_PAIRS:
         csv_path = fx_dir / f"{pair}.csv"
+        symbol_id = _CURRENCY_ID_MAP.get(pair)
+        if not symbol_id:
+            errors.append(pair)
+            continue
 
-        # Determine fetch start for incremental update
+        # Incremental: determine fetch start
         fetch_start = start
-        existing_df = None
         if csv_path.exists():
             try:
-                existing_df = pd.read_csv(csv_path, parse_dates=["time"])
-                if not existing_df.empty:
-                    last_date = existing_df["time"].max()
-                    fetch_start = (last_date - timedelta(days=3)).strftime("%Y-%m-%d")
+                existing = pd.read_csv(csv_path, parse_dates=["time"])
+                if not existing.empty:
+                    fetch_start = (existing["time"].max() - timedelta(days=3)).strftime("%Y-%m-%d")
             except Exception:
-                existing_df = None
+                pass
 
         try:
-            client = Vnstock(show_log=False)
-            fx_obj = client.fx(symbol=pair, source="MSN")
-            df = fx_obj.quote.history(start=fetch_start, end=end, interval="1D")
-
+            df = msn_fetch_history(symbol_id, fetch_start, end, asset_type="currency")
             if df is not None and not df.empty:
                 df["symbol"] = pair
-
-                if existing_df is not None and not existing_df.empty:
-                    combined = pd.concat([existing_df, df])
-                    combined = (
-                        combined
-                        .drop_duplicates("time", keep="last")
-                        .sort_values("time")
-                        .reset_index(drop=True)
-                    )
-                else:
-                    combined = df.sort_values("time").reset_index(drop=True)
-
+                combined = incremental_merge(csv_path, df)
                 combined.to_csv(csv_path, index=False, encoding="utf-8-sig")
                 success += 1
                 logger.info(f"  {pair}: {len(combined)} rows")
@@ -127,7 +249,7 @@ def collect_fx(start: str, end: str):
             errors.append(pair)
             logger.warning(f"  {pair}: lỗi - {e}")
 
-        time.sleep(0.5)
+        time.sleep(0.3)
 
     logger.info(f"  FX: {success}/{len(FX_PAIRS)} OK, lỗi: {errors}")
     return success > 0
@@ -140,7 +262,12 @@ def collect_fx(start: str, end: str):
 def collect_crypto(start: str, end: str):
     """Thu thập giá crypto OHLCV từ MSN."""
     logger.info("Đang lấy giá crypto từ MSN...")
-    from vnstock.common.client import Vnstock
+
+    if get_msn_apikey() is None:
+        logger.warning("  MSN không khả dụng, bỏ qua Crypto.")
+        return False
+
+    from vnstock.explorer.msn.const import _CRYPTO_ID_MAP
 
     crypto_dir = DATA_DIR / "crypto"
     crypto_dir.mkdir(parents=True, exist_ok=True)
@@ -150,37 +277,25 @@ def collect_crypto(start: str, end: str):
 
     for symbol in CRYPTO_SYMBOLS:
         csv_path = crypto_dir / f"{symbol}.csv"
+        symbol_id = _CRYPTO_ID_MAP.get(symbol)
+        if not symbol_id:
+            errors.append(symbol)
+            continue
 
         fetch_start = start
-        existing_df = None
         if csv_path.exists():
             try:
-                existing_df = pd.read_csv(csv_path, parse_dates=["time"])
-                if not existing_df.empty:
-                    last_date = existing_df["time"].max()
-                    fetch_start = (last_date - timedelta(days=3)).strftime("%Y-%m-%d")
+                existing = pd.read_csv(csv_path, parse_dates=["time"])
+                if not existing.empty:
+                    fetch_start = (existing["time"].max() - timedelta(days=3)).strftime("%Y-%m-%d")
             except Exception:
-                existing_df = None
+                pass
 
         try:
-            client = Vnstock(show_log=False)
-            crypto_obj = client.crypto(symbol=symbol, source="MSN")
-            df = crypto_obj.quote.history(start=fetch_start, end=end, interval="1D")
-
+            df = msn_fetch_history(symbol_id, fetch_start, end, asset_type="crypto")
             if df is not None and not df.empty:
                 df["symbol"] = symbol
-
-                if existing_df is not None and not existing_df.empty:
-                    combined = pd.concat([existing_df, df])
-                    combined = (
-                        combined
-                        .drop_duplicates("time", keep="last")
-                        .sort_values("time")
-                        .reset_index(drop=True)
-                    )
-                else:
-                    combined = df.sort_values("time").reset_index(drop=True)
-
+                combined = incremental_merge(csv_path, df)
                 combined.to_csv(csv_path, index=False, encoding="utf-8-sig")
                 success += 1
                 logger.info(f"  {symbol}: {len(combined)} rows")
@@ -190,7 +305,7 @@ def collect_crypto(start: str, end: str):
             errors.append(symbol)
             logger.warning(f"  {symbol}: lỗi - {e}")
 
-        time.sleep(0.5)
+        time.sleep(0.3)
 
     logger.info(f"  Crypto: {success}/{len(CRYPTO_SYMBOLS)} OK, lỗi: {errors}")
     return success > 0
@@ -203,7 +318,12 @@ def collect_crypto(start: str, end: str):
 def collect_world_indices(start: str, end: str):
     """Thu thập chỉ số thế giới OHLCV từ MSN."""
     logger.info("Đang lấy chỉ số thế giới từ MSN...")
-    from vnstock.common.client import Vnstock
+
+    if get_msn_apikey() is None:
+        logger.warning("  MSN không khả dụng, bỏ qua World Indices.")
+        return False
+
+    from vnstock.explorer.msn.const import _GLOBAL_INDICES
 
     idx_dir = DATA_DIR / "world_indices"
     idx_dir.mkdir(parents=True, exist_ok=True)
@@ -213,38 +333,26 @@ def collect_world_indices(start: str, end: str):
 
     for symbol, name in WORLD_INDICES.items():
         csv_path = idx_dir / f"{symbol}.csv"
+        symbol_id = _GLOBAL_INDICES.get(symbol)
+        if not symbol_id:
+            errors.append(symbol)
+            continue
 
         fetch_start = start
-        existing_df = None
         if csv_path.exists():
             try:
-                existing_df = pd.read_csv(csv_path, parse_dates=["time"])
-                if not existing_df.empty:
-                    last_date = existing_df["time"].max()
-                    fetch_start = (last_date - timedelta(days=3)).strftime("%Y-%m-%d")
+                existing = pd.read_csv(csv_path, parse_dates=["time"])
+                if not existing.empty:
+                    fetch_start = (existing["time"].max() - timedelta(days=3)).strftime("%Y-%m-%d")
             except Exception:
-                existing_df = None
+                pass
 
         try:
-            client = Vnstock(show_log=False)
-            idx_obj = client.world_index(symbol=symbol, source="MSN")
-            df = idx_obj.quote.history(start=fetch_start, end=end, interval="1D")
-
+            df = msn_fetch_history(symbol_id, fetch_start, end, asset_type="index")
             if df is not None and not df.empty:
                 df["symbol"] = symbol
                 df["name"] = name
-
-                if existing_df is not None and not existing_df.empty:
-                    combined = pd.concat([existing_df, df])
-                    combined = (
-                        combined
-                        .drop_duplicates("time", keep="last")
-                        .sort_values("time")
-                        .reset_index(drop=True)
-                    )
-                else:
-                    combined = df.sort_values("time").reset_index(drop=True)
-
+                combined = incremental_merge(csv_path, df)
                 combined.to_csv(csv_path, index=False, encoding="utf-8-sig")
                 success += 1
                 logger.info(f"  {symbol} ({name}): {len(combined)} rows")
@@ -254,7 +362,7 @@ def collect_world_indices(start: str, end: str):
             errors.append(symbol)
             logger.warning(f"  {symbol}: lỗi - {e}")
 
-        time.sleep(0.5)
+        time.sleep(0.3)
 
     logger.info(f"  World: {success}/{len(WORLD_INDICES)} OK, lỗi: {errors}")
     return success > 0
@@ -357,71 +465,26 @@ def collect_listing_metadata():
         client = Vnstock(source="KBS", show_log=False)
         stock = client.stock(symbol="ACB", source="KBS")
 
-        # 1. Industry classification
-        try:
-            logger.info("  Lấy phân ngành ICB...")
-            industries = stock.listing.industries_icb()
-            if industries is not None and not industries.empty:
-                industries.to_csv(meta_dir / "industries_icb.csv", index=False, encoding="utf-8-sig")
-                logger.info(f"  ICB: {len(industries)} ngành")
-                success += 1
-        except Exception as e:
-            logger.warning(f"  ICB lỗi: {e}")
+        items = [
+            ("industries_icb", "Phân ngành ICB", "industries_icb.csv"),
+            ("symbols_by_industries", "Mã theo ngành", "symbols_by_industry.csv"),
+            ("all_future_indices", "Hợp đồng tương lai", "futures.csv"),
+            ("all_covered_warrant", "Chứng quyền", "covered_warrants.csv"),
+            ("all_bonds", "Trái phiếu DN", "corporate_bonds.csv"),
+            ("all_government_bonds", "Trái phiếu CP", "government_bonds.csv"),
+        ]
 
-        # 2. Symbols by industry
-        try:
-            logger.info("  Lấy mã theo ngành...")
-            by_industry = stock.listing.symbols_by_industries()
-            if by_industry is not None and not by_industry.empty:
-                by_industry.to_csv(meta_dir / "symbols_by_industry.csv", index=False, encoding="utf-8-sig")
-                logger.info(f"  By industry: {len(by_industry)} mã")
-                success += 1
-        except Exception as e:
-            logger.warning(f"  By industry lỗi: {e}")
-
-        # 3. Future indices
-        try:
-            logger.info("  Lấy hợp đồng tương lai...")
-            futures = stock.listing.all_future_indices()
-            if futures is not None and not futures.empty:
-                futures.to_csv(meta_dir / "futures.csv", index=False, encoding="utf-8-sig")
-                logger.info(f"  Futures: {len(futures)} mã")
-                success += 1
-        except Exception as e:
-            logger.warning(f"  Futures lỗi: {e}")
-
-        # 4. Covered warrants
-        try:
-            logger.info("  Lấy chứng quyền...")
-            warrants = stock.listing.all_covered_warrant()
-            if warrants is not None and not warrants.empty:
-                warrants.to_csv(meta_dir / "covered_warrants.csv", index=False, encoding="utf-8-sig")
-                logger.info(f"  Warrants: {len(warrants)} mã")
-                success += 1
-        except Exception as e:
-            logger.warning(f"  Warrants lỗi: {e}")
-
-        # 5. Corporate bonds
-        try:
-            logger.info("  Lấy trái phiếu doanh nghiệp...")
-            bonds = stock.listing.all_bonds()
-            if bonds is not None and not bonds.empty:
-                bonds.to_csv(meta_dir / "corporate_bonds.csv", index=False, encoding="utf-8-sig")
-                logger.info(f"  Bonds: {len(bonds)} mã")
-                success += 1
-        except Exception as e:
-            logger.warning(f"  Bonds lỗi: {e}")
-
-        # 6. Government bonds
-        try:
-            logger.info("  Lấy trái phiếu chính phủ...")
-            gov_bonds = stock.listing.all_government_bonds()
-            if gov_bonds is not None and not gov_bonds.empty:
-                gov_bonds.to_csv(meta_dir / "government_bonds.csv", index=False, encoding="utf-8-sig")
-                logger.info(f"  Gov bonds: {len(gov_bonds)} mã")
-                success += 1
-        except Exception as e:
-            logger.warning(f"  Gov bonds lỗi: {e}")
+        for method_name, label, filename in items:
+            try:
+                logger.info(f"  Lấy {label}...")
+                method = getattr(stock.listing, method_name)
+                df = method()
+                if df is not None and not df.empty:
+                    df.to_csv(meta_dir / filename, index=False, encoding="utf-8-sig")
+                    logger.info(f"  {label}: {len(df)} rows")
+                    success += 1
+            except Exception as e:
+                logger.warning(f"  {label} lỗi: {e}")
 
     except Exception as e:
         logger.warning(f"  Listing metadata lỗi: {e}")
@@ -450,12 +513,14 @@ def main():
     start = args.start or (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+    # Run Fund + Listing first (independent of MSN)
+    # Then MSN-dependent sections (FX, Crypto, World)
     sections = {
+        "fund": ("FUND DATA (FMARKET)", collect_fund_data),
+        "listing": ("LISTING METADATA (KBS)", collect_listing_metadata),
         "fx": ("FX RATES (MSN)", lambda: collect_fx(start, end)),
         "crypto": ("CRYPTO (MSN)", lambda: collect_crypto(start, end)),
         "world": ("WORLD INDICES (MSN)", lambda: collect_world_indices(start, end)),
-        "fund": ("FUND DATA (FMARKET)", collect_fund_data),
-        "listing": ("LISTING METADATA (KBS)", collect_listing_metadata),
     }
 
     if args.only:

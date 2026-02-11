@@ -134,6 +134,7 @@ jobs:
       # ========== PHẦN 5: FX + CRYPTO + WORLD INDICES + FUND ==========
       - name: "[5/8] Thu thập FX, Crypto, World Indices, Fund, Listing"
         if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
         run: |
           python scripts/collect_market.py
         env:
