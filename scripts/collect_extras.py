@@ -1,15 +1,19 @@
 """
-Thu thập dữ liệu bổ sung hàng ngày: giá vàng, tỷ giá, thông tin công ty.
+Thu thập dữ liệu bổ sung hàng ngày: giá vàng, tỷ giá, thông tin công ty, sự kiện, giao dịch nội bộ.
 
 Output:
     data/gold_prices.csv        - Giá vàng SJC (append hàng ngày)
     data/exchange_rates.csv     - Tỷ giá VCB (append hàng ngày)
     data/company_overview.csv   - Thông tin 500 công ty (PE/PB/ngành/vốn hóa, snapshot)
+    data/company_ratios.csv     - Chỉ số tài chính (PE/PB/EPS/ROE, snapshot)
+    data/company_events.csv     - Sự kiện công ty (cổ tức, ĐHCĐ, phát hành)
+    data/insider_trading.csv    - Giao dịch nội bộ (snapshot)
+    data/shareholders.csv       - Cổ đông lớn (snapshot)
 
 Cách chạy:
     python scripts/collect_extras.py                           # Tất cả
     python scripts/collect_extras.py --date 2026-02-11         # Ngày cụ thể
-    python scripts/collect_extras.py --skip-company            # Bỏ qua company overview
+    python scripts/collect_extras.py --skip-company            # Bỏ qua company data
 """
 
 import sys
@@ -237,23 +241,192 @@ def collect_company_overview(top_n: int = 500):
 
 
 # ============================================================
+# 4. COMPANY EVENTS (KBS - Cổ tức, ĐHCĐ, Phát hành)
+# ============================================================
+
+def collect_company_events(top_n: int = 100):
+    """
+    Thu thập sự kiện công ty (cổ tức, ĐHCĐ, phát hành, giao dịch nội bộ) cho top N mã.
+    Snapshot overwrite mỗi ngày.
+    """
+    logger.info(f"Đang lấy company events cho top {top_n} mã...")
+
+    from vnstock.common.client import Vnstock
+
+    client = Vnstock(source="KBS", show_log=False)
+    stock = client.stock(symbol="ACB", source="KBS")
+    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
+    all_symbols = symbols_df["symbol"].tolist()[:top_n]
+
+    all_events = []
+    success = 0
+    errors = 0
+
+    for idx, symbol in enumerate(all_symbols):
+        if (idx + 1) % 50 == 0 or idx == 0:
+            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
+
+        try:
+            from vnstock.explorer.kbs.company import Company
+            comp = Company(symbol, show_log=False)
+
+            # Get all event types (page_size=50 to get recent events)
+            try:
+                ev = comp.events(page_size=50)
+                if ev is not None and not ev.empty:
+                    ev["symbol"] = symbol
+                    all_events.append(ev)
+            except Exception:
+                pass
+
+            success += 1
+            time.sleep(0.05)
+
+        except Exception:
+            errors += 1
+
+    csv_events = DATA_DIR / "company_events.csv"
+    if all_events:
+        df_events = pd.concat(all_events, ignore_index=True)
+        df_events.to_csv(csv_events, index=False, encoding="utf-8-sig")
+        logger.info(f"  Events: {len(df_events)} sự kiện → {csv_events.name}")
+
+    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
+    return success > 0
+
+
+# ============================================================
+# 5. INSIDER TRADING (KBS)
+# ============================================================
+
+def collect_insider_trading(top_n: int = 100):
+    """
+    Thu thập giao dịch nội bộ cho top N mã.
+    Snapshot overwrite mỗi ngày.
+    """
+    logger.info(f"Đang lấy insider trading cho top {top_n} mã...")
+
+    from vnstock.common.client import Vnstock
+
+    client = Vnstock(source="KBS", show_log=False)
+    stock = client.stock(symbol="ACB", source="KBS")
+    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
+    all_symbols = symbols_df["symbol"].tolist()[:top_n]
+
+    all_insider = []
+    success = 0
+    errors = 0
+
+    for idx, symbol in enumerate(all_symbols):
+        if (idx + 1) % 50 == 0 or idx == 0:
+            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
+
+        try:
+            from vnstock.explorer.kbs.company import Company
+            comp = Company(symbol, show_log=False)
+
+            try:
+                ins = comp.insider_trading(page_size=20)
+                if ins is not None and not ins.empty:
+                    ins["symbol"] = symbol
+                    all_insider.append(ins)
+            except Exception:
+                pass
+
+            success += 1
+            time.sleep(0.05)
+
+        except Exception:
+            errors += 1
+
+    csv_insider = DATA_DIR / "insider_trading.csv"
+    if all_insider:
+        df_insider = pd.concat(all_insider, ignore_index=True)
+        df_insider.to_csv(csv_insider, index=False, encoding="utf-8-sig")
+        logger.info(f"  Insider: {len(df_insider)} giao dịch → {csv_insider.name}")
+
+    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
+    return success > 0
+
+
+# ============================================================
+# 6. SHAREHOLDERS (KBS)
+# ============================================================
+
+def collect_shareholders(top_n: int = 100):
+    """
+    Thu thập thông tin cổ đông lớn cho top N mã.
+    Snapshot overwrite mỗi ngày.
+    """
+    logger.info(f"Đang lấy shareholders cho top {top_n} mã...")
+
+    from vnstock.common.client import Vnstock
+
+    client = Vnstock(source="KBS", show_log=False)
+    stock = client.stock(symbol="ACB", source="KBS")
+    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
+    all_symbols = symbols_df["symbol"].tolist()[:top_n]
+
+    all_shareholders = []
+    success = 0
+    errors = 0
+
+    for idx, symbol in enumerate(all_symbols):
+        if (idx + 1) % 50 == 0 or idx == 0:
+            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
+
+        try:
+            from vnstock.explorer.kbs.company import Company
+            comp = Company(symbol, show_log=False)
+
+            try:
+                sh = comp.shareholders()
+                if sh is not None and not sh.empty:
+                    sh["symbol"] = symbol
+                    all_shareholders.append(sh)
+            except Exception:
+                pass
+
+            success += 1
+            time.sleep(0.05)
+
+        except Exception:
+            errors += 1
+
+    csv_shareholders = DATA_DIR / "shareholders.csv"
+    if all_shareholders:
+        df_sh = pd.concat(all_shareholders, ignore_index=True)
+        df_sh.to_csv(csv_shareholders, index=False, encoding="utf-8-sig")
+        logger.info(f"  Shareholders: {len(df_sh)} cổ đông → {csv_shareholders.name}")
+
+    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
+    return success > 0
+
+
+# ============================================================
 # CLI
 # ============================================================
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Thu thập dữ liệu bổ sung: giá vàng, tỷ giá, company overview.",
+        description="Thu thập dữ liệu bổ sung: giá vàng, tỷ giá, company overview, events, insider.",
     )
     parser.add_argument("--date", default=None,
                         help="Ngày thu thập (YYYY-MM-DD). Mặc định: hôm nay")
     parser.add_argument("--top-n", type=int, default=500,
                         help="Số mã cho company overview (mặc định: 500)")
+    parser.add_argument("--top-n-events", type=int, default=100,
+                        help="Số mã cho events/insider/shareholders (mặc định: 100)")
     parser.add_argument("--skip-company", action="store_true",
-                        help="Bỏ qua company overview (chỉ lấy vàng + tỷ giá)")
+                        help="Bỏ qua tất cả company data")
     args = parser.parse_args()
 
     date_str = args.date or datetime.now().strftime("%Y-%m-%d")
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    total_steps = 2
+    if not args.skip_company:
+        total_steps += 4  # overview, events, insider, shareholders
 
     logger.info("=" * 60)
     logger.info("THU THẬP DỮ LIỆU BỔ SUNG")
@@ -262,7 +435,6 @@ def main():
     logger.info("=" * 60)
 
     step = 1
-    total_steps = 2 if args.skip_company else 3
 
     # 1. Giá vàng
     logger.info(f"\n[{step}/{total_steps}] GIÁ VÀNG SJC")
@@ -274,10 +446,25 @@ def main():
     collect_exchange_rates(date_str)
     step += 1
 
-    # 3. Company overview
     if not args.skip_company:
+        # 3. Company overview
         logger.info(f"\n[{step}/{total_steps}] COMPANY OVERVIEW ({args.top_n} mã)")
         collect_company_overview(top_n=args.top_n)
+        step += 1
+
+        # 4. Company events
+        logger.info(f"\n[{step}/{total_steps}] COMPANY EVENTS ({args.top_n_events} mã)")
+        collect_company_events(top_n=args.top_n_events)
+        step += 1
+
+        # 5. Insider trading
+        logger.info(f"\n[{step}/{total_steps}] INSIDER TRADING ({args.top_n_events} mã)")
+        collect_insider_trading(top_n=args.top_n_events)
+        step += 1
+
+        # 6. Shareholders
+        logger.info(f"\n[{step}/{total_steps}] SHAREHOLDERS ({args.top_n_events} mã)")
+        collect_shareholders(top_n=args.top_n_events)
 
     logger.info("\n" + "=" * 60)
     logger.info("HOÀN TẤT!")

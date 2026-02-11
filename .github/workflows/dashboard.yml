@@ -25,7 +25,7 @@ permissions:
 jobs:
   dashboard:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
 
     steps:
       - name: Checkout repo
@@ -83,7 +83,7 @@ jobs:
           fi
 
       # ========== PHẦN 1: THU THẬP DỮ LIỆU CỔ PHIẾU ==========
-      - name: "[1/4] Thu thập dữ liệu cổ phiếu"
+      - name: "[1/5] Thu thập dữ liệu cổ phiếu"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} --skip-ohlcv
@@ -91,7 +91,7 @@ jobs:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
       # ========== PHẦN 2: THU THẬP OHLCV TOP 500 CỔ PHIẾU ==========
-      - name: "[2/4] Thu thập OHLCV top 500 cổ phiếu vốn hóa"
+      - name: "[2/5] Thu thập OHLCV top 500 cổ phiếu vốn hóa"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           python scripts/collect_stocks.py
@@ -99,7 +99,7 @@ jobs:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
       # ========== PHẦN 3: THU THẬP DỮ LIỆU CHỈ SỐ ==========
-      - name: "[3/4] Thu thập 18 chỉ số thị trường + charts"
+      - name: "[3/5] Thu thập 18 chỉ số thị trường + charts"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           START_FLAG=""
@@ -114,11 +114,19 @@ jobs:
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
-      # ========== PHẦN 4: GIÁ VÀNG + TỶ GIÁ + COMPANY OVERVIEW ==========
-      - name: "[4/4] Thu thập giá vàng, tỷ giá, company overview"
+      # ========== PHẦN 4: GIÁ VÀNG + TỶ GIÁ + COMPANY DATA ==========
+      - name: "[4/5] Thu thập giá vàng, tỷ giá, company data, events, insider"
         if: steps.check_day.outputs.skip != 'true'
         run: |
           python scripts/collect_extras.py --date ${{ steps.date.outputs.date }}
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+
+      # ========== PHẦN 5: FX + CRYPTO + WORLD INDICES + FUND ==========
+      - name: "[5/5] Thu thập FX, Crypto, World Indices, Fund, Listing"
+        if: steps.check_day.outputs.skip != 'true'
+        run: |
+          python scripts/collect_market.py
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
 
@@ -149,6 +157,24 @@ jobs:
           echo "  DỮ LIỆU BỔ SUNG"
           echo "=========================================="
           ls -lh data/gold_prices.csv data/exchange_rates.csv data/company_overview.csv data/company_ratios.csv 2>/dev/null || echo "No extra files"
+          ls -lh data/company_events.csv data/insider_trading.csv data/shareholders.csv 2>/dev/null || echo "No company detail files"
+          echo ""
+          echo "=========================================="
+          echo "  FX / CRYPTO / WORLD INDICES"
+          echo "=========================================="
+          ls data/fx/*.csv 2>/dev/null | wc -l | xargs -I{} echo "FX: {} pairs"
+          ls data/crypto/*.csv 2>/dev/null | wc -l | xargs -I{} echo "Crypto: {} coins"
+          ls data/world_indices/*.csv 2>/dev/null | wc -l | xargs -I{} echo "World: {} indices"
+          echo ""
+          echo "=========================================="
+          echo "  FUND DATA"
+          echo "=========================================="
+          ls -lh data/funds/*.csv 2>/dev/null || echo "No fund files"
+          echo ""
+          echo "=========================================="
+          echo "  LISTING METADATA"
+          echo "=========================================="
+          ls -lh data/metadata/*.csv 2>/dev/null || echo "No metadata files"
 
       # ========== COMMIT & PUSH ==========
       - name: Commit and push all data
