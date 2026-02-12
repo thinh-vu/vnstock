@@ -2,8 +2,8 @@ name: Dashboard Data Collector
 
 on:
   schedule:
-    # 15:00 giờ Việt Nam (UTC+7) = 08:00 UTC, thứ 2-6
-    - cron: '0 8 * * 1-5'
+    # 14:50 giờ Việt Nam (UTC+7) = 07:50 UTC, thứ 2-6
+    - cron: '50 7 * * 1-5'
   workflow_dispatch:
     inputs:
       date:
@@ -71,16 +71,42 @@ jobs:
             echo "date=$(TZ=Asia/Ho_Chi_Minh date +%Y-%m-%d)" >> $GITHUB_OUTPUT
           fi
 
-      - name: Check if weekday (skip weekends for scheduled runs)
+      - name: Check trading day (skip weekends + VN holidays)
         id: check_day
         run: |
-          DAY_OF_WEEK=$(TZ=Asia/Ho_Chi_Minh date +%u)
-          if [ "$DAY_OF_WEEK" -gt 5 ] && [ "${{ github.event_name }}" = "schedule" ]; then
-            echo "skip=true" >> $GITHUB_OUTPUT
-            echo "Hôm nay là cuối tuần, bỏ qua."
-          else
+          DATE="${{ steps.date.outputs.date }}"
+          IS_MANUAL="${{ github.event_name }}"
+
+          # Nếu chạy thủ công (workflow_dispatch) → luôn chạy
+          if [ "$IS_MANUAL" = "workflow_dispatch" ]; then
             echo "skip=false" >> $GITHUB_OUTPUT
+            echo "Chạy thủ công → tiếp tục."
+            exit 0
           fi
+
+          # Kiểm tra cuối tuần
+          DAY_OF_WEEK=$(TZ=Asia/Ho_Chi_Minh date +%u)
+          if [ "$DAY_OF_WEEK" -gt 5 ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Hôm nay là cuối tuần → bỏ qua."
+            exit 0
+          fi
+
+          # Kiểm tra ngày lễ TTCK Việt Nam
+          python -c "
+          from scripts.vn_holidays import is_holiday
+          date = '$DATE'
+          if is_holiday(date):
+              print(f'{date}: NGHỈ LỄ TTCK Việt Nam → bỏ qua.')
+              exit(0)
+          else:
+              print(f'{date}: Ngày giao dịch → tiếp tục.')
+              exit(1)
+          " && {
+            echo "skip=true" >> $GITHUB_OUTPUT
+          } || {
+            echo "skip=false" >> $GITHUB_OUTPUT
+          }
 
       # ========== PHẦN 0: CÀI VNSTOCK_DATA (NẾU CÓ) ==========
       - name: "[0] Install vnstock premium packages (if available)"
