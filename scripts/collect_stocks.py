@@ -23,6 +23,7 @@ import time
 import logging
 import argparse
 import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -52,8 +53,9 @@ _VND_HEADERS = {
     "Origin": "https://dchart.vndirect.com.vn",
 }
 
-REQUEST_DELAY = 0.05  # ~20 req/s
+REQUEST_DELAY = 0.02  # delay giữa mỗi request (chỉ dùng cho fallback)
 BATCH_SIZE = 50       # Log progress mỗi 50 mã
+MAX_WORKERS = 10      # Số thread song song cho VNDirect API
 
 # Reuse HTTP session for connection pooling
 _session = requests.Session()
@@ -255,12 +257,63 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
 CORE_COLS = ["time", "open", "high", "low", "close", "volume"]
 
 
+def _process_one_stock(symbol: str, start: str, end: str, force_full: bool) -> dict:
+    """Fetch + merge OHLCV cho 1 mã (chạy trong thread)."""
+    csv_path = DATA_DIR / f"{symbol}.csv"
+    existing_df = None
+    fetch_start = start
+    is_incremental = False
+
+    # Check existing CSV for incremental update
+    if not force_full and csv_path.exists():
+        try:
+            existing_df = pd.read_csv(csv_path, parse_dates=["time"])
+            if not existing_df.empty and "time" in existing_df.columns:
+                last_date = existing_df["time"].max()
+                fetch_start = (last_date - timedelta(days=3)).strftime("%Y-%m-%d")
+                is_incremental = True
+            else:
+                existing_df = None
+        except Exception:
+            existing_df = None
+
+    try:
+        new_data = fetch_stock_ohlcv(symbol, fetch_start, end)
+
+        if new_data is not None and not new_data.empty:
+            if existing_df is not None and not existing_df.empty:
+                existing_core = existing_df[CORE_COLS].copy()
+                combined = pd.concat([existing_core, new_data])
+                combined = (
+                    combined
+                    .drop_duplicates("time", keep="last")
+                    .sort_values("time")
+                    .reset_index(drop=True)
+                )
+            else:
+                combined = new_data
+
+            combined = add_indicators(combined)
+            combined["symbol"] = symbol
+            combined.to_csv(csv_path, index=False, encoding="utf-8-sig")
+
+            return {"status": "ok", "type": "incremental" if is_incremental else "full"}
+
+        elif existing_df is not None and not existing_df.empty:
+            return {"status": "ok", "type": "incremental"}
+        else:
+            return {"status": "error", "symbol": symbol}
+
+    except Exception as e:
+        return {"status": "error", "symbol": symbol, "msg": str(e)}
+
+
 def collect_stocks(symbols: list, start: str, end: str, force_full: bool = False):
     """
-    Thu thập OHLCV cho danh sách mã cổ phiếu.
+    Thu thập OHLCV cho danh sách mã cổ phiếu (song song).
 
+    Dùng ThreadPoolExecutor để fetch nhiều mã cùng lúc từ VNDirect API.
     Nếu file CSV đã tồn tại → chỉ fetch dữ liệu mới (incremental).
-    Nếu chưa có hoặc --full → fetch toàn bộ.
     """
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -269,73 +322,39 @@ def collect_stocks(symbols: list, start: str, end: str, force_full: bool = False
     incremental = 0
     full_fetch = 0
     errors = []
+    completed = 0
 
-    for idx, symbol in enumerate(symbols):
-        if (idx + 1) % BATCH_SIZE == 0 or idx == 0:
-            logger.info(
-                f"  [{idx + 1}/{total}] {symbol}... "
-                f"(OK: {success}, incremental: {incremental}, full: {full_fetch})"
-            )
+    logger.info(f"  Song song: {MAX_WORKERS} threads")
 
-        csv_path = DATA_DIR / f"{symbol}.csv"
-        existing_df = None
-        fetch_start = start
-        is_incremental = False
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(_process_one_stock, sym, start, end, force_full): sym
+            for sym in symbols
+        }
 
-        # Check existing CSV for incremental update
-        if not force_full and csv_path.exists():
+        for future in as_completed(futures):
+            completed += 1
+            symbol = futures[future]
+
+            if completed % BATCH_SIZE == 0 or completed == total:
+                logger.info(
+                    f"  [{completed}/{total}] "
+                    f"(OK: {success}, incremental: {incremental}, full: {full_fetch}, lỗi: {len(errors)})"
+                )
+
             try:
-                existing_df = pd.read_csv(csv_path, parse_dates=["time"])
-                if not existing_df.empty and "time" in existing_df.columns:
-                    last_date = existing_df["time"].max()
-                    # Fetch from 3 days before last date (overlap for accuracy)
-                    fetch_start = (last_date - timedelta(days=3)).strftime("%Y-%m-%d")
-                    is_incremental = True
+                result = future.result()
+                if result["status"] == "ok":
+                    success += 1
+                    if result["type"] == "incremental":
+                        incremental += 1
+                    else:
+                        full_fetch += 1
                 else:
-                    existing_df = None
-            except Exception:
-                existing_df = None
-
-        try:
-            new_data = fetch_stock_ohlcv(symbol, fetch_start, end)
-
-            if new_data is not None and not new_data.empty:
-                if existing_df is not None and not existing_df.empty:
-                    # Merge: keep only core columns from existing, add new data
-                    existing_core = existing_df[CORE_COLS].copy()
-                    combined = pd.concat([existing_core, new_data])
-                    combined = (
-                        combined
-                        .drop_duplicates("time", keep="last")
-                        .sort_values("time")
-                        .reset_index(drop=True)
-                    )
-                else:
-                    combined = new_data
-
-                # Recalculate indicators on full dataset
-                combined = add_indicators(combined)
-                combined["symbol"] = symbol
-                combined.to_csv(csv_path, index=False, encoding="utf-8-sig")
-                success += 1
-
-                if is_incremental:
-                    incremental += 1
-                else:
-                    full_fetch += 1
-
-            elif existing_df is not None and not existing_df.empty:
-                # No new data but existing file is fine (weekend/holiday)
-                success += 1
-                incremental += 1
-            else:
+                    errors.append(result.get("symbol", symbol))
+            except Exception as e:
                 errors.append(symbol)
-
-        except Exception as e:
-            errors.append(symbol)
-            logger.debug(f"  {symbol}: lỗi - {e}")
-
-        time.sleep(REQUEST_DELAY)
+                logger.debug(f"  {symbol}: thread lỗi - {e}")
 
     logger.info(f"\nKết quả: {success}/{total} mã thành công")
     logger.info(f"  Incremental: {incremental} | Full fetch: {full_fetch} | Lỗi: {len(errors)}")
