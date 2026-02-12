@@ -48,20 +48,6 @@ jobs:
       - name: Set timezone to Vietnam
         run: echo "TZ=Asia/Ho_Chi_Minh" >> $GITHUB_ENV
 
-      - name: Register API key
-        if: ${{ env.VNSTOCK_API_KEY != '' }}
-        run: |
-          python -c "
-          from vnstock.core.utils.auth import register_user
-          import os
-          key = os.environ.get('VNSTOCK_API_KEY', '')
-          if key:
-              register_user(api_key=key)
-              print('API key registered (Golden Sponsor: 500 req/min)')
-          "
-        env:
-          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
-
       - name: Determine collection date
         id: date
         run: |
@@ -108,40 +94,47 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           }
 
-      # ========== PHẦN 0: CÀI VNSTOCK PREMIUM ==========
-      - name: "[0] Install vnstock premium packages (if available)"
+      # ========== PHẦN 0: CÀI VNSTOCK PREMIUM + ĐĂNG KÝ API KEY ==========
+      - name: "[0] Install premium packages + register API key"
         if: steps.check_day.outputs.skip != 'true'
         continue-on-error: true
         run: |
           EXTRA_INDEX="https://vnstocks.com/api/simple"
 
-          # 1. Install vnii first (license verification for premium tier detection)
-          echo "=== Installing vnii (license verification) ==="
+          # 1. Install vnii first (license verification - needed for tier detection)
+          echo "=== [1/4] Installing vnii (license verification) ==="
           pip install --extra-index-url $EXTRA_INDEX vnii 2>&1 || echo "vnii not available"
 
-          # 2. Register API key with vnai
-          echo "=== Registering API key ==="
+          # 2. Register API key AFTER vnii is installed (so vnai can detect Golden tier)
+          echo "=== [2/4] Registering API key (after vnii) ==="
           python -c "
           import os
-          try:
-              from vnai import setup_api_key
-              key = os.environ.get('VNSTOCK_API_KEY', '')
-              if key:
-                  setup_api_key(key)
-                  print('API key registered with vnai')
-          except Exception as e:
-              print(f'Warning: {e}')
+          key = os.environ.get('VNSTOCK_API_KEY', '')
+          if not key:
+              print('No VNSTOCK_API_KEY set')
+              exit(0)
+
+          # Register with vnai (vnii now available for tier detection)
+          from vnai import setup_api_key, check_api_key_status
+          setup_api_key(key)
+
+          # Check detected tier
+          status = check_api_key_status()
+          tier = status.get('tier', 'unknown')
+          limits = status.get('limits', {})
+          print(f'Detected tier: {tier}')
+          print(f'Rate limits: {limits}')
           "
 
           # 3. Install premium data packages
-          echo "=== Installing premium packages ==="
+          echo "=== [3/4] Installing premium packages ==="
           pip install --extra-index-url $EXTRA_INDEX vnstock_data 2>&1 || echo "vnstock_data not available"
           pip install --extra-index-url $EXTRA_INDEX vnstock_news 2>&1 || echo "vnstock_news not available"
 
-          # 4. Verify installations
-          echo "=== Verification ==="
+          # 4. Verify everything
+          echo "=== [4/4] Verification ==="
           python -c "
-          packages = ['vnii', 'vnstock_data', 'vnstock_news']
+          packages = ['vnii', 'vnai', 'vnstock_data', 'vnstock_news']
           for pkg in packages:
               try:
                   mod = __import__(pkg)
@@ -149,6 +142,15 @@ jobs:
                   print(f'  {pkg}: v{ver}')
               except ImportError:
                   print(f'  {pkg}: NOT installed')
+
+          # Verify tier detection
+          try:
+              from vnai.beam.auth import authenticator
+              tier = authenticator.get_tier(force_refresh=True)
+              limits = authenticator.get_limits(tier)
+              print(f'  vnai tier: {tier} ({limits[\"min\"]} req/min)')
+          except Exception as e:
+              print(f'  vnai tier check failed: {e}')
           "
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
