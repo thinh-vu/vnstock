@@ -25,6 +25,8 @@ import logging
 import argparse
 import requests
 import base64
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from io import BytesIO
 from datetime import datetime
 from pathlib import Path
@@ -55,6 +57,17 @@ _HEADERS = {
         "Chrome/120.0.0.0 Safari/537.36"
     ),
 }
+
+# Thread-safe rate limiter lock for vnstock API calls
+_api_lock = threading.Lock()
+MAX_WORKERS = 5  # Threads for company data (conservative: vnai allows 600/min)
+
+
+def _rate_limited_call(func):
+    """Call func with global rate limiter (thread-safe)."""
+    with _api_lock:
+        get_limiter().wait()
+    return func()
 
 
 # ============================================================
@@ -176,16 +189,43 @@ def collect_exchange_rates(date_str: str):
 # 3. COMPANY OVERVIEW (PE/PB/ngành/vốn hóa cho top 500)
 # ============================================================
 
-def collect_company_overview(top_n: int = 500):
+def _fetch_overview_one(symbol: str):
+    """Fetch overview + ratio for one symbol (runs in thread)."""
+    from vnstock.common.client import Vnstock
+    result = {"overview": None, "ratios": None, "ok": False}
+    try:
+        client_s = Vnstock(source="VCI", show_log=False)
+        stock_s = client_s.stock(symbol=symbol, source="VCI")
+
+        try:
+            ov = _rate_limited_call(lambda: stock_s.company.overview())
+            if ov is not None and not ov.empty:
+                result["overview"] = ov
+        except Exception:
+            pass
+
+        try:
+            rs = _rate_limited_call(lambda: stock_s.company.ratio_summary())
+            if rs is not None and not rs.empty:
+                result["ratios"] = rs
+        except Exception:
+            pass
+
+        result["ok"] = True
+    except Exception:
+        pass
+    return result
+
+
+def collect_company_overview(top_n: int = 200):
     """
-    Thu thập thông tin tổng quan công ty cho top N mã.
+    Thu thập thông tin tổng quan công ty cho top N mã (song song).
     Lưu snapshot (overwrite mỗi ngày).
     """
-    logger.info(f"Đang lấy company overview cho top {top_n} mã...")
+    logger.info(f"Đang lấy company overview cho top {top_n} mã ({MAX_WORKERS} threads)...")
 
     from vnstock.common.client import Vnstock
 
-    # Get top symbols (reuse logic from collect_stocks.py)
     client = Vnstock(source="VCI", show_log=False)
     stock = client.stock(symbol="ACB", source="VCI")
     symbols_df = stock.listing.symbols_by_exchange(show_log=False)
@@ -195,45 +235,33 @@ def collect_company_overview(top_n: int = 500):
     all_ratios = []
     success = 0
     errors = 0
+    completed = 0
 
-    for idx, symbol in enumerate(all_symbols):
-        if (idx + 1) % 50 == 0 or idx == 0:
-            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
-
-        try:
-            client_s = Vnstock(source="VCI", show_log=False)
-            stock_s = client_s.stock(symbol=symbol, source="VCI")
-
-            # Company overview
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {executor.submit(_fetch_overview_one, sym): sym for sym in all_symbols}
+        for future in as_completed(futures):
+            completed += 1
+            if completed % 50 == 0 or completed == len(all_symbols):
+                logger.info(f"  [{completed}/{top_n}] (OK: {success}, lỗi: {errors})")
             try:
-                ov = stock_s.company.overview()
-                if ov is not None and not ov.empty:
-                    all_overview.append(ov)
+                r = future.result()
+                if r["ok"]:
+                    success += 1
+                    if r["overview"] is not None:
+                        all_overview.append(r["overview"])
+                    if r["ratios"] is not None:
+                        all_ratios.append(r["ratios"])
+                else:
+                    errors += 1
             except Exception:
-                pass
+                errors += 1
 
-            # Ratio summary (PE, PB, EPS, ROE, etc.)
-            try:
-                rs = stock_s.company.ratio_summary()
-                if rs is not None and not rs.empty:
-                    all_ratios.append(rs)
-            except Exception:
-                pass
-
-            success += 1
-            get_limiter().wait()
-
-        except Exception:
-            errors += 1
-
-    # Save overview
     csv_overview = DATA_DIR / "company_overview.csv"
     if all_overview:
         df_overview = pd.concat(all_overview, ignore_index=True)
         df_overview.to_csv(csv_overview, index=False, encoding="utf-8-sig")
         logger.info(f"  Overview: {len(df_overview)} mã → {csv_overview.name}")
 
-    # Save ratio summary
     csv_ratios = DATA_DIR / "company_ratios.csv"
     if all_ratios:
         df_ratios = pd.concat(all_ratios, ignore_index=True)
@@ -245,328 +273,168 @@ def collect_company_overview(top_n: int = 500):
 
 
 # ============================================================
-# 4. COMPANY EVENTS (KBS - Cổ tức, ĐHCĐ, Phát hành)
+# GENERIC CONCURRENT COMPANY DATA FETCHER
 # ============================================================
 
-def collect_company_events(top_n: int = 100):
+def _collect_company_data_concurrent(
+    label: str,
+    fetch_func,
+    symbols: list,
+    csv_path,
+    add_symbol_col: bool = True,
+):
     """
-    Thu thập sự kiện công ty (cổ tức, ĐHCĐ, phát hành, giao dịch nội bộ) cho top N mã.
-    Snapshot overwrite mỗi ngày.
+    Generic concurrent fetcher for company data.
+    fetch_func(symbol) → DataFrame or None
     """
-    logger.info(f"Đang lấy company events cho top {top_n} mã...")
+    top_n = len(symbols)
+    logger.info(f"Đang lấy {label} cho {top_n} mã ({MAX_WORKERS} threads)...")
 
-    from vnstock.common.client import Vnstock
-
-    client = Vnstock(source="KBS", show_log=False)
-    stock = client.stock(symbol="ACB", source="KBS")
-    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
-    all_symbols = symbols_df["symbol"].tolist()[:top_n]
-
-    all_events = []
+    all_data = []
     success = 0
     errors = 0
+    completed = 0
 
-    for idx, symbol in enumerate(all_symbols):
-        if (idx + 1) % 50 == 0 or idx == 0:
-            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {}
+        for sym in symbols:
+            futures[executor.submit(fetch_func, sym)] = sym
 
-        try:
-            from vnstock.explorer.kbs.company import Company
-            comp = Company(symbol, show_log=False)
-
-            # Get all event types (page_size=50 to get recent events)
+        for future in as_completed(futures):
+            completed += 1
+            symbol = futures[future]
+            if completed % 50 == 0 or completed == top_n:
+                logger.info(f"  [{completed}/{top_n}] (OK: {success}, lỗi: {errors})")
             try:
-                ev = comp.events(page_size=50)
-                if ev is not None and not ev.empty:
-                    ev["symbol"] = symbol
-                    all_events.append(ev)
+                df = future.result()
+                if df is not None and not df.empty:
+                    if add_symbol_col:
+                        df["symbol"] = symbol
+                    all_data.append(df)
+                success += 1
             except Exception:
-                pass
+                errors += 1
 
-            success += 1
-            get_limiter().wait()
-
-        except Exception:
-            errors += 1
-
-    csv_events = DATA_DIR / "company_events.csv"
-    if all_events:
-        df_events = pd.concat(all_events, ignore_index=True)
-        df_events.to_csv(csv_events, index=False, encoding="utf-8-sig")
-        logger.info(f"  Events: {len(df_events)} sự kiện → {csv_events.name}")
+    if all_data:
+        combined = pd.concat(all_data, ignore_index=True)
+        combined.to_csv(csv_path, index=False, encoding="utf-8-sig")
+        logger.info(f"  {label}: {len(combined)} rows → {csv_path.name}")
 
     logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
     return success > 0
+
+
+def _get_symbols(source: str, top_n: int) -> list:
+    """Get top N symbols from listing."""
+    from vnstock.common.client import Vnstock
+    client = Vnstock(source=source, show_log=False)
+    stock = client.stock(symbol="ACB", source=source)
+    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
+    return symbols_df["symbol"].tolist()[:top_n]
+
+
+# ============================================================
+# 4. COMPANY EVENTS (KBS)
+# ============================================================
+
+def collect_company_events(top_n: int = 50):
+    symbols = _get_symbols("KBS", top_n)
+
+    def fetch(symbol):
+        from vnstock.explorer.kbs.company import Company
+        comp = Company(symbol, show_log=False)
+        return _rate_limited_call(lambda: comp.events(page_size=50))
+
+    return _collect_company_data_concurrent(
+        "Events", fetch, symbols, DATA_DIR / "company_events.csv"
+    )
 
 
 # ============================================================
 # 5. INSIDER TRADING (KBS)
 # ============================================================
 
-def collect_insider_trading(top_n: int = 100):
-    """
-    Thu thập giao dịch nội bộ cho top N mã.
-    Snapshot overwrite mỗi ngày.
-    """
-    logger.info(f"Đang lấy insider trading cho top {top_n} mã...")
+def collect_insider_trading(top_n: int = 50):
+    symbols = _get_symbols("KBS", top_n)
 
-    from vnstock.common.client import Vnstock
+    def fetch(symbol):
+        from vnstock.explorer.kbs.company import Company
+        comp = Company(symbol, show_log=False)
+        return _rate_limited_call(lambda: comp.insider_trading(page_size=20))
 
-    client = Vnstock(source="KBS", show_log=False)
-    stock = client.stock(symbol="ACB", source="KBS")
-    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
-    all_symbols = symbols_df["symbol"].tolist()[:top_n]
-
-    all_insider = []
-    success = 0
-    errors = 0
-
-    for idx, symbol in enumerate(all_symbols):
-        if (idx + 1) % 50 == 0 or idx == 0:
-            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
-
-        try:
-            from vnstock.explorer.kbs.company import Company
-            comp = Company(symbol, show_log=False)
-
-            try:
-                ins = comp.insider_trading(page_size=20)
-                if ins is not None and not ins.empty:
-                    ins["symbol"] = symbol
-                    all_insider.append(ins)
-            except Exception:
-                pass
-
-            success += 1
-            get_limiter().wait()
-
-        except Exception:
-            errors += 1
-
-    csv_insider = DATA_DIR / "insider_trading.csv"
-    if all_insider:
-        df_insider = pd.concat(all_insider, ignore_index=True)
-        df_insider.to_csv(csv_insider, index=False, encoding="utf-8-sig")
-        logger.info(f"  Insider: {len(df_insider)} giao dịch → {csv_insider.name}")
-
-    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
-    return success > 0
+    return _collect_company_data_concurrent(
+        "Insider", fetch, symbols, DATA_DIR / "insider_trading.csv"
+    )
 
 
 # ============================================================
 # 6. SHAREHOLDERS (KBS)
 # ============================================================
 
-def collect_shareholders(top_n: int = 100):
-    """
-    Thu thập thông tin cổ đông lớn cho top N mã.
-    Snapshot overwrite mỗi ngày.
-    """
-    logger.info(f"Đang lấy shareholders cho top {top_n} mã...")
+def collect_shareholders(top_n: int = 50):
+    symbols = _get_symbols("KBS", top_n)
 
-    from vnstock.common.client import Vnstock
+    def fetch(symbol):
+        from vnstock.explorer.kbs.company import Company
+        comp = Company(symbol, show_log=False)
+        return _rate_limited_call(lambda: comp.shareholders())
 
-    client = Vnstock(source="KBS", show_log=False)
-    stock = client.stock(symbol="ACB", source="KBS")
-    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
-    all_symbols = symbols_df["symbol"].tolist()[:top_n]
-
-    all_shareholders = []
-    success = 0
-    errors = 0
-
-    for idx, symbol in enumerate(all_symbols):
-        if (idx + 1) % 50 == 0 or idx == 0:
-            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
-
-        try:
-            from vnstock.explorer.kbs.company import Company
-            comp = Company(symbol, show_log=False)
-
-            try:
-                sh = comp.shareholders()
-                if sh is not None and not sh.empty:
-                    sh["symbol"] = symbol
-                    all_shareholders.append(sh)
-            except Exception:
-                pass
-
-            success += 1
-            get_limiter().wait()
-
-        except Exception:
-            errors += 1
-
-    csv_shareholders = DATA_DIR / "shareholders.csv"
-    if all_shareholders:
-        df_sh = pd.concat(all_shareholders, ignore_index=True)
-        df_sh.to_csv(csv_shareholders, index=False, encoding="utf-8-sig")
-        logger.info(f"  Shareholders: {len(df_sh)} cổ đông → {csv_shareholders.name}")
-
-    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
-    return success > 0
+    return _collect_company_data_concurrent(
+        "Shareholders", fetch, symbols, DATA_DIR / "shareholders.csv"
+    )
 
 
 # ============================================================
 # 7. COMPANY NEWS (VCI)
 # ============================================================
 
-def collect_company_news(top_n: int = 100):
-    """
-    Thu thập tin tức công ty cho top N mã.
-    Snapshot overwrite mỗi ngày.
-    """
-    logger.info(f"Đang lấy company news cho top {top_n} mã...")
+def collect_company_news(top_n: int = 50):
+    symbols = _get_symbols("VCI", top_n)
 
-    from vnstock.common.client import Vnstock
+    def fetch(symbol):
+        from vnstock.common.client import Vnstock
+        client_s = Vnstock(source="VCI", show_log=False)
+        stock_s = client_s.stock(symbol=symbol, source="VCI")
+        return _rate_limited_call(lambda: stock_s.company.news())
 
-    client = Vnstock(source="VCI", show_log=False)
-    stock = client.stock(symbol="ACB", source="VCI")
-    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
-    all_symbols = symbols_df["symbol"].tolist()[:top_n]
-
-    all_news = []
-    success = 0
-    errors = 0
-
-    for idx, symbol in enumerate(all_symbols):
-        if (idx + 1) % 50 == 0 or idx == 0:
-            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
-
-        try:
-            client_s = Vnstock(source="VCI", show_log=False)
-            stock_s = client_s.stock(symbol=symbol, source="VCI")
-
-            try:
-                nw = stock_s.company.news()
-                if nw is not None and not nw.empty:
-                    nw["symbol"] = symbol
-                    all_news.append(nw)
-            except Exception:
-                pass
-
-            success += 1
-            get_limiter().wait()
-
-        except Exception:
-            errors += 1
-
-    csv_news = DATA_DIR / "company_news.csv"
-    if all_news:
-        df_news = pd.concat(all_news, ignore_index=True)
-        df_news.to_csv(csv_news, index=False, encoding="utf-8-sig")
-        logger.info(f"  News: {len(df_news)} tin tức → {csv_news.name}")
-
-    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
-    return success > 0
+    return _collect_company_data_concurrent(
+        "News", fetch, symbols, DATA_DIR / "company_news.csv"
+    )
 
 
 # ============================================================
 # 8. COMPANY OFFICERS (VCI)
 # ============================================================
 
-def collect_company_officers(top_n: int = 100):
-    """
-    Thu thập ban lãnh đạo cho top N mã.
-    Snapshot overwrite mỗi ngày.
-    """
-    logger.info(f"Đang lấy company officers cho top {top_n} mã...")
+def collect_company_officers(top_n: int = 50):
+    symbols = _get_symbols("VCI", top_n)
 
-    from vnstock.common.client import Vnstock
+    def fetch(symbol):
+        from vnstock.common.client import Vnstock
+        client_s = Vnstock(source="VCI", show_log=False)
+        stock_s = client_s.stock(symbol=symbol, source="VCI")
+        return _rate_limited_call(lambda: stock_s.company.officers())
 
-    client = Vnstock(source="VCI", show_log=False)
-    stock = client.stock(symbol="ACB", source="VCI")
-    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
-    all_symbols = symbols_df["symbol"].tolist()[:top_n]
-
-    all_officers = []
-    success = 0
-    errors = 0
-
-    for idx, symbol in enumerate(all_symbols):
-        if (idx + 1) % 50 == 0 or idx == 0:
-            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
-
-        try:
-            client_s = Vnstock(source="VCI", show_log=False)
-            stock_s = client_s.stock(symbol=symbol, source="VCI")
-
-            try:
-                of = stock_s.company.officers()
-                if of is not None and not of.empty:
-                    of["symbol"] = symbol
-                    all_officers.append(of)
-            except Exception:
-                pass
-
-            success += 1
-            get_limiter().wait()
-
-        except Exception:
-            errors += 1
-
-    csv_officers = DATA_DIR / "company_officers.csv"
-    if all_officers:
-        df_of = pd.concat(all_officers, ignore_index=True)
-        df_of.to_csv(csv_officers, index=False, encoding="utf-8-sig")
-        logger.info(f"  Officers: {len(df_of)} người → {csv_officers.name}")
-
-    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
-    return success > 0
+    return _collect_company_data_concurrent(
+        "Officers", fetch, symbols, DATA_DIR / "company_officers.csv"
+    )
 
 
 # ============================================================
 # 9. SUBSIDIARIES (KBS)
 # ============================================================
 
-def collect_subsidiaries(top_n: int = 100):
-    """
-    Thu thập danh sách công ty con cho top N mã.
-    Snapshot overwrite mỗi ngày.
-    """
-    logger.info(f"Đang lấy subsidiaries cho top {top_n} mã...")
+def collect_subsidiaries(top_n: int = 50):
+    symbols = _get_symbols("KBS", top_n)
 
-    from vnstock.common.client import Vnstock
+    def fetch(symbol):
+        from vnstock.explorer.kbs.company import Company
+        comp = Company(symbol, show_log=False)
+        return _rate_limited_call(lambda: comp.subsidiaries())
 
-    client = Vnstock(source="KBS", show_log=False)
-    stock = client.stock(symbol="ACB", source="KBS")
-    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
-    all_symbols = symbols_df["symbol"].tolist()[:top_n]
-
-    all_subs = []
-    success = 0
-    errors = 0
-
-    for idx, symbol in enumerate(all_symbols):
-        if (idx + 1) % 50 == 0 or idx == 0:
-            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
-
-        try:
-            from vnstock.explorer.kbs.company import Company
-            comp = Company(symbol, show_log=False)
-
-            try:
-                sb = comp.subsidiaries()
-                if sb is not None and not sb.empty:
-                    sb["symbol"] = symbol
-                    all_subs.append(sb)
-            except Exception:
-                pass
-
-            success += 1
-            get_limiter().wait()
-
-        except Exception:
-            errors += 1
-
-    csv_subs = DATA_DIR / "subsidiaries.csv"
-    if all_subs:
-        df_subs = pd.concat(all_subs, ignore_index=True)
-        df_subs.to_csv(csv_subs, index=False, encoding="utf-8-sig")
-        logger.info(f"  Subsidiaries: {len(df_subs)} công ty con → {csv_subs.name}")
-
-    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
-    return success > 0
+    return _collect_company_data_concurrent(
+        "Subsidiaries", fetch, symbols, DATA_DIR / "subsidiaries.csv"
+    )
 
 
 # ============================================================
@@ -579,10 +447,10 @@ def main():
     )
     parser.add_argument("--date", default=None,
                         help="Ngày thu thập (YYYY-MM-DD). Mặc định: hôm nay")
-    parser.add_argument("--top-n", type=int, default=500,
-                        help="Số mã cho company overview (mặc định: 500)")
-    parser.add_argument("--top-n-events", type=int, default=100,
-                        help="Số mã cho events/insider/shareholders (mặc định: 100)")
+    parser.add_argument("--top-n", type=int, default=200,
+                        help="Số mã cho company overview (mặc định: 200)")
+    parser.add_argument("--top-n-events", type=int, default=50,
+                        help="Số mã cho events/insider/shareholders (mặc định: 50)")
     parser.add_argument("--skip-company", action="store_true",
                         help="Bỏ qua tất cả company data")
     args = parser.parse_args()
