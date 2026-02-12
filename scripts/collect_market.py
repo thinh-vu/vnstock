@@ -2,12 +2,16 @@
 Thu thập dữ liệu thị trường bổ sung: FX, Crypto, World Indices, Fund, Listing metadata.
 
 Output:
-    data/fx/USDVND.csv          - Tỷ giá FX OHLCV (MSN)
-    data/crypto/BTC.csv         - Crypto OHLCV (MSN)
-    data/world_indices/DJI.csv  - Chỉ số thế giới OHLCV (MSN)
-    data/funds/fund_listing.csv - Danh sách quỹ mở (FMARKET)
-    data/funds/fund_nav.csv     - NAV lịch sử các quỹ (FMARKET)
-    data/listing_metadata.csv   - Bonds, warrants, futures, industries (KBS)
+    data/fx/USDVND.csv                    - Tỷ giá FX OHLCV (MSN)
+    data/crypto/BTC.csv                   - Crypto OHLCV (MSN)
+    data/world_indices/DJI.csv            - Chỉ số thế giới OHLCV (MSN)
+    data/funds/fund_listing.csv           - Danh sách quỹ mở (FMARKET)
+    data/funds/fund_nav.csv               - NAV lịch sử các quỹ (FMARKET)
+    data/funds/fund_holdings.csv          - Top holdings các quỹ (FMARKET)
+    data/funds/fund_industry_holding.csv  - Phân bổ ngành các quỹ (FMARKET)
+    data/funds/fund_asset_holding.csv     - Phân bổ tài sản các quỹ (FMARKET)
+    data/metadata/etf_listing.csv         - Danh sách ETF (KBS)
+    data/metadata/*.csv                   - Bonds, warrants, futures, industries (KBS)
 
 Cách chạy:
     python scripts/collect_market.py                     # Tất cả
@@ -442,6 +446,52 @@ def collect_fund_data():
                 logger.info(f"  Holdings: {len(hold_combined)} rows → {hold_path.name}")
                 success += 1
 
+            # 4. Industry holding for each fund
+            logger.info("  Lấy industry holding cho từng quỹ...")
+            all_industry = []
+
+            for idx, fname in enumerate(fund_names):
+                if (idx + 1) % 10 == 0:
+                    logger.info(f"    [{idx + 1}/{len(fund_names)}] {fname}...")
+                try:
+                    ind_df = fund.details.industry_holding(symbol=fname)
+                    if ind_df is not None and not ind_df.empty:
+                        ind_df["fund"] = fname
+                        all_industry.append(ind_df)
+                except Exception:
+                    pass
+                get_limiter().wait()
+
+            if all_industry:
+                ind_combined = pd.concat(all_industry, ignore_index=True)
+                ind_path = fund_dir / "fund_industry_holding.csv"
+                ind_combined.to_csv(ind_path, index=False, encoding="utf-8-sig")
+                logger.info(f"  Industry: {len(ind_combined)} rows ({len(all_industry)} quỹ) → {ind_path.name}")
+                success += 1
+
+            # 5. Asset holding for each fund
+            logger.info("  Lấy asset holding cho từng quỹ...")
+            all_asset = []
+
+            for idx, fname in enumerate(fund_names):
+                if (idx + 1) % 10 == 0:
+                    logger.info(f"    [{idx + 1}/{len(fund_names)}] {fname}...")
+                try:
+                    asset_df = fund.details.asset_holding(symbol=fname)
+                    if asset_df is not None and not asset_df.empty:
+                        asset_df["fund"] = fname
+                        all_asset.append(asset_df)
+                except Exception:
+                    pass
+                get_limiter().wait()
+
+            if all_asset:
+                asset_combined = pd.concat(all_asset, ignore_index=True)
+                asset_path = fund_dir / "fund_asset_holding.csv"
+                asset_combined.to_csv(asset_path, index=False, encoding="utf-8-sig")
+                logger.info(f"  Asset: {len(asset_combined)} rows ({len(all_asset)} quỹ) → {asset_path.name}")
+                success += 1
+
     except Exception as e:
         logger.warning(f"  Fund lỗi: {e}")
 
@@ -473,6 +523,7 @@ def collect_listing_metadata():
             ("all_covered_warrant", "Chứng quyền", "covered_warrants.csv"),
             ("all_bonds", "Trái phiếu DN", "corporate_bonds.csv"),
             ("all_government_bonds", "Trái phiếu CP", "government_bonds.csv"),
+            ("all_etf", "Danh sách ETF", "etf_listing.csv"),
         ]
 
         for method_name, label, filename in items:

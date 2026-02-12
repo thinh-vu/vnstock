@@ -9,6 +9,9 @@ Output:
     data/company_events.csv     - Sự kiện công ty (cổ tức, ĐHCĐ, phát hành)
     data/insider_trading.csv    - Giao dịch nội bộ (snapshot)
     data/shareholders.csv       - Cổ đông lớn (snapshot)
+    data/company_news.csv       - Tin tức công ty (VCI, snapshot)
+    data/company_officers.csv   - Ban lãnh đạo (VCI, snapshot)
+    data/subsidiaries.csv       - Công ty con (KBS, snapshot)
 
 Cách chạy:
     python scripts/collect_extras.py                           # Tất cả
@@ -405,6 +408,168 @@ def collect_shareholders(top_n: int = 100):
 
 
 # ============================================================
+# 7. COMPANY NEWS (VCI)
+# ============================================================
+
+def collect_company_news(top_n: int = 100):
+    """
+    Thu thập tin tức công ty cho top N mã.
+    Snapshot overwrite mỗi ngày.
+    """
+    logger.info(f"Đang lấy company news cho top {top_n} mã...")
+
+    from vnstock.common.client import Vnstock
+
+    client = Vnstock(source="VCI", show_log=False)
+    stock = client.stock(symbol="ACB", source="VCI")
+    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
+    all_symbols = symbols_df["symbol"].tolist()[:top_n]
+
+    all_news = []
+    success = 0
+    errors = 0
+
+    for idx, symbol in enumerate(all_symbols):
+        if (idx + 1) % 50 == 0 or idx == 0:
+            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
+
+        try:
+            client_s = Vnstock(source="VCI", show_log=False)
+            stock_s = client_s.stock(symbol=symbol, source="VCI")
+
+            try:
+                nw = stock_s.company.news()
+                if nw is not None and not nw.empty:
+                    nw["symbol"] = symbol
+                    all_news.append(nw)
+            except Exception:
+                pass
+
+            success += 1
+            get_limiter().wait()
+
+        except Exception:
+            errors += 1
+
+    csv_news = DATA_DIR / "company_news.csv"
+    if all_news:
+        df_news = pd.concat(all_news, ignore_index=True)
+        df_news.to_csv(csv_news, index=False, encoding="utf-8-sig")
+        logger.info(f"  News: {len(df_news)} tin tức → {csv_news.name}")
+
+    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
+    return success > 0
+
+
+# ============================================================
+# 8. COMPANY OFFICERS (VCI)
+# ============================================================
+
+def collect_company_officers(top_n: int = 100):
+    """
+    Thu thập ban lãnh đạo cho top N mã.
+    Snapshot overwrite mỗi ngày.
+    """
+    logger.info(f"Đang lấy company officers cho top {top_n} mã...")
+
+    from vnstock.common.client import Vnstock
+
+    client = Vnstock(source="VCI", show_log=False)
+    stock = client.stock(symbol="ACB", source="VCI")
+    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
+    all_symbols = symbols_df["symbol"].tolist()[:top_n]
+
+    all_officers = []
+    success = 0
+    errors = 0
+
+    for idx, symbol in enumerate(all_symbols):
+        if (idx + 1) % 50 == 0 or idx == 0:
+            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
+
+        try:
+            client_s = Vnstock(source="VCI", show_log=False)
+            stock_s = client_s.stock(symbol=symbol, source="VCI")
+
+            try:
+                of = stock_s.company.officers()
+                if of is not None and not of.empty:
+                    of["symbol"] = symbol
+                    all_officers.append(of)
+            except Exception:
+                pass
+
+            success += 1
+            get_limiter().wait()
+
+        except Exception:
+            errors += 1
+
+    csv_officers = DATA_DIR / "company_officers.csv"
+    if all_officers:
+        df_of = pd.concat(all_officers, ignore_index=True)
+        df_of.to_csv(csv_officers, index=False, encoding="utf-8-sig")
+        logger.info(f"  Officers: {len(df_of)} người → {csv_officers.name}")
+
+    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
+    return success > 0
+
+
+# ============================================================
+# 9. SUBSIDIARIES (KBS)
+# ============================================================
+
+def collect_subsidiaries(top_n: int = 100):
+    """
+    Thu thập danh sách công ty con cho top N mã.
+    Snapshot overwrite mỗi ngày.
+    """
+    logger.info(f"Đang lấy subsidiaries cho top {top_n} mã...")
+
+    from vnstock.common.client import Vnstock
+
+    client = Vnstock(source="KBS", show_log=False)
+    stock = client.stock(symbol="ACB", source="KBS")
+    symbols_df = stock.listing.symbols_by_exchange(show_log=False)
+    all_symbols = symbols_df["symbol"].tolist()[:top_n]
+
+    all_subs = []
+    success = 0
+    errors = 0
+
+    for idx, symbol in enumerate(all_symbols):
+        if (idx + 1) % 50 == 0 or idx == 0:
+            logger.info(f"  [{idx + 1}/{top_n}] {symbol}... (OK: {success}, lỗi: {errors})")
+
+        try:
+            from vnstock.explorer.kbs.company import Company
+            comp = Company(symbol, show_log=False)
+
+            try:
+                sb = comp.subsidiaries()
+                if sb is not None and not sb.empty:
+                    sb["symbol"] = symbol
+                    all_subs.append(sb)
+            except Exception:
+                pass
+
+            success += 1
+            get_limiter().wait()
+
+        except Exception:
+            errors += 1
+
+    csv_subs = DATA_DIR / "subsidiaries.csv"
+    if all_subs:
+        df_subs = pd.concat(all_subs, ignore_index=True)
+        df_subs.to_csv(csv_subs, index=False, encoding="utf-8-sig")
+        logger.info(f"  Subsidiaries: {len(df_subs)} công ty con → {csv_subs.name}")
+
+    logger.info(f"  Kết quả: {success}/{top_n} mã, {errors} lỗi")
+    return success > 0
+
+
+# ============================================================
 # CLI
 # ============================================================
 
@@ -430,7 +595,7 @@ def main():
 
     total_steps = 2
     if not args.skip_company:
-        total_steps += 4  # overview, events, insider, shareholders
+        total_steps += 7  # overview, events, insider, shareholders, news, officers, subsidiaries
 
     logger.info("=" * 60)
     logger.info("THU THẬP DỮ LIỆU BỔ SUNG")
@@ -469,6 +634,21 @@ def main():
         # 6. Shareholders
         logger.info(f"\n[{step}/{total_steps}] SHAREHOLDERS ({args.top_n_events} mã)")
         collect_shareholders(top_n=args.top_n_events)
+        step += 1
+
+        # 7. Company news (VCI)
+        logger.info(f"\n[{step}/{total_steps}] COMPANY NEWS ({args.top_n_events} mã)")
+        collect_company_news(top_n=args.top_n_events)
+        step += 1
+
+        # 8. Company officers (VCI)
+        logger.info(f"\n[{step}/{total_steps}] COMPANY OFFICERS ({args.top_n_events} mã)")
+        collect_company_officers(top_n=args.top_n_events)
+        step += 1
+
+        # 9. Subsidiaries (KBS)
+        logger.info(f"\n[{step}/{total_steps}] SUBSIDIARIES ({args.top_n_events} mã)")
+        collect_subsidiaries(top_n=args.top_n_events)
 
     logger.info("\n" + "=" * 60)
     logger.info("HOÀN TẤT!")
