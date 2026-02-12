@@ -1,0 +1,310 @@
+name: Dashboard Data Collector
+
+on:
+  schedule:
+    # 14:50 giờ Việt Nam (UTC+7) = 07:50 UTC, thứ 2-6
+    - cron: '50 7 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Ngày thu thập (YYYY-MM-DD), bỏ trống = hôm nay'
+        required: false
+        default: ''
+      indices_start:
+        description: 'Ngày bắt đầu chỉ số (YYYY-MM-DD). Mặc định: 1 năm trước'
+        required: false
+        default: ''
+      indices_end:
+        description: 'Ngày kết thúc chỉ số (YYYY-MM-DD). Mặc định: hôm nay'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytz matplotlib openpyxl
+
+      - name: Set timezone to Vietnam
+        run: echo "TZ=Asia/Ho_Chi_Minh" >> $GITHUB_ENV
+
+      - name: Determine collection date
+        id: date
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            echo "date=${{ github.event.inputs.date }}" >> $GITHUB_OUTPUT
+          else
+            echo "date=$(TZ=Asia/Ho_Chi_Minh date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check trading day (skip weekends + VN holidays)
+        id: check_day
+        run: |
+          DATE="${{ steps.date.outputs.date }}"
+          IS_MANUAL="${{ github.event_name }}"
+
+          # Nếu chạy thủ công (workflow_dispatch) → luôn chạy
+          if [ "$IS_MANUAL" = "workflow_dispatch" ]; then
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "Chạy thủ công → tiếp tục."
+            exit 0
+          fi
+
+          # Kiểm tra cuối tuần
+          DAY_OF_WEEK=$(TZ=Asia/Ho_Chi_Minh date +%u)
+          if [ "$DAY_OF_WEEK" -gt 5 ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Hôm nay là cuối tuần → bỏ qua."
+            exit 0
+          fi
+
+          # Kiểm tra ngày lễ TTCK Việt Nam
+          python -c "
+          from scripts.vn_holidays import is_holiday
+          date = '$DATE'
+          if is_holiday(date):
+              print(f'{date}: NGHỈ LỄ TTCK Việt Nam → bỏ qua.')
+              exit(0)
+          else:
+              print(f'{date}: Ngày giao dịch → tiếp tục.')
+              exit(1)
+          " && {
+            echo "skip=true" >> $GITHUB_OUTPUT
+          } || {
+            echo "skip=false" >> $GITHUB_OUTPUT
+          }
+
+      # ========== PHẦN 0: CÀI ĐẶT VNSTOCK PREMIUM ==========
+      # Theo hướng dẫn: https://vnstocks.com/onboard-member/cai-dat-go-loi/cai-dat-nang-cao
+      # Sử dụng CLI installer chính thức + xác thực bằng API key
+      - name: "[0] Install premium packages (CLI installer)"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          echo "=== [1/3] Downloading CLI installer ==="
+          wget -q https://vnstocks.com/files/vnstock-cli-installer.run -O /tmp/vnstock-cli-installer.run
+          chmod +x /tmp/vnstock-cli-installer.run
+
+          echo "=== [2/3] Running installer (non-interactive) ==="
+          # CLI installer interactive prompts:
+          #   Language: 1 (Vietnamese, default Enter)
+          #   Python version: 1 (default Enter)
+          #   Venv path: empty (skip, Enter)
+          #   Auth method: 2 (Nhập API Key thủ công)
+          #   API key: from env var
+          printf "\n\n\n2\n${VNSTOCK_API_KEY}\n" | /tmp/vnstock-cli-installer.run 2>&1
+
+          echo "=== [3/3] Verification ==="
+          python -c "
+          print('Package status:')
+          for pkg in ['vnii', 'vnai', 'vnstock_data', 'vnstock_news', 'vnstock_ta', 'vnstock_pipeline']:
+              try:
+                  mod = __import__(pkg)
+                  ver = getattr(mod, '__version__', 'OK')
+                  print(f'  {pkg}: v{ver}')
+              except ImportError:
+                  print(f'  {pkg}: NOT installed')
+
+          # Verify tier
+          try:
+              from vnai.beam.auth import authenticator
+              tier = authenticator.get_tier(force_refresh=True)
+              limits = authenticator.get_limits(tier)
+              print(f'Tier: {tier} ({limits[\"min\"]} req/min)')
+          except Exception as e:
+              print(f'Tier check failed: {e}')
+          "
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+
+      # ========== PHẦN 1: THU THẬP DỮ LIỆU CỔ PHIẾU ==========
+      - name: "[1/8] Thu thập dữ liệu cổ phiếu"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} --skip-ohlcv
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
+
+      # ========== PHẦN 2: THU THẬP OHLCV TOP 500 CỔ PHIẾU ==========
+      - name: "[2/8] Thu thập OHLCV top 500 cổ phiếu vốn hóa"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/collect_stocks.py
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
+
+      # ========== PHẦN 3: THU THẬP DỮ LIỆU CHỈ SỐ ==========
+      - name: "[3/8] Thu thập 18 chỉ số thị trường + charts"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          START_FLAG=""
+          END_FLAG=""
+          if [ -n "${{ github.event.inputs.indices_start }}" ]; then
+            START_FLAG="--start ${{ github.event.inputs.indices_start }}"
+          fi
+          if [ -n "${{ github.event.inputs.indices_end }}" ]; then
+            END_FLAG="--end ${{ github.event.inputs.indices_end }}"
+          fi
+          python scripts/collect_indices.py $START_FLAG $END_FLAG
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
+
+      # ========== PHẦN 4: GIÁ VÀNG + TỶ GIÁ + COMPANY DATA ==========
+      - name: "[4/8] Thu thập giá vàng, tỷ giá, company data, events, insider"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/collect_extras.py --date ${{ steps.date.outputs.date }}
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
+
+      # ========== PHẦN 5: FX + CRYPTO + WORLD INDICES + FUND ==========
+      - name: "[5/8] Thu thập FX, Crypto, World Indices, Fund, Listing"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/collect_market.py
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
+
+      # ========== PHẦN 6: GIÁ HÀNG HÓA (vnstock_data) ==========
+      - name: "[6/8] Thu thập giá hàng hóa (CommodityPrice)"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/collect_commodity.py
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
+
+      # ========== PHẦN 7: DỮ LIỆU VĨ MÔ (vnstock_data) ==========
+      - name: "[7/8] Thu thập dữ liệu vĩ mô (Macro)"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/collect_macro.py
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
+
+      # ========== PHẦN 8: MARKET INSIGHTS (vnstock_data) ==========
+      - name: "[8/8] Thu thập thống kê thị trường (Market Insights)"
+        if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
+        run: |
+          python scripts/collect_insights.py
+        env:
+          VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
+
+      # ========== HIỂN THỊ KẾT QUẢ ==========
+      - name: Show collected files
+        if: steps.check_day.outputs.skip != 'true'
+        run: |
+          echo "=========================================="
+          echo "  DỮ LIỆU CỔ PHIẾU (${{ steps.date.outputs.date }})"
+          echo "=========================================="
+          if [ -d "data/${{ steps.date.outputs.date }}" ]; then
+            ls -lh data/${{ steps.date.outputs.date }}/
+          else
+            echo "Không có thư mục data."
+          fi
+          echo ""
+          echo "=========================================="
+          echo "  OHLCV TOP 500 CỔ PHIẾU"
+          echo "=========================================="
+          ls data/stocks/*.csv 2>/dev/null | wc -l | xargs -I{} echo "{} files"
+          echo ""
+          echo "=========================================="
+          echo "  DỮ LIỆU CHỈ SỐ (18 indices)"
+          echo "=========================================="
+          ls -lh data/indices/*.csv 2>/dev/null || echo "No CSV files"
+          echo ""
+          echo "=========================================="
+          echo "  DỮ LIỆU BỔ SUNG"
+          echo "=========================================="
+          ls -lh data/gold_prices.csv data/exchange_rates.csv data/company_overview.csv data/company_ratios.csv 2>/dev/null || echo "No extra files"
+          ls -lh data/company_events.csv data/insider_trading.csv data/shareholders.csv 2>/dev/null || echo "No company detail files"
+          echo ""
+          echo "=========================================="
+          echo "  FX / CRYPTO / WORLD INDICES"
+          echo "=========================================="
+          ls data/fx/*.csv 2>/dev/null | wc -l | xargs -I{} echo "FX: {} pairs"
+          ls data/crypto/*.csv 2>/dev/null | wc -l | xargs -I{} echo "Crypto: {} coins"
+          ls data/world_indices/*.csv 2>/dev/null | wc -l | xargs -I{} echo "World: {} indices"
+          echo ""
+          echo "=========================================="
+          echo "  FUND DATA"
+          echo "=========================================="
+          ls -lh data/funds/*.csv 2>/dev/null || echo "No fund files"
+          echo ""
+          echo "=========================================="
+          echo "  LISTING METADATA"
+          echo "=========================================="
+          ls -lh data/metadata/*.csv 2>/dev/null || echo "No metadata files"
+          echo ""
+          echo "=========================================="
+          echo "  HÀNG HÓA (vnstock_data)"
+          echo "=========================================="
+          ls -lh data/commodity/*.csv 2>/dev/null || echo "No commodity files"
+          echo ""
+          echo "=========================================="
+          echo "  KINH TẾ VĨ MÔ (vnstock_data)"
+          echo "=========================================="
+          ls -lh data/macro/*.csv 2>/dev/null || echo "No macro files"
+          echo ""
+          echo "=========================================="
+          echo "  MARKET INSIGHTS (vnstock_data)"
+          echo "=========================================="
+          ls -lh data/insights/*.csv 2>/dev/null || echo "No insights files"
+
+      # ========== COMMIT & PUSH ==========
+      - name: Commit and push all data
+        if: steps.check_day.outputs.skip != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --staged --quiet; then
+            echo "Không có dữ liệu mới."
+          else
+            DATE=${{ steps.date.outputs.date }}
+            git commit -m "data: dashboard $DATE"
+            git push
+          fi
+
+      - name: Upload artifacts
+        if: steps.check_day.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-data-${{ steps.date.outputs.date }}
+          path: data/
+          retention-days: 90
