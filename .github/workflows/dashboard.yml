@@ -108,25 +108,47 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           }
 
-      # ========== PHẦN 0: CÀI VNSTOCK_DATA (NẾU CÓ) ==========
+      # ========== PHẦN 0: CÀI VNSTOCK PREMIUM ==========
       - name: "[0] Install vnstock premium packages (if available)"
         if: steps.check_day.outputs.skip != 'true'
         continue-on-error: true
         run: |
-          echo "Trying to install vnstock premium packages from vnstocks.com..."
-          pip install --extra-index-url https://vnstocks.com/api/simple vnstock_data vnstock_news 2>&1 || \
-            echo "vnstock premium packages not available (check Insiders Program access)"
+          EXTRA_INDEX="https://vnstocks.com/api/simple"
+
+          # 1. Install vnii first (license verification for premium tier detection)
+          echo "=== Installing vnii (license verification) ==="
+          pip install --extra-index-url $EXTRA_INDEX vnii 2>&1 || echo "vnii not available"
+
+          # 2. Register API key with vnai
+          echo "=== Registering API key ==="
           python -c "
+          import os
           try:
-              import vnstock_data
-              print(f'vnstock_data: {vnstock_data.__version__}')
-          except ImportError:
-              print('vnstock_data: NOT installed')
-          try:
-              import vnstock_news
-              print(f'vnstock_news: {vnstock_news.__version__}')
-          except ImportError:
-              print('vnstock_news: NOT installed')
+              from vnai import setup_api_key
+              key = os.environ.get('VNSTOCK_API_KEY', '')
+              if key:
+                  setup_api_key(key)
+                  print('API key registered with vnai')
+          except Exception as e:
+              print(f'Warning: {e}')
+          "
+
+          # 3. Install premium data packages
+          echo "=== Installing premium packages ==="
+          pip install --extra-index-url $EXTRA_INDEX vnstock_data 2>&1 || echo "vnstock_data not available"
+          pip install --extra-index-url $EXTRA_INDEX vnstock_news 2>&1 || echo "vnstock_news not available"
+
+          # 4. Verify installations
+          echo "=== Verification ==="
+          python -c "
+          packages = ['vnii', 'vnstock_data', 'vnstock_news']
+          for pkg in packages:
+              try:
+                  mod = __import__(pkg)
+                  ver = getattr(mod, '__version__', 'installed')
+                  print(f'  {pkg}: v{ver}')
+              except ImportError:
+                  print(f'  {pkg}: NOT installed')
           "
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
@@ -134,6 +156,7 @@ jobs:
       # ========== PHẦN 1: THU THẬP DỮ LIỆU CỔ PHIẾU ==========
       - name: "[1/8] Thu thập dữ liệu cổ phiếu"
         if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
         run: |
           python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} --skip-ohlcv
         env:
@@ -143,6 +166,7 @@ jobs:
       # ========== PHẦN 2: THU THẬP OHLCV TOP 500 CỔ PHIẾU ==========
       - name: "[2/8] Thu thập OHLCV top 500 cổ phiếu vốn hóa"
         if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
         run: |
           python scripts/collect_stocks.py
         env:
@@ -152,6 +176,7 @@ jobs:
       # ========== PHẦN 3: THU THẬP DỮ LIỆU CHỈ SỐ ==========
       - name: "[3/8] Thu thập 18 chỉ số thị trường + charts"
         if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
         run: |
           START_FLAG=""
           END_FLAG=""
@@ -169,6 +194,7 @@ jobs:
       # ========== PHẦN 4: GIÁ VÀNG + TỶ GIÁ + COMPANY DATA ==========
       - name: "[4/8] Thu thập giá vàng, tỷ giá, company data, events, insider"
         if: steps.check_day.outputs.skip != 'true'
+        continue-on-error: true
         run: |
           python scripts/collect_extras.py --date ${{ steps.date.outputs.date }}
         env:
