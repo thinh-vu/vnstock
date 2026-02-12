@@ -96,76 +96,25 @@ jobs:
 
       # ========== PHẦN 0: CÀI ĐẶT VNSTOCK PREMIUM ==========
       # Theo hướng dẫn: https://vnstocks.com/onboard-member/cai-dat-go-loi/cai-dat-nang-cao
-      # Cài đặt thư viện premium qua vnstocks.com/api/simple với xác thực API key
-      - name: "[0] Install premium packages (vnstocks.com)"
+      # Sử dụng CLI installer chính thức + xác thực bằng API key
+      - name: "[0] Install premium packages (CLI installer)"
         if: steps.check_day.outputs.skip != 'true'
         continue-on-error: true
         run: |
-          # Pip index URLs - thử xác thực bằng API key token
-          PUBLIC_INDEX="https://vnstocks.com/api/simple"
-          AUTH_INDEX="https://__token__:${VNSTOCK_API_KEY}@vnstocks.com/api/simple"
+          echo "=== [1/3] Downloading CLI installer ==="
+          wget -q https://vnstocks.com/files/vnstock-cli-installer.run -O /tmp/vnstock-cli-installer.run
+          chmod +x /tmp/vnstock-cli-installer.run
 
-          # ---- Step 1: Install vnii (license verification) ----
-          echo "=== [1/5] Installing vnii (license verification) ==="
-          pip install --extra-index-url "$AUTH_INDEX" vnii 2>&1 || \
-          pip install --extra-index-url "$PUBLIC_INDEX" vnii 2>&1 || \
-          echo "WARN: vnii not available"
+          echo "=== [2/3] Running installer (non-interactive) ==="
+          # CLI installer interactive prompts:
+          #   Language: 1 (Vietnamese, default Enter)
+          #   Python version: 1 (default Enter)
+          #   Venv path: empty (skip, Enter)
+          #   Auth method: 2 (Nhập API Key thủ công)
+          #   API key: from env var
+          printf "\n\n\n2\n${VNSTOCK_API_KEY}\n" | /tmp/vnstock-cli-installer.run 2>&1
 
-          # ---- Step 2: Register API key with vnai ----
-          echo "=== [2/5] Registering API key ==="
-          python -c "
-          import os
-          key = os.environ.get('VNSTOCK_API_KEY', '')
-          if not key:
-              print('No VNSTOCK_API_KEY set')
-              exit(0)
-          from vnai import setup_api_key
-          setup_api_key(key)
-          "
-
-          # ---- Step 3: Install premium packages with authentication ----
-          echo "=== [3/5] Installing premium packages ==="
-          PKGS=(vnstock_data vnstock_news vnstock_ta vnstock_pipeline)
-          for pkg in "${PKGS[@]}"; do
-            echo "  Installing $pkg..."
-            pip install --extra-index-url "$AUTH_INDEX" "$pkg" 2>&1 || \
-            pip install --extra-index-url "$PUBLIC_INDEX" "$pkg" 2>&1 || \
-            echo "  WARN: $pkg not available"
-          done
-
-          # ---- Step 4: Fallback - try CLI installer if packages missing ----
-          echo "=== [4/5] Checking installed packages ==="
-          MISSING=$(python -c "
-          missing = []
-          for pkg in ['vnstock_data', 'vnstock_news']:
-              try:
-                  __import__(pkg)
-              except ImportError:
-                  missing.append(pkg)
-          print(' '.join(missing))
-          ")
-
-          if [ -n "$MISSING" ]; then
-            echo "Missing packages: $MISSING"
-            echo "Trying CLI installer fallback..."
-            # Download official CLI installer
-            wget -q https://vnstocks.com/files/vnstock-cli-installer.run -O /tmp/installer.run 2>&1 || true
-            if [ -f /tmp/installer.run ]; then
-              chmod +x /tmp/installer.run
-              # Extract without running (--noexec), then run setup_wizard.py with token
-              /tmp/installer.run --noexec --keep --target /tmp/vnstock_setup 2>&1 || true
-              if [ -f /tmp/vnstock_setup/setup_wizard.py ]; then
-                # Create token file for non-interactive setup (if GH token available)
-                mkdir -p ~/.vnstock
-                # setup_wizard.py looks for ~/.vnstock/access_token.json
-                echo "CLI installer extracted. setup_wizard.py requires GitHub OAuth."
-                echo "Set VNSTOCK_GH_TOKEN secret for automatic sponsor package installation."
-              fi
-            fi
-          fi
-
-          # ---- Step 5: Verify installation ----
-          echo "=== [5/5] Verification ==="
+          echo "=== [3/3] Verification ==="
           python -c "
           print('Package status:')
           for pkg in ['vnii', 'vnai', 'vnstock_data', 'vnstock_news', 'vnstock_ta', 'vnstock_pipeline']:
