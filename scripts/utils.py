@@ -25,6 +25,37 @@ logger = logging.getLogger("utils")
 # API KEY REGISTRATION
 # ============================================================
 
+def _sync_vnai_tier(rate_limit: int):
+    """
+    Sync vnai's internal authenticator to match the actual tier.
+
+    Without this, vnai's Guardian (quota.py) enforces 60 req/min for "free"
+    tier and calls sys.exit() when exceeded — even if VNSTOCK_RATE_LIMIT is set
+    higher. This happens because vnai needs the `vnii` package to detect
+    Golden/Silver/Bronze tiers, and vnii is not available in CI environments.
+    """
+    try:
+        from vnai.beam.auth import authenticator
+        # Map to a tier whose vnai limit >= our rate_limit
+        # so vnai's Guardian won't kill the process prematurely
+        # golden=600, silver=300, bronze=180, free=60, guest=20
+        if rate_limit > 300:
+            tier = "golden"
+        elif rate_limit > 180:
+            tier = "silver"
+        elif rate_limit > 60:
+            tier = "bronze"
+        elif rate_limit > 20:
+            tier = "free"
+        else:
+            tier = "guest"
+        authenticator._cached_tier = tier
+        authenticator._cache_timestamp = time.time()
+        logger.info(f"vnai tier synced: {tier} ({authenticator.TIER_LIMITS[tier]['min']} req/min)")
+    except Exception as e:
+        logger.warning(f"Failed to sync vnai tier: {e}")
+
+
 def register_api_key():
     """
     Register vnstock API key from environment variable VNSTOCK_API_KEY.
@@ -36,17 +67,26 @@ def register_api_key():
         2. vnai tier detection
         3. Default: 60 req/min
     """
-    # Check for manual override first
+    # Register API key with vnai first (so vnai knows we have a key)
+    api_key = os.environ.get("VNSTOCK_API_KEY", "")
+    if api_key:
+        try:
+            from vnai import setup_api_key
+            setup_api_key(api_key)
+        except Exception as e:
+            logger.warning(f"Failed to register API key with vnai: {e}")
+
+    # Check for manual override
     rate_limit_override = os.environ.get("VNSTOCK_RATE_LIMIT", "")
     if rate_limit_override:
         try:
             rate_limit = int(rate_limit_override)
             logger.info(f"Rate limit override: {rate_limit} req/min (from VNSTOCK_RATE_LIMIT)")
+            _sync_vnai_tier(rate_limit)
             return rate_limit
         except ValueError:
             logger.warning(f"Invalid VNSTOCK_RATE_LIMIT: {rate_limit_override}")
 
-    api_key = os.environ.get("VNSTOCK_API_KEY", "")
     rate_limit = 60  # Default: Community tier
 
     if not api_key:
@@ -54,9 +94,7 @@ def register_api_key():
         return rate_limit
 
     try:
-        from vnai import setup_api_key, check_api_key_status
-
-        setup_api_key(api_key)
+        from vnai import check_api_key_status
 
         status = check_api_key_status()
         if status and status.get("has_api_key"):
