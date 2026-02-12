@@ -94,63 +94,96 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           }
 
-      # ========== PHẦN 0: CÀI VNSTOCK PREMIUM + ĐĂNG KÝ API KEY ==========
-      - name: "[0] Install premium packages + register API key"
+      # ========== PHẦN 0: CÀI ĐẶT VNSTOCK PREMIUM ==========
+      # Theo hướng dẫn: https://vnstocks.com/onboard-member/cai-dat-go-loi/cai-dat-nang-cao
+      # Cài đặt thư viện premium qua vnstocks.com/api/simple với xác thực API key
+      - name: "[0] Install premium packages (vnstocks.com)"
         if: steps.check_day.outputs.skip != 'true'
         continue-on-error: true
         run: |
-          EXTRA_INDEX="https://vnstocks.com/api/simple"
+          # Pip index URLs - thử xác thực bằng API key token
+          PUBLIC_INDEX="https://vnstocks.com/api/simple"
+          AUTH_INDEX="https://__token__:${VNSTOCK_API_KEY}@vnstocks.com/api/simple"
 
-          # 1. Install vnii first (license verification - needed for tier detection)
-          echo "=== [1/4] Installing vnii (license verification) ==="
-          pip install --extra-index-url $EXTRA_INDEX vnii 2>&1 || echo "vnii not available"
+          # ---- Step 1: Install vnii (license verification) ----
+          echo "=== [1/5] Installing vnii (license verification) ==="
+          pip install --extra-index-url "$AUTH_INDEX" vnii 2>&1 || \
+          pip install --extra-index-url "$PUBLIC_INDEX" vnii 2>&1 || \
+          echo "WARN: vnii not available"
 
-          # 2. Register API key AFTER vnii is installed (so vnai can detect Golden tier)
-          echo "=== [2/4] Registering API key (after vnii) ==="
+          # ---- Step 2: Register API key with vnai ----
+          echo "=== [2/5] Registering API key ==="
           python -c "
           import os
           key = os.environ.get('VNSTOCK_API_KEY', '')
           if not key:
               print('No VNSTOCK_API_KEY set')
               exit(0)
-
-          # Register with vnai (vnii now available for tier detection)
-          from vnai import setup_api_key, check_api_key_status
+          from vnai import setup_api_key
           setup_api_key(key)
-
-          # Check detected tier
-          status = check_api_key_status()
-          tier = status.get('tier', 'unknown')
-          limits = status.get('limits', {})
-          print(f'Detected tier: {tier}')
-          print(f'Rate limits: {limits}')
           "
 
-          # 3. Install premium data packages
-          echo "=== [3/4] Installing premium packages ==="
-          pip install --extra-index-url $EXTRA_INDEX vnstock_data 2>&1 || echo "vnstock_data not available"
-          pip install --extra-index-url $EXTRA_INDEX vnstock_news 2>&1 || echo "vnstock_news not available"
+          # ---- Step 3: Install premium packages with authentication ----
+          echo "=== [3/5] Installing premium packages ==="
+          PKGS=(vnstock_data vnstock_news vnstock_ta vnstock_pipeline)
+          for pkg in "${PKGS[@]}"; do
+            echo "  Installing $pkg..."
+            pip install --extra-index-url "$AUTH_INDEX" "$pkg" 2>&1 || \
+            pip install --extra-index-url "$PUBLIC_INDEX" "$pkg" 2>&1 || \
+            echo "  WARN: $pkg not available"
+          done
 
-          # 4. Verify everything
-          echo "=== [4/4] Verification ==="
+          # ---- Step 4: Fallback - try CLI installer if packages missing ----
+          echo "=== [4/5] Checking installed packages ==="
+          MISSING=$(python -c "
+          missing = []
+          for pkg in ['vnstock_data', 'vnstock_news']:
+              try:
+                  __import__(pkg)
+              except ImportError:
+                  missing.append(pkg)
+          print(' '.join(missing))
+          ")
+
+          if [ -n "$MISSING" ]; then
+            echo "Missing packages: $MISSING"
+            echo "Trying CLI installer fallback..."
+            # Download official CLI installer
+            wget -q https://vnstocks.com/files/vnstock-cli-installer.run -O /tmp/installer.run 2>&1 || true
+            if [ -f /tmp/installer.run ]; then
+              chmod +x /tmp/installer.run
+              # Extract without running (--noexec), then run setup_wizard.py with token
+              /tmp/installer.run --noexec --keep --target /tmp/vnstock_setup 2>&1 || true
+              if [ -f /tmp/vnstock_setup/setup_wizard.py ]; then
+                # Create token file for non-interactive setup (if GH token available)
+                mkdir -p ~/.vnstock
+                # setup_wizard.py looks for ~/.vnstock/access_token.json
+                echo "CLI installer extracted. setup_wizard.py requires GitHub OAuth."
+                echo "Set VNSTOCK_GH_TOKEN secret for automatic sponsor package installation."
+              fi
+            fi
+          fi
+
+          # ---- Step 5: Verify installation ----
+          echo "=== [5/5] Verification ==="
           python -c "
-          packages = ['vnii', 'vnai', 'vnstock_data', 'vnstock_news']
-          for pkg in packages:
+          print('Package status:')
+          for pkg in ['vnii', 'vnai', 'vnstock_data', 'vnstock_news', 'vnstock_ta', 'vnstock_pipeline']:
               try:
                   mod = __import__(pkg)
-                  ver = getattr(mod, '__version__', 'installed')
+                  ver = getattr(mod, '__version__', 'OK')
                   print(f'  {pkg}: v{ver}')
               except ImportError:
                   print(f'  {pkg}: NOT installed')
 
-          # Verify tier detection
+          # Verify tier
           try:
               from vnai.beam.auth import authenticator
               tier = authenticator.get_tier(force_refresh=True)
               limits = authenticator.get_limits(tier)
-              print(f'  vnai tier: {tier} ({limits[\"min\"]} req/min)')
+              print(f'Tier: {tier} ({limits[\"min\"]} req/min)')
           except Exception as e:
-              print(f'  vnai tier check failed: {e}')
+              print(f'Tier check failed: {e}')
           "
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
