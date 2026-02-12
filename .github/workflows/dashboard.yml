@@ -112,6 +112,7 @@ jobs:
           python scripts/daily_collector.py --date ${{ steps.date.outputs.date }} --skip-ohlcv
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
 
       # ========== PHẦN 2: THU THẬP OHLCV TOP 500 CỔ PHIẾU ==========
       - name: "[2/8] Thu thập OHLCV top 500 cổ phiếu vốn hóa"
@@ -120,6 +121,7 @@ jobs:
           python scripts/collect_stocks.py
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
 
       # ========== PHẦN 3: THU THẬP DỮ LIỆU CHỈ SỐ ==========
       - name: "[3/8] Thu thập 18 chỉ số thị trường + charts"
@@ -136,6 +138,7 @@ jobs:
           python scripts/collect_indices.py $START_FLAG $END_FLAG
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
 
       # ========== PHẦN 4: GIÁ VÀNG + TỶ GIÁ + COMPANY DATA ==========
       - name: "[4/8] Thu thập giá vàng, tỷ giá, company data, events, insider"
@@ -144,6 +147,7 @@ jobs:
           python scripts/collect_extras.py --date ${{ steps.date.outputs.date }}
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
 
       # ========== PHẦN 5: FX + CRYPTO + WORLD INDICES + FUND ==========
       - name: "[5/8] Thu thập FX, Crypto, World Indices, Fund, Listing"
@@ -153,6 +157,7 @@ jobs:
           python scripts/collect_market.py
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
 
       # ========== PHẦN 6: GIÁ HÀNG HÓA (vnstock_data) ==========
       - name: "[6/8] Thu thập giá hàng hóa (CommodityPrice)"
@@ -162,6 +167,7 @@ jobs:
           python scripts/collect_commodity.py
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
 
       # ========== PHẦN 7: DỮ LIỆU VĨ MÔ (vnstock_data) ==========
       - name: "[7/8] Thu thập dữ liệu vĩ mô (Macro)"
@@ -171,6 +177,7 @@ jobs:
           python scripts/collect_macro.py
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
 
       # ========== PHẦN 8: MARKET INSIGHTS (vnstock_data) ==========
       - name: "[8/8] Thu thập thống kê thị trường (Market Insights)"
@@ -180,6 +187,7 @@ jobs:
           python scripts/collect_insights.py
         env:
           VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+          VNSTOCK_RATE_LIMIT: '500'
 
       # ========== HIỂN THỊ KẾT QUẢ ==========
       - name: Show collected files

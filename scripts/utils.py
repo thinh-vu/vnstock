@@ -4,6 +4,15 @@ Shared utilities for data collection scripts.
 Provides:
 - API key registration
 - Rate limiter to avoid exceeding API limits
+
+Rate limit auto-detection:
+    1. VNSTOCK_RATE_LIMIT env var (highest priority, override)
+    2. vnai.check_api_key_status() (auto-detect from API key)
+    3. Default: 60 req/min (Community tier)
+
+Environment variables:
+    VNSTOCK_API_KEY       - API key for vnstock authentication
+    VNSTOCK_RATE_LIMIT    - Override rate limit (e.g. 500 for Golden tier)
 """
 
 import os
@@ -21,7 +30,22 @@ def register_api_key():
     Register vnstock API key from environment variable VNSTOCK_API_KEY.
     Must be called at the start of each script.
     Returns the detected rate limit (requests per minute).
+
+    Priority:
+        1. VNSTOCK_RATE_LIMIT env var (manual override)
+        2. vnai tier detection
+        3. Default: 60 req/min
     """
+    # Check for manual override first
+    rate_limit_override = os.environ.get("VNSTOCK_RATE_LIMIT", "")
+    if rate_limit_override:
+        try:
+            rate_limit = int(rate_limit_override)
+            logger.info(f"Rate limit override: {rate_limit} req/min (from VNSTOCK_RATE_LIMIT)")
+            return rate_limit
+        except ValueError:
+            logger.warning(f"Invalid VNSTOCK_RATE_LIMIT: {rate_limit_override}")
+
     api_key = os.environ.get("VNSTOCK_API_KEY", "")
     rate_limit = 60  # Default: Community tier
 
