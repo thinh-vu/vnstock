@@ -38,6 +38,7 @@ dependencies = [
     "seaborn",
     "openpyxl",
     "pydantic",
+    "pytz",
     "psutil",
     "packaging>=20.0",
     "importlib-metadata>=1.0",
