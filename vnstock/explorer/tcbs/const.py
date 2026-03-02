@@ -3,6 +3,9 @@ _STOCKS_URL = 'stock-insight'
 _FUTURE_URL = 'futures-insight'
 _ANALYSIS_URL = 'tcanalysis'
 
+# TCBS API interval mapping
+# Note: 'ME' (month-end) is the pandas 2.2+ format. For older pandas versions,
+# use normalize_frequency_string() from vnstock.core.utils.compat module
 _INTERVAL_MAP = {'1m' : '1',
             '5m' : '5',
             '15m' : '15',
@@ -10,7 +13,7 @@ _INTERVAL_MAP = {'1m' : '1',
             '1H' : '60',
             '1D' : 'D',
             '1W' : 'W',
-            '1M' : 'M'
+            '1M' : 'ME'
             }
         
 

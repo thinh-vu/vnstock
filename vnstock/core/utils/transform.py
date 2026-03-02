@@ -763,10 +763,12 @@ def resample_ohlcv(df: pd.DataFrame,
     freq_map : Optional[Dict[str, str]], optional
         Mapping from interval to pandas frequency string. Default supports:
         - '1W': 'W' (weekly)
-        - '1M': 'M' (monthly)
+        - '1M': 'ME' (month end, pandas 2.2+)
         - '1H': 'H' (hourly)
         - '5min': '5min' (5-minute)
         If an interval not in freq_map, used directly as frequency.
+        Note: Frequency strings are automatically normalized for compatibility
+        across pandas versions using normalize_frequency_string()
     time_col : str, optional
         Name of the time column (default: 'time')
 
@@ -804,6 +806,8 @@ def resample_ohlcv(df: pd.DataFrame,
         * volume: sums all values
         * other columns: uses last value
     - Result is sorted by time with index reset
+    - For pandas 2.2+ compatibility with month-end frequency ('ME'), 
+      consider using safe_resample_dataframe() from vnstock.core.utils.compat
     """
     if time_col not in df.columns:
         raise KeyError(
@@ -815,7 +819,7 @@ def resample_ohlcv(df: pd.DataFrame,
     if freq_map is None:
         freq_map = {
             '1W': 'W',
-            '1M': 'M',
+            '1M': 'ME',
             '1H': 'H',
             '5min': '5min',
             '15min': '15min',

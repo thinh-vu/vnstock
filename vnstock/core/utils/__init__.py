@@ -82,6 +82,16 @@ from .auth import (
     check_status,
 )
 
+# Pandas compatibility utilities
+from .compat import (
+    apply_to_dataframe,
+    replace_newlines_in_dataframe,
+    strip_whitespace_in_dataframe,
+    get_pandas_info,
+    normalize_frequency_string,
+    safe_resample_dataframe,
+)
+
 __all__ = [
     # Validation
     'validate_symbol',
@@ -140,4 +150,11 @@ __all__ = [
     'register_user',
     'change_api_key',
     'check_status',
+    # Pandas compatibility
+    'apply_to_dataframe',
+    'replace_newlines_in_dataframe',
+    'strip_whitespace_in_dataframe',
+    'get_pandas_info',
+    'normalize_frequency_string',
+    'safe_resample_dataframe',
 ]

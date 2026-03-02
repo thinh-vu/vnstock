@@ -14,13 +14,16 @@ _INTERVAL_MAP = {'1m' : 'ONE_MINUTE',
             '1M' : 'ONE_DAY'
             }
 
+# Frequency resampling map
+# Note: 'ME' (month-end) is the pandas 2.2+ format. For older pandas versions,
+# use normalize_frequency_string() from vnstock.core.utils.compat module
 _RESAMPLE_MAP = {
             '5m' : '5min',
             '15m' : '15min',
             '30m' : '30min',
             '1H' : '1H',
             '1W' : '1W',
-            '1M' : 'M'
+            '1M' : 'ME'
             }
 
 _OHLC_MAP = {

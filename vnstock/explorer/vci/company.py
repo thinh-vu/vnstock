@@ -8,6 +8,7 @@ from typing import Dict, Optional, Union, List
 from vnstock.core.utils import client
 from vnstock.core.utils.client import ProxyConfig
 from vnstock.core.utils.logger import get_logger
+from vnstock.core.utils.compat import replace_newlines_in_dataframe
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.transform import clean_html_dict, flatten_dict_to_df, flatten_list_to_df, reorder_cols, drop_cols_by_pattern
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
@@ -155,9 +156,8 @@ class Company:
         clean_data = clean_html_dict(data)
         df = flatten_dict_to_df(clean_data, 'financialRatio')
         
-        # Replace '\n' with ' ' in all string columns
-        # df = df.map(lambda x: x.replace('\n', ' ') if isinstance(x, str) else x) # This is for pandas 2.x
-        df = df.applymap(lambda x: x.replace('\n', ' ') if isinstance(x, str) else x) # This can be used for pandas 1.x and 2.x
+        # Replace '\n' with ' ' in all string columns using pandas-compatible method
+        df = replace_newlines_in_dataframe(df)
         
         # Convert to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]
