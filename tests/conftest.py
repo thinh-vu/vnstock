@@ -314,6 +314,48 @@ def disable_logging(monkeypatch):
     )
 
 
+@pytest.fixture(autouse=True, scope="session")
+def setup_api_key():
+    """
+    Setup API key from environment variable for tests.
+    
+    Automatically registers VNSTOCK_API_KEY from environment if available.
+    This increases rate limit from 20 to 60 requests/minute.
+    
+    Environment Variables:
+        VNSTOCK_API_KEY: API key for authenticated requests (Community tier)
+        
+    Usage:
+        # Automatically runs before any test begins
+        # No manual action needed in test code
+        
+    GitHub Actions Setup:
+        1. Register free account at https://vnstocks.com/login
+        2. Get API key from dashboard
+        3. Add to GitHub Secrets: Settings → Secrets → Actions → New
+        4. Use in workflow: 
+           env:
+             VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+    """
+    import os
+    
+    api_key = os.getenv('VNSTOCK_API_KEY')
+    if api_key:
+        try:
+            # Try to import and setup the API key
+            from vnstock.core.utils.auth import register_user
+            success = register_user(api_key=api_key)
+            
+            if success:
+                masked_key = f"{api_key[:4]}***{api_key[-4:]}"
+                print(f"\n✓ API Key Setup: {masked_key} (Community: 60 req/min)")
+            else:
+                print("\n⚠ API Key setup failed, continuing with guest tier (20 req/min)")
+        except Exception as e:
+            print(f"\n⚠ Could not setup API key: {e}")
+            print("  Continuing with guest tier (20 req/min)")
+
+
 @pytest.fixture
 def temp_cache_dir(tmp_path):
     """Provide temporary directory for cache during tests."""

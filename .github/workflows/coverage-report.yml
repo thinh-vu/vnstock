@@ -28,6 +28,8 @@ jobs:
     - name: Generate coverage report
       run: |
         pytest tests/ --cov=vnstock --cov-report=xml --cov-report=html --cov-report=term-missing
+      env:
+        VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3

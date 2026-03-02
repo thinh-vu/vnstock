@@ -31,6 +31,8 @@ jobs:
       run: |
         pytest tests/ --benchmark-only --benchmark-json=benchmark.json
       continue-on-error: true
+      env:
+        VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
     
     - name: Compare with baseline
       run: |

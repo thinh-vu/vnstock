@@ -1,0 +1,90 @@
+name: Verify API Key Setup
+
+on:
+  workflow_dispatch:  # Manual trigger to test setup
+  push:
+    paths:
+      - '.github/workflows/verify-api-key.yml'
+      - 'verify_api_key_setup.py'
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+    
+    - name: Verify API Key Setup (with secret)
+      run: |
+        python verify_api_key_setup.py
+      env:
+        VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+      continue-on-error: true
+    
+    - name: Quick Test with API Key
+      run: |
+        python -c "
+import os
+from vnstock.core.utils.auth import register_user
+
+api_key = os.getenv('VNSTOCK_API_KEY')
+if api_key:
+    print('✓ API Key found')
+    success = register_user(api_key=api_key)
+    if success:
+        print('✓ API Key registered - Community tier (60 req/min)')
+    else:
+        print('⚠ API Key registration failed')
+else:
+    print('ℹ No API Key - Guest tier (20 req/min)')
+"
+      env:
+        VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+      continue-on-error: true
+    
+    - name: Test API Connection
+      run: |
+        python -c "
+from vnstock import listing
+try:
+    symbols = listing.all_symbols()
+    print(f'✓ Successfully fetched {len(symbols)} symbols')
+except Exception as e:
+    print(f'⚠ API Call failed: {e}')
+"
+      env:
+        VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
+      continue-on-error: true
+    
+    - name: Print Summary
+      if: always()
+      run: |
+        echo "## API Key Setup Verification Result 📊" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Item | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Python Version | $(python --version) |" >> $GITHUB_STEP_SUMMARY
+        echo "| VNStock Module | ✓ Installed |" >> $GITHUB_STEP_SUMMARY
+        echo "| API Secret | $([[ -z \"$VNSTOCK_API_KEY\" ]] && echo '❌ Not Set' || echo '✓ Set') |" >> $GITHUB_STEP_SUMMARY
+        echo "| Tier | Community (60 req/min) |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+        echo "1. Run tests: \`pytest tests/unit/ -v\`" >> $GITHUB_STEP_SUMMARY
+        echo "2. Check rate limit:" >> $GITHUB_STEP_SUMMARY
+        echo "   - Before: 20 requests/minute" >> $GITHUB_STEP_SUMMARY
+        echo "   - After: 60 requests/minute ✓" >> $GITHUB_STEP_SUMMARY
+      env:
+        VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}

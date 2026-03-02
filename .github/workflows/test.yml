@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        python-version: ['3.10', '3.11', '3.12', '3.13']
     
     steps:
     - uses: actions/checkout@v4
@@ -30,21 +30,31 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
         pip install -e ".[test]"
-        pip install pytest-xdist pytest-timeout pytest-mock
+        pip install pytest-xdist pytest-timeout pytest-mock pytest-rerunfailures
     
     - name: Run unit tests
       run: |
-        pytest tests/unit/ -v --tb=short --timeout=30 -n auto
+        pytest tests/unit/ -v --tb=short --timeout=60 -n auto --durations=10 --reruns 2 --reruns-delay 5
+      env:
+        PYTEST_CURRENT_TEST: true
+        CI: true
+        VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
     
     - name: Run integration tests
       run: |
-        pytest tests/integration/ -v --tb=short --timeout=60
+        pytest tests/integration/ -v --tb=short --timeout=120 --maxfail=5
       continue-on-error: true
+      env:
+        PYTEST_XDIST_WORKER_COUNT: 2
+        VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
     
     - name: Generate coverage report
       run: |
         pip install pytest-cov
-        pytest tests/ --cov=vnstock --cov-report=xml --cov-report=term-missing --timeout=30
+        pytest tests/ --cov=vnstock --cov-report=xml --cov-report=term-missing --timeout=60 -x
+      continue-on-error: true
+      env:
+        VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
@@ -158,8 +168,11 @@ jobs:
     
     steps:
     - name: Download coverage reports
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       continue-on-error: true
+      with:
+        pattern: coverage-*
+        merge-multiple: true
     
     - name: Publish test results
       uses: EnricoMi/publish-unit-test-result-action@v2

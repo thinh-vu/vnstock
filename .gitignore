@@ -1,6 +1,7 @@
 .DS_Store
 /vnstock_data/
 tests/report
+# /logs_58999677869/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
