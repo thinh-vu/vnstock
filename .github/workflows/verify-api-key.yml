@@ -36,7 +36,7 @@ jobs:
     
     - name: Quick Test with API Key
       run: |
-        python -c "
+        python << 'EOF'
 import os
 from vnstock.core.utils.auth import register_user
 
@@ -50,21 +50,21 @@ if api_key:
         print('⚠ API Key registration failed')
 else:
     print('ℹ No API Key - Guest tier (20 req/min)')
-"
+EOF
       env:
         VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
       continue-on-error: true
     
     - name: Test API Connection
       run: |
-        python -c "
+        python << 'EOF'
 from vnstock import listing
 try:
     symbols = listing.all_symbols()
     print(f'✓ Successfully fetched {len(symbols)} symbols')
 except Exception as e:
     print(f'⚠ API Call failed: {e}')
-"
+EOF
       env:
         VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
       continue-on-error: true
