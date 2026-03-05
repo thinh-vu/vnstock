@@ -46,7 +46,7 @@ class Quote(BaseAdapter):
         Khởi tạo một đối tượng Quote.
 
         Args:
-            source (str): Data source (VCI, TCBS, MSN). Nguồn dữ liệu (VCI, TCBS, MSN).
+            source (str): Data source (VCI, MSN). Nguồn dữ liệu (VCI, MSN).
             symbol (str): Stock symbol. Mã chứng khoán.
             random_agent (bool): Use random user agent for requests. Sử dụng user agent ngẫu nhiên cho các yêu cầu.
             show_log (bool): Show log messages. Hiển thị thông báo nhật ký.
@@ -61,7 +61,7 @@ class Quote(BaseAdapter):
         self.random_agent = random_agent
         self.show_log = show_log
         
-        # Validate the source to only accept vci or tcbs or msn
+        # Validate the source to only accept vci or msn
         all_sources = DataSources.all_sources()
         if source.lower() not in [s.lower() for s in all_sources]:
             sources_str = ', '.join(all_sources)

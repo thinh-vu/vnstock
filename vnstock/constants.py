@@ -2,7 +2,7 @@
 Standardized market constants for the vnstock library.
 
 This module contains centralized reference data for indices, sectors,
-and exchanges used across all data sources (VCI, TCBS, MSN, etc.).
+and exchanges used across all data sources (VCI, MSN, etc.).
 These are shared constants, not system configuration.
 """
 

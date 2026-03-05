@@ -187,7 +187,7 @@ class ProviderRegistry:
         Example:
             {
                 "quote": {
-                    "scraping": ["vci", "tcbs", "msn", "kbs"],
+                    "scraping": ["vci", "msn", "kbs"],
                     "api": ["fmp"]
                 },
                 "company": {
@@ -203,7 +203,7 @@ class ProviderRegistry:
                     "api": []
                 },
                 "trading": {
-                    "scraping": ["vci", "tcbs", "kbs"],
+                    "scraping": ["vci", "kbs"],
                     "api": []
                 }
             }

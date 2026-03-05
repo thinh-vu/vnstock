@@ -253,7 +253,7 @@ class Listing:
     # STANDARDIZED MARKET INDICES (Wrapper functions)
     # =========================================================================
     # Provide access to standardized indices across all data sources
-    # (VCI, TCBS, MSN, etc.). Sector indices include mapping to ICB
+    # (VCI, MSN, etc.). Sector indices include mapping to ICB
     # sector_id for industry filtering and analysis.
 
     def all_indices(self) -> pd.DataFrame:

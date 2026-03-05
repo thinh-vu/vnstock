@@ -40,7 +40,7 @@ class Vnstock:
         >>> djia = stock.world_index('DJI')  # Dow Jones
     """
     
-    SUPPORTED_SOURCES = ["KBS", "VCI", "TCBS", "MSN"]
+    SUPPORTED_SOURCES = ["KBS", "VCI", "MSN"]
 
     def __init__(self, symbol: Optional[str] = None, source: str = "KBS",
                  show_log: bool = True):
@@ -50,7 +50,7 @@ class Vnstock:
         Args:
             symbol (str, optional): Default symbol for stock queries.
                 Defaults to None.
-            source (str): Default data source. One of VCI, TCBS, MSN.
+            source (str): Default data source. One of VCI, MSN.
                 Defaults to "VCI".
             show_log (bool): Whether to display log messages.
                 Defaults to True.

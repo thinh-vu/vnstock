@@ -2,7 +2,7 @@
 Data access layer providing unified interface to multiple data sources.
 
 This module implements the facade pattern to access quote, company, finance,
-trading, listing, and screener data from various sources (VCI, TCBS, MSN, FMP).
+trading, listing, and screener data from various sources (VCI, MSN, FMP).
 """
 
 import logging
@@ -80,7 +80,7 @@ class BaseComponent:
 
         Args:
             symbol: Stock/asset symbol
-            source: Data source (VCI, TCBS, MSN, FMP, etc.)
+            source: Data source (VCI, MSN, FMP, etc.)
 
         Raises:
             ValueError: If source not in SUPPORTED_SOURCES
@@ -109,7 +109,7 @@ class BaseComponent:
 class StockComponents(BaseComponent):
     """Unified access to stock data and related information."""
 
-    SUPPORTED_SOURCES = ["KBS", "VCI", "TCBS", "MSN", "FMP"]
+    SUPPORTED_SOURCES = ["KBS", "VCI", "MSN", "FMP"]
 
     def __init__(self, symbol: str, source: str = Config.DEFAULT_SOURCE,
                  show_log: bool = True):
@@ -118,7 +118,7 @@ class StockComponents(BaseComponent):
 
         Args:
             symbol: Stock symbol (e.g., 'ACB', 'VNM')
-            source: Data source (VCI, TCBS, MSN, FMP)
+            source: Data source (VCI, MSN, FMP)
             show_log: Whether to display log messages
 
         Raises:
@@ -153,14 +153,10 @@ class StockComponents(BaseComponent):
             )
 
         # Initialize source-specific components
-        if self.source in ['KBS', 'VCI', 'TCBS']:
+        if self.source in ['KBS', 'VCI']:
             self.listing = Listing(source='KBS')
-            self.screener = Screener(source='TCBS')
             self.quote = Quote(self.symbol, self.source)
             self.trading = Trading(self.symbol, source=self.source)
-
-            if self.source == 'TCBS':
-                logger.info("TCBS listing data fallback to VCI")
         elif self.source == 'MSN':
             self.quote = Quote(self.symbol, 'MSN')
             self.listing = Listing(source='MSN')
@@ -185,7 +181,7 @@ class StockComponents(BaseComponent):
 class Quote(BaseComponent):
     """Historical and real-time price data."""
 
-    SUPPORTED_SOURCES = ["KBS", "VCI", "TCBS", "MSN", "FMP"]
+    SUPPORTED_SOURCES = ["KBS", "VCI", "MSN", "FMP"]
 
     def __init__(self, symbol: str, source: str = Config.DEFAULT_SOURCE):
         super().__init__(symbol, source)
@@ -305,7 +301,7 @@ class Listing(BaseComponent):
 class Trading(BaseComponent):
     """Real-time trading data and market board information."""
 
-    SUPPORTED_SOURCES = ["KBS", "VCI", "TCBS"]
+    SUPPORTED_SOURCES = ["KBS", "VCI"]
 
     def __init__(self, symbol: Optional[str] = 'VN30F1M',
                  source: str = Config.DEFAULT_SOURCE):
@@ -334,10 +330,10 @@ class Trading(BaseComponent):
 class Company(BaseComponent):
     """Company profile, management, ownership information."""
 
-    SUPPORTED_SOURCES = ["KBS", "TCBS", "VCI", "FMP"]
+    SUPPORTED_SOURCES = ["KBS", "VCI", "FMP"]
 
     def __init__(self, symbol: Optional[str] = 'ACB',
-                 source: str = "TCBS"):
+                 source: str = "VCI"):
         super().__init__(symbol, source)
 
     def _load_data_source(self):
@@ -415,14 +411,14 @@ class Company(BaseComponent):
 class Finance(BaseComponent):
     """Financial statements and ratios."""
 
-    SUPPORTED_SOURCES = ["KBS", "TCBS", "VCI", "FMP"]
+    SUPPORTED_SOURCES = ["KBS", "VCI", "FMP"]
     SUPPORTED_PERIODS = ["quarter", "annual"]
 
     def __init__(
         self,
         symbol: str,
         period: str = 'quarter',
-        source: str = 'TCBS',
+        source: str = 'VCI',
         get_all: bool = True
     ):
         """
@@ -466,15 +462,6 @@ class Finance(BaseComponent):
         allowed_kwargs = ['lang', 'dropna', 'period', 'show_log']
         processed = {k: v for k, v in kwargs.items()
                      if k in allowed_kwargs}
-
-        # Handle TCBS-specific constraints
-        if self.source == 'TCBS':
-            if 'lang' in processed:
-                logger.warning('TCBS only supports Vietnamese reports')
-                processed.pop('lang')
-            if 'dropna' in processed:
-                logger.warning('dropna not supported for TCBS')
-                processed.pop('dropna')
 
         if 'period' not in processed:
             processed['period'] = self.period
@@ -523,30 +510,7 @@ class Finance(BaseComponent):
         return self._get_financial_data('ratio', symbol, **kwargs)
 
 
-class Screener(BaseComponent):
-    """Stock screening and filtering."""
 
-    SUPPORTED_SOURCES = ["TCBS"]
-
-    def __init__(self, source: str = "TCBS"):
-        # Don't need symbol for screener
-        super().__init__(symbol=None, source=source)
-
-    def _load_data_source(self):
-        """Load screener data source module."""
-        module = importlib.import_module(self.source_module)
-        return module.Screener()
-
-    @retry(
-        stop=stop_after_attempt(Config.DEFAULT_RETRIES),
-        wait=wait_exponential(multiplier=1, min=2, max=10)
-    )
-    def stock(self, **kwargs):
-        """Screen stocks with criteria."""
-        allowed_kwargs = ['params', 'limit', 'lang']
-        processed = {k: v for k, v in kwargs.items()
-                     if k in allowed_kwargs}
-        return self.data_source.stock(**processed)
 
 
 class Fund(BaseComponent):

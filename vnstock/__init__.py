@@ -24,7 +24,6 @@ from .api.company import Company
 from .api.financial import Finance
 from .api.listing import Listing
 from .api.trading import Trading
-from .api.screener import Screener
 from .explorer.fmarket import Fund
 
 # Market constants
@@ -57,7 +56,7 @@ def _ensure_explorer_modules_loaded():
     if _explorer_modules_loaded:
         return
     try:
-        from .explorer import vci, tcbs, msn, kbs  # noqa: F401
+        from .explorer import vci, msn, kbs  # noqa: F401
         _explorer_modules_loaded = True
     except Exception as e:
         _explorer_modules_loaded = True  # Mark as loaded to avoid retry loops
@@ -71,7 +70,6 @@ __all__ = [
     "Company",
     "Finance",
     "Trading",
-    "Screener",
     "Fund",
     "connector",
     "INDICES_INFO",

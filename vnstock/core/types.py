@@ -37,7 +37,7 @@ class DataCategory(str, Enum):
 
 class ProviderType(str, Enum):
     """Type of data provider."""
-    SCRAPING = "scraping"  # Web scraping sources (VCI, TCBS, MSN, KBS)
+    SCRAPING = "scraping"  # Web scraping sources (VCI, MSN, KBS)
     API = "api"            # REST API partners (FMP, Binance, DNSE)
 
 
@@ -94,7 +94,6 @@ class DataSource(str, Enum):
     """
     KBS = "kbs"
     VCI = "vci"
-    TCBS = "tcbs"
     MSN = "msn"
     DNSE = "dnse"
     BINANCE = "binance"

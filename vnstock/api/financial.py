@@ -42,9 +42,9 @@ class Finance(BaseAdapter):
         self.get_all = get_all
         self.show_log = show_log
         
-        # Validate the source to only accept vci or tcbs
-        if source.lower() not in ["kbs", "vci", "tcbs"]:
-            raise ValueError("Lớp Finance chỉ nhận giá trị tham số source là 'VCI' hoặc 'TCBS'.")
+        # Validate the source to only accept vci or kbs
+        if source.lower() not in ["kbs", "vci"]:
+            raise ValueError("Lớp Finance chỉ nhận giá trị tham số source là 'VCI' hoặc 'KBS'.")
         
         # BaseAdapter will discover vnstock.explorer.<real_source>.financial
         # and pass only the kwargs its __init__ accepts (symbol, period, get_all, show_log).
