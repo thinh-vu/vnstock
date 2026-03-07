@@ -4,16 +4,22 @@ from packaging import version
 from importlib.metadata import version as get_version
 import sys
 import os
-import uuid
 import re
 import time
 
 # Try to import IPython for Jupyter notebook/Google Colab support
 try:
-    from IPython.display import display, Markdown, HTML
+    from IPython.display import display, Markdown
     ipython_available = True
 except ImportError:
     ipython_available = False
+
+# Import environment utilities
+from vnstock.core.utils.env import (
+    detect_venv,
+    get_python_executable,
+    get_python_version_string,
+)
 
 # Import version requirements and notices from config
 try:
@@ -28,10 +34,6 @@ except ImportError:
     VERSION_NOTICES = {}
     PYTHON_VERSION_SUPPORT = {}
 
-# Global state for lazy checking
-_notice_check_done = False
-_last_check_time = 0
-_check_interval = 3600  # Check once per hour
 
 def detect_environment():
     """
@@ -59,6 +61,7 @@ def detect_environment():
             return "Terminal"
         else:
             return "Other"
+
 
 def _check_dependency_compatibility():
     """
@@ -187,10 +190,18 @@ def _display_message(msg, environment, is_warning=False):
 def _check_version_updates():
     """
     Check for newer versions of packages and display update notices.
+    Compares installed vs latest version - only show if update available.
+    Uses current Python executable for upgrade suggestions.
     """
     core_packages = ["vnstock", "vnai"]
     license_packages = ["vnii", "vnstock_installer"]
     environment = detect_environment()
+    
+    # Get current Python executable and version info
+    venv_info = detect_venv()
+    python_exe = venv_info.get("python_exe", sys.executable)
+    py_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+    venv_type = venv_info.get("type", "system")
     
     # Check core packages
     for package in core_packages:
@@ -216,11 +227,27 @@ def _check_version_updates():
                         else "https://pypi.org/project/vnai/#history"
                     )
                     
+                    # Create environment-aware update command
+                    if venv_type == "system":
+                        update_cmd = f"pip install {package} --upgrade"
+                    else:
+                        # For venv/conda, suggest using python -m pip for clarity
+                        update_cmd = (
+                            f"{python_exe} -m pip install "
+                            f"{package} --upgrade"
+                        )
+                    
+                    env_info = (
+                        f"Python {py_version} ({venv_type})"
+                        if venv_type != "system"
+                        else f"Python {py_version}"
+                    )
+                    
                     msg = (
                         f"📦 **{package_name} {latest_version} is available**\n"
-                        f"Current version: {installed_version}\n"
-                        f"Update: `pip install {package} --upgrade`\n"
-                        f"Release history: {history_url}"
+                        f"Current: {installed_version} ({env_info})\n"
+                        f"Update: `{update_cmd}`\n"
+                        f"Release: {history_url}"
                     )
                     _display_message(msg, environment)
         except (
@@ -235,6 +262,7 @@ def _check_version_updates():
         try:
             installed_version = get_version(package).strip()
             latest_version = None
+            update_cmd = None
             
             if package == "vnii":
                 try:
@@ -248,13 +276,20 @@ def _check_version_updates():
                         versions = re.findall(version_pattern, html)
                         if versions:
                             latest_version = max(versions, key=version.parse)
-                except:
+                except Exception:
                     pass
                 
-                update_cmd = (
-                    "pip install --upgrade --extra-index-url "
-                    "https://vnstocks.com/api/simple vnii"
-                )
+                if venv_type == "system":
+                    update_cmd = (
+                        "pip install --upgrade --extra-index-url "
+                        "https://vnstocks.com/api/simple vnii"
+                    )
+                else:
+                    update_cmd = (
+                        f"{python_exe} -m pip install --upgrade "
+                        "--extra-index-url "
+                        "https://vnstocks.com/api/simple vnii"
+                    )
             
             elif package == "vnstock_installer":
                 try:
@@ -264,17 +299,24 @@ def _check_version_updates():
                     )
                     if response.status_code == 200:
                         html = response.text
-                        version_pattern = r'vnstock[_-]installer-(\d+\.\d+\.\d+)\.tar\.gz'
-                        versions = re.findall(version_pattern, html)
+                        pattern = r'vnstock[_-]installer-(\d+\.\d+\.\d+)\.tar\.gz'
+                        versions = re.findall(pattern, html)
                         if versions:
                             latest_version = max(versions, key=version.parse)
-                except:
+                except Exception:
                     pass
                 
-                update_cmd = (
-                    "pip install --upgrade --extra-index-url "
-                    "https://vnstocks.com/api/simple vnstock-installer"
-                )
+                if venv_type == "system":
+                    update_cmd = (
+                        "pip install --upgrade --extra-index-url "
+                        "https://vnstocks.com/api/simple vnstock-installer"
+                    )
+                else:
+                    update_cmd = (
+                        f"{python_exe} -m pip install --upgrade "
+                        "--extra-index-url "
+                        "https://vnstocks.com/api/simple vnstock-installer"
+                    )
             
             if latest_version:
                 latest_version = latest_version.strip()
@@ -283,10 +325,16 @@ def _check_version_updates():
                 
                 if parsed_installed < parsed_latest:
                     package_display = package.replace("_", " ").title()
+                    env_info = (
+                        f"Python {py_version} ({venv_type})"
+                        if venv_type != "system"
+                        else f"Python {py_version}"
+                    )
+                    
                     msg = (
-                        f"📦 **{package_display} {latest_version} is available** "
+                        f"📦 **{package_display} {latest_version}** "
                         f"(subscription)\n"
-                        f"Current version: {installed_version}\n"
+                        f"Current: {installed_version} ({env_info})\n"
                         f"Update: `{update_cmd}`"
                     )
                     _display_message(msg, environment)
@@ -298,25 +346,17 @@ def _check_version_updates():
 
 def update_notice(verbose=False):
     """
-    Lazy-loaded notice system with smart caching.
+    Check and display package upgrade notices.
     
     Args:
-        verbose: If True, show all notices. If False, show only critical issues.
+        verbose: If True, show all notices. Else, show critical only.
     """
-    global _notice_check_done, _last_check_time
-    
     try:
-        current_time = time.time()
-        
-        # Skip if already checked recently (unless verbose)
-        if not verbose and _notice_check_done and (current_time - _last_check_time) < _check_interval:
-            return
-        
-        _last_check_time = current_time
         environment = detect_environment()
         
         # Check dependency compatibility
-        has_issues, critical_issues, warnings_list = _check_dependency_compatibility()
+        has_issues, critical_issues, warnings_list = \
+            _check_dependency_compatibility()
         
         if has_issues and critical_issues:
             # Show compact critical issues only
@@ -328,7 +368,11 @@ def update_notice(verbose=False):
             if len(critical_issues) > 3:
                 msg_parts.append(f"  ... and {len(critical_issues) - 3} more")
             
-            msg_parts.append("\nFor details:\nfrom vnstock.core.utils.upgrade import show_full_notice\nshow_full_notice()")
+            msg_parts.append(
+                "\nFor details:\n"
+                "from vnstock.core.utils.upgrade import show_full_notice\n"
+                "show_full_notice()"
+            )
             msg = "\n".join(msg_parts)
             _display_message(msg, environment, is_warning=True)
         
@@ -336,26 +380,45 @@ def update_notice(verbose=False):
         if verbose or not critical_issues:
             _check_version_updates()
         
-        _notice_check_done = True
-        
     except Exception:
         # Silently fail - never break user code
+        pass
         pass
 
 
 def show_full_notice():
     """
-    Show detailed dependency and update information.
+    Show detailed dependency and update info for current environment.
     Call this manually when you want full diagnostics.
     """
     try:
         environment = detect_environment()
+        venv_info = detect_venv()
+        py_version = f"{sys.version_info.major}.{sys.version_info.minor}"
         
         # Check dependency compatibility
-        has_issues, critical_issues, warnings_list = _check_dependency_compatibility()
+        has_issues, critical_issues, warnings_list = \
+            _check_dependency_compatibility()
         
         if has_issues:
             msg_parts = ["📋 **Full Dependency Report**\n"]
+            
+            # Show environment info
+            if venv_info.get("is_active"):
+                vcmd = venv_info.get("type")
+                vpath = venv_info.get("path")
+                python_exe = venv_info.get("python_exe", sys.executable)
+                msg_parts.append(
+                    f"**Environment:** {vcmd}\n"
+                    f"**Path:** {vpath}\n"
+                    f"**Python:** {py_version} at {python_exe}\n"
+                )
+            else:
+                python_exe = venv_info.get("python_exe", sys.executable)
+                msg_parts.append(
+                    f"**Environment:** System (global)\n"
+                    f"**Python:** {py_version} at {python_exe}\n"
+                )
             
             if critical_issues:
                 msg_parts.append("**❌ Critical Issues:**")
@@ -370,7 +433,11 @@ def show_full_notice():
                 msg_parts.append("")
             
             msg_parts.append("**Resolution:**")
-            msg_parts.append("  pip install -r requirements.txt --upgrade")
+            python_exe = venv_info.get("python_exe", sys.executable)
+            msg_parts.append(
+                f"  {python_exe} -m pip install -r requirements.txt "
+                "--upgrade"
+            )
             
             msg = "\n".join(msg_parts)
             _display_message(msg, environment, is_warning=True)
@@ -378,11 +445,17 @@ def show_full_notice():
             print("✅ All dependencies are compatible!")
         
         # Show available updates
-        print("\n📦 Checking for available updates...")
+        print(
+            "\n📦 Checking for available updates...\n"
+            f"📌 Environment: {venv_info.get('type')} "
+            f"(Python {py_version})\n"
+            f"📌 Executable: {venv_info.get('python_exe', 'system')}\n"
+        )
         _check_version_updates()
         
     except Exception as e:
         print(f"Error showing full notice: {e}")
+
 
 # Customizing the warnings output format for non-notebook environments
 

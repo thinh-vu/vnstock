@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026-03-07]
+
+### Changed
+- **Upgrade suggestions now more helpful**: When upgrading vnstock, the system now properly detects your Python environment and shows you the exact command to use. If you have multiple Python versions installed, it will suggest the upgrade using the correct one.
+
+### Removed
+- **Screener functionality removed**: The built-in stock screener from TCBS is no longer available. If you were using this feature, you can find similar functionality in the vnstock_data (sponsored version).
+
 ## [2026-03-05]
 
 ### Added

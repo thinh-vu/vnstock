@@ -2,7 +2,7 @@ from vnstock.common import viz
 from vnstock.common import indices  # Standardized market constants
 from vnstock.common.data import (
     StockComponents, MSNComponents, Quote, Listing, Trading,
-    Company, Finance, Screener, Fund
+    Company, Finance, Fund
 )
 
 # Lazy initialization to avoid circular import deadlock
