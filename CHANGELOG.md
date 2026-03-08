@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [2026-03-07]
 
+### Added
+- **Market events module**: Introduced `vnstock/core/utils/market-events.py` containing a comprehensive list of Vietnam market holidays, suspensions and other notable events. The dataset is maintained in an open format so the community can contribute additional quant-focused events and reuse the list for analysis.
+
 ### Changed
 - **Upgrade suggestions now more helpful**: When upgrading vnstock, the system now properly detects your Python environment and shows you the exact command to use. If you have multiple Python versions installed, it will suggest the upgrade using the correct one.
 
