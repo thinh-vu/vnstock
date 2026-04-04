@@ -234,6 +234,28 @@ Bạn cũng có thể cài đặt bản phát hành thử nghiệm trên Github 
 pip install git+https://github.com/thinh-vu/vnstock
 ```
 
+### Dùng repo này thay cho bản `vnstock` chuẩn
+
+Nếu bạn muốn dùng đúng bản đã tối ưu trong repo hiện tại thay vì bản chuẩn trên PyPI, làm theo 3 bước:
+
+```bash
+# 1) Gỡ bản đang cài (nếu có)
+pip uninstall -y vnstock
+
+# 2) Cài trực tiếp từ repo fork của bạn
+pip install git+https://github.com/<your-user>/<your-repo>.git@main
+```
+
+Xác nhận môi trường đã nạp đúng bản fork:
+
+```bash
+python -c "import vnstock, importlib.metadata as m; print(m.version('vnstock')); print(vnstock.__file__)"
+```
+
+Nếu đường dẫn `vnstock.__file__` trỏ tới source từ repo của bạn thì đã thay thành công.
+
+Tài liệu migration đầy đủ: `docs/FORK_MIGRATION_GUIDE.md`.
+
 ## 8.2. Nạp thư viện
 
 Bạn cần nạp thư viện vào môi trường Python thông qua giao diện Jupyter Notebook hoặc Terminal để có thể gọi và sử dụng các hàm được cung cấp.
@@ -770,6 +792,28 @@ You can also install the experimental release from GitHub using the command:
 ```bash
 pip install git+https://github.com/thinh-vu/vnstock.git
 ```
+
+### Replace standard `vnstock` with this repository build
+
+To use this optimized repository build instead of the standard PyPI package:
+
+```bash
+# 1) Remove existing vnstock package
+pip uninstall -y vnstock
+
+# 2) Install directly from your fork
+pip install git+https://github.com/<your-user>/<your-repo>.git@main
+```
+
+Verify your environment is using the forked build:
+
+```bash
+python -c "import vnstock, importlib.metadata as m; print(m.version('vnstock')); print(vnstock.__file__)"
+```
+
+If `vnstock.__file__` resolves to your repository source, replacement is complete.
+
+Full migration guide: `docs/FORK_MIGRATION_GUIDE.md`.
 
 ---
 

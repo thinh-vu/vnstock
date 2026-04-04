@@ -10,6 +10,7 @@ Tests cover:
 
 import pytest
 import requests
+from datetime import datetime
 from unittest.mock import Mock, patch
 from vnstock.core.utils.proxy_manager import (
     Proxy, ProxyManager
@@ -80,6 +81,7 @@ class TestProxyManager:
         assert manager.timeout == 15
         assert manager.proxies == []
         assert manager.last_fetch is None
+        assert manager.last_test is None
 
     @patch('requests.get')
     def test_fetch_proxies_success(self, mock_get):
@@ -246,6 +248,39 @@ class TestProxyManager:
 
         assert len(working) == 2
         assert len(failed) == 1
+        assert manager.last_test is not None
+
+    def test_get_proxy_pool_falls_back_to_unchecked_proxies(self):
+        """Test proxy pool still returns proxies when speed is unknown."""
+        manager = ProxyManager()
+        manager.proxies = [
+            Proxy('http', '192.168.1.1', 8080, speed=0.0),
+            Proxy('http', '10.0.0.1', 3128, speed=0.0),
+        ]
+        manager.last_test = datetime.now()
+
+        pool = manager.get_proxy_pool(size=2, auto_refresh=False)
+
+        assert pool == [
+            'http://192.168.1.1:8080',
+            'http://10.0.0.1:3128',
+        ]
+
+    @patch('vnstock.core.utils.proxy_manager.ProxyManager.fetch_proxies')
+    @patch('vnstock.core.utils.proxy_manager.ProxyManager.test_proxies')
+    def test_get_proxy_pool_respects_refresh_interval(self, mock_test_proxies, mock_fetch_proxies):
+        """Test back-to-back calls reuse refreshed pool instead of retesting immediately."""
+        manager = ProxyManager(min_pool_refresh_interval_seconds=60)
+        refreshed = [Proxy('http', '192.168.1.1', 8080, speed=15.0)]
+        mock_test_proxies.return_value = (refreshed, [])
+
+        first_pool = manager.get_proxy_pool(size=1)
+        second_pool = manager.get_proxy_pool(size=1)
+
+        assert first_pool == ['http://192.168.1.1:8080']
+        assert second_pool == ['http://192.168.1.1:8080']
+        mock_fetch_proxies.assert_called_once()
+        mock_test_proxies.assert_called_once()
 
     def test_get_best_proxy(self):
         """Test getting fastest proxy."""

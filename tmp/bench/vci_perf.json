@@ -1,0 +1,93 @@
+{
+  "generated_at": "2026-04-04T06:41:05",
+  "symbols": [
+    "ACB",
+    "VCB",
+    "TCB"
+  ],
+  "config": {
+    "runs": 1,
+    "concurrency": [
+      4,
+      8
+    ],
+    "interval": "1D",
+    "start": "2026-03-31",
+    "end": "2026-04-03",
+    "length": "3M",
+    "count_back": 5,
+    "symbol_file": null,
+    "symbol_limit": 30
+  },
+  "rows": [
+    {
+      "concurrency": 4,
+      "runs": 1,
+      "symbols": 3,
+      "success_count": 3,
+      "failure_count": 0,
+      "elapsed_seconds": 7.302104899979895,
+      "requests_per_second": 0.41084044136482617,
+      "requests_per_minute": 24.65042648188957,
+      "p50_latency_seconds": 7.3021002000023145,
+      "p95_latency_seconds": 7.3021002000023145,
+      "min_latency_seconds": 7.3021002000023145,
+      "max_latency_seconds": 7.3021002000023145,
+      "mean_latency_seconds": 7.3021002000023145,
+      "total_attempts": 3,
+      "retry_attempts": 0,
+      "throttled_responses": 0,
+      "server_error_responses": 0,
+      "timeout_errors": 0,
+      "transport_errors": 0,
+      "total_requests": 3,
+      "success_rate": 100.0
+    },
+    {
+      "concurrency": 8,
+      "runs": 1,
+      "symbols": 3,
+      "success_count": 3,
+      "failure_count": 0,
+      "elapsed_seconds": 0.41606320001301356,
+      "requests_per_second": 7.210443028622014,
+      "requests_per_minute": 432.62658171732085,
+      "p50_latency_seconds": 0.4160595999856014,
+      "p95_latency_seconds": 0.4160595999856014,
+      "min_latency_seconds": 0.4160595999856014,
+      "max_latency_seconds": 0.4160595999856014,
+      "mean_latency_seconds": 0.4160595999856014,
+      "total_attempts": 3,
+      "retry_attempts": 0,
+      "throttled_responses": 0,
+      "server_error_responses": 0,
+      "timeout_errors": 0,
+      "transport_errors": 0,
+      "total_requests": 3,
+      "success_rate": 100.0
+    }
+  ],
+  "best": {
+    "concurrency": 8,
+    "runs": 1,
+    "symbols": 3,
+    "success_count": 3,
+    "failure_count": 0,
+    "elapsed_seconds": 0.41606320001301356,
+    "requests_per_second": 7.210443028622014,
+    "requests_per_minute": 432.62658171732085,
+    "p50_latency_seconds": 0.4160595999856014,
+    "p95_latency_seconds": 0.4160595999856014,
+    "min_latency_seconds": 0.4160595999856014,
+    "max_latency_seconds": 0.4160595999856014,
+    "mean_latency_seconds": 0.4160595999856014,
+    "total_attempts": 3,
+    "retry_attempts": 0,
+    "throttled_responses": 0,
+    "server_error_responses": 0,
+    "timeout_errors": 0,
+    "transport_errors": 0,
+    "total_requests": 3,
+    "success_rate": 100.0
+  }
+}

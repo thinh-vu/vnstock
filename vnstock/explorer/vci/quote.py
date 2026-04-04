@@ -1,141 +1,348 @@
-"""History module for VCI."""
+"""Quote module for VCI data source."""
 
-from typing import Optional, Union
+from __future__ import annotations
+
+import asyncio
 from datetime import datetime
+from typing import Any, List, Optional, Union
+
 import pandas as pd
 from vnai import optimize_execution
-from vnstock.core.types import TimeFrame
-from vnstock.core.utils.interval import normalize_interval
-from .const import (
-    _TRADING_URL, _INTERVAL_MAP, _RESAMPLE_MAP,
-    _OHLC_MAP, _OHLC_DTYPE, _INTRADAY_URL,
-    _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
-)
+
 from vnstock.core.models import TickerModel
+from vnstock.core.utils import async_send_request
+from vnstock.core.utils.client import ProxyConfig, send_request
+from vnstock.core.utils.interval import normalize_interval
 from vnstock.core.utils.logger import get_logger
+from vnstock.core.utils.lookback import (
+    get_start_date_from_lookback,
+    interpret_lookback_length,
+)
 from vnstock.core.utils.market import trading_hours
-from vnstock.core.utils.parser import get_asset_type, convert_time_flexible
-from vnstock.core.utils.validation import validate_symbol
+from vnstock.core.utils.parser import convert_time_flexible, get_asset_type
+from vnstock.core.utils.transform import intraday_to_df, ohlc_to_df
 from vnstock.core.utils.user_agent import get_headers
-from vnstock.core.utils.client import send_request, ProxyConfig
-from vnstock.core.utils.transform import ohlc_to_df, intraday_to_df
-from vnstock.core.utils.lookback import get_start_date_from_lookback, interpret_lookback_length
+from vnstock.core.utils.validation import validate_symbol
+from vnstock.core.utils.proxy_manager import proxy_manager
+
+from .const import (
+    _INDEX_MAPPING,
+    _INTERVAL_MAP,
+    _INTRADAY_DTYPE,
+    _INTRADAY_MAP,
+    _INTRADAY_URL,
+    _OHLC_DTYPE,
+    _OHLC_MAP,
+    _PRICE_DEPTH_MAP,
+    _RESAMPLE_MAP,
+    _TRADING_URL,
+)
 
 logger = get_logger(__name__)
 
-# TimeFrame to interval key mapping
-# Standard format: m/1m=minute, h/1H=hour, d/1D=day, w/1W=week, M/1M=month
 _TIMEFRAME_MAP = {
-    '1D': '1D',
-    '1H': '1H',
-    '1W': '1W',
-    '1M': '1M',
-    '1m': '1m',
-    '5m': '5m',
-    '15m': '15m',
-    '30m': '30m'
+    "1D": "1D",
+    "1H": "1H",
+    "1W": "1W",
+    "1M": "1M",
+    "1m": "1m",
+    "5m": "5m",
+    "15m": "15m",
+    "30m": "30m",
 }
 
 
 class Quote:
-    """
-    The Quote class is used to fetch historical price data from VCI.
-
-    Parameters:
-        - symbol (required): the stock symbol to fetch data for.
-        - random_agent (optional): whether to use random user agent.
-            Default is False.
-        - proxy_config (optional): proxy configuration. Default is None.
-        - show_log (optional): whether to show log. Default is True.
-    """
+    """Fetch VCI historical, intraday, and depth quote data."""
 
     def __init__(
         self,
-        symbol,
-        random_agent=False,
+        symbol: str,
+        random_agent: bool = False,
         proxy_config: Optional[ProxyConfig] = None,
-        show_log=True,
+        show_log: bool = True,
         proxy_mode: Optional[str] = None,
-        proxy_list: Optional[list] = None
+        proxy_list: Optional[List[str]] = None,
     ):
         self.symbol = validate_symbol(symbol)
-        self.data_source = 'VCI'
-        self._history = None  # Cache for historical data
+        self.data_source = "VCI"
         self.asset_type = get_asset_type(self.symbol)
         self.base_url = _TRADING_URL
-        self.headers = get_headers(
-            data_source=self.data_source,
-            random_agent=random_agent
-        )
+        self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.interval_map = _INTERVAL_MAP
         self.show_log = show_log
-        
-        # Handle proxy configuration
+
         if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else 'try'
-            # If user asks for 'auto' or provides list, set request_mode to PROXY
-            req_mode = 'direct'
-            if proxy_mode == 'auto' or (proxy_list and len(proxy_list) > 0):
-                req_mode = 'proxy'
-                
+            p_mode = proxy_mode if proxy_mode else "try"
+            req_mode = "proxy" if (proxy_mode == "auto" or proxy_list) else "direct"
             self.proxy_config = ProxyConfig(
                 proxy_mode=p_mode,
                 proxy_list=proxy_list,
-                request_mode=req_mode
+                request_mode=req_mode,
             )
         else:
             self.proxy_config = proxy_config
 
         if not show_log:
-            logger.setLevel('CRITICAL')
+            logger.setLevel("CRITICAL")
 
-        if 'INDEX' in self.symbol:
+        if "INDEX" in self.symbol:
             self.symbol = self._index_validation()
 
     def _index_validation(self) -> str:
-        """
-        If symbol contains 'INDEX' substring, validate it with
-        _INDEX_MAPPING.
-        """
-        if self.symbol not in _INDEX_MAPPING.keys():
-            valid_indices = ', '.join(_INDEX_MAPPING.keys())
+        if self.symbol not in _INDEX_MAPPING:
+            valid_indices = ", ".join(_INDEX_MAPPING.keys())
             raise ValueError(
-                f"Không tìm thấy mã chứng khoán {self.symbol}. "
-                f"Các giá trị hợp lệ: {valid_indices}"
+                f"Khong tim thay ma chung khoan {self.symbol}. "
+                f"Cac gia tri hop le: {valid_indices}"
             )
         return _INDEX_MAPPING[self.symbol]
 
-    def _input_validation(
-        self,
-        start: str,
-        end: Optional[str],
-        interval: Optional[str]
-    ) -> tuple:
-        """
-        Validate input data and return TickerModel and interval_key.
-        """
+    def _input_validation(self, start: str, end: Optional[str], interval: Optional[str]) -> tuple[TickerModel, str, str]:
         timeframe = normalize_interval(interval)
-        ticker = TickerModel(
-            symbol=self.symbol,
-            start=start,
-            end=end,
-            interval=str(timeframe)
-        )
+        ticker = TickerModel(symbol=self.symbol, start=start, end=end, interval=str(timeframe))
 
         interval_key = _TIMEFRAME_MAP.get(timeframe.value)
-        if (
-            interval_key is None or
-            interval_key not in self.interval_map.keys()
-        ):
-            valid_intervals = ', '.join(self.interval_map.keys())
-            msg = (
-                f"Giá trị interval không hợp lệ: {interval}. "
-                f"Vui lòng chọn: {valid_intervals}"
+        if interval_key is None or interval_key not in self.interval_map:
+            valid_intervals = ", ".join(self.interval_map.keys())
+            raise ValueError(
+                f"Gia tri interval khong hop le: {interval}. Vui long chon: {valid_intervals}"
             )
-            raise ValueError(msg)
 
-        return ticker, interval_key
+        return ticker, interval_key, timeframe.value
+
+    def _resolve_dates(
+        self,
+        start: Optional[str],
+        end: Optional[str],
+        interval: str,
+        count_back: Optional[int],
+        length: Optional[Union[str, int]],
+    ) -> tuple[str, str, Optional[int]]:
+        resolved_end = end or datetime.now().strftime("%Y-%m-%d")
+        resolved_count_back = count_back
+        resolved_length = length
+
+        if start is None and resolved_length is not None:
+            bars_from_len, remaining_length = interpret_lookback_length(resolved_length)
+            if bars_from_len is not None:
+                resolved_count_back = bars_from_len
+                resolved_length = None
+            else:
+                resolved_length = remaining_length
+
+        if start is None:
+            if resolved_length is not None:
+                start = get_start_date_from_lookback(
+                    lookback_length=resolved_length,
+                    end_date=resolved_end,
+                )
+            elif resolved_count_back is not None:
+                start = get_start_date_from_lookback(
+                    bars=resolved_count_back,
+                    interval=interval,
+                    end_date=resolved_end,
+                )
+            else:
+                start = get_start_date_from_lookback(
+                    lookback_days=365,
+                    end_date=resolved_end,
+                )
+
+        return start, resolved_end, resolved_count_back
+
+    @staticmethod
+    def _extract_data_list(response: Any) -> List[dict]:
+        if isinstance(response, list):
+            return response
+
+        if not isinstance(response, dict):
+            return []
+
+        data = response.get("data")
+        if isinstance(data, list):
+            return data
+
+        if isinstance(data, dict):
+            for key in ("items", "candles", "ohlc", "bars"):
+                value = data.get(key)
+                if isinstance(value, list):
+                    return value
+
+        for value in response.values():
+            if isinstance(value, list) and value and isinstance(value[0], dict):
+                return value
+
+        return []
+
+    @staticmethod
+    def _parse_datetime(value: str, is_end: bool = False) -> datetime:
+        try:
+            return datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            dt = datetime.strptime(value, "%Y-%m-%d")
+            if is_end:
+                dt = dt + pd.Timedelta(days=1)
+            return dt
+
+    def _estimate_count_back(self, interval_value: str, start_time: datetime, end_time: datetime, count_back: Optional[int]) -> int:
+        if count_back is not None:
+            return count_back
+
+        business_days = pd.bdate_range(start=start_time, end=end_time)
+        if interval_value == "ONE_DAY":
+            return len(business_days) + 1
+        if interval_value == "ONE_HOUR":
+            return int(len(business_days) * 5 + 1)
+        if interval_value == "ONE_MINUTE":
+            return int(len(business_days) * 255 + 1)
+        return 1000
+
+    def _build_history_payload(
+        self,
+        interval_key: str,
+        start: str,
+        end: str,
+        count_back: Optional[int],
+    ) -> dict:
+        start_time = self._parse_datetime(start)
+        end_time = self._parse_datetime(end, is_end=True)
+
+        if start_time > end_time:
+            raise ValueError("Thoi gian bat dau khong the lon hon thoi gian ket thuc.")
+
+        interval_value = self.interval_map[interval_key]
+        auto_count_back = self._estimate_count_back(interval_value, start_time, end_time, count_back)
+
+        return {
+            "timeFrame": interval_value,
+            "symbols": [self.symbol],
+            "to": int(end_time.timestamp()),
+            "countBack": auto_count_back,
+        }
+
+    @staticmethod
+    def _normalize_ohlc_response(response: Any) -> List[dict]:
+        data = Quote._extract_data_list(response)
+        if not data:
+            return []
+
+        first = data[0] if isinstance(data, list) and data else None
+        if isinstance(first, dict) and isinstance(first.get("o"), list):
+            try:
+                return pd.DataFrame(
+                    {
+                        "t": first.get("t", []),
+                        "o": first.get("o", []),
+                        "h": first.get("h", []),
+                        "l": first.get("l", []),
+                        "c": first.get("c", []),
+                        "v": first.get("v", []),
+                    }
+                ).to_dict("records")
+            except Exception:
+                return []
+
+        return data
+
+    async def history_async(
+        self,
+        start: Optional[str] = None,
+        end: Optional[str] = None,
+        interval: Optional[str] = "1D",
+        show_log: Optional[bool] = False,
+        count_back: Optional[int] = None,
+        floating: Optional[int] = 2,
+        length: Optional[Union[str, int]] = None,
+    ) -> pd.DataFrame:
+        start, end, count_back = self._resolve_dates(start, end, interval or "1D", count_back, length)
+        ticker, interval_key, normalized_interval = self._input_validation(start, end, interval)
+
+        url = f"{self.base_url}chart/OHLCChart/gap-chart"
+        payload = self._build_history_payload(
+            interval_key=interval_key,
+            start=ticker.start,
+            end=ticker.end or end,
+            count_back=count_back,
+        )
+
+        proxy_pool = self.proxy_config.proxy_list
+        if proxy_pool is None:
+            proxy_pool = proxy_manager.get_proxy_pool(size=16)
+        response = await async_send_request(
+            url=url,
+            headers=self.headers,
+            method="POST",
+            payload=payload,
+            proxy_idx=abs(hash(self.symbol)),
+            proxy_list=proxy_pool or self.proxy_config.proxy_list,
+            proxy_mode=self.proxy_config.proxy_mode,
+            show_log=show_log or self.show_log,
+        )
+
+        data = self._normalize_ohlc_response(response)
+        if not data:
+            return pd.DataFrame(columns=["time", "open", "high", "low", "close", "volume"])
+
+        df = ohlc_to_df(
+            data=data,
+            column_map=_OHLC_MAP,
+            dtype_map=_OHLC_DTYPE,
+            asset_type=self.asset_type,
+            symbol=self.symbol,
+            source=self.data_source,
+            interval=normalized_interval,
+            floating=floating or 2,
+            resample_map=_RESAMPLE_MAP,
+        )
+
+        if count_back is not None:
+            df = df.tail(count_back).reset_index(drop=True)
+
+        return df
+
+    @classmethod
+    async def fetch_multiple(
+        cls,
+        symbols: List[str],
+        start: Optional[str] = None,
+        end: Optional[str] = None,
+        interval: Optional[str] = "1D",
+        show_log: bool = False,
+        count_back: Optional[int] = None,
+        floating: int = 2,
+        length: Optional[Union[str, int]] = None,
+        max_concurrency: int = 24,
+    ) -> List[pd.DataFrame]:
+        semaphore = asyncio.Semaphore(max_concurrency)
+        shared_proxy_pool = proxy_manager.get_proxy_pool(
+            size=max(8, min(max_concurrency, 32))
+        )
+
+        async def _run_one(symbol: str) -> Optional[pd.DataFrame]:
+            async with semaphore:
+                quote = cls(
+                    symbol=symbol,
+                    show_log=show_log,
+                    proxy_list=shared_proxy_pool or None,
+                )
+                try:
+                    return await quote.history_async(
+                        start=start,
+                        end=end,
+                        interval=interval,
+                        show_log=show_log,
+                        count_back=count_back,
+                        floating=floating,
+                        length=length,
+                    )
+                except Exception as exc:
+                    if show_log:
+                        logger.warning("Fetch failed for %s: %s", symbol, exc)
+                    return None
+
+        results = await asyncio.gather(*[_run_one(symbol) for symbol in symbols])
+        return [item for item in results if item is not None]
 
     @optimize_execution("VCI")
     def history(
@@ -146,205 +353,74 @@ class Quote:
         show_log: Optional[bool] = False,
         count_back: Optional[int] = None,
         floating: Optional[int] = 2,
-        length: Optional[Union[str, int]] = None
-    ) -> pd.DataFrame:
-        """
-        Tải lịch sử giá của mã chứng khoán từ nguồn dữ liệu VCI.
+        length: Optional[Union[str, int]] = None,
+        parallel: bool = False,
+        symbols: Optional[List[str]] = None,
+        max_concurrency: int = 24,
+    ) -> Union[pd.DataFrame, List[pd.DataFrame]]:
+        """Fetch historical OHLC data with optional parallel multi-symbol mode."""
+        if parallel or symbols:
+            target_symbols = symbols or [self.symbol]
+            try:
+                return asyncio.run(
+                    Quote.fetch_multiple(
+                        symbols=target_symbols,
+                        start=start,
+                        end=end,
+                        interval=interval,
+                        show_log=bool(show_log),
+                        count_back=count_back,
+                        floating=floating or 2,
+                        length=length,
+                        max_concurrency=max_concurrency,
+                    )
+                )
+            except RuntimeError as exc:
+                raise RuntimeError(
+                    "Cannot call sync parallel history inside an active event loop. "
+                    "Use await Quote.fetch_multiple(...) or await history_async(...)."
+                ) from exc
 
-        Tham số:
-            - start (tùy chọn): thời gian bắt đầu lấy dữ liệu.
-              Bắt buộc nếu không có length hoặc count_back.
-            - end (tùy chọn): thời gian kết thúc lấy dữ liệu.
-              Mặc định là None (hiện tại).
-            - interval (tùy chọn): Khung thời gian. Mặc định "1D".
-            - length (tùy chọn): Khoảng thời gian phân tích (vd: '3M', 150, '150').
-              Nhận giá trị chuỗi (vd 3M), số ngày (int/str), hoặc số bars (vd '100b').
-            - count_back (tùy chọn): Số lượng nến (bars) cần lấy.
-            - show_log (tùy chọn): Hiển thị log.
-            - floating (tùy chọn): Số chữ số thập phân.
-        """
-        # Calculate start if not provided
-        if start is None:
-            # Check if length defines bars
-            if length is not None:
-                bars_from_len, len_remainder = interpret_lookback_length(length)
-                if bars_from_len is not None:
-                    count_back = bars_from_len
-                    length = None # Consumed as bars
-                else:
-                    length = len_remainder
-            
-            if length is not None:
-                start = get_start_date_from_lookback(
-                    lookback_length=length,
-                    end_date=end
-                )
-            elif count_back is not None:
-                start = get_start_date_from_lookback(
-                    bars=count_back,
-                    interval=interval,
-                    end_date=end
-                )
-            else:
-                raise ValueError(
-                    "Tham số 'start' là bắt buộc nếu không cung cấp "
-                    "'length' (hoặc 'period') hoặc 'count_back'."
-                )
+        start, end, count_back = self._resolve_dates(start, end, interval or "1D", count_back, length)
+        ticker, interval_key, normalized_interval = self._input_validation(start, end, interval)
 
-        # Validate inputs
-        ticker, interval_key = self._input_validation(
-            start,
-            end,
-            interval
+        url = f"{self.base_url}chart/OHLCChart/gap-chart"
+        payload = self._build_history_payload(
+            interval_key=interval_key,
+            start=ticker.start,
+            end=ticker.end or end,
+            count_back=count_back,
         )
 
-        # Parse start time - support both date and datetime formats
-        try:
-            # Try datetime format first
-            start_time = datetime.strptime(
-                ticker.start,
-                "%Y-%m-%d %H:%M:%S"
-            )
-        except ValueError:
-            try:
-                # Try date only format
-                start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
-            except ValueError:
-                raise ValueError(
-                    f"Định dạng ngày không hợp lệ: {ticker.start}. "
-                    f"Sử dụng định dạng YYYY-MM-DD hoặc "
-                    f"YYYY-MM-DD HH:MM:SS"
-                )
-
-        # Calculate end timestamp
-        if end is not None:
-            try:
-                # Try datetime format first
-                end_time = datetime.strptime(
-                    ticker.end,
-                    "%Y-%m-%d %H:%M:%S"
-                )
-            except ValueError:
-                try:
-                    # Try date only format
-                    end_time = datetime.strptime(
-                        ticker.end,
-                        "%Y-%m-%d"
-                    ) + pd.Timedelta(days=1)
-                except ValueError:
-                    raise ValueError(
-                        f"Định dạng ngày không hợp lệ: {ticker.end}. "
-                        f"Sử dụng định dạng YYYY-MM-DD hoặc "
-                        f"YYYY-MM-DD HH:MM:SS"
-                    )
-
-            if start_time > end_time:
-                raise ValueError(
-                    "Thời gian bắt đầu không thể lớn hơn "
-                    "thời gian kết thúc."
-                )
-            end_stamp = int(end_time.timestamp())
-        else:
-            end_time = datetime.now() + pd.Timedelta(days=1)
-            end_stamp = int(end_time.timestamp())
-
-        interval_value = self.interval_map[interval_key]
-
-        # Calculate count_back automatically if not provided
-        auto_count_back = 1000
-        business_days = pd.bdate_range(start=start_time, end=end_time)
-
-        if count_back is None:
-            interval_mapped = interval_value
-
-            if interval_mapped == "ONE_DAY":
-                # Count business days (excluding weekends)
-                auto_count_back = len(business_days) + 1
-            elif interval_mapped == "ONE_HOUR":
-                # Business days * trading hours per day (5 hours for VN market: 9-11:30, 13-14:45 approx 5 bars of 1H)
-                auto_count_back = int(len(business_days) * 5 + 1)
-            elif interval_mapped == "ONE_MINUTE":
-                # Business days * trading minutes per day.
-                # Morning: 9:00-11:30 (150m)
-                # Afternoon: 13:00-14:45 (105m)
-                # Total: 255 minutes
-                auto_count_back = int(len(business_days) * 255 + 1)
-        else:
-            auto_count_back = count_back
-
-        # Prepare request
-        url = f'{self.base_url}chart/OHLCChart/gap-chart'
-        payload = {
-            "timeFrame": interval_value,
-            "symbols": [self.symbol],
-            "to": end_stamp,
-            "countBack": auto_count_back
-        }
-
-        # Use the send_request utility
-        json_data = send_request(
+        response = send_request(
             url=url,
             headers=self.headers,
             method="POST",
             payload=payload,
-            show_log=show_log if show_log is not None else False,
+            show_log=show_log or self.show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode
+            request_mode=self.proxy_config.request_mode,
         )
 
-        # Debug: log response structure
-        if show_log:
-            logger.info(f"API Response type: {type(json_data)}")
-            data_len = (
-                len(json_data) if hasattr(json_data, '__len__') else 'N/A'
-            )
-            logger.info(f"Response length: {data_len}")
+        data = self._normalize_ohlc_response(response)
+        if not data:
+            return pd.DataFrame(columns=["time", "open", "high", "low", "close", "volume"])
 
-        # Handle both list and dict responses
-        if isinstance(json_data, list):
-            # API returns list of OHLC data directly
-            pass  # json_data is already in correct format
-        elif isinstance(json_data, dict) and 'data' in json_data:
-            # API returns dict with 'data' key
-            json_data = json_data['data']
-
-        # Transform VCI array format to row format
-        if isinstance(json_data, list) and len(json_data) > 0:
-            list_data = json_data
-            symbol_data = list_data[0]
-            if (
-                isinstance(symbol_data, dict) and
-                'o' in symbol_data and
-                isinstance(symbol_data['o'], list)
-            ):
-                # Vectorized conversion using pandas
-                json_data = pd.DataFrame({
-                    't': symbol_data['t'],
-                    'o': symbol_data['o'],
-                    'h': symbol_data['h'],
-                    'l': symbol_data['l'],
-                    'c': symbol_data['c'],
-                    'v': symbol_data['v']
-                }).to_dict('records')
-
-        if not json_data:
-            raise ValueError(
-                "Không tìm thấy dữ liệu. Vui lòng kiểm tra lại "
-                "mã chứng khoán hoặc thời gian truy xuất."
-            )
-
-        # Use the ohlc_to_df utility
         df = ohlc_to_df(
-            data=json_data,
+            data=data,
             column_map=_OHLC_MAP,
             dtype_map=_OHLC_DTYPE,
-            symbol=self.symbol,
             asset_type=self.asset_type,
+            symbol=self.symbol,
             source=self.data_source,
-            interval=interval_key,
-            resample_map=_RESAMPLE_MAP
+            interval=normalized_interval,
+            floating=floating or 2,
+            resample_map=_RESAMPLE_MAP,
         )
+
+        if count_back is not None:
+            df = df.tail(count_back).reset_index(drop=True)
 
         return df
 
@@ -354,89 +430,100 @@ class Quote:
         page_size: Optional[int] = 100,
         last_time: Optional[Union[str, int, float]] = None,
         last_time_format: Optional[str] = None,
-        show_log: bool = False
+        show_log: bool = False,
     ) -> pd.DataFrame:
-        """
-        Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ
-        nguồn dữ liệu VCI.
-
-        Tham số:
-            - page_size (tùy chọn): Số lượng dữ liệu trả về trong
-              một lần request. Mặc định là 100.
-            - last_time (tùy chọn): Thời gian cắt dữ liệu, dùng để
-              lấy dữ liệu sau thời gian cắt. Có thể là epoch timestamp
-              (int/float) hoặc chuỗi datetime. Mặc định là None.
-            - last_time_format (tùy chọn): Định dạng để parse last_time
-              nếu là chuỗi. Mặc định sẽ thử 'YYYY-MM-DD HH:MM:SS'
-              và 'YYYY-MM-DD'.
-            - show_log (tùy chọn): Hiển thị thông tin log giúp debug
-              dễ dàng. Mặc định là False.
-        """
-        # Validator: Intraday data is not supported for indices
-        if self.asset_type == 'index':
-            raise ValueError(f"Dữ liệu intraday không được hỗ trợ cho chỉ số {self.symbol}.")
+        """Fetch intraday matched trade data."""
+        if self.asset_type == "index":
+            raise ValueError(f"Du lieu intraday khong duoc ho tro cho chi so {self.symbol}.")
 
         market_status = trading_hours("HOSE")
-        if (
-            market_status['is_trading_hour'] is False and
-            market_status['data_status'] == 'preparing'
-        ):
+        if not market_status["is_trading_hour"] and market_status["data_status"] == "preparing":
             raise ValueError(
-                f"{market_status['time']}: Dữ liệu khớp lệnh không "
-                f"thể truy cập trong thời gian chuẩn bị phiên mới. "
-                f"Vui lòng quay lại sau."
-            )
-
-        if self.symbol is None:
-            raise ValueError(
-                "Vui lòng nhập mã chứng khoán cần truy xuất khi "
-                "khởi tạo Trading Class."
+                f"{market_status['time']}: Du lieu khop lenh khong the truy cap trong thoi gian chuan bi phien moi."
             )
 
         if page_size and page_size > 30_000:
-            logger.warning(
-                "Bạn đang yêu cầu truy xuất quá nhiều dữ liệu, "
-                "điều này có thể gây lỗi quá tải."
-            )
+            logger.warning("Ban dang yeu cau truy xuat qua nhieu du lieu, dieu nay co the gay qua tai.")
 
-        # Parse last_time to epoch timestamp
         parsed_last_time = convert_time_flexible(last_time, last_time_format)
-
-        url = f'{self.base_url}{_INTRADAY_URL}/LEData/getAll'
+        url = f"{self.base_url}{_INTRADAY_URL}/LEData/getAll"
         payload = {
             "symbol": self.symbol,
             "limit": page_size,
-            "truncTime": parsed_last_time
+            "truncTime": parsed_last_time,
         }
 
-        # Fetch data using the send_request utility
-        data = send_request(
+        response = send_request(
             url=url,
             headers=self.headers,
             method="POST",
             payload=payload,
-            show_log=show_log,
+            show_log=show_log or self.show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode
+            request_mode=self.proxy_config.request_mode,
         )
 
-        # Ensure data is a list
+        data = response.get("data", []) if isinstance(response, dict) else response
         if isinstance(data, dict):
-            data = data.get('data', []) if 'data' in data else []
+            data = data.get("items", [])
 
-        # Transform data using intraday_to_df utility
-        df = intraday_to_df(
-            data=data,
+        return intraday_to_df(
+            data=data if isinstance(data, list) else [],
             column_map=_INTRADAY_MAP,
             dtype_map=_INTRADAY_DTYPE,
             symbol=self.symbol,
             asset_type=self.asset_type,
-            source=self.data_source
+            source=self.data_source,
         )
+
+    @optimize_execution("VCI")
+    def price_depth(self, show_log: bool = False) -> pd.DataFrame:
+        """Fetch order-book depth data for current symbol."""
+        url = f"{self.base_url}{_INTRADAY_URL}/LEData/getPriceBoardDetail"
+        payload = {"symbol": self.symbol}
+
+        response = send_request(
+            url=url,
+            headers=self.headers,
+            method="POST",
+            payload=payload,
+            show_log=show_log or self.show_log,
+            proxy_list=self.proxy_config.proxy_list,
+            proxy_mode=self.proxy_config.proxy_mode,
+            request_mode=self.proxy_config.request_mode,
+        )
+
+        raw_data: List[dict] = []
+        if isinstance(response, dict):
+            if isinstance(response.get("data"), list):
+                raw_data = response["data"]
+            elif isinstance(response.get("data"), dict):
+                for value in response["data"].values():
+                    if isinstance(value, list) and value and isinstance(value[0], dict):
+                        raw_data = value
+                        break
+
+        if not raw_data:
+            return pd.DataFrame(columns=list(_PRICE_DEPTH_MAP.values()))
+
+        df = pd.DataFrame(raw_data)
+        keep_cols = [col for col in _PRICE_DEPTH_MAP.keys() if col in df.columns]
+        if not keep_cols:
+            return pd.DataFrame(columns=list(_PRICE_DEPTH_MAP.values()))
+
+        df = df[keep_cols].rename(columns=_PRICE_DEPTH_MAP)
+
+        for col in ("price", "acc_volume", "acc_buy_volume", "acc_sell_volume", "acc_undefined_volume"):
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors="coerce")
+
+        if "price" in df.columns and self.asset_type not in {"index", "derivative"}:
+            df["price"] = (df["price"] / 1000).round(2)
 
         return df
 
-# Register VCI Quote provider
+
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
-ProviderRegistry.register('quote', 'vci', Quote)
+
+ProviderRegistry.register("quote", "vci", Quote)

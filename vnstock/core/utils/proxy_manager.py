@@ -8,12 +8,16 @@ Provides functionality to:
 - Configure proxies for vnstock requests
 """
 
-import requests
 import json
-from typing import List, Dict, Optional, Tuple
+import logging
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime
-import logging
+from typing import Dict, List, Optional, Tuple
+
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -75,15 +79,30 @@ class ProxyManager:
         )
     }
 
-    def __init__(self, timeout: int = 10):
+    def __init__(
+        self,
+        timeout: int = 10,
+        pool_ttl_seconds: int = 300,
+        min_pool_refresh_interval_seconds: int = 30,
+        test_max_workers: int = 16,
+    ):
         """Initialize ProxyManager.
         
         Args:
             timeout: Request timeout in seconds
         """
         self.timeout = timeout
+        self.pool_ttl_seconds = max(pool_ttl_seconds, 0)
+        self.min_pool_refresh_interval_seconds = max(
+            min_pool_refresh_interval_seconds,
+            0,
+        )
+        self.test_max_workers = max(test_max_workers, 1)
         self.proxies: List[Proxy] = []
         self.last_fetch: Optional[datetime] = None
+        self.last_test: Optional[datetime] = None
+        self._last_pool_refresh_monotonic: float = 0.0
+        self._refresh_lock = threading.Lock()
 
     def fetch_proxies(
         self,
@@ -236,6 +255,7 @@ class ProxyManager:
         Returns:
             True if proxy works, False otherwise
         """
+        started = time.perf_counter()
         try:
             response = requests.get(
                 test_url,
@@ -244,10 +264,13 @@ class ProxyManager:
             )
             works = response.status_code == 200
             if works:
+                proxy.speed = (time.perf_counter() - started) * 1000
+                proxy.last_checked = datetime.now()
                 logger.debug(f"Proxy {proxy} is working")
             return works
 
         except requests.RequestException as e:
+            proxy.last_checked = datetime.now()
             logger.debug(f"Proxy {proxy} test failed: {e}")
             return False
 
@@ -255,7 +278,8 @@ class ProxyManager:
         self,
         proxies: Optional[List[Proxy]] = None,
         test_url: str = 'https://httpbin.org/ip',
-        timeout: int = 5
+        timeout: int = 5,
+        max_workers: Optional[int] = None,
     ) -> Tuple[List[Proxy], List[Proxy]]:
         """Test multiple proxies.
         
@@ -270,14 +294,37 @@ class ProxyManager:
         if proxies is None:
             proxies = self.proxies
 
+        if not proxies:
+            return [], []
+
         working = []
         failed = []
+        worker_count = min(max_workers or self.test_max_workers, len(proxies))
 
-        for proxy in proxies:
-            if self.test_proxy(proxy, test_url, timeout):
-                working.append(proxy)
-            else:
-                failed.append(proxy)
+        if worker_count <= 1:
+            for proxy in proxies:
+                if self.test_proxy(proxy, test_url, timeout):
+                    working.append(proxy)
+                else:
+                    failed.append(proxy)
+        else:
+            with ThreadPoolExecutor(max_workers=worker_count) as executor:
+                futures = {
+                    executor.submit(self.test_proxy, proxy, test_url, timeout): proxy
+                    for proxy in proxies
+                }
+                for future in as_completed(futures):
+                    proxy = futures[future]
+                    try:
+                        if future.result():
+                            working.append(proxy)
+                        else:
+                            failed.append(proxy)
+                    except Exception as exc:
+                        logger.debug("Proxy %s test raised error: %s", proxy, exc)
+                        failed.append(proxy)
+
+        self.last_test = datetime.now()
 
         logger.info(
             f"Proxy test results: {len(working)} working, "
@@ -314,6 +361,57 @@ class ProxyManager:
             
         return [str(p) for p in self.proxies]
 
+    def _is_pool_stale(self) -> bool:
+        if self.last_test is None:
+            return True
+        if self.pool_ttl_seconds == 0:
+            return True
+        age = (datetime.now() - self.last_test).total_seconds()
+        return age >= self.pool_ttl_seconds
+
+    def _should_refresh_pool(self, size: int, auto_refresh: bool) -> bool:
+        if not auto_refresh:
+            return False
+        if len(self.proxies) < size:
+            return True
+        return self._is_pool_stale()
+
+    def _ranked_pool(self, size: int) -> List[str]:
+        ranked = sorted(
+            self.proxies,
+            key=lambda proxy: proxy.speed if proxy.speed > 0 else float('inf'),
+        )
+        return [str(proxy) for proxy in ranked[:size]]
+
+    def get_proxy_pool(self, size: int = 16, auto_refresh: bool = True) -> List[str]:
+        """
+        Get a tested proxy pool for parallel requests.
+
+        Args:
+            size: Number of proxies to return.
+            auto_refresh: Fetch and test new proxies when pool is low.
+
+        Returns:
+            List of proxy URLs.
+        """
+        desired_size = max(size, 1)
+        if self._should_refresh_pool(desired_size, auto_refresh):
+            with self._refresh_lock:
+                now_monotonic = time.monotonic()
+                refresh_age = now_monotonic - self._last_pool_refresh_monotonic
+                if self._should_refresh_pool(desired_size, auto_refresh) and (
+                    self._last_pool_refresh_monotonic == 0.0 or
+                    refresh_age >= self.min_pool_refresh_interval_seconds
+                ):
+                    self.fetch_proxies(limit=max(desired_size * 2, 8))
+                    working, _ = self.test_proxies(self.proxies)
+                    self.proxies = working
+                    self._last_pool_refresh_monotonic = time.monotonic()
+
+        pool = self._ranked_pool(desired_size)
+        logger.info(f"Proxy pool: {len(pool)}/{size}")
+        return pool
+
     def set_custom_proxies(self, proxy_list: List[str]):
         """
         Set custom proxies from list of strings.
@@ -343,6 +441,7 @@ class ProxyManager:
                 continue
                 
         self.proxies = new_proxies
+        self.last_test = None
         logger.info(f"Set {len(new_proxies)} custom proxies")
 
     def get_best_proxy(

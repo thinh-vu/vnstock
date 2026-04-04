@@ -44,7 +44,7 @@ from .transform import (
 # Logging
 from .logger import get_logger, advanced_logger
 
-# Client utilities
+# Client utilities (sync + async)
 from .client import (
     send_request,
     send_direct_request,
@@ -52,6 +52,12 @@ from .client import (
     ProxyMode,
     RequestMode,
     ProxyConfig,
+)
+from .async_client import (
+    async_send_request,
+    fetch_multiple_requests,
+    RATE_LIMITER,
+    AsyncClientManager,
 )
 
 # Environment utilities
@@ -124,13 +130,18 @@ __all__ = [
     # Logging
     'get_logger',
     'advanced_logger',
-    # Client
+# Client
     'send_request',
     'send_direct_request',
     'send_proxy_request',
     'ProxyMode',
     'RequestMode',
     'ProxyConfig',
+    # Async Client (NEW)
+    'async_send_request',
+    'fetch_multiple_requests',
+    'RATE_LIMITER',
+    'AsyncClientManager',
     # Environment
     'get_platform',
     'get_hosting_service',
