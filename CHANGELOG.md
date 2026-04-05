@@ -2,46 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2026-03-07]
+## [3.5.1] - 2026-04-06
+
+### Breaking Changes
+- **KBS Price Board Column Updates**: Renamed the `total_trades` column to `volume_accumulated` and included the new `volume_last` (mapped from `CV`) column. This strictly aligns the API responses with the actual KBS user interface values. Users utilizing pandas parsing will need to update their target keys to reflect this consistency change.
 
 ### Added
-- **Market events module**: Introduced `vnstock/core/utils/market-events.py` containing a comprehensive list of Vietnam market holidays, suspensions and other notable events. The dataset is maintained in an open format so the community can contribute additional quant-focused events and reuse the list for analysis.
+- **Intelligent Environment Detection**: The library now performs a startup check in your virtual environment. If the sponsored package `vnstock_data` is detected, it gently guides you to update your imports to unlock extended features seamlessly.
+- **Smart AST Migration Utility**: Introduced `vnstock.core.utils.upgrade.migrate_to_sponsor()`, an advanced tool built for AI coding assistants. Utilizing an Abstract Syntax Tree (AST) engine and dynamic validation, AI agents can now safely migrate your codebase to `vnstock_data` with complete accuracy, bypassing the risks of standard regex text replacement.
+- **AI Agent Context Integration**: Embedded system guardrails directly in core initialization files. These passive clues guide AI assistants (like Copilot or Cursor) to understand library tier boundaries, directing them to seamlessly leverage `vnstock_data` rather than attempting heavy workarounds.
 
-### Changed
-- **Upgrade suggestions now more helpful**: When upgrading vnstock, the system now properly detects your Python environment and shows you the exact command to use. If you have multiple Python versions installed, it will suggest the upgrade using the correct one.
-
-### Removed
-- **Screener functionality removed**: The built-in stock screener from TCBS is no longer available. If you were using this feature, you can find similar functionality in the vnstock_data (sponsored version).
-
-## [2026-03-05]
+## [3.5.0] - 2026-03-07
 
 ### Added
+- **Expanded Market Events Catalog**: Introduced `vnstock/core/utils/market_events.py` documenting major market events since 2000 (including national holidays, suspensions, and outages). Designed as an open dictionary format, this highly flexible dataset is ideal for time-series analysis and warmly welcomes community contributions.
 - Added pandas compatibility utilities and enhance frequency handling in data processing
 - Enhance CI workflows with API key setup and verification, improve linting and testing configurations
 
+### Changed
+- **Upgrade suggestions now more helpful**: When upgrading vnstock, the system now properly detects your Python environment and shows you the exact command to use. If you have multiple Python versions installed, it will suggest the upgrade using the correct one.
+- Consolidated test documentation into `tests/docs/` directory
+- Updated `.gitignore` to include debug scripts
+- Standardized KBS Quote price data to use decimal values (thousands unit) instead of VND in `history` and `intraday` methods
+- Updated agent guide file copying instructions for macOS/Linux and Windows
+
 ### Fixed
+- Added fallback to fetch symbols by exchange if the initial listing lacks an exchange column
 - Update Python script execution method in CI workflow for API key verification
 - Add `pytz` to project dependencies (#217)
-
-### Removed
-- Removed TCBS data source and all its related dependencies and integrations across the library (`explorer/tcbs/`)
-- Removed `api/screener.py` entirely as it was exclusively dependent on TCBS
-- Removed TCBS references from core registry, constants, types, common data layer, and all API adapters (`Company`, `Finance`, `Quote`, `Trading`, `Listing`)
-
-## [2025-02-01]
-
-### Fixed
 - Fixed `Listing` tests to correctly handle `pd.Series` return types from `all_future_indices` and related methods
 - Fixed `Quote` integration tests to handle missing data and expired derivatives gracefully without failing the entire suite
 - Fixed `KBS Quote` to correctly interpret bar-based lookback lengths (e.g., '500b') using `interpret_lookback_length` logic
 - Enabled full integration test suite for `vnstock.explorer` module
 
-### Changed
-- Consolidated test documentation into `tests/docs/` directory
-- Updated `.gitignore` to include debug scripts
-- Standardized KBS Quote price data to use decimal values (thousands unit) instead of VND in `history` and `intraday` methods
-
 ### Removed
+- **Screener functionality removed**: The built-in stock screener from TCBS is no longer available. If you were using this feature, you can find similar functionality in the vnstock_data (sponsored version).
+- Removed TCBS data source and all its related dependencies and integrations across the library (`explorer/tcbs/`)
+- Removed `api/screener.py` entirely as it was exclusively dependent on TCBS
+- Removed TCBS references from core registry, constants, types, common data layer, and all API adapters (`Company`, `Finance`, `Quote`, `Trading`, `Listing`)
 - Removed `price_depth` method from `vnstock.explorer.vci.quote`
 
 

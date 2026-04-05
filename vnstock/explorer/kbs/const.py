@@ -105,18 +105,6 @@ _OHLC_MAP = {
     'l': 'low',
     'c': 'close',
     'v': 'volume',
-    # Derivative / Extended fields
-    're': 'reference_price',
-    'ptq': 'put_through_volume',
-    'ptv': 'put_through_value',
-    'cl': 'ceiling_price',
-    'fl': 'floor_price',
-    'fb': 'foreign_buy_volume',
-    'fs': 'foreign_sell_volume',
-    'fnet': 'foreign_net_volume',
-    'oi': 'open_interest',
-    'tt': 'total_trades',
-    'tv': 'total_value',
 }
 
 # Data type mapping for OHLC data
@@ -232,10 +220,12 @@ _RESAMPLE_MAP = {
 # Column mapping for price board (ISS endpoint)
 # Maps KBS API fields to schema-aligned field names (PriceBoardCore/Extended)
 _PRICE_BOARD_MAP = {
-    'TT': 'total_trades',
+    'TT': 'volume_accumulated',  # CORRECTED: TT = total accumulated volume (not total_trades)
+    'CV': 'volume_last',  # CORRECTED: CV = current volume (last matched volume)
+                           # ⚠️  KBS grouping differs from VCI (each provider aggregates ATC orders differently)
     'PP': 'price_points',
     'HI': 'high_price',
-    'TV': 'total_value',
+    'TV': 'total_value',  # CORRECTED: TV = total value (accumulated, unit VND)
     'LO': 'low_price',
     'LS': 'listed_shares',
     'CHP': 'percent_change',
@@ -255,9 +245,9 @@ _PRICE_BOARD_MAP = {
     'S3': 'ask_price_3',
     'FL': 'floor_price',
     'FO': 'foreign_ownership_ratio',
-    'FR': 'foreign_sell_volume',
+    'FS': 'foreign_sell_volume',  # FS raw key = foreign sell volume
     'PTQ': 'put_through_qty',
-    'FS': 'foreign_sell_count',
+    'FR': 'foreign_room',  # FR raw key = foreign room
     'SB': 'symbol',
     'PTV': 'put_through_value',
     'TLQ': 'total_listed_qty',
@@ -348,8 +338,9 @@ _PRICE_BOARD_STANDARD_COLUMNS = [
     'high_price',           # Cao nhất
     'low_price',            # Thấp nhất
     'close_price',          # Đóng cửa / Giá khớp hiện tại
+    'volume_last',          # KHỐI LƯỢNG NGAY TẠI LẦN KHỚP LỆNH CUỐI (Khớp lệnh -> KL)    
     'average_price',        # Giá trung bình
-    'total_trades',         # Tổng KL giao dịch
+    'volume_accumulated',   # ⭐ Accumulated volume (from raw TT field)
     'total_value',          # Tổng GT giao dịch
     'price_change',         # Thay đổi giá
     'percent_change',       # % Thay đổi
@@ -367,6 +358,7 @@ _PRICE_BOARD_STANDARD_COLUMNS = [
     'ask_vol_3',            # KL bán 3 (CORE)
     'foreign_buy_volume',   # KL NN mua
     'foreign_sell_volume',  # KL NN bán
+    'foreign_room',         # ⭐ Foreign investor room (from raw FR field)
 ]
 
 # Mapping from KBS API fields to the schema fields
