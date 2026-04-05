@@ -43,7 +43,7 @@ dependencies = [
     "packaging>=20.0",
     "importlib-metadata>=1.0",
     "tenacity",
-    "vnai>=2.3.9",
+    "vnai>=2.4.3",
     "vnstock_ezchart>=0.0.3",
 ]
 

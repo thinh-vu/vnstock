@@ -49,10 +49,10 @@ class TestVnstockClient:
 
     def test_vnstock_supported_sources(self):
         """Test Vnstock supports expected sources."""
-        expected_sources = ['KBS', 'VCI', 'TCBS', 'MSN']
+        expected_sources = ['KBS', 'VCI', 'MSN']
         assert Vnstock.SUPPORTED_SOURCES == expected_sources
 
-    @pytest.mark.parametrize("source", ['VCI', 'TCBS'])
+    @pytest.mark.parametrize("source", ['VCI', 'KBS'])
     def test_vnstock_stock_with_different_sources(self, source):
         """Test Vnstock.stock() works with different sources."""
         stock = Vnstock(show_log=False)

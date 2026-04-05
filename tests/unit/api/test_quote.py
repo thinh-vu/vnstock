@@ -21,11 +21,7 @@ class TestQuoteAdapter:
         assert quote is not None
         assert quote.source.lower() == 'vci'
 
-    def test_quote_instantiation_tcbs(self):
-        """Test Quote can be instantiated with TCBS source."""
-        quote = Quote(source='TCBS', symbol='VCB', show_log=False)
-        assert quote is not None
-        assert quote.source.lower() == 'tcbs'
+
 
     @pytest.mark.skip(reason="MSN Quote uses symbol_id instead of symbol")
     def test_quote_instantiation_msn(self):
@@ -95,7 +91,7 @@ class TestQuoteAdapter:
         quote = Quote(symbol='ACB', show_log=False)
         assert quote.source.lower() == 'kbs'
 
-    @pytest.mark.parametrize("source", ['VCI', 'TCBS'])
+    @pytest.mark.parametrize("source", ['VCI', 'KBS'])
     def test_quote_supports_multiple_sources(self, source):
         """Test Quote supports VCI and TCBS sources."""
         # MSN is excluded as it uses incompatible symbol_id parameter
