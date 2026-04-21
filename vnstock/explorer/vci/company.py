@@ -98,6 +98,12 @@ class Company:
             request_mode=self.proxy_config.request_mode
         )
         
+        if not response_data or 'data' not in response_data:
+            raise ValueError(
+                f"VCI GraphQL returned empty/malformed response for '{self.symbol}'. "
+                f"Upstream may be unavailable. Try source='KBS' as fallback. "
+                f"Raw: {response_data!r}"
+            )
         return response_data['data']
 
     def _process_data(self, data: Dict, data_key: str, 

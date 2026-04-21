@@ -252,6 +252,13 @@ class Finance:
             request_mode=self.proxy_config.request_mode
         )
         
+        if not response_data or 'data' not in response_data:
+            raise ValueError(
+                f"VCI GraphQL returned empty/malformed response for '{self.symbol}'. "
+                f"Upstream may be unavailable. Try source='KBS' as fallback. "
+                f"Raw: {response_data!r}"
+            )
+
         # Extract relevant data
         try:
             selected_data = response_data['data']['CompanyFinancialRatio']['ratio']
