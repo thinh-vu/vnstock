@@ -90,13 +90,12 @@ class Quote:
         if not show_log:
             logger.setLevel('CRITICAL')
 
-        if 'INDEX' in self.symbol:
+        if self.asset_type == 'index':
             self.symbol = self._index_validation()
 
     def _index_validation(self) -> str:
         """
-        If symbol contains 'INDEX' substring, validate it with
-        _INDEX_MAPPING.
+        Validate and map index symbol with _INDEX_MAPPING.
         """
         if self.symbol not in _INDEX_MAPPING.keys():
             valid_indices = ', '.join(_INDEX_MAPPING.keys())
@@ -143,6 +142,7 @@ class Quote:
         start: Optional[str] = None,
         end: Optional[str] = None,
         interval: Optional[str] = "1D",
+        to_df: Optional[bool] = True,
         show_log: Optional[bool] = False,
         count_back: Optional[int] = None,
         floating: Optional[int] = 2,
@@ -346,7 +346,10 @@ class Quote:
             resample_map=_RESAMPLE_MAP
         )
 
-        return df
+        if to_df:
+            return df
+        else:
+            return df.to_json(orient='records')
 
     @optimize_execution("VCI")
     def intraday(

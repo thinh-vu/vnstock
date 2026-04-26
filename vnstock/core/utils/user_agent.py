@@ -1,6 +1,7 @@
 # vnstock/vnstock/core/utils/user_agent.py
 
 import random
+import secrets
 from typing import Optional, Dict
 from vnstock.core.utils.browser_profiles import USER_AGENTS
 
@@ -18,6 +19,14 @@ DEFAULT_HEADERS = {
     'sec-ch-ua-platform': '"Windows"',
     'sec-ch-ua-mobile': '?0',
 }
+
+
+def _generate_vci_device_id() -> str:
+    """
+    Generate a random 16-character hex string to use as a VCI Device-Id.
+    This mimics a fresh browser session.
+    """
+    return secrets.token_hex(8)
 
 
 BROWSER_PROFILES = {
@@ -276,5 +285,17 @@ def get_headers(
     if override_headers:
         headers.update(override_headers)
 
-    # Step 9: Validate and return
+    # Step 9: Source-specific dynamic transformations
+    if data_source.upper() == 'VCI':
+        # Inject randomized device identifier for VCI to bypass security wall
+        vci_device_id = _generate_vci_device_id()
+        headers['Device-Id'] = vci_device_id
+        # Ensure it is also in the Cookie
+        current_cookie = headers.get('Cookie', '')
+        if current_cookie:
+            headers['Cookie'] = f'device_id={vci_device_id}; {current_cookie}'
+        else:
+            headers['Cookie'] = f'device_id={vci_device_id}'
+
+    # Step 10: Validate and return
     return validate_headers(headers)

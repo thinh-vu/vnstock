@@ -76,7 +76,7 @@ def _check_dependency_compatibility():
     priority_packages = ["vnai", "vnii"]  # Always check and display first
     
     try:
-        vnstock_version = get_version("vnstock").strip()
+        vnstock_version = _get_installed_version_robust("vnstock")
         
         # Get requirements for this version
         requirements = VERSION_REQUIREMENTS.get(vnstock_version, {})
@@ -90,7 +90,7 @@ def _check_dependency_compatibility():
                 
             version_spec = requirements[package]
             try:
-                installed_version = get_version(package).strip()
+                installed_version = _get_installed_version_robust(package)
                 parsed_installed = version.parse(installed_version)
                 
                 # Parse version specifier (e.g., ">=2.2.3,<3.0.0")
@@ -122,7 +122,7 @@ def _check_dependency_compatibility():
                 continue  # Already checked above
                 
             try:
-                installed_version = get_version(package).strip()
+                installed_version = _get_installed_version_robust(package)
                 parsed_installed = version.parse(installed_version)
                 
                 # Parse version specifier
@@ -187,6 +187,30 @@ def _display_message(msg, environment, is_warning=False):
         )
 
 
+def _get_installed_version_robust(package, python_exe=sys.executable):
+    """
+    Get installed version using pip list to ensure it reflects the
+    environment associated with python_exe, falling back to importlib.
+    """
+    try:
+        import subprocess
+        import json
+        result = subprocess.run(
+            [python_exe, "-m", "pip", "list", "--format=json"],
+            capture_output=True, text=True, timeout=5
+        )
+        packages = json.loads(result.stdout)
+        for pkg in packages:
+            if pkg["name"].lower() == package.lower():
+                return pkg["version"].strip()
+    except Exception:
+        pass
+
+    try:
+        return get_version(package).strip()
+    except Exception:
+        return "0.0.0"
+
 def _check_version_updates():
     """
     Check for newer versions of packages and display update notices.
@@ -206,7 +230,9 @@ def _check_version_updates():
     # Check core packages
     for package in core_packages:
         try:
-            installed_version = get_version(package).strip()
+            installed_version = _get_installed_version_robust(package, python_exe)
+            if installed_version == "0.0.0":
+                continue
             
             response = requests.get(
                 f"https://pypi.org/pypi/{package}/json",
@@ -260,7 +286,9 @@ def _check_version_updates():
     # Check subscription packages
     for package in license_packages:
         try:
-            installed_version = get_version(package).strip()
+            installed_version = _get_installed_version_robust(package, python_exe)
+            if installed_version == "0.0.0":
+                continue
             latest_version = None
             update_cmd = None
             

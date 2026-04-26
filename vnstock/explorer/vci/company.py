@@ -5,17 +5,14 @@ Module quản lý thông tin công ty từ nguồn dữ liệu VCI.
 import json
 import pandas as pd
 from typing import Dict, Optional, Union, List
-from vnstock.core.utils import client
-from vnstock.core.utils.client import ProxyConfig
+from datetime import datetime, timedelta
 from vnstock.core.utils.logger import get_logger
-from vnstock.core.utils.compat import replace_newlines_in_dataframe
-from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.transform import clean_html_dict, flatten_dict_to_df, flatten_list_to_df, reorder_cols, drop_cols_by_pattern
+from vnstock.core.utils.client import send_request
+from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.parser import get_asset_type, camel_to_snake
-from vnstock.core.utils.validation import validate_symbol
 from vnai import optimize_execution  # Import the decorator from vnai package
-from .const import _GRAPHQL_URL, _PRICE_INFO_MAP
-import copy
+from vnstock.explorer.vci.const import _VCIQ_URL, _VCI_COMPANY_URL
 
 logger = get_logger(__name__)
 
@@ -26,17 +23,15 @@ class Company:
     Tham số:
         - symbol (str): Mã chứng khoán của công ty cần truy xuất thông tin.
         - random_agent (bool): Sử dụng user-agent ngẫu nhiên hoặc không. Mặc định là False.
+        - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
         - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
     """
     def __init__(self, symbol: str, random_agent: bool = False, 
-                 show_log: Optional[bool] = False,
-                 proxy_config: Optional[ProxyConfig] = None,
-                 proxy_mode: Optional[str] = None,
-                 proxy_list: Optional[List[str]] = None):
+                 to_df: Optional[bool] = True, show_log: Optional[bool] = False):
         """
         Khởi tạo đối tượng Company với các tham số cho việc truy xuất dữ liệu.
         """
-        self.symbol = validate_symbol(symbol)
+        self.symbol = symbol.upper()
         self.asset_type = get_asset_type(self.symbol)
         
         # Validate if symbol is a stock
@@ -45,166 +40,389 @@ class Company:
             
         self.headers = get_headers(data_source='VCI', random_agent=random_agent)
         self.show_log = show_log
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else 'try'
-            # If user asks for 'auto' or provides list, set request_mode to PROXY
-            req_mode = 'direct'
-            if proxy_mode == 'auto' or (proxy_list and len(proxy_list) > 0):
-                req_mode = 'proxy'
-                
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode,
-                proxy_list=proxy_list,
-                request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
-
-        self.raw_data = self._fetch_data()
+        self.to_df = to_df
+        self.base_url = _VCI_COMPANY_URL
         
         if not show_log:
             logger.setLevel('CRITICAL')
 
-    def _fetch_data(self) -> Dict:
+    def _fetch_company_details(self) -> Dict:
         """
-        Phương thức riêng để lấy dữ liệu công ty từ nguồn VCI.
+        Fetch company overview details from REST API.
         
         Returns:
-            Dict: Dữ liệu thô về công ty từ API.
+            Dict: Company details data.
         """
-        url = _GRAPHQL_URL
+        url = f"{self.base_url}/details?ticker={self.symbol}"
 
-        # GraphQL query for company data
-        payload = "{\"query\":\"query Query($ticker: String!, $lang: String!) {\\n  AnalysisReportFiles(ticker: $ticker, langCode: $lang) {\\n    date\\n    description\\n    link\\n    name\\n    __typename\\n  }\\n  News(ticker: $ticker, langCode: $lang) {\\n    id\\n    organCode\\n    ticker\\n    newsTitle\\n    newsSubTitle\\n    friendlySubTitle\\n    newsImageUrl\\n    newsSourceLink\\n    createdAt\\n    publicDate\\n    updatedAt\\n    langCode\\n    newsId\\n    newsShortContent\\n    newsFullContent\\n    closePrice\\n    referencePrice\\n    floorPrice\\n    ceilingPrice\\n    percentPriceChange\\n    __typename\\n  }\\n  TickerPriceInfo(ticker: $ticker) {\\n    financialRatio {\\n      yearReport\\n      lengthReport\\n      updateDate\\n      revenue\\n      revenueGrowth\\n      netProfit\\n      netProfitGrowth\\n      ebitMargin\\n      roe\\n      roic\\n      roa\\n      pe\\n      pb\\n      eps\\n      currentRatio\\n      cashRatio\\n      quickRatio\\n      interestCoverage\\n      ae\\n      fae\\n      netProfitMargin\\n      grossMargin\\n      ev\\n      issueShare\\n      ps\\n      pcf\\n      bvps\\n      evPerEbitda\\n      at\\n      fat\\n      acp\\n      dso\\n      dpo\\n      epsTTM\\n      charterCapital\\n      RTQ4\\n      charterCapitalRatio\\n      RTQ10\\n      dividend\\n      ebitda\\n      ebit\\n      le\\n      de\\n      ccc\\n      RTQ17\\n      __typename\\n    }\\n    ticker\\n    exchange\\n    ev\\n    ceilingPrice\\n    floorPrice\\n    referencePrice\\n    openPrice\\n    matchPrice\\n    closePrice\\n    priceChange\\n    percentPriceChange\\n    highestPrice\\n    lowestPrice\\n    totalVolume\\n    highestPrice1Year\\n    lowestPrice1Year\\n    percentLowestPriceChange1Year\\n    percentHighestPriceChange1Year\\n    foreignTotalVolume\\n    foreignTotalRoom\\n    averageMatchVolume2Week\\n    foreignHoldingRoom\\n    currentHoldingRatio\\n    maxHoldingRatio\\n    __typename\\n  }\\n  Subsidiary(ticker: $ticker) {\\n    id\\n    organCode\\n    subOrganCode\\n    percentage\\n    subOrListingInfo {\\n      enOrganName\\n      organName\\n      __typename\\n    }\\n    __typename\\n  }\\n  Affiliate(ticker: $ticker) {\\n    id\\n    organCode\\n    subOrganCode\\n    percentage\\n    subOrListingInfo {\\n      enOrganName\\n      organName\\n      __typename\\n    }\\n    __typename\\n  }\\n  CompanyListingInfo(ticker: $ticker) {\\n    id\\n    issueShare\\n    en_History\\n    history\\n    en_CompanyProfile\\n    companyProfile\\n    icbName3\\n    enIcbName3\\n    icbName2\\n    enIcbName2\\n    icbName4\\n    enIcbName4\\n    financialRatio {\\n      id\\n      ticker\\n      issueShare\\n      charterCapital\\n      __typename\\n    }\\n    __typename\\n  }\\n  OrganizationManagers(ticker: $ticker) {\\n    id\\n    ticker\\n    fullName\\n    positionName\\n    positionShortName\\n    en_PositionName\\n    en_PositionShortName\\n    updateDate\\n    percentage\\n    quantity\\n    __typename\\n  }\\n  OrganizationShareHolders(ticker: $ticker) {\\n    id\\n    ticker\\n    ownerFullName\\n    en_OwnerFullName\\n    quantity\\n    percentage\\n    updateDate\\n    __typename\\n  }\\n  OrganizationResignedManagers(ticker: $ticker) {\\n    id\\n    ticker\\n    fullName\\n    positionName\\n    positionShortName\\n    en_PositionName\\n    en_PositionShortName\\n    updateDate\\n    percentage\\n    quantity\\n    __typename\\n  }\\n  OrganizationEvents(ticker: $ticker) {\\n    id\\n    organCode\\n    ticker\\n    eventTitle\\n    en_EventTitle\\n    publicDate\\n    issueDate\\n    sourceUrl\\n    eventListCode\\n    ratio\\n    value\\n    recordDate\\n    exrightDate\\n    eventListName\\n    en_EventListName\\n    __typename\\n  }\\n}\\n\",\"variables\":{\"ticker\":\"VCI\",\"lang\":\"vi\"}}"
-        
-        payload = json.loads(payload)
-        payload['variables']['ticker'] = self.symbol
-        
         if self.show_log:
-            logger.debug(f"Requesting data for {self.symbol} from {url}. payload: {payload}")
+            logger.debug(f"Requesting company details for {self.symbol} from {url}")
 
-        # Use centralized API client instead of direct requests
-        response_data = client.send_request(
+        response_data = send_request(
             url=url,
             headers=self.headers,
-            method="POST",
-            payload=payload,
-            show_log=self.show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode
+            method="GET",
+            show_log=self.show_log
         )
         
-        return response_data['data']
+        return response_data.get('data', {})
 
-    def _process_data(self, data: Dict, data_key: str, 
-                      columns_dict: Optional[Dict] = None) -> pd.DataFrame:
+    def _fetch_shareholders(self) -> Dict:
         """
-        Xử lý dữ liệu công ty từ API của VCI và chuyển đổi thành DataFrame.
-
-        Tham số:
-            - data (Dict): Dữ liệu từ API của VCI.
-            - data_key (str): Khóa của dữ liệu cần xử lý.
-            - columns_dict (Dict, optional): Từ điển các cột cần đổi tên.
+        Fetch shareholder structure from REST API.
 
         Returns:
-            pd.DataFrame: DataFrame đã xử lý.
+            Dict: Shareholder data.
         """
-        segment_data = data[data_key]
+        url = f"{self.base_url}/{self.symbol}/shareholder-structure"
+        
+        if self.show_log:
+            logger.debug(f"Requesting shareholder structure for {self.symbol} from {url}")
+
+        response_data = send_request(
+            url=url,
+            headers=self.headers,
+            method="GET",
+            show_log=self.show_log
+        )
+        
+        return response_data.get('data', {})
+
+    def _fetch_shareholder_list(self) -> Dict:
+        """
+        Fetch shareholder list from REST API (includes both individuals and organizations).
+
+        Returns:
+            Dict: Shareholder list data.
+        """
+        url = f"{self.base_url}/{self.symbol}/shareholder"
+
+        if self.show_log:
+            logger.debug(f"Requesting shareholder list for {self.symbol} from {url}")
+
+        response_data = send_request(
+            url=url,
+            headers=self.headers,
+            method="GET",
+            show_log=self.show_log
+        )
+
+        return response_data.get('data', [])
+
+    def _fetch_relationships(self) -> Dict:
+        """
+        Fetch subsidiary and affiliate relationships from REST API.
+
+        Returns:
+            Dict: Relationship data.
+        """
+        url = f"{self.base_url}/{self.symbol}/relationship"
+
+        if self.show_log:
+            logger.debug(f"Requesting relationships for {self.symbol} from {url}")
+
+        response_data = send_request(
+            url=url,
+            headers=self.headers,
+            method="GET",
+            show_log=self.show_log
+        )
+
+        return response_data.get('data', {})
+    
+    def _fetch_news_events(self, from_date: str = None, to_date: str = None,
+                          event_codes: str = None) -> List:
+        """
+        Fetch news and events from REST API.
+        
+        Returns:
+            List: News and events data.
+        """
+        if from_date is None:
+            from_date = (datetime.now() - timedelta(days=120)).strftime('%Y%m%d')
+        if to_date is None:
+            to_date = datetime.now().strftime('%Y%m%d')
+        if event_codes is None:
+            event_codes = 'DIV,ISS'
+        
+        url = f"{_VCIQ_URL}/v1/news-events-for-chart?ticker={self.symbol}&fromDate={from_date}&toDate={to_date}&languageId=1&eventCode={event_codes}"
+        
+        if self.show_log:
+            logger.debug(f"Requesting news and events for {self.symbol} from {url}")
+
+        response_data = send_request(
+            url=url,
+            headers=self.headers,
+            method="GET",
+            show_log=self.show_log
+        )
+
+        return response_data.get('data', [])
+    
+    def _fetch_news(self, from_date: str = None, to_date: str = None,
+                   page: int = 0, size: int = 50) -> List:
+        """
+        Fetch news from REST API (alternative endpoint with more data).
+
+        Returns:
+            List: News data.
+        """
+        if from_date is None:
+            from_date = (datetime.now() - timedelta(days=365*10)).strftime('%Y%m%d')
+        if to_date is None:
+            to_date = datetime.now().strftime('%Y%m%d')
+
+        url = f"{_VCIQ_URL}/v1/news?ticker={self.symbol}&fromDate={from_date}&toDate={to_date}&languageId=1&page={page}&size={size}"
+
+        if self.show_log:
+            logger.debug(f"Requesting news for {self.symbol} from {url}")
+
+        response_data = send_request(
+            url=url,
+            headers=self.headers,
+            method="GET",
+            show_log=self.show_log
+        )
+
+        # Extract content from paginated response
+        data = response_data.get('data', {})
+        if isinstance(data, dict):
+            return data.get('content', [])
+        return []
+
+    def _fetch_financial_statistics(self) -> Dict:
+        """
+        Fetch financial statistics summary from REST API.
+
+        Returns:
+            Dict: Financial statistics data.
+        """
+        url = f"{self.base_url}/{self.symbol}/statistics-financial"
+
+        if self.show_log:
+            logger.debug(f"Requesting financial statistics for {self.symbol} from {url}")
+
+        response_data = send_request(
+            url=url,
+            headers=self.headers,
+            method="GET",
+            show_log=self.show_log
+        )
+
+        return response_data.get('data', {})
+
+
+    @optimize_execution("VCI")
+    def _info(self) -> pd.DataFrame:
+        """
+        Truy xuất thông tin công ty theo chuẩn schema mapping.
+
+        Returns:
+            pd.DataFrame: DataFrame chứa thông tin công ty với columns chuẩn hóa.
+        """
+        data = self._fetch_company_details()
+
+        if not data:
+            return pd.DataFrame()
+
+        df = pd.DataFrame([data])
+
+        # Map columns theo SCHEMA_MAP (camelCase from API)
+        # Priority: use Vietnamese names first, then English
+        result = {}
+
+        # Symbol
+        if 'ticker' in df.columns:
+            result['symbol'] = df['ticker'].iloc[0]
+
+        # Name (prefer Vietnamese)
+        if 'viOrganName' in df.columns:
+            result['name'] = df['viOrganName'].iloc[0]
+        elif 'enOrganName' in df.columns:
+            result['name'] = df['enOrganName'].iloc[0]
+
+        # Short name (prefer Vietnamese)
+        if 'viOrganShortName' in df.columns:
+            result['short_name'] = df['viOrganShortName'].iloc[0]
+        elif 'enOrganShortName' in df.columns:
+            result['short_name'] = df['enOrganShortName'].iloc[0]
+
+        # Sector (prefer Vietnamese)
+        if 'sectorVn' in df.columns:
+            result['sector'] = df['sectorVn'].iloc[0]
+        elif 'sector' in df.columns:
+            result['sector'] = df['sector'].iloc[0]
+
+        # Profile (prefer Vietnamese)
+        if 'profile' in df.columns:
+            result['profile'] = df['profile'].iloc[0]
+        elif 'enProfile' in df.columns:
+            result['profile'] = df['enProfile'].iloc[0]
+
+        # Listing date
+        if 'listingDate' in df.columns:
+            result['listing_date'] = df['listingDate'].iloc[0]
 
         # Convert to DataFrame
-        df = pd.DataFrame(segment_data)
+        result_df = pd.DataFrame([result])
 
-        # Rename columns to snake_case
-        df.columns = [camel_to_snake(col) for col in df.columns]
+        # Select only columns that exist
+        standard_columns = [
+            "symbol", "name", "short_name", "sector", "profile", "listing_date"
+        ]
 
-        # Rename columns if specified
-        if columns_dict:
-            df = df.rename(columns=columns_dict)
+        existing_cols = [col for col in standard_columns if col in result_df.columns]
+        result_df = result_df[existing_cols]
 
-        return df
-    
-    def _parse_price_info(self) -> tuple:
-        """
-        Phân tách dữ liệu giá và tỷ lệ tài chính từ thông tin giá.
-        
-        Returns:
-            tuple: (price_data, ratio_data) - Bộ dữ liệu giá và tỷ lệ tài chính.
-        """
-        # Process raw_data['TickerPriceInfo]['financialRatio'] separately from raw_data['TickerPriceInfo]
-        price_data = copy.deepcopy(self.raw_data['TickerPriceInfo'])
-        ratio_data = pd.DataFrame(price_data['financialRatio'], index=[0])
-        
-        # Remove key 'financialRatio' from price_data dict
-        price_data.pop('financialRatio')
-        price_data = pd.DataFrame(price_data, index=[0])
-        
-        return price_data, ratio_data
-    
+        return result_df
+
     @optimize_execution("VCI")
     def overview(self) -> pd.DataFrame:
         """
-        Truy xuất thông tin tổng quan của công ty.
+        Truy xuất thông tin tổng quan của công ty (raw data từ API).
         
         Returns:
             pd.DataFrame: DataFrame chứa thông tin tổng quan của công ty.
         """
-        data = self.raw_data['CompanyListingInfo']
-        clean_data = clean_html_dict(data)
-        df = flatten_dict_to_df(clean_data, 'financialRatio')
+        data = self._fetch_company_details()
         
-        # Replace '\n' with ' ' in all string columns using pandas-compatible method
-        df = replace_newlines_in_dataframe(df)
+        if not data:
+            return pd.DataFrame()
         
-        # Convert to snake_case
+        df = pd.DataFrame([data])
+
+        # Convert camelCase to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]
         
-        # Drop columns with prefixes 'en_', '__' and these specific columns
-        df = drop_cols_by_pattern(df, ['en_', '__', '_ratio_id'])
+        # Drop English columns and internal fields
+        df = drop_cols_by_pattern(df, ['en_', '__'])
+
+        # Drop sector_vn if sector already exists (to avoid duplicates)
+        if 'sector_vn' in df.columns and 'sector' in df.columns:
+            df = df.drop(columns=['sector_vn'])
+
+        # Rename to match old schema names
+        rename_map = {
+            'vi_organ_name': 'organ_name',
+            'vi_organ_short_name': 'organ_short_name',
+            'profile': 'company_profile',
+            'number_of_shares_mkt_cap': 'issue_share',
+            'ticker': 'symbol'
+        }
+        rename_dict = {k: v for k, v in rename_map.items() if k in df.columns}
+        if rename_dict:
+            df = df.rename(columns=rename_dict)
+
+        # Clean HTML/CSS from company_profile field
+        if 'company_profile' in df.columns:
+            import re
+            def strip_html(text):
+                if not isinstance(text, str):
+                    return text
+                # Remove HTML tags
+                text = re.sub(r'<[^>]+>', '', text)
+                # Decode HTML entities
+                import html
+                text = html.unescape(text)
+                # Remove extra whitespace
+                text = ' '.join(text.split())
+                return text
+
+            df['company_profile'] = df['company_profile'].apply(strip_html)
         
-        # Rename ticker column to symbol
-        df = df.rename(columns={'ticker': 'symbol'})
-        
-        # Reorder columns to have symbol first
+        # Reorder columns with ticker first
         df = reorder_cols(df, ['symbol'], position='first')
         
         return df
 
     @optimize_execution("VCI")
-    def shareholders(self) -> pd.DataFrame:
+    def shareholders(self, mode: str = 'detailed') -> pd.DataFrame:
         """
         Truy xuất thông tin cổ đông của công ty.
         
+        Tham số:
+            - mode (str): Chế độ hiển thị
+                - 'summary': Tóm tắt cơ cấu cổ đông (mặc định)
+                - 'detailed': Danh sách chi tiết tất cả cổ đông
+
         Returns:
             pd.DataFrame: DataFrame chứa thông tin cổ đông của công ty.
         """
-        df = self._process_data(self.raw_data, 'OrganizationShareHolders')
+        if mode == 'summary':
+            # Return summary structure
+            data = self._fetch_shareholders()
+
+            if not data:
+                return pd.DataFrame()
+
+            df = pd.DataFrame(data) if isinstance(data, list) else pd.DataFrame([data])
+
+            # Convert to snake_case
+            df.columns = [camel_to_snake(col) for col in df.columns]
+
+            # Drop unnecessary columns
+            df = drop_cols_by_pattern(df, ['__typename', 'ticker', 'en_'])
+
+            # Convert update_date from timestamp to date string if needed
+            if 'update_date' in df.columns and df['update_date'].dtype in [int, float]:
+                df['update_date'] = pd.to_datetime(df['update_date'], unit='ms').dt.strftime('%Y-%m-%d')
+
+            # Rename columns for clarity
+            rename_map = {}
+            if 'owner_full_name' in df.columns:
+                rename_map['owner_full_name'] = 'share_holder'
+            if 'percentage' in df.columns:
+                rename_map['percentage'] = 'share_own_percent'
+            if rename_map:
+                df = df.rename(columns=rename_map)
+
+            return df
         
-        # Drop unnecessary columns
-        df = drop_cols_by_pattern(df, ['__typename', 'ticker', 'en_'])
+        elif mode == 'detailed':
+            # Return detailed shareholder list
+            data = self._fetch_shareholder_list()
+
+            if not data:
+                return pd.DataFrame()
+
+            df = pd.DataFrame(data)
+
+            # Convert to snake_case
+            df.columns = [camel_to_snake(col) for col in df.columns]
+
+            # Drop unnecessary columns
+            df = drop_cols_by_pattern(df, ['__typename', 'ticker', 'en_', 'owner_type', 'owner_code', 'position_name', 'public_date'])
+
+            # Rename to match old schema names
+            rename_map = {
+                'owner_name': 'share_holder',
+                'percentage': 'share_own_percent'
+            }
+            rename_dict = {k: v for k, v in rename_map.items() if k in df.columns}
+            if rename_dict:
+                df = df.rename(columns=rename_dict)
+
+            # Add symbol column
+            df.insert(0, 'symbol', self.symbol)
+
+            # Select only standard columns (using schema mapping keys)
+            standard_columns = ['symbol', 'share_holder', 'quantity', 'share_own_percent', 'update_date']
+            existing_cols = [col for col in standard_columns if col in df.columns]
+            df = df[existing_cols]
+
+            return df
         
-        # Convert update_date from timestamp to date string %Y-%m-%d
-        df['update_date'] = pd.to_datetime(df['update_date'], unit='ms').dt.strftime('%Y-%m-%d')
-        
-        # Rename columns for clarity
-        df = df.rename(columns={
-            'owner_full_name': 'share_holder', 
-            'percentage': 'share_own_percent'
-        })
-        
-        return df
+        else:
+            raise ValueError(f"Invalid mode: {mode}. Use 'summary' or 'detailed'")
     
     @optimize_execution("VCI")
     def officers(self, filter_by: str = 'working') -> pd.DataFrame:
         """
-        Truy xuất thông tin lãnh đạo công ty.
+        Truy xuất thông tin lãnh đạo công ty (cá nhân có vị trí).
 
         Tham số:
             - filter_by (str): Lọc lãnh đạo đang làm việc hoặc đã từ nhiệm hoặc tất cả.
-                - 'working': Lọc lãnh đạo đang làm việc.
+                - 'working': Lọc lãnh đạo đang làm việc (mặc định).
                 - 'resigned': Lọc lãnh đạo đã từ nhiệm.
                 - 'all': Lọc tất cả lãnh đạo.
 
@@ -214,33 +432,49 @@ class Company:
         if filter_by not in ['working', 'resigned', 'all']:
             raise ValueError("filter_by chỉ nhận giá trị 'working' hoặc 'resigned' hoặc 'all'")
         
-        if filter_by == 'working':
-            df = self._process_data(self.raw_data, 'OrganizationManagers')
-        elif filter_by == 'resigned':
-            df = self._process_data(self.raw_data, 'OrganizationResignedManagers')
-        else:
-            # Combine both working and resigned officers
-            working_df = self._process_data(self.raw_data, 'OrganizationManagers')
-            working_df['type'] = 'đang làm việc'
-            resigned_df = self._process_data(self.raw_data, 'OrganizationResignedManagers')
-            resigned_df['type'] = 'đã từ nhiệm'
-            df = pd.concat([working_df, resigned_df])
+        data = self._fetch_shareholder_list()
+
+        if not data:
+            return pd.DataFrame()
+
+        df = pd.DataFrame(data) if isinstance(data, list) else pd.DataFrame([data])
+
+        # Convert to snake_case
+        df.columns = [camel_to_snake(col) for col in df.columns]
+
+        # Filter: only INDIVIDUAL with positionName (lãnh đạo)
+        if 'owner_type' in df.columns:
+            df = df[df['owner_type'] == 'INDIVIDUAL']
+
+        # Filter: must have a position name (not null)
+        if 'position_name' in df.columns:
+            df = df[df['position_name'].notna()]
         
         # Drop unnecessary columns
-        df = drop_cols_by_pattern(df, ['en_', '__', 'ticker'])
+        df = drop_cols_by_pattern(df, ['en_', '__', 'owner_code', 'owner_type', 'public_date'])
+
+        # Rename to match old schema names
+        rename_map = {
+            'owner_name': 'officer_name',
+            'position_name': 'officer_position',
+            'percentage': 'officer_own_percent',
+            'quantity': 'officer_own_quantity'
+        }
+        rename_dict = {k: v for k, v in rename_map.items() if k in df.columns}
+        if rename_dict:
+            df = df.rename(columns=rename_dict)
+
+        # Add symbol column
+        df.insert(0, 'symbol', self.symbol)
         
-        # Reorder columns
-        df = reorder_cols(df, ['symbol'], position='first')
+        # Convert date from timestamp to date string if needed
+        if 'update_date' in df.columns and df['update_date'].dtype in [int, float]:
+            df['update_date'] = pd.to_datetime(df['update_date'], unit='ms').dt.strftime('%Y-%m-%d')
         
-        # Rename columns for clarity
-        df = df.rename(columns={
-            'full_name': 'officer_name', 
-            'position_name': 'officer_position', 
-            'percentage': 'officer_own_percent'
-        })
-        
-        # Convert update_date from timestamp to date string
-        df['update_date'] = pd.to_datetime(df['update_date'], unit='ms').dt.strftime('%Y-%m-%d')
+        # Select only standard columns (using schema mapping keys)
+        standard_columns = ['symbol', 'officer_name', 'officer_position', 'officer_own_percent', 'officer_own_quantity', 'update_date']
+        existing_cols = [col for col in standard_columns if col in df.columns]
+        df = df[existing_cols]
         
         return df
     
@@ -258,30 +492,81 @@ class Company:
         Returns:
             pd.DataFrame: DataFrame chứa thông tin công ty con.
         """
-        if filter_by not in ['all', 'subsidiary']:
-            raise ValueError("filter_by chỉ nhận giá trị 'all' hoặc 'subsidiary'")
+        if filter_by not in ['all', 'subsidiary', 'affiliate']:
+            raise ValueError("filter_by chỉ nhận giá trị 'all' hoặc 'subsidiary' hoặc 'affiliate'")
         
-        df = self.raw_data['Subsidiary']
-        df = flatten_list_to_df(df, 'subOrListingInfo')
+        data = self._fetch_relationships()
         
-        # Convert column names to snake_case
-        df.columns = [camel_to_snake(col) for col in df.columns]
+        if not data:
+            return pd.DataFrame()
         
-        # Drop unnecessary columns
-        df = drop_cols_by_pattern(df, ['__typename', 'en_'])
-        df = df.drop(columns=['organ_code'])
+        # Handle both dict and list responses
+        if isinstance(data, dict):
+            subsidiary_list = data.get('subsidiaries', [])
+            affiliate_list = data.get('affiliates', [])
+        else:
+            subsidiary_list = []
+            affiliate_list = []
         
-        # Rename percentage to ownership_percent for clarity
-        df = df.rename(columns={'percentage': 'ownership_percent'})
-        df['type'] = 'công ty con'
+        dfs = []
 
-        if filter_by == 'subsidiary':
-            return df
-        elif filter_by == 'all':
-            affiliate_df = self.affiliate()
-            affiliate_df['type'] = 'công ty liên kết'
-            combine_df = pd.concat([df, affiliate_df])
-            return combine_df
+        if filter_by in ['all', 'subsidiary'] and subsidiary_list:
+            sub_df = pd.DataFrame(subsidiary_list)
+            sub_df.columns = [camel_to_snake(col) for col in sub_df.columns]
+            sub_df = drop_cols_by_pattern(sub_df, ['__typename', 'en_'])
+
+            # Rename columns to match old schema names
+            rename_map = {
+                'right_organ_name_vi': 'organ_name',
+                'right_organ_code': 'sub_organ_code',
+                'owned_percentage': 'ownership_percent'
+            }
+
+            rename_dict = {k: v for k, v in rename_map.items() if k in sub_df.columns}
+            if rename_dict:
+                sub_df = sub_df.rename(columns=rename_dict)
+
+            # Drop organ_code if exists
+            if 'organ_code' in sub_df.columns:
+                sub_df = sub_df.drop(columns=['organ_code'])
+
+            sub_df.insert(0, 'symbol', self.symbol)
+            dfs.append(sub_df)
+
+        if filter_by in ['all', 'affiliate'] and affiliate_list:
+            aff_df = pd.DataFrame(affiliate_list)
+            aff_df.columns = [camel_to_snake(col) for col in aff_df.columns]
+            aff_df = drop_cols_by_pattern(aff_df, ['__typename', 'en_'])
+
+            # Rename columns to match old schema names
+            rename_map = {
+                'right_organ_name_vi': 'organ_name',
+                'right_organ_code': 'sub_organ_code',
+                'owned_percentage': 'ownership_percent'
+            }
+
+            rename_dict = {k: v for k, v in rename_map.items() if k in aff_df.columns}
+            if rename_dict:
+                aff_df = aff_df.rename(columns=rename_dict)
+
+            # Drop organ_code if exists
+            if 'organ_code' in aff_df.columns:
+                aff_df = aff_df.drop(columns=['organ_code'])
+
+            aff_df.insert(0, 'symbol', self.symbol)
+            dfs.append(aff_df)
+
+        if dfs:
+            result = pd.concat(dfs, ignore_index=True)
+
+            # Select only standard columns (using old schema names)
+            standard_columns = ['symbol', 'organ_name', 'ownership_percent', 'sub_organ_code', 'type']
+            existing_cols = [col for col in standard_columns if col in result.columns]
+            result = result[existing_cols]
+
+            return result
+        else:
+            return pd.DataFrame()
         
     @optimize_execution("VCI")
     def affiliate(self) -> pd.DataFrame:
@@ -291,21 +576,33 @@ class Company:
         Returns:
             pd.DataFrame: DataFrame chứa thông tin công ty liên kết.
         """
-        data = self.raw_data['Affiliate']
-        df = flatten_list_to_df(data, 'subOrListingInfo')
+        data = self._fetch_relationships()
+
+        if not data:
+            return pd.DataFrame()
+
+        # Extract affiliates from relationship data
+        if isinstance(data, dict):
+            affiliate_list = data.get('affiliates', [])
+        else:
+            affiliate_list = []
+
+        if not affiliate_list:
+            return pd.DataFrame()
+
+        df = pd.DataFrame(affiliate_list)
         
         # Convert column names to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]
         
         # Drop unnecessary columns
         df = drop_cols_by_pattern(df, ['en_', '__typename'])
-        df = df.drop(columns=['organ_code'])
-        
-        # Reorder columns
-        df = reorder_cols(df, ['id', 'sub_organ_code', 'organ_name'], position='first')
+        if 'organ_code' in df.columns:
+            df = df.drop(columns=['organ_code'])
         
         # Rename percentage to ownership_percent for clarity
-        df = df.rename(columns={'percentage': 'ownership_percent'})
+        if 'percentage' in df.columns:
+            df = df.rename(columns={'percentage': 'ownership_percent'})
         
         return df
       
@@ -317,18 +614,70 @@ class Company:
         Returns:
             pd.DataFrame: DataFrame chứa tin tức liên quan đến công ty.
         """
-        df = self._process_data(self.raw_data, 'News')
+        # Try to fetch from the main news endpoint first (has more data)
+        data = self._fetch_news()
         
-        # Rename columns according to the price info mapping
-        for col, new_col in _PRICE_INFO_MAP.items():
-            if col in df.columns:
-                df = df.rename(columns={col: new_col})
+        if not data:
+            return pd.DataFrame()
+
+        df = pd.DataFrame(data)
+
+        # Convert to snake_case
+        df.columns = [camel_to_snake(col) for col in df.columns]
         
         # Drop unnecessary columns
-        df = df.drop(columns=['organ_code', 'symbol', '__typename'])
+        cols_to_drop = [col for col in ['organ_code', 'symbol', '__typename', 'is_event', 'event', 'create_by', 'update_by', 'status', 'create_date', 'update_date', 'source_code', 'expert_id', 'is_tranfer'] if col in df.columns]
+        if cols_to_drop:
+            df = df.drop(columns=cols_to_drop)
         
         return df
     
+    def _fetch_events(self, event_codes: str = None, from_date: str = None,
+                     to_date: str = None, page: int = 0, size: int = 50) -> List:
+        """
+        Fetch events from REST API.
+
+        Args:
+            event_codes (str): Event codes to fetch (comma-separated)
+                - 'DIV,ISS': Trả cổ tức & phát hành thêm
+                - 'DDIND,DDINS,DDRP': Giao dịch cổ đông lớn & cổ đông nội bộ
+                - 'AGME,AGMR,EGME': Đại hội cổ đông
+                - 'AIS,MA,MOVE,NLIS,OTHE,RETU,SUSP': Sự kiện khác
+            from_date (str): Start date in YYYYMMDD format
+            to_date (str): End date in YYYYMMDD format
+            page (int): Page number (0-indexed)
+            size (int): Number of items per page
+
+        Returns:
+            List: Events data.
+        """
+        if event_codes is None:
+            # Default: all event types
+            event_codes = 'DIV,ISS,DDIND,DDINS,DDRP,AGME,AGMR,EGME,AIS,MA,MOVE,NLIS,OTHE,RETU,SUSP'
+
+        if from_date is None:
+            from_date = (datetime.now() - timedelta(days=365*10)).strftime('%Y%m%d')
+        if to_date is None:
+            to_date = datetime.now().strftime('%Y%m%d')
+
+        url = f"{_VCIQ_URL}/v1/events?ticker={self.symbol}&fromDate={from_date}&toDate={to_date}&eventCode={event_codes}&page={page}&size={size}"
+
+        if self.show_log:
+            logger.debug(f"Requesting events for {self.symbol} from {url}")
+
+        response_data = send_request(
+            url=url,
+            headers=self.headers,
+            method="GET",
+            show_log=self.show_log
+        )
+
+        # Extract content from paginated response
+        data = response_data.get('data', {})
+        if isinstance(data, dict):
+            return data.get('content', [])
+        return []
+
     @optimize_execution("VCI")
     def events(self) -> pd.DataFrame:
         """
@@ -337,43 +686,37 @@ class Company:
         Returns:
             pd.DataFrame: DataFrame chứa các sự kiện của công ty.
         """
-        df = self._process_data(self.raw_data, 'OrganizationEvents')
+        data = self._fetch_events()
         
-        # Rename columns according to the price info mapping
-        for col, new_col in _PRICE_INFO_MAP.items():
-            if col in df.columns:
-                df = df.rename(columns={col: new_col})
+        if not data:
+            return pd.DataFrame()
+
+        df = pd.DataFrame(data)
+
+        # Convert to snake_case
+        df.columns = [camel_to_snake(col) for col in df.columns]
         
         # Drop unnecessary columns
-        df = df.drop(columns=['organ_code', 'symbol', '__typename'])
+        cols_to_drop = [col for col in ['organ_code', 'symbol', '__typename', 'is_event', 'event', 'organ_name_en', 'organ_name_vi'] if col in df.columns]
+        if cols_to_drop:
+            df = df.drop(columns=cols_to_drop)
         
         # Convert date columns from timestamp to date string
-        date_columns = ['public_date', 'issue_date', 'record_date', 'exright_date']
+        date_columns = ['public_date', 'issue_date', 'record_date', 'exright_date', 'display_date']
         for col in date_columns:
             if col in df.columns:
-                df[col] = pd.to_datetime(df[col], unit='ms').dt.strftime('%Y-%m-%d')
+                if df[col].dtype in [int, float]:
+                    df[col] = pd.to_datetime(df[col], unit='ms').dt.strftime('%Y-%m-%d')
+                elif df[col].dtype == 'object':
+                    # Try to parse ISO format dates
+                    try:
+                        df[col] = pd.to_datetime(df[col]).dt.strftime('%Y-%m-%d')
+                    except:
+                        pass
         
         return df
     
-    @optimize_execution("VCI")
-    def reports(self) -> pd.DataFrame:
-        """
-        Truy xuất báo cáo phân tích về công ty.
-        
-        Returns:
-            pd.DataFrame: DataFrame chứa các báo cáo phân tích về công ty.
-        """
-        df = self._process_data(self.raw_data, 'AnalysisReportFiles')
-        
-        # Drop __typename column if it exists
-        if '__typename' in df.columns:
-            df = df.drop(columns=['__typename'])
-        
-        # Convert date from timestamp to date string if it's in timestamp format
-        if 'date' in df.columns and df['date'].dtype in [int, float]:
-            df['date'] = pd.to_datetime(df['date'], unit='ms').dt.strftime('%Y-%m-%d')
-        
-        return df
+
 
     @optimize_execution("VCI")
     def trading_stats(self) -> pd.DataFrame:
@@ -383,19 +726,18 @@ class Company:
         Returns:
             pd.DataFrame: DataFrame chứa thống kê giao dịch của công ty.
         """
-        price_data, _ = self._parse_price_info()
-        df = pd.DataFrame(price_data)
+        data = self._fetch_company_details()
+
+        if not data:
+            return pd.DataFrame()
+
+        df = pd.DataFrame([data])
         
         # Convert column names to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]
         
         # Drop __typename column
         df = drop_cols_by_pattern(df, ['__typename'])
-        
-        # Rename columns according to the price info mapping
-        for col, new_col in _PRICE_INFO_MAP.items():
-            if col in df.columns:
-                df = df.rename(columns={col: new_col})
         
         # Add symbol column
         df['symbol'] = self.symbol
@@ -413,13 +755,24 @@ class Company:
         Returns:
             pd.DataFrame: DataFrame chứa tóm tắt các tỷ lệ tài chính của công ty.
         """
-        _, financial_ratio_data = self._parse_price_info()
+        data = self._fetch_financial_statistics()
         
-        # Convert column names to snake_case
-        financial_ratio_data.columns = [camel_to_snake(col) for col in financial_ratio_data.columns]
+        if not data:
+            return pd.DataFrame()
+
+        # Handle both list and dict responses
+        if isinstance(data, list):
+            if len(data) == 0:
+                return pd.DataFrame()
+            df = pd.DataFrame(data)
+        else:
+            df = pd.DataFrame([data])
+
+        # Convert column names to snake_case (only string column names)
+        df.columns = [camel_to_snake(str(col)) for col in df.columns]
         
         # Drop __typename column
-        df = drop_cols_by_pattern(financial_ratio_data, ['__typename'])
+        df = drop_cols_by_pattern(df, ['__typename'])
         
         # Add symbol column
         df['symbol'] = self.symbol
@@ -428,7 +781,6 @@ class Company:
         df = reorder_cols(df, cols=['symbol'], position='first')
         
         return df
-
 
 # Register provider
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401

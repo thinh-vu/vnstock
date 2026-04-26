@@ -3,6 +3,14 @@ _TRADING_URL = 'https://trading.vietcap.com.vn/api/'
 _CHART_URL = 'chart/OHLCChart/gap-chart'
 _INTRADAY_URL = 'market-watch'
 _GRAPHQL_URL = 'https://trading.vietcap.com.vn/data-mt/graphql'
+_VCIQ_URL = 'https://iq.vietcap.com.vn/api/iq-insight-service'
+_VCI_EVENTS_URL = f'{_VCIQ_URL}/v1/events'
+_VCI_MARKET_INDICES_URL = f'{_VCIQ_URL}/v1/market-indices'
+_VCI_COMPANY_URL = f'{_VCIQ_URL}/v1/company'
+_IQ_FINANCE_REPORT = {'balance_sheet': 'BALANCE_SHEET',
+                    'income_statement': 'INCOME_STATEMENT',
+                    'cash_flow': 'CASH_FLOW',
+                    'ratio': 'RATIO'}
 
 _INTERVAL_MAP = {'1m' : 'ONE_MINUTE',
             '5m' : 'ONE_MINUTE',
@@ -81,7 +89,45 @@ _UNIT_MAP = {'BILLION':'tỷ', 'PERCENT':'%', 'INDEX':'index', 'MILLION':'triệ
 
 SUPPORTED_LANGUAGES = ['vi', 'en']
 
-_INDEX_MAPPING = {'VNINDEX': 'VNINDEX', 'HNXINDEX': 'HNXIndex', 'UPCOMINDEX': 'HNXUpcomIndex'}
+_INDEX_MAPPING = {
+    # Major Market Indices
+    'VNINDEX': 'VNINDEX',
+    'VNI': 'VNINDEX',
+    'HNX': 'HNXIndex',
+    'HNXINDEX': 'HNXIndex',
+    'UPCOM': 'HNXUpcomIndex',
+    'UPCOMINDEX': 'HNXUpcomIndex',
+
+    # HOSE Indices
+    'VN30': 'VN30',
+    'VNMID': 'VNMID',
+    'VNSML': 'VNSML',
+    'VN100': 'VN100',
+    'VNALL': 'VNALL',
+    'VNSI': 'VNSI',
+
+    # Sector Indices (HOSE)
+    'VNIT': 'VNIT',
+    'VNIND': 'VNIND',
+    'VNCONS': 'VNCONS',
+    'VNMAT': 'VNMAT',
+    'VNCOND': 'VNCOND',
+    'VNFIN': 'VNFIN',
+    'VNFINLEAD': 'VNFINLEAD',
+    'VNFINSELECT': 'VNFINSELECT',
+    'VNHEAL': 'VNHEAL',
+    'VNREAL': 'VNREAL',
+    'VNUTI': 'VNUTI',
+    'VNENE': 'VNENE',
+
+    # HNX Indices
+    'HNX30': 'HNX30',
+    'HNXCON': 'HNXCon',
+    'HNXFIN': 'HNXFin',
+    'HNXLCAP': 'HNXLCap',
+    'HNXMAN': 'HNXMan',
+    'HNXSMCAP': 'HNXSMCap',
+}
 
 _PRICE_INFO_MAP = {
     'ev': 'ev', # Enterprise Value
