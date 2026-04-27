@@ -265,18 +265,25 @@ def get_asset_type(symbol: str) -> str:
 def camel_to_snake(name):
     """
     Convert variable name from CamelCase to snake_case.
+    Also handles spaces and hyphens by converting them to underscores.
 
     Parameters:
-        - name (str): Variable name in CamelCase.
+        - name (str): Variable name in CamelCase, space-separated, or hyphen-separated.
 
     Returns:
         - str: Variable name in snake_case.
     """
-    str1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    output = re.sub('([a-z0-9])([A-Z])', r'\1_\2', str1).lower()
-    # replace . with _
-    output = output.replace('.', '_')
-    return output
+    # 1. Replace spaces, dots, and hyphens with underscores
+    name = re.sub(r'[\s\.\-]+', '_', name)
+    # 2. Add underscore between lower/number and upper (e.g., aB -> a_B, 1B -> 1_B)
+    name = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', name)
+    # 3. Add underscore between upper and upper-lower (e.g., ABc -> A_Bc)
+    name = re.sub(r'([A-Z])([A-Z][a-z])', r'\1_\2', name)
+    # 4. Lowercase and remove consecutive underscores
+    output = name.lower()
+    output = re.sub(r'_+', '_', output)
+    # 5. Trim leading/trailing underscores
+    return output.strip('_')
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║                    VIETNAMESE TEXT NORMALIZATION MODULE                      ║

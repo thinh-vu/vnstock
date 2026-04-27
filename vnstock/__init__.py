@@ -17,51 +17,9 @@ migrate_to_sponsor(target_dir=".") # Thư mục gốc project của user
 """
 
 
-def _check_sponsor_package():
-    import sys
-    import warnings
-    import inspect
-    import importlib.util
-    
-    # 1. Skip if vnstock is being imported directly by vnstock_data
-    # This prevents the warning from showing when vnstock_data uses vnstock internally
-    # We check the call stack to see where the import originated
-    try:
-        for frame_info in inspect.stack():
-            module_name = frame_info.frame.f_globals.get('__name__', '')
-            if module_name and module_name.startswith('vnstock_data'):
-                return
-
-            # Also check file path just in case module_name is missing or __main__
-            file_name = frame_info.filename
-            if 'vnstock_data' in file_name:
-                return
-    except Exception:
-        pass
-        
-    # 2. Skip if vnstock_data is already loaded in sys.modules
-    # If the user did `import vnstock_data` first, they're already using the premium package
-    if 'vnstock_data' in sys.modules:
-        return
-
-    # 3. Check if vnstock_data is installed in the current environment
-    # This correctly looks in the active python environment instead of hardcoded ~/.venv
-    has_vnstock_data = importlib.util.find_spec('vnstock_data') is not None
-
-    if has_vnstock_data:
-        msg = (
-            "\n**************************************************************\n"
-            "[vnstock] Đã tìm thấy thư viện Sponsor `vnstock_data` trong môi trường hiện tại!\n"
-            "Để sử dụng CÁC TÍNH NĂNG MỞ RỘNG (dữ liệu phái sinh, API mở giới hạn,...),\n"
-            "Vui lòng đổi TẤT CẢ các import `from vnstock import ...` \n"
-            "Thành `from vnstock_data import ...` ở trong code của bạn.\n"
-            "Chỉ nhập API key trên vnstock bản free sẽ KHÔNG mở khóa được giới hạn.\n"
-            "**************************************************************"
-        )
-        warnings.warn(msg, UserWarning, stacklevel=2)
-
 try:
-    _check_sponsor_package()
+    from vnstock.core.utils.env import check_sponsor_package
+    check_sponsor_package()
 except Exception:
     pass
 

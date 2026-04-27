@@ -24,7 +24,7 @@ _RANKING_FOREIGN_URL = f'{_IIS_BASE_URL}/rtranking/foreignTotal'
 # SAS Endpoints - Stock Data Store
 _SAS_STOCK_URL = f'{_SAS_BASE_URL}/kbsv-stock-data-store/stock'
 _SAS_HISTORICAL_QUOTES_URL = f'{_SAS_STOCK_URL}/{{symbol}}/historical-quotes'
-_SAS_FINANCE_INFO_URL = f'{_SAS_STOCK_URL}/finance-info'
+_SAS_FINANCE_INFO_URL = f'{_IIS_BASE_URL}/stock/finance-info'
 _SAS_TRADING_MARGIN_URL = f'{_SAS_STOCK_URL}/trading-margin'
 _SAS_CTKH_INFO_URL = f'{_SAS_STOCK_URL}/ctkh-info'
 

@@ -6,6 +6,8 @@ for accessing stock, forex, crypto, index, and fund data from various sources.
 """
 
 import logging
+import datetime
+import warnings
 from typing import Optional
 
 from vnstock.core.utils.logger import get_logger
@@ -58,6 +60,32 @@ class Vnstock:
         Raises:
             ValueError: If source is not in SUPPORTED_SOURCES.
         """
+        # Deprecation warning after 2025-08-31
+        deprecation_date = datetime.date(2025, 8, 31)
+        if datetime.date.today() > deprecation_date:
+            msg = (
+                "\n"
+                "  ╭──────────────────────────────────────────────────────────╮\n"
+                "  │  ⚠️  VNSTOCK DEPRECATION NOTICE (31/08/2025)             │\n"
+                "  │                                                          │\n"
+                "  │  Lớp Vnstock và các phương thức cũ (stock, fx, crypto,   │\n"
+                "  │  world_index, fund...) đã chính thức bị ngừng hỗ trợ.    │\n"
+                "  │                                                          │\n"
+                "  │  Để hệ thống ổn định và nhận được cập nhật mới nhất,     │\n"
+                "  │  vui lòng chuyển sang dùng bộ thư viện `vnstock.api`.    │\n"
+                "  │                                                          │\n"
+                "  │  👉 Xem hướng dẫn Migration: /vnstock-migration          │\n"
+                "  ╰──────────────────────────────────────────────────────────╯\n\n"
+                "Mẫu code chuyển đổi (Migration Example):\n"
+                "--------------------------------------\n"
+                "Cũ (Old):  stock = Vnstock().stock('ACB')\n"
+                "Mới (New): from vnstock.api.quote import Quote\n"
+                "          q = Quote(symbol='ACB', source='VCI')\n"
+            )
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
+            if show_log:
+                print(msg)
+
         self.symbol = symbol
         self.source = source.upper()
         self.show_log = show_log

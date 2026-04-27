@@ -31,9 +31,10 @@ class Finance(BaseAdapter):
         get_all: bool = True,
         show_log: bool = False
     ):
-        # Ensure explorer modules are loaded (lazy load to avoid deadlock)
-        from vnstock import _ensure_explorer_modules_loaded
+        # Ensure explorer modules and vnai patches are loaded
+        from vnstock import _ensure_explorer_modules_loaded, _ensure_vnai_initialized
         _ensure_explorer_modules_loaded()
+        _ensure_vnai_initialized()
         
         # Store parameters for later use
         self.source = source

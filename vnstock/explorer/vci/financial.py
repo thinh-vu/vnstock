@@ -28,7 +28,6 @@ from vnstock.core.utils.validation import validate_symbol
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.transform import replace_in_column_names, flatten_hierarchical_index, reorder_cols
-from vnai import optimize_execution
 import requests
 import secrets
 
@@ -168,8 +167,7 @@ class Finance:
                 # Apply the renaming
                 df.columns = new_columns
             
-            return df
-    
+
     def _handshake(self):
         """
         Phát động handshake để khởi tạo session và tránh bị chặn từ phía VCI.
@@ -245,21 +243,14 @@ class Finance:
                    show_log: Optional[bool] = False, 
                    mode: Optional[str] = 'final', 
                    style: Optional[str] = 'readable',
-                   get_all: Optional[bool] = False) -> pd.DataFrame:
+                   get_all: Optional[bool] = False,
+                   period: Optional[str] = None,
+                   limit: Optional[int] = None) -> pd.DataFrame:
         """
         Lấy dữ liệu báo cáo tài chính thô hoặc đã ánh xạ từ VCI REST API.
-
-        Tham số:
-            - report_type (str): Loại báo cáo ('income_statement', 'balance_sheet', 'cash_flow', 'ratio').
-            - lang (str): Ngôn ngữ của báo cáo. Mặc định là 'en'.
-            - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
-            - mode (str): Chế độ ('final' cho dữ liệu đã ánh xạ, 'raw' cho dữ liệu thô). Mặc định là 'final'.
-            - style (str): Phong cách tên cột. Mặc định là 'readable'.
-            - get_all (bool): Trả về tất cả các trường dữ liệu. Mặc định là False.
-
-        Returns:
-            pd.DataFrame: Dữ liệu báo cáo tài chính.
         """
+        # Baseline limit
+        effective_limit = limit if limit is not None else 4
         # Validate report_type
         if report_type not in _IQ_FINANCE_REPORT.keys():
             raise ValueError(f"Loại báo cáo tài chính không hợp lệ: '{report_type}'. Hỗ trợ: {', '.join(_IQ_FINANCE_REPORT.keys())}")
@@ -292,89 +283,96 @@ class Finance:
         if data is None:
             raise ValueError(f"Không nhận được dữ liệu (data) từ VCI cho mã {self.symbol} tại section {report_section}.")
 
+        # Filter only requested period type
+        effective_period = period if period else self.period
+        # Map 'Y'/'Q' (internal) or 'year'/'quarter' (user) to VCI API keys
+        target_key = 'years' if effective_period in ['year', 'Y'] else 'quarters'
+        
         if report_section == 'RATIO':
             combined_df = pd.DataFrame(data)
         else:
             df_list = []
-            for period_key, period_data in data.items():
-                if period_data:
-                    df = pd.DataFrame(period_data)
-                    df['report_period'] = period_key[:-1] # Remove 's' from 'quarters'
-                    df_list.append(df)
-            if not df_list:
-                return pd.DataFrame()
-            combined_df = pd.concat(df_list, ignore_index=True)
+            # Only process the target period key from the response
+            period_data = data.get(target_key, [])
+            if period_data:
+                combined_df = pd.DataFrame(period_data)
+                # Keep tracking if it's year or quarter
+                combined_df['report_period'] = target_key[:-1]
+            else:
+                combined_df = pd.DataFrame()
+
+        # Apply limit
+        if not combined_df.empty and len(combined_df) > effective_limit:
+            combined_df = combined_df.head(effective_limit)
 
         if mode == 'final':
-            return self._ratio_mapping(report_df=combined_df, lang=lang, style=style, get_all=get_all, show_log=show_log)
+            return self._ratio_mapping(report_df=combined_df, lang=lang, style=style, get_all=get_all, show_log=show_log, period_type=effective_period)
         else:
             return combined_df
 
-    def _ratio_mapping(self, report_df: pd.DataFrame, lang: Optional[str] = 'vi', style: str = 'readable', get_all: Optional[bool] = False, show_log: Optional[bool] = False):
-        """
-        Ánh xạ các mã trường kỹ thuật sang tên hiển thị dễ đọc dựa trên metadata.
+    def _ratio_mapping(self, report_df: pd.DataFrame, lang: Optional[str] = 'vi', style: str = 'readable', get_all: Optional[bool] = False, show_log: Optional[bool] = False, period_type: Optional[str] = None):
+        # Get metadata mapping for both languages
+        meta_df = self._get_ratio_dict(format='dataframe', show_log=show_log)
+        vi_dict = meta_df.set_index('field_name')['name'].to_dict()
+        en_dict = meta_df.set_index('field_name')['en_name'].to_dict()
 
-        Tham số:
-            - report_df (pd.DataFrame): DataFrame dữ liệu thô.
-            - lang (str): Ngôn ngữ ánh xạ.
-            - style (str): Phong cách lấy tên.
-            - get_all (bool): Giữ lại tất cả các cột.
-            - show_log (bool): Hiển thị log.
-        """
-        ratio_dict = self._get_ratio_dict(lang=lang, style=style, format='dict')
-
-        report_df.columns = [ratio_dict[col] if col in ratio_dict else col for col in report_df.columns]
+        # Identify which columns are items vs metadata
+        item_cols = [col for col in report_df.columns if col in vi_dict]
         
-        # Add Tahun/Quarter labels
-        if 'year' in report_df.columns:
-            report_df['yearReport'] = report_df['year']
-        if 'quarter' in report_df.columns:
-            report_df['lengthReport'] = report_df['quarter']
-
-        # Construct a clean 'period' (Year-Q) if possible
-        if 'year' in report_df.columns and 'quarter' in report_df.columns:
-             report_df['period'] = report_df.apply(lambda x: f"{int(x['year'])}-Q{int(x['quarter'])}" if int(x['quarter']) < 5 else f"{int(x['year'])}", axis=1)
-        elif 'year' in report_df.columns:
-             report_df['period'] = report_df['year'].astype(str)
-
-        # Standardize labels based on lang
-        if lang == 'vi':
-            if style == 'readable':
-                 report_df = report_df.rename(columns={'period': 'Kỳ báo cáo', 'ticker': 'Mã CP'})
-            index_name = 'Kỳ báo cáo'
-        else:
-            index_name = 'period'
+        # Create period labels if not already present
+        if 'period' not in report_df.columns:
+            # VCI logic for year/quarter
+            y_col = 'year' if 'year' in report_df.columns else ('yearReport' if 'yearReport' in report_df.columns else None)
+            q_col = 'quarter' if 'quarter' in report_df.columns else ('lengthReport' if 'lengthReport' in report_df.columns else None)
+            
+            if y_col and q_col:
+                 def fmt_period(row):
+                     try:
+                         y = int(row[y_col])
+                         q = int(row[q_col])
+                         return f"{y}-Q{q}" if q < 5 and period_type in ['quarter', 'Q'] else f"{y}"
+                     except:
+                         return "N/A"
+                 report_df['period'] = report_df.apply(fmt_period, axis=1)
+            elif y_col:
+                 report_df['period'] = report_df[y_col].astype(str)
+            elif 'report_period' in report_df.columns:
+                 report_df['period'] = report_df['report_period']
         
+        # We want to return Items as rows and Periods as columns (match KBS)
         if 'period' in report_df.columns:
-            report_df = report_df.set_index(index_name if lang == 'vi' and style == 'readable' else 'period')
-
-        # Reorder and drop técnico columns
-        if get_all == False:
-            import re
-            code_pattern = re.compile(r'^[a-z]{2,3}\d+$', re.IGNORECASE)
-            cols_to_drop = ['year', 'quarter', 'yearReport', 'lengthReport', 'report_period', 'organCode', 'createDate', 'updateDate', 'publicDate']
-            cols_to_drop += [col for col in report_df.columns if code_pattern.match(str(col))]
-            report_df = report_df.drop(columns=[c for c in cols_to_drop if c in report_df.columns])
+            # Drop metadata columns that are NOT the items or period
+            cols_to_keep = ['period'] + item_cols
+            processed_df = report_df[cols_to_keep].copy()
+            
+            # Set period as index then transpose
+            processed_df = processed_df.set_index('period').T
+            
+            # Now Rows are our items (codes). Let's add readable labels.
+            processed_df.index.name = 'item_id'
+            processed_df = processed_df.reset_index()
+            
+            processed_df['item'] = processed_df['item_id'].map(vi_dict)
+            processed_df['item_en'] = processed_df['item_id'].map(en_dict)
+            
+            # Reorder columns: metadata first, then periods
+            period_cols = [c for c in processed_df.columns if c not in ['item', 'item_en', 'item_id']]
+            # Use original order for columns
+            processed_df = processed_df[['item', 'item_en', 'item_id'] + period_cols]
+            
+            return processed_df
         
         return report_df
 
     def _get_financial_report(self, report_type: str, period: Optional[str] = None, lang: Optional[str] = 'en', 
                              mode: Optional[str] = 'final', style: Optional[str] = 'readable',
-                             get_all: Optional[bool] = False, dropna: Optional[bool] = True, show_log: Optional[bool] = False) -> pd.DataFrame:
+                             get_all: Optional[bool] = False, dropna: Optional[bool] = True, 
+                             show_log: Optional[bool] = False, limit: Optional[int] = None) -> pd.DataFrame:
         """
-        Cổng truy xuất báo cáo tài chính nội bộ, xử lý lọc dữ liệu và định dạng.
-
-        Tham số:
-            - report_type (str): Key loại báo cáo.
-            - period (str): Kỳ báo cáo (không bắt buộc).
-            - lang (str): Ngôn ngữ.
-            - mode (str): Chế độ xử lý.
-            - style (str): Định dạng cột.
-            - get_all (bool): Lấy tất cả cột.
-            - dropna (bool): Loại bỏ cột rỗng.
-            - show_log (bool): Hiển thị log.
+        Cổng truy xuất báo cáo tài chính nội bộ.
         """
-        df = self._get_report(report_type=report_type, lang=lang, mode=mode, style=style, get_all=get_all, show_log=show_log)
+        df = self._get_report(report_type=report_type, lang=lang, mode=mode, style=style, 
+                             get_all=get_all, show_log=show_log, limit=limit, period=period)
         
         if df.empty:
             return df
@@ -391,7 +389,6 @@ class Finance:
             
         return df
 
-    @optimize_execution("VCI")
     def balance_sheet(self, period: Optional[str] = None, lang: Optional[str] = 'en', 
                     dropna: Optional[bool] = True, show_log: Optional[bool] = False) -> pd.DataFrame:
         """
@@ -408,7 +405,6 @@ class Finance:
         """
         return self._get_financial_report('balance_sheet', period=period, lang=lang, dropna=dropna, show_log=show_log)
 
-    @optimize_execution("VCI")
     def income_statement(self, period: Optional[str] = None, lang: Optional[str] = 'en', 
                         dropna: Optional[bool] = True, show_log: Optional[bool] = False) -> pd.DataFrame:
         """
@@ -425,7 +421,6 @@ class Finance:
         """
         return self._get_financial_report('income_statement', period=period, lang=lang, dropna=dropna, show_log=show_log)
 
-    @optimize_execution("VCI")
     def cash_flow(self, period: Optional[str] = None, lang: Optional[str] = 'en', 
                  dropna: Optional[bool] = True, show_log: Optional[bool] = False) -> pd.DataFrame:
         """
@@ -442,7 +437,6 @@ class Finance:
         """
         return self._get_financial_report('cash_flow', period=period, lang=lang, dropna=dropna, show_log=show_log)
 
-    @optimize_execution("VCI")
     def ratio(self, period: Optional[str] = None, lang: Optional[str] = 'en', 
             dropna: Optional[bool] = True, show_log: Optional[bool] = False) -> pd.DataFrame:
         """

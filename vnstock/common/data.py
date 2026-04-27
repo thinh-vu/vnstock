@@ -85,6 +85,19 @@ class BaseComponent:
         Raises:
             ValueError: If source not in SUPPORTED_SOURCES
         """
+        import datetime
+        import warnings
+        # Deprecation warning after 2025-08-31
+        deprecation_date = datetime.date(2025, 8, 31)
+        if datetime.date.today() > deprecation_date:
+            msg = (
+                f"⚠️  Lớp `{self.__class__.__name__}` trong `vnstock.common.data` "
+                "đã bị ngừng hỗ trợ và sẽ bị gỡ bỏ sau ngày 31/08/2025. "
+                "Vui lòng chuyển sang sử dụng bộ API mới trong `vnstock.api`.\n"
+                "👉 Xem hướng dẫn: /vnstock-migration"
+            )
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
         self.symbol = symbol.upper() if symbol else None
         self.source = source.upper()
         self._validate_source()
@@ -555,6 +568,19 @@ class MSNComponents:
         Raises:
             ValueError: If source is not MSN
         """
+        import datetime
+        import warnings
+        # Deprecation warning after 2025-08-31
+        deprecation_date = datetime.date(2025, 8, 31)
+        if datetime.date.today() > deprecation_date:
+            msg = (
+                "⚠️  Lớp `MSNComponents` trong `vnstock.common.data` "
+                "đã bị ngừng hỗ trợ và sẽ bị gỡ bỏ sau ngày 31/08/2025. "
+                "Vui lòng chuyển sang sử dụng bộ API mới trong `vnstock.api`.\n"
+                "👉 Xem hướng dẫn: /vnstock-migration"
+            )
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
         self.original_symbol = symbol.upper() if symbol else None
         self.source = source.upper()
 
@@ -607,6 +633,19 @@ class FMPComponents:
         Raises:
             ValueError: If source is not FMP
         """
+        import datetime
+        import warnings
+        # Deprecation warning after 2025-08-31
+        deprecation_date = datetime.date(2025, 8, 31)
+        if datetime.date.today() > deprecation_date:
+            msg = (
+                "⚠️  Lớp `FMPComponents` trong `vnstock.common.data` "
+                "đã bị ngừng hỗ trợ và sẽ bị gỡ bỏ sau ngày 31/08/2025. "
+                "Vui lòng chuyển sang sử dụng bộ API mới trong `vnstock.api`.\n"
+                "👉 Xem hướng dẫn: /vnstock-migration"
+            )
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
         self.original_symbol = symbol.upper() if symbol else None
         self.symbol = self.original_symbol
         self.source = source.upper()
