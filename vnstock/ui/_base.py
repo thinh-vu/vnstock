@@ -111,26 +111,36 @@ class BaseUI:
                     obj = cls(**init_kwargs)
                     func = getattr(obj, function_name)
                     
+                    # Filter clean_kwargs to only include parameters accepted by the function
+                    import inspect
+                    func_sig = inspect.signature(func)
+                    has_kwargs = any(p.kind == p.VAR_KEYWORD for p in func_sig.parameters.values())
+                    clean_kwargs = {k: v for k, v in kwargs.items() if k not in ['source', 'random_agent', 'show_log']}
+                    if not has_kwargs:
+                        clean_kwargs = {k: v for k, v in clean_kwargs.items() if k in func_sig.parameters}
+
                     # Pass remaining kwargs to function, avoiding double-passing symbol
                     if symbol:
                         # Check if symbol was consumed by __init__
                         consumed_by_init = 'symbol' in sig.parameters
                         # Check if symbol-like arg is in kwargs/args
-                        in_kwargs = any(k in kwargs for k in ['symbol', 'group', 'code', 'ticker', 'query'])
+                        in_kwargs = any(k in clean_kwargs for k in ['symbol', 'group', 'code', 'ticker', 'query'])
                         
                         if not consumed_by_init and not in_kwargs and not args:
-                            return func(symbol, *args, **kwargs)
+                            if 'symbol' in func_sig.parameters or has_kwargs:
+                                return func(symbol, *args, **clean_kwargs)
                         
-                    return func(*args, **kwargs)
-
-
-
-
+                    return func(*args, **clean_kwargs)
 
                 else:
                     func = getattr(module, function_name)
                     # Filter UI internal parameters if they aren't part of the direct API function signature
+                    import inspect
+                    func_sig = inspect.signature(func)
+                    has_kwargs = any(p.kind == p.VAR_KEYWORD for p in func_sig.parameters.values())
                     clean_kwargs = {k: v for k, v in kwargs.items() if k not in ['source', 'random_agent', 'show_log']}
+                    if not has_kwargs:
+                        clean_kwargs = {k: v for k, v in clean_kwargs.items() if k in func_sig.parameters}
                     return func(*args, **clean_kwargs)
 
             elif module_type == 'explorer':
@@ -156,8 +166,14 @@ class BaseUI:
                 else:
                     func = getattr(module, function_name)
                 
-                # Filter UI internal parameters
+                # Filter UI internal parameters and ensure only valid arguments are passed
+                import inspect
+                func_sig = inspect.signature(func)
+                has_kwargs = any(p.kind == p.VAR_KEYWORD for p in func_sig.parameters.values())
                 clean_kwargs = {k: v for k, v in kwargs.items() if k not in ['source', 'random_agent', 'show_log']}
+                if not has_kwargs:
+                    clean_kwargs = {k: v for k, v in clean_kwargs.items() if k in func_sig.parameters}
+
                 return func(*args, **clean_kwargs)
 
 
@@ -171,6 +187,7 @@ class BaseUI:
 
 class BaseDetailUI(BaseUI):
     """Base class for detail UI modules (e.g. Reference().company('VNM'))"""
-    def __init__(self, symbol: str = None):
+    def __init__(self, symbol: str = None, **kwargs):
         self.symbol = symbol
+        self.params = kwargs
 

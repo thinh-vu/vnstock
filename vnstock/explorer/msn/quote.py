@@ -56,7 +56,7 @@ class Quote:
         if timeframe_value not in _RESAMPLE_MAP.keys():
             msg = (
                 f"Giá trị interval không hợp lệ: {timeframe_value}. "
-                f"MSN chỉ hỗ trợ: 1D, 1W, 1M"
+                f"MSN chỉ hỗ trợ: {', '.join(_RESAMPLE_MAP.keys())}"
             )
             raise ValueError(msg)
 
@@ -67,7 +67,7 @@ class Quote:
         )
         return ticker
     @optimize_execution('MSN')
-    def history(self, start: Optional[str] = None, end: Optional[str] = None, interval: Optional[str] = "1D", show_log: bool = False, count_back: Optional[int] = 365, asset_type: Optional[str] = None) -> pd.DataFrame:
+    def history(self, start: Optional[str] = None, end: Optional[str] = None, interval: Optional[str] = "1D", show_log: bool = False, count_back: Optional[int] = 365, asset_type: Optional[str] = None, timezone: str = 'Asia/Ho_Chi_Minh', **kwargs) -> pd.DataFrame:
         """
         Truy xuất dữ liệu giá lịch sử.
         Fetch historical price data.
@@ -99,7 +99,7 @@ class Quote:
         if timeframe_value not in _RESAMPLE_MAP.keys():
             msg = (
                 f"Giá trị interval không hợp lệ: {timeframe_value}. "
-                f"MSN chỉ hỗ trợ: 1D, 1W, 1M"
+                f"MSN chỉ hỗ trợ: {', '.join(_RESAMPLE_MAP.keys())}"
             )
             raise ValueError(msg)
 
@@ -137,7 +137,7 @@ class Quote:
         if show_log:
             logger.info(f'Truy xuất thành công dữ liệu {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}.')
 
-        df = self._as_df(json_data, timeframe_value)
+        df = self._as_df(json_data, timeframe_value, timezone=timezone)
 
         # index df's data by start and end date
         df = df[(df['time'] >= ticker.start) & (df['time'] <= ticker.end)]
@@ -147,9 +147,9 @@ class Quote:
         if count_back is not None:
             df = df.tail(count_back)
         
-        return df
+        return df.reset_index(drop=True)
     
-    def _as_df(self, history_data: Dict, interval:str, floating: Optional[int] = 2) -> pd.DataFrame:
+    def _as_df(self, history_data: Dict, interval:str, floating: Optional[int] = 2, timezone: str = 'Asia/Ho_Chi_Minh') -> pd.DataFrame:
         """
         Convert fetched historical stock data into a Pandas DataFrame.
         """
@@ -162,18 +162,37 @@ class Quote:
         # parse the df['time'] from string to datetime, it can be in format of "2023-01-01 00:00:00" or "2023-01-01"
         df["time"] = pd.to_datetime(df["time"], errors='coerce')
 
-        # add 7 hours to time to convert from UTC to Asia/Ho_Chi_Minh
-        df['time'] = df['time'] + pd.Timedelta(hours=7)
-        # remove hours info from time
-        df['time'] = df['time'].dt.floor('D')
+        # Convert time based on requested timezone (default is Asia/Ho_Chi_Minh / GMT+7)
+        if timezone.upper() == 'UTC':
+             pass # Already UTC
+        elif timezone == 'Asia/Ho_Chi_Minh':
+            df['time'] = df['time'] + pd.Timedelta(hours=7)
+        else:
+            # For other timezones, we might need more complex logic, 
+            # but for now handle common ones or use pandas tz_convert if we had tz info
+            try:
+                # If timezone is an offset like '+7', '7'
+                offset = int(timezone.replace('+', ''))
+                df['time'] = df['time'] + pd.Timedelta(hours=offset)
+            except (ValueError, TypeError):
+                # Default fallback for VN users if unknown timezone
+                df['time'] = df['time'] + pd.Timedelta(hours=7)
+
+        # remove hours info from time if not intraday
+        if interval in ["1D", "1W", "1M"]:
+            df['time'] = df['time'].dt.floor('D')
 
         # round open, high, low, close to 2 decimal places
         df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].round(floating)
 
         # set datatype for each column using _OHLC_DTYPE
         for col, dtype in _OHLC_DTYPE.items():
-            if df[col].dtype.name == 'datetime64[ns, UTC]':
-                df[col] = df[col].dt.tz_localize(None)
+            if col == 'time':
+                if pd.api.types.is_datetime64_any_dtype(df[col]):
+                    if df[col].dt.tz is not None:
+                        df[col] = df[col].dt.tz_localize(None)
+                else:
+                    df[col] = pd.to_datetime(df[col]).dt.tz_localize(None)
             else:
                 df[col] = df[col].astype(dtype)
 

@@ -1,4 +1,5 @@
 from typing import Any
+from vnai import optimize_execution
 from vnstock.ui._base import BaseUI
 
 class WarrantReference(BaseUI):
@@ -12,6 +13,7 @@ class WarrantReference(BaseUI):
         self.symbol = symbol
         return self
 
+    @optimize_execution("UI")
     def info(self, symbol: str = None, source: str = 'kbs') -> Any:
         """Get information and contract specifications for a specific warrant."""
         target = symbol or self.symbol
@@ -19,6 +21,7 @@ class WarrantReference(BaseUI):
 
 
 
+    @optimize_execution("UI")
     def list(self, source: str = 'kbs') -> Any:
         """List all covered warrants."""
         return self._dispatch('Reference', 'warrant', 'list', source=source)

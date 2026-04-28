@@ -2,6 +2,7 @@
 
 from typing import Any
 from tenacity import retry, stop_after_attempt, wait_exponential
+from vnai import optimize_execution
 from vnstock.config import Config
 from vnstock.base import BaseAdapter, dynamic_method
 
@@ -58,6 +59,7 @@ class Company(BaseAdapter):
         )
 
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -71,10 +73,12 @@ class Company(BaseAdapter):
         """Retrieve company overview data."""
         pass
 
+    @optimize_execution("API")
     def info(self, *args: Any, **kwargs: Any) -> Any:
         """Alias for overview() to match vnstock_data parity."""
         return self.overview(*args, **kwargs)
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -88,6 +92,7 @@ class Company(BaseAdapter):
         """Retrieve company shareholders data."""
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -104,6 +109,7 @@ class Company(BaseAdapter):
         """
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -112,7 +118,6 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
-
     @dynamic_method
     def subsidiaries(self, *args: Any, **kwargs: Any) -> Any:
         """
@@ -121,6 +126,7 @@ class Company(BaseAdapter):
         """
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -129,12 +135,12 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
-
     @dynamic_method
     def affiliate(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company affiliate data."""
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -143,12 +149,12 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
-
     @dynamic_method
     def news(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company news."""
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -157,12 +163,12 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
-
     @dynamic_method
     def events(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company events."""
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -171,12 +177,12 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
-
     @dynamic_method
     def ownership(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company ownership structure."""
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -185,12 +191,12 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
-
     @dynamic_method
     def capital_history(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company capital change history."""
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -199,7 +205,6 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
-
     @dynamic_method
     def insider_trading(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company insider trading history."""

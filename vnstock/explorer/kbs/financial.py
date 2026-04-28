@@ -3,6 +3,7 @@
 import pandas as pd
 from typing import Optional, List, Dict, Union
 from enum import Enum
+from vnai import optimize_execution
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.field import FieldHandler
@@ -167,9 +168,18 @@ class Finance:
                         quarter_num = term_name.replace('Quý', '').strip()
                         period_label = f"{year}-Q{quarter_num}"
                     else:
-                        # Annual report - just use year
-                        period_label = str(year)
+                        if self.period == 'quarter':
+                            period_label = f"{year}-{term_name}" if term_name else str(year)
+                        else:
+                            period_label = str(year)
                     
+                    # Ensure period labels are unique
+                    original_label = period_label
+                    suffix = 1
+                    while period_label in periods:
+                        period_label = f"{original_label}_{suffix}"
+                        suffix += 1
+                        
                     periods.append(period_label)
                     
                     # Store audit/unit codes for this period
@@ -496,7 +506,6 @@ class Finance:
             page_size: Số kỳ trên mỗi trang (mặc định 4)
             show_log: Hiển thị log debug.
         """
-        page_size: int = 8
         url = f'{_SAS_FINANCE_INFO_URL}/{self.symbol}'
         
         # Build params based on report type
@@ -545,6 +554,7 @@ class Finance:
 
 
 
+    @optimize_execution("KBS")
     def income_statement(
         self,
         period: Optional[str] = None,
@@ -608,6 +618,7 @@ class Finance:
 
 
 
+    @optimize_execution("KBS")
     def balance_sheet(
         self,
         period: Optional[str] = None,
@@ -671,6 +682,7 @@ class Finance:
 
 
 
+    @optimize_execution("KBS")
     def cash_flow(
         self,
         period: Optional[str] = None,
@@ -755,6 +767,7 @@ class Finance:
 
 
 
+    @optimize_execution("KBS")
     def ratio(
         self,
         period: Optional[str] = None,

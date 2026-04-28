@@ -30,7 +30,8 @@ def get_sponsor_ui_class(module_name: str, class_name: str) -> Optional[Type]:
         sponsor_import_path = f"vnstock_data.ui.{module_name}"
         module = importlib.import_module(sponsor_import_path)
         return getattr(module, class_name, None)
-    except (ImportError, AttributeError):
+    except BaseException:
+        # Catch all including SystemExit to avoid crashing free package if sponsor is broken
         return None
 
 def redirect_if_sponsor(module_name: str, class_name: str):

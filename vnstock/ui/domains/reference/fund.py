@@ -1,4 +1,5 @@
 from typing import Any
+from vnai import optimize_execution
 from vnstock.ui._base import BaseUI
 
 class FundReference(BaseUI):
@@ -14,25 +15,30 @@ class FundReference(BaseUI):
 
 
 
+    @optimize_execution("UI")
     def list(self, source: str = 'kbs') -> Any:
         """List all funds."""
         return self._dispatch('Reference', 'fund', 'list', source=source)
 
+    @optimize_execution("UI")
     def top_holding(self, symbol: str = None, source: str = 'fmarket') -> Any:
         """Get top holdings for a specific fund."""
         target = symbol or self.symbol
         return self._dispatch('Reference', 'fund', 'top_holding', symbol=target, source=source)
 
+    @optimize_execution("UI")
     def industry_holding(self, symbol: str = None, source: str = 'fmarket') -> Any:
         """Get industry allocation for a specific fund."""
         target = symbol or self.symbol
         return self._dispatch('Reference', 'fund', 'industry_holding', symbol=target, source=source)
 
+    @optimize_execution("UI")
     def nav_report(self, symbol: str = None, source: str = 'fmarket') -> Any:
         """Get NAV growth report for a specific fund."""
         target = symbol or self.symbol
         return self._dispatch('Reference', 'fund', 'nav_report', symbol=target, source=source)
 
+    @optimize_execution("UI")
     def asset_holding(self, symbol: str = None, source: str = 'fmarket') -> Any:
         """Get asset allocation for a specific fund."""
         target = symbol or self.symbol

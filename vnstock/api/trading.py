@@ -6,6 +6,7 @@ Unified Trading adapter with dynamic method detection and parameter filtering.
 
 from typing import Any
 from tenacity import retry, stop_after_attempt, wait_exponential
+from vnai import optimize_execution
 from vnstock.config import Config
 from vnstock.base import BaseAdapter, dynamic_method
 
@@ -49,6 +50,7 @@ class Trading(BaseAdapter):
             show_log=show_log
         )
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -64,6 +66,7 @@ class Trading(BaseAdapter):
         """
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -79,6 +82,7 @@ class Trading(BaseAdapter):
         """
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -110,6 +114,7 @@ class Trading(BaseAdapter):
 
 
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -118,7 +123,6 @@ class Trading(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
-
     @dynamic_method
     def price_history(self, *args: Any, **kwargs: Any) -> Any:
         """
@@ -126,6 +130,7 @@ class Trading(BaseAdapter):
         """
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -134,7 +139,6 @@ class Trading(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
-        
     @dynamic_method
     def foreign_trade(self, *args: Any, **kwargs: Any) -> Any:
         """
@@ -142,6 +146,7 @@ class Trading(BaseAdapter):
         """
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -157,6 +162,7 @@ class Trading(BaseAdapter):
         """
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -172,6 +178,7 @@ class Trading(BaseAdapter):
         """
         pass
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(

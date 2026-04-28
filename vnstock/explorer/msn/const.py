@@ -19,6 +19,8 @@ _INTERVAL_MAP = {
                 }
 
 _RESAMPLE_MAP = {
+    '1H': '1h',
+    '4h': '4h',
     '1D': '1D',
     '1W': '1W',
     '1M': 'ME'
@@ -83,6 +85,8 @@ _CURRENCY_ID_MAP = {
                     'GBPCAD': 'avyb9c',
                     'AUDUSD': 'auxr9c',
                     'NZDUSD': 'avmpm7',
+                    'XAUUSD': 'ck48ur',
+                    'XAGUSD': 'ck48xm',
                     }
 
 _CRYPTO_ID_MAP = {
@@ -95,7 +99,14 @@ _CRYPTO_ID_MAP = {
                     'XRP': 'c2117',
                     'ADA': 'c2114',
                     'SOL': 'c2116',
-                    'DOGE': 'c2119'
+                    'DOGE': 'c2119',
+                    'BTCUSDT': 'c2111',
+                    'ETHUSDT': 'c2112',
+                    'BNBUSDT': 'c2113',
+                    'XRPUSDT': 'c2117',
+                    'ADAUSDT': 'c2114',
+                    'SOLUSDT': 'c2116',
+                    'DOGEUSDT': 'c2119'
                     }
 
 
@@ -115,5 +126,6 @@ _GLOBAL_INDICES = {
                     'HSI': 'ah7etc', # Hang Seng Index
                     'SENSEX': 'ahkucw', # S&P BSE Sensex Index
                     'ME00000000': 'ale3jc', # S&P/BMV IPC
-                    'VNI': 'aqk2nm' # VN Index
+                    'VNI': 'aqk2nm', # VN Index
+                    'USA30': 'a6qja2' # Dow Jones (Alias)
                     }

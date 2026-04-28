@@ -8,6 +8,7 @@ Module quản lý dữ liệu giá chứng khoán với phát hiện phương th
 from typing import Any, Optional
 import pandas as pd
 from tenacity import retry, stop_after_attempt, wait_exponential
+from vnai import optimize_execution
 from vnstock.config import Config
 from vnstock.base import BaseAdapter, dynamic_method
 from vnstock.core.types import (
@@ -78,6 +79,7 @@ class Quote(BaseAdapter):
             show_log=show_log
         )
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -132,6 +134,7 @@ class Quote(BaseAdapter):
     # Aliases
     ohlcv = history
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -170,6 +173,7 @@ class Quote(BaseAdapter):
         
         return self._delegate_to_provider(M.INTRADAY, symbol, **params)
 
+    @optimize_execution("API")
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(

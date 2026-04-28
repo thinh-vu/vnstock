@@ -1,4 +1,5 @@
 from typing import Any
+from vnai import optimize_execution
 from vnstock.ui._base import BaseUI
 
 class BondReference(BaseUI):
@@ -12,6 +13,7 @@ class BondReference(BaseUI):
         self.symbol = symbol
         return self
 
+    @optimize_execution("UI")
     def list(self, bond_type: str = 'all', source: str = None) -> Any:
 
         """List all debt/bonds."""

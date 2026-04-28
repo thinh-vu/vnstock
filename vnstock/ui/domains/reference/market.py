@@ -1,4 +1,5 @@
 from typing import Any
+from vnai import optimize_execution
 from vnstock.ui._base import BaseUI
 
 class MarketReference(BaseUI):
@@ -12,6 +13,7 @@ class MarketReference(BaseUI):
         self.symbol = symbol
         return self
 
+    @optimize_execution("UI")
     def status(self) -> Any:
         """Retrieve live stock market status (OPEN, CLOSED, etc.)."""
         return self._dispatch('Reference', 'market', 'status')

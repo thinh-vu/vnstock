@@ -67,9 +67,12 @@ class BaseAdapter(ABC):
         # Inspect constructor signature and filter kwargs
         sig = inspect.signature(impl_cls.__init__)
         init_params = {}
-        # Only pass symbol if accepted
-        if symbol is not None and 'symbol' in sig.parameters:
-            init_params['symbol'] = symbol
+        # Only pass symbol if accepted (handle both 'symbol' and 'symbol_id' names)
+        if symbol is not None:
+            if 'symbol' in sig.parameters:
+                init_params['symbol'] = symbol
+            elif 'symbol_id' in sig.parameters:
+                init_params['symbol_id'] = symbol
         # Pass only recognized provider kwargs
         for key, val in kwargs.items():
             if key in sig.parameters:
