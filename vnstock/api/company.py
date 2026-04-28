@@ -71,6 +71,10 @@ class Company(BaseAdapter):
         """Retrieve company overview data."""
         pass
 
+    def info(self, *args: Any, **kwargs: Any) -> Any:
+        """Alias for overview() to match vnstock_data parity."""
+        return self.overview(*args, **kwargs)
+
     @retry(
         stop=stop_after_attempt(Config.RETRIES),
         wait=wait_exponential(
@@ -108,6 +112,7 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
+
     @dynamic_method
     def subsidiaries(self, *args: Any, **kwargs: Any) -> Any:
         """
@@ -124,6 +129,7 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
+
     @dynamic_method
     def affiliate(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company affiliate data."""
@@ -137,6 +143,7 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
+
     @dynamic_method
     def news(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company news."""
@@ -150,9 +157,52 @@ class Company(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
+
     @dynamic_method
     def events(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company events."""
+        pass
+
+    @retry(
+        stop=stop_after_attempt(Config.RETRIES),
+        wait=wait_exponential(
+            multiplier=Config.BACKOFF_MULTIPLIER,
+            min=Config.BACKOFF_MIN,
+            max=Config.BACKOFF_MAX
+        )
+    )
+
+    @dynamic_method
+    def ownership(self, *args: Any, **kwargs: Any) -> Any:
+        """Retrieve company ownership structure."""
+        pass
+
+    @retry(
+        stop=stop_after_attempt(Config.RETRIES),
+        wait=wait_exponential(
+            multiplier=Config.BACKOFF_MULTIPLIER,
+            min=Config.BACKOFF_MIN,
+            max=Config.BACKOFF_MAX
+        )
+    )
+
+    @dynamic_method
+    def capital_history(self, *args: Any, **kwargs: Any) -> Any:
+        """Retrieve company capital change history."""
+        pass
+
+    @retry(
+        stop=stop_after_attempt(Config.RETRIES),
+        wait=wait_exponential(
+            multiplier=Config.BACKOFF_MULTIPLIER,
+            min=Config.BACKOFF_MIN,
+            max=Config.BACKOFF_MAX
+        )
+    )
+
+    @dynamic_method
+    def insider_trading(self, *args: Any, **kwargs: Any) -> Any:
+        """Retrieve company insider trading history."""
         pass
         
     def _delegate_to_provider(self, method_name: str, symbol: str = None, **kwargs: Any) -> Any:

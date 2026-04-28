@@ -70,7 +70,17 @@ class Trading:
             self.proxy_config = proxy_config
 
         if self.symbol:
+            from vnstock.core.utils.parser import get_asset_type, convert_derivative_symbol
             self.asset_type = get_asset_type(self.symbol)
+            
+            # Auto-convert derivative symbols to new KRX format
+            if self.asset_type == 'derivative':
+                try:
+                    new_symbol = convert_derivative_symbol(self.symbol)
+                    logger.info(f"Converted derivative symbol {self.symbol} to {new_symbol} (KRX format)")
+                    self.symbol = new_symbol
+                except Exception as e:
+                    logger.debug(f"Symbol conversion skipped for {self.symbol}: {e}")
 
         if not show_log:
             logger.setLevel('CRITICAL')
@@ -82,13 +92,6 @@ class Trading:
     ) -> pd.DataFrame:
         """
         Fetch stock board (lô chẵn) data from /stock/iss endpoint.
-        
-        Args:
-            symbols_list: List of stock symbols.
-            show_log: Show debug logs.
-            
-        Returns:
-            DataFrame with stock board data.
         """
         import requests
         
@@ -125,19 +128,55 @@ class Trading:
             return pd.DataFrame()
         
         if not json_data or not isinstance(json_data, list):
-            return pd.DataFrame()
+            # Try to see if it's in a 'data' field
+            if isinstance(json_data, dict) and 'data' in json_data:
+                json_data = json_data['data']
+            else:
+                return pd.DataFrame()
         
         # Convert to DataFrame
         df = pd.DataFrame(json_data)
-        
-        # Apply column mapping
-        df = df.rename(columns=_PRICE_BOARD_MAP)
-        
-        # Convert timestamp to datetime
-        if 'timestamp' in df.columns:
-            df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms', errors='coerce')
-        
         return df
+
+    def _fetch_derivative_board(
+        self,
+        symbols_list: List[str],
+        show_log: Optional[bool] = False,
+    ) -> pd.DataFrame:
+        """
+        Fetch derivative board data from /derivative/iss endpoint.
+        """
+        import requests
+        
+        url = f"{_IIS_BASE_URL}/derivative/iss"
+        payload = {'code': ','.join(symbols_list)}
+        
+        try:
+            headers_der = self.headers.copy()
+            headers_der.update({
+                'Content-Type': 'application/json',
+                'x-lang': 'vi'
+            })
+            
+            response = requests.post(
+                url,
+                headers=headers_der,
+                data=json.dumps(payload),
+                timeout=30
+            )
+            if response.status_code in [200, 201]:
+                json_data = response.json()
+            else:
+                return pd.DataFrame()
+        except Exception as e:
+            if show_log or self.show_log:
+                logger.error(f"Failed to fetch derivative board data: {str(e)}")
+            return pd.DataFrame()
+        
+        if not json_data or 'data' not in json_data:
+            return pd.DataFrame()
+            
+        return pd.DataFrame(json_data['data'])
 
 
     @agg_execution("KBS")
@@ -150,43 +189,49 @@ class Trading:
     ) -> pd.DataFrame:
         """
         Truy xuất bảng giá realtime cho danh sách mã chứng khoán.
-
-        Lấy dữ liệu giá từ bảng giá lô chẵn (giao dịch thông thường).
-
-        Args:
-            symbols_list: Danh sách mã chứng khoán (VD: ['ACB', 'VNM', 'HPG']).
-            exchange: Sàn giao dịch ('HOSE', 'HNX', 'UPCOM'). Mặc định 'HOSE'.
-            show_log: Hiển thị log debug.
-            get_all: Nếu True, trả về tất cả các cột. Nếu False (mặc định), chỉ trả về các cột tiêu chuẩn.
-
-        Returns:
-            DataFrame chứa thông tin giá realtime với các cột chuẩn hóa.
-            Mặc định chỉ trả về các cột tiêu chuẩn cho frontend.
-            Sử dụng get_all=True để lấy tất cả các cột có sẵn.
-
-        Examples:
-            >>> trading = Trading()
-            >>> df = trading.price_board(['ACB', 'VNM', 'HPG'])  # Stock board (standard columns)
-            >>> df = trading.price_board(['ACB', 'VNM', 'HPG'], get_all=True)  # All columns
-
-        Raises:
-            ValueError: Nếu symbols_list trống.
         """
         if not symbols_list:
             raise ValueError("symbols_list không được để trống.")
 
-
         # Normalize symbols to uppercase
         symbols_list = [s.upper() for s in symbols_list]
+        
+        # Determine if we should use derivative endpoint
+        from vnstock.core.utils.parser import get_asset_type, convert_derivative_symbol
+        
+        # Convert symbols if needed
+        converted_symbols = []
+        is_derivative = False
+        for s in symbols_list:
+            atype = get_asset_type(s)
+            if atype == 'derivative':
+                is_derivative = True
+                try:
+                    cs = convert_derivative_symbol(s)
+                    converted_symbols.append(cs)
+                except Exception as e:
+                    converted_symbols.append(s)
+            else:
+                converted_symbols.append(s)
 
         # Route to appropriate endpoint based on board type
-        # Stock board (lô chẵn) - use /stock/iss endpoint
-        df = self._fetch_stock_board(symbols_list, show_log)
-        data_label = 'lô chẵn'
+        if is_derivative:
+            df = self._fetch_derivative_board(converted_symbols, show_log)
+            data_label = 'phái sinh'
+        else:
+            df = self._fetch_stock_board(converted_symbols, show_log)
+            data_label = 'lô chẵn'
+            
         standard_cols = _PRICE_BOARD_STANDARD_COLUMNS
+        # Add open_interest to standard columns for derivatives
+        if is_derivative:
+            standard_cols = standard_cols + ['open_interest']
 
         # Filter columns based on get_all parameter
         if len(df) > 0:
+            # Apply column mapping
+            df = df.rename(columns=_PRICE_BOARD_MAP)
+            
             if not get_all:
                 # Keep only standard columns that exist in the dataframe
                 available_cols = [col for col in standard_cols if col in df.columns]
@@ -196,7 +241,7 @@ class Trading:
                 cols_to_keep = [col for col in df.columns if col not in _EXCLUDED_COLUMNS]
                 df = df[cols_to_keep]
             
-            # Normalize exchange codes (HSX → HOSE for VCI compatibility)
+            # Normalize exchange codes
             if 'exchange' in df.columns:
                 df['exchange'] = df['exchange'].map(
                     lambda x: _EXCHANGE_CODE_MAP.get(x, x) if pd.notna(x) else x

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2026-04-28
+
+### Added
+- **Unified UI**: Introduced a unified UI module for improved user experience and consistency across features.
+
+### Changed
+- **VCI API Migration**: Updated VCI API endpoints to REST for enhanced stability and reliability.
+- **VCI Financial Reports**: Upgraded financial report data fetching to support period filtering, custom limits, and transposed output format.
+- **Sponsor Detection**: Improved sponsor library detection logic for a smoother user upgrade experience.
+
+### Fixed
+- **API Error Fixes (VCI)**: Resolved various API fetching errors across Listing, Company, and Finance modules for the VCI data source.
+- **API Error Fixes (KBS)**: Addressed API fetching errors in the Finance module for the KBS data source.
+
 ## [3.5.1] - 2026-04-06
 
 ### Breaking Changes

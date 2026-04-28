@@ -88,10 +88,10 @@ class Listing:
         )
 
         if not json_data or 'data' not in json_data or json_data['data'] is None:
-            raise ValueError("Không nhận được dữ liệu (data) từ VCI. Có thể API đã thay đổi cấu trúc hoặc bị chặn.")
+            raise ValueError("Không nhận được dữ liệu (data) từ VCI. Có thể API đã thay đổi cấu trúc (Did not receive data from VCI. API structure may have changed)")
 
         if show_log:
-            logger.info(f'Truy xuất thành công dữ liệu danh sách phân ngành icb.')
+            logger.info(f'Truy xuất thành công dữ liệu danh sách phân ngành icb (Successfully retrieved ICB sector list data).')
 
         parsed_data = []
         for company in json_data['data']:
@@ -154,9 +154,10 @@ class Listing:
             raise ValueError("Không tìm thấy dữ liệu. Vui lòng kiểm tra lại.")
 
         if show_log:
-            logger.info(f'Truy xuất dữ liệu thành công cho {len(json_data)} mã.')
+            logger.info(f'Truy xuất dữ liệu thành công cho {len(json_data)} mã (Successfully retrieved data for {len(json_data)} symbols).')
 
-        df = pd.DataFrame(json_data)
+        df = pd.DataFrame([json_data]) if isinstance(json_data, dict) else pd.DataFrame(json_data)
+
 
         df.columns = [camel_to_snake(col) for col in df.columns]
         df = df.rename(columns={'board': 'exchange'})
@@ -199,10 +200,10 @@ class Listing:
             raise ValueError("Không tìm thấy dữ liệu. Vui lòng kiểm tra lại.")
 
         if 'data' not in json_data or json_data['data'] is None:
-            raise ValueError("Không nhận được dữ liệu (data) từ VCI. Có thể API đã thay đổi cấu trúc hoặc bị chặn.")
+            raise ValueError("Không nhận được dữ liệu (data) từ VCI. Có thể API đã thay đổi cấu trúc (Did not receive data from VCI. API structure may have changed).")
 
         if show_log:
-            logger.info('Truy xuất thành công dữ liệu danh sách phân ngành icb.')
+            logger.info('Truy xuất thành công dữ liệu danh sách phân ngành icb (Successfully retrieved ICB sector list data).')
 
         df = pd.DataFrame(json_data['data'])
         df = df.rename(columns={
@@ -247,7 +248,7 @@ class Listing:
         )
 
         if show_log:
-            logger.info('Truy xuất thành công dữ liệu danh sách mã theo nhóm.')
+            logger.info('Truy xuất thành công dữ liệu danh sách mã theo nhóm (Successfully retrieved symbol list by group).')
 
         df = pd.DataFrame(json_data)
 
@@ -273,37 +274,25 @@ class Listing:
     def all_bonds(self, show_log: Optional[bool] = False) -> pd.Series:
         return self.symbols_by_group(group='BOND', show_log=show_log)
 
-    # =========================================================================
-    # STANDARDIZED MARKET INDICES (Wrapper functions)
-    # =========================================================================
-    # Provide access to standardized indices across all data sources
-    # (VCI, MSN, etc.). Sector indices include mapping to ICB
-    # sector_id for industry filtering and analysis.
+    @optimize_execution("VCI")
+    def market_status(self, show_log: Optional[bool] = False) -> pd.DataFrame:
+        """Retrieve global market status from HOSE as reference."""
+        from vnstock.core.utils.market import trading_hours
+        status_dict = trading_hours("HOSE")
+        df = pd.DataFrame([status_dict])
+        df.source = "VCI"
+        return df
 
-    def all_indices(self) -> pd.DataFrame:
-        """
-        Lấy danh sách tất cả các chỉ số tiêu chuẩn hóa với thông tin đầy đủ.
-
-        Returns:
-            pd.DataFrame: Columns [symbol, name, description, full_name,
-                                   group, index_id, sector_id (for sectors)]
-        """
-        return market_indices.get_all_indices()
-
-    def indices_by_group(self, group: str) -> Optional[pd.DataFrame]:
-        """
-        Lấy danh sách chỉ số theo nhóm tiêu chuẩn hóa.
-
-        Args:
-            group: Tên nhóm (VD: 'HOSE Indices', 'Sector Indices', etc.)
-
-        Returns:
-            pd.DataFrame: Danh sách chỉ số trong nhóm hoặc None
-                          (Sector indices include sector_id mapping)
-        """
-        return market_indices.get_indices_by_group(group)
-
-
+    @optimize_execution("VCI")
+    def search_symbol(self, query: str, show_log: Optional[bool] = False) -> pd.DataFrame:
+        """Search for symbols by filtering all_symbols list."""
+        df = self.all_symbols(show_log=show_log)
+        if query:
+            query = query.upper()
+            df = df[df['symbol'].str.contains(query) | df['organ_name'].str.upper().str.contains(query)]
+        df.source = "VCI"
+        return df
 # Register provider
+
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
 ProviderRegistry.register('listing', 'vci', Listing)

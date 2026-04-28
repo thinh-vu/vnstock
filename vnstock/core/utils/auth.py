@@ -15,9 +15,13 @@ logger = logging.getLogger(__name__)
 
 def register_user(api_key: Optional[str] = None) -> bool:
     """
+    Đăng ký người dùng với tham số API key tùy chọn.
     User registration with optional API key parameter.
     
+    Hướng dẫn người dùng qua quá trình đăng ký để thiết lập API key của họ.
     Guides user through the registration process to set up their API key.
+
+    Nếu api_key được cung cấp, sử dụng trực tiếp. Nếu không, hiển thị lời nhắc tương tác.
     If api_key is provided, uses it directly. Otherwise, shows interactive prompt.
     
     Args:
@@ -31,7 +35,7 @@ def register_user(api_key: Optional[str] = None) -> bool:
         import vnai
         vnai  # Use the import to avoid unused warning
     except ImportError:
-        print("✗ Lỗi: vnai module không được tìm thấy")
+        print("✗ Lỗi: vnai module không được tìm thấy (✗ Error: vnai module not found)")
         return False
     
     # If API key is provided as parameter, use it directly
@@ -44,6 +48,7 @@ def register_user(api_key: Optional[str] = None) -> bool:
 
 def _register_api_key_directly(api_key: str) -> bool:
     """
+    Đăng ký API key trực tiếp mà không cần lời nhắc tương tác.
     Register API key directly without interactive prompts.
     
     Args:
@@ -65,8 +70,8 @@ def _register_api_key_directly(api_key: str) -> bool:
             else:
                 masked_key = api_key[:8] + "***" if len(api_key) > 4 else "****"
             
-            print(f"✓ API key đã được lưu thành công! {masked_key}")
-            print("✓ Bạn đang sử dụng Phiên bản cộng đồng (60 requests/phút)")
+            print(f"✓ API key đã được lưu thành công! (✓ API key saved successfully! {masked_key}")
+            print("✓ Bạn đang sử dụng gói Cộng đồng (✓ You are using Community Edition - 60 requests/min)")
             return True
     except Exception as e:
         logger.debug(f"Direct setup failed: {e}")
@@ -85,7 +90,7 @@ def _register_interactive() -> bool:
     try:
         from vnai import setup_api_key, check_api_key_status
     except ImportError:
-        print("✗ Lỗi: vnai module không được tìm thấy")
+        print("✗ Lỗi: vnai module không được tìm thấy (✗ Error: vnai module not found)")
         return False
     
     print("\n" + "="*70)
@@ -107,20 +112,20 @@ def _register_interactive() -> bool:
             print(f"✓ Tier (Gói): {status.get('tier', 'unknown')}")
             print(f"✓ Giới hạn (Limits): {status.get('limits', {})}")
             
-            change = input("\nBạn muốn thay đổi API key? [y/N]: ").strip().lower()
+            change = input("\nBạn muốn thay đổi API key? (Do you want to change API key?) [y/N]: ").strip().lower()
             if change != 'y':
                 return True
     except Exception:
         pass
     
     print("""
-🚀 Đăng ký API key để tăng giới hạn sử dụng:
+🚀 Đăng ký API key để tăng giới hạn sử dụng (🚀 Register API key to increase rate limits):
 
-  • Khách (Guest): 20 requests/phút - không cần đăng ký
-  • Cộng đồng (Community): 60 requests/phút - đăng ký miễn phí
-  • Tài trợ (Sponsor): 180-600 requests/phút
+  • Khách (Guest): 20 requests/phút - không cần đăng ký (20 requests/min - no registration needed)
+  • Cộng đồng (Community): 60 requests/phút - đăng ký miễn phí (60 requests/min - free registration)
+  • Tài trợ (Sponsor): 180-600 requests/phút (180-600 requests/min)
 
-📌 Đăng nhập Google để tạo tài khoản và lấy API key miễn phí tại: https://vnstocks.com/login
+📌 Đăng nhập Google để tạo tài khoản và lấy API key miễn phí tại: https://vnstocks.com/login (Login with Google to create an account and get a free API key at: https://vnstocks.com/login)
 """)
     
     # Get API key from user directly (no Enter step)
@@ -129,7 +134,7 @@ def _register_interactive() -> bool:
         api_key = input("\nNhập API key của bạn: ").strip()
         
         if not api_key:
-            print("✗ API key không được để trống")
+            print("✗ API key không được để trống (✗ API key cannot be empty)")
             if attempt < max_attempts - 1:
                 print(f"  Vui lòng thử lại ({max_attempts - attempt - 1} lần còn lại)")
             continue
@@ -149,9 +154,9 @@ def _register_interactive() -> bool:
                 else:
                     masked_key = api_key[:8] + "***" if len(api_key) > 4 else "****"
                 
-                print(f"\n✓ API key đã được lưu thành công! {masked_key}")
-                print("✓ Bạn đang sử dụng Phiên bản cộng đồng (60 requests/phút)")
-                print("\n🎉 Đăng ký thành công!")
+                print(f"\n✓ API key đã được lưu thành công! (✓ API key saved successfully!) {masked_key}")
+                print("✓ Bạn đang sử dụng gói Cộng đồng (✓ You are using Community Edition - 60 requests/min)")
+                print("\n🎉 Đăng ký thành công! (🎉 Registration successful!)")
                 return True
         except Exception as e:
             logger.debug(f"Setup failed: {e}")
@@ -180,7 +185,7 @@ def change_api_key(api_key: str) -> bool:
     try:
         from vnai import setup_api_key
         if setup_api_key(api_key):
-            print("✓ API key đã được cập nhật")
+            print("✓ API key đã được cập nhật (✓ API key updated)")
             return True
     except Exception as e:
         logger.debug(f"Change failed: {e}")
@@ -205,7 +210,7 @@ def check_status() -> Optional[dict]:
             print(f"  Tier: {status.get('tier')}")
             print(f"  Giới hạn: {status.get('limits', {}).get('per_minute')} requests/phút")
         else:
-            print("✗ Chưa đăng ký API key")
+            print("✗ Chưa đăng ký API key (✗ API key not registered)")
             print("  Tier: Guest (20 requests/phút)")
         
         return status

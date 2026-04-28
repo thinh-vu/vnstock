@@ -16,7 +16,8 @@ logger = get_logger(__name__)
 
 class Listing:
     """
-    Cấu hình truy cập dữ liệu lịch sử giá chứng khoán từ VCI.
+    Cấu hình truy cập dữ liệu lịch sử giá chứng khoán từ MSN.
+    Configure access to historical stock price data from MSN.
     """
     def __init__(self, api_version='20250317', random_agent=False):
         self.data_source = 'MSN'
@@ -30,12 +31,13 @@ class Listing:
                         show_log: Optional[bool] = False) -> pd.DataFrame:
         """
         Truy xuất danh sách toàn bộ mã và tên các cổ phiếu từ thị trường.
+        Retrieve the list of all stock symbols and names from the market.
 
-        Tham số:
-            - query (bắt buộc): Từ khóa tìm kiếm mã cổ phiếu.
-            - locale (tùy chọn): Ngôn ngữ mục tiêu, đồng thời sử dụng để lọc kết quả, ví dụ 'vi-vn', 'en-us'. Mặc định là None.
-            - limit (tùy chọn): Giới hạn số kết quả. Mặc định là 10.
-            - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
+        Args:
+            - query (required): Từ khóa tìm kiếm mã cổ phiếu (Keyword to search for stock symbols).
+            - locale (optional): Ngôn ngữ mục tiêu, đồng thời sử dụng để lọc kết quả. Mặc định là None (Target language, also used to filter results, e.g., 'vi-vn', 'en-us'. Default is None).
+            - limit (optional): Giới hạn số kết quả. Mặc định là 10 (Limit number of results. Default is 10).
+            - show_log (optional): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False (Show log info for debugging. Default is False).
         """
         url = f"https://services.bingapis.com/contentservices-finance.csautosuggest/api/v1/Query?query={query}&market={locale}&count={limit}"
 
@@ -63,6 +65,19 @@ class Listing:
             combine_df = combine_df[combine_df['locale'] == locale]
 
         return combine_df
+    @optimize_execution('MSN')
+    def search_symbol(self, query: str, locale: Optional[str] = None, 
+                        limit: Optional[int] = 10, 
+                        show_log: Optional[bool] = False) -> pd.DataFrame:
+        """Alias for search_symbol_id for registry compatibility."""
+        return self.search_symbol_id(query=query, locale=locale, limit=limit, show_log=show_log)
+
+    @optimize_execution('MSN')
+    def info(self, query: str, locale: Optional[str] = None, 
+                        limit: Optional[int] = 10, 
+                        show_log: Optional[bool] = False) -> pd.DataFrame:
+        """Alias for search_symbol_id to retrieve detailed asset info."""
+        return self.search_symbol_id(query=query, locale=locale, limit=limit, show_log=show_log)
 
 
 # Register provider

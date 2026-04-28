@@ -128,6 +128,9 @@ class Quote(BaseAdapter):
         params.update(kwargs)
             
         return self._delegate_to_provider(M.HISTORY, symbol, **params)
+    
+    # Aliases
+    ohlcv = history
 
     @retry(
         stop=stop_after_attempt(Config.RETRIES),

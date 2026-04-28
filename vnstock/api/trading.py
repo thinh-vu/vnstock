@@ -88,11 +88,27 @@ class Trading(BaseAdapter):
         )
     )
     @dynamic_method
-    def price_board(self, *args: Any, **kwargs: Any) -> Any:
+    def price_board(self, symbols_list: Any = None, **kwargs: Any) -> Any:
         """
         Retrieve the price board (order book) for a list of symbols.
         """
-        pass
+        # Resolve symbols_list from self.symbol if missing
+        if not symbols_list and self.symbol:
+            symbols_list = self.symbol
+            
+        # Ensure symbols_list is a list
+        if isinstance(symbols_list, str):
+            symbols_list = [symbols_list]
+        elif symbols_list is None:
+            symbols_list = []
+            
+        return self._delegate_to_provider("price_board", symbols_list=symbols_list, **kwargs)
+
+
+
+
+
+
 
     @retry(
         stop=stop_after_attempt(Config.RETRIES),

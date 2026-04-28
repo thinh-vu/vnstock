@@ -170,7 +170,8 @@ class Finance:
 
     def _handshake(self):
         """
-        Phát động handshake để khởi tạo session và tránh bị chặn từ phía VCI.
+        Khởi tạo kết nối cho phiên làm việc.
+        Initiate handshake to establish a session.
         """
         url = 'https://trading.vietcap.com.vn/priceboard'
         try:

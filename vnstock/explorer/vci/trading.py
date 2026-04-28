@@ -1,4 +1,4 @@
-# Các thông tin về giao dịch, sở hữu của các bên (đối tượng tham gia thị trường)
+# Trading information, ownership of parties (market participants)
 
 from typing import List, Dict, Optional, Union
 from datetime import datetime
@@ -19,6 +19,7 @@ logger = get_logger(__name__)
 class Trading:
     """
     Truy xuất dữ liệu giao dịch của mã chứng khoán từ nguồn dữ liệu VCI.
+    Retrieve stock trading data from VCI data source.
     """
     def __init__(self, symbol:Optional[str]='VCI', random_agent=False, show_log:Optional[bool]=True,
                  proxy_config: Optional[ProxyConfig] = None,
@@ -58,6 +59,7 @@ class Trading:
                      drop_levels: Optional[Union[int, List[int]]] = None) -> pd.DataFrame:
         """
         Truy xuất thông tin bảng giá của các mã chứng khoán tuỳ chọn từ nguồn dữ liệu VCI.
+        Retrieve price board information for optionally selected stock symbols from VCI data source.
         """
         url = f'{self.base_url}price/symbols/getList'
         payload = json.dumps({"symbols": symbols_list})

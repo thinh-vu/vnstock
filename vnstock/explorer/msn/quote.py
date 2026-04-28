@@ -15,7 +15,7 @@ from vnstock.explorer.msn.listing import Listing
 from vnstock.explorer.msn.helper import msn_apikey
 from vnstock.core.models import TickerModel
 from vnstock.explorer.msn.helper import get_asset_type
-from .const import _BASE_URL, _RESAMPLE_MAP, _OHLC_MAP, _OHLC_DTYPE
+from .const import _BASE_URL, _RESAMPLE_MAP, _OHLC_MAP, _OHLC_DTYPE, _CRYPTO_ID_MAP, _CURRENCY_ID_MAP, _GLOBAL_INDICES
 
 logger = get_logger(__name__)
 
@@ -26,13 +26,23 @@ class Quote:
     """
     def __init__(self, symbol_id:str, api_version='20240430', random_agent:Optional[bool]=False):
         self.data_source = 'MSN'
-        self.symbol_id = symbol_id.lower()
-        self.asset_type = get_asset_type(symbol_id)
+        symbol_id_upper = symbol_id.upper()
+        # Resolve SecId from common maps if symbol is passed instead of ID
+        if symbol_id_upper in _CRYPTO_ID_MAP:
+            self.symbol_id = _CRYPTO_ID_MAP[symbol_id_upper]
+        elif symbol_id_upper in _CURRENCY_ID_MAP:
+            self.symbol_id = _CURRENCY_ID_MAP[symbol_id_upper]
+        elif symbol_id_upper in _GLOBAL_INDICES:
+            self.symbol_id = _GLOBAL_INDICES[symbol_id_upper]
+        else:
+            self.symbol_id = symbol_id.lower()
+            
+        self.asset_type = get_asset_type(self.symbol_id)
         self.base_url = _BASE_URL
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
         self.apikey = msn_apikey(headers=self.headers, version=api_version)
 
-    def _input_validation(self, start: str, end: str, interval: str):
+    def _input_validation(self, start: Optional[str], end: Optional[str], interval: Optional[str]):
         """
         Validate input data
         """
@@ -57,15 +67,24 @@ class Quote:
         )
         return ticker
     @optimize_execution('MSN')
-    def history(self, start: str, end: Optional[str], interval: Optional[str] = "1D", show_log: bool = False, count_back: Optional[int] = 365, asset_type: Optional[str] = None) -> pd.DataFrame:
+    def history(self, start: Optional[str] = None, end: Optional[str] = None, interval: Optional[str] = "1D", show_log: bool = False, count_back: Optional[int] = 365, asset_type: Optional[str] = None) -> pd.DataFrame:
         """
-        Tham số:
-            - start (bắt buộc): thời gian bắt đầu lấy dữ liệu, có thể là ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS".
-            - end (tùy chọn): thời gian kết thúc lấy dữ liệu. Mặc định là None, chương trình tự động lấy thời điểm hiện tại. Có thể nhập ngày dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS". 
-            - interval (tùy chọn): Khung thời gian trích xuất dữ liệu giá lịch sử. Giá trị duy nhất được hỗ trợ là "1D".
-            - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
-            - count_back (tùy chọn): Số lượng dữ liệu trả về từ thời điểm cuối. Mặc định là 365.
+        Truy xuất dữ liệu giá lịch sử.
+        Fetch historical price data.
+
+        Args:
+            - start (required): Thời gian bắt đầu lấy dữ liệu, dạng string kiểu "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS". (Start time for data fetching, string format "YYYY-MM-DD" or "YYYY-MM-DD HH:MM:SS").
+            - end (optional): Thời gian kết thúc lấy dữ liệu. Mặc định là None. String format "YYYY-MM-DD" hoặc "YYYY-MM-DD HH:MM:SS". (End time for data fetching. Default is None. String format "YYYY-MM-DD" or "YYYY-MM-DD HH:MM:SS").
+            - interval (optional): Khung thời gian trích xuất dữ liệu giá lịch sử. Hỗ trợ "1D". (Timeframe for historical data. Supported value is "1D").
+            - show_log (optional): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False. (Show log info for debugging. Default is False).
+            - count_back (optional): Số lượng dữ liệu trả về từ thời điểm cuối. Mặc định là 365. (Number of records to return from the end. Default is 365).
         """
+
+        # Default dates if not provided
+        if start is None:
+            start = '2000-01-01'
+        if end is None:
+            end = datetime.now().strftime("%Y-%m-%d")
 
         # Validate inputs
         ticker = self._input_validation(start, end, interval)
@@ -118,7 +137,7 @@ class Quote:
         if show_log:
             logger.info(f'Truy xuất thành công dữ liệu {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}.')
 
-        df = self._as_df(json_data, interval)
+        df = self._as_df(json_data, timeframe_value)
 
         # index df's data by start and end date
         df = df[(df['time'] >= ticker.start) & (df['time'] <= ticker.end)]

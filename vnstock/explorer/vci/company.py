@@ -26,17 +26,19 @@ class Company:
         - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
         - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
     """
-    def __init__(self, symbol: str, random_agent: bool = False, 
+    def __init__(self, symbol: str = None, random_agent: bool = False, 
                  to_df: Optional[bool] = True, show_log: Optional[bool] = False):
+
         """
         Khởi tạo đối tượng Company với các tham số cho việc truy xuất dữ liệu.
         """
-        self.symbol = symbol.upper()
-        self.asset_type = get_asset_type(self.symbol)
+        self.symbol = symbol.upper() if symbol else ""
+        self.asset_type = get_asset_type(self.symbol) if symbol else "stock"
         
         # Validate if symbol is a stock
-        if self.asset_type not in ['stock']:
+        if symbol and self.asset_type not in ['stock']:
             raise ValueError("Mã chứng khoán không hợp lệ. Chỉ cổ phiếu mới có thông tin.")
+
             
         self.headers = get_headers(data_source='VCI', random_agent=random_agent)
         self.show_log = show_log

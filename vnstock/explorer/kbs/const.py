@@ -265,6 +265,7 @@ _PRICE_BOARD_MAP = {
     'U2': 'ask_vol_2',
     'U3': 'ask_vol_3',
     'MS': 'market_status',
+    'OI': 'open_interest',  # Open Interest for derivatives
 }
 
 # Column mapping for intraday trade history (real-time matching data)
@@ -419,6 +420,7 @@ _EXCHANGE_CODE_MAP = {
     'HOSE': 'HOSE',             # Ho Chi Minh Stock Exchange
     'HSX': 'HOSE',              # Old VCI code - normalize to HOSE
     'HNX': 'HNX',               # Ha Noi Stock Exchange
+    'XHNF': 'HNX',              # KBS derivative exchange code - map to HNX
     'UPCOM': 'UPCOM',           # Unlisted Public Company Market
 }
 

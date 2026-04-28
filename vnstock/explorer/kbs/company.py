@@ -34,7 +34,8 @@ class Company:
 
     def __init__(
         self,
-        symbol: str,
+        symbol: str = None,
+
         random_agent: Optional[bool] = False,
         proxy_config: Optional[ProxyConfig] = None,
         show_log: Optional[bool] = False,
@@ -55,12 +56,13 @@ class Company:
         Raises:
             ValueError: Nếu mã không phải là cổ phiếu.
         """
-        self.symbol = symbol.upper()
-        self.asset_type = get_asset_type(self.symbol)
+        self.symbol = symbol.upper() if symbol else ""
+        self.asset_type = get_asset_type(self.symbol) if symbol else "stock"
 
         # Validate if symbol is a stock
-        if self.asset_type not in ['stock']:
+        if symbol and self.asset_type not in ['stock']:
             raise ValueError("Mã CK không hợp lệ hoặc không phải cổ phiếu.")
+
 
         self.data_source = 'KBS'
         self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
@@ -624,7 +626,8 @@ class Company:
             return pd.DataFrame()
 
         # Convert to DataFrame
-        df = pd.DataFrame(json_data)
+        df = pd.DataFrame([json_data]) if isinstance(json_data, dict) else pd.DataFrame(json_data)
+
 
         # Convert column names to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]
@@ -685,7 +688,8 @@ class Company:
             return pd.DataFrame()
 
         # Convert to DataFrame
-        df = pd.DataFrame(json_data)
+        df = pd.DataFrame([json_data]) if isinstance(json_data, dict) else pd.DataFrame(json_data)
+
 
         # Convert column names to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]
@@ -744,7 +748,8 @@ class Company:
             return pd.DataFrame()
 
         # Convert to DataFrame
-        df = pd.DataFrame(json_data)
+        df = pd.DataFrame([json_data]) if isinstance(json_data, dict) else pd.DataFrame(json_data)
+
 
         # Convert column names to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]

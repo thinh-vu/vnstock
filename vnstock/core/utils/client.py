@@ -144,9 +144,9 @@ def send_request(
         Dict[str, Any]: Returned JSON data
         
     Raises:
-        ConnectionError: Nếu tất cả proxy đều thất bại hoặc request lỗi
+        ConnectionError: Nếu tất cả proxy đều thất bại hoặc request lỗi (If all proxies fail or request fails)
     """
-    # Chuyển đổi string thành enum nếu cần
+    # Convert string to enum if needed
     if isinstance(proxy_mode, str):
         try:
             proxy_mode = ProxyMode(proxy_mode)

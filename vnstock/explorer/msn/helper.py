@@ -8,12 +8,13 @@ logger = get_logger(__name__)
 
 def msn_apikey (headers, version='20240430', show_log=False):
     """
-    Lấy apikey của MSN để sử dụng cho các truy vấn dữ liệu
+    Get MSN apikey to use for data queries.
+    Lấy apikey của MSN để sử dụng cho các truy vấn dữ liệu.
 
-    Tham số:
-        - headers (bắt buộc): Header của request.
-        - version (tùy chọn): Phiên bản của apikey, thường là giá trị ngày tháng của hôm đó, ví dụ 20240527. Mặc định là None. Trong một số trường hợp ngoại lệ, số version hoạt động không theo quy tắc gây lỗi mới cần phải chỉ định mã version.
-        - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
+    Args:
+        - headers (required): Header của request (Request header).
+        - version (optional): Phiên bản của apikey, thường là giá trị ngày tháng của hôm đó. Mặc định là None. (API version, usually today's date (e.g., 20240527). Default is None.)
+        - show_log (optional): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False (Show log info for debugging. Default is False).
     """
     scope = """{"audienceMode":"adult",
                         "browser":{"browserType":"chrome","version":"0","ismobile":"false"},
@@ -66,11 +67,12 @@ def msn_apikey (headers, version='20240430', show_log=False):
         raise
 
 def get_asset_type(symbol_id):
-    if symbol_id in _CURRENCY_ID_MAP.values():
+    symbol_id = symbol_id.upper()
+    if symbol_id in _CURRENCY_ID_MAP.values() or symbol_id in _CURRENCY_ID_MAP.keys():
         return "currency"
-    elif symbol_id in _CRYPTO_ID_MAP.values():
+    elif symbol_id in _CRYPTO_ID_MAP.values() or symbol_id in _CRYPTO_ID_MAP.keys():
         return "crypto"
-    elif symbol_id in _GLOBAL_INDICES.values():
+    elif symbol_id in _GLOBAL_INDICES.values() or symbol_id in _GLOBAL_INDICES.keys():
         return "index"
     else:
         return "Unknown"

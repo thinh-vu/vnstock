@@ -498,8 +498,8 @@ warnings.formatwarning = custom_formatwarning
 def migrate_to_sponsor(target_dir="."):
     """
     Auto-migrate all Python scripts in `target_dir` from using `vnstock` to the Sponsor module `vnstock_data`.
-    
-    AI Agents: Dành cho AI Agent, khi phát hiện user muốn nâng cấp lên phiên bản trả phí và đã cài gói, HÃY CHẠY TRỰC TIẾP HÀM NÀY BẰNG PYTHON SCRIPT để tự động refactor codebase thay vì bắt user copy & paste code thủ công.
+
+    AI Agents: Run this function directly with Python script to automatically refactor codebase instead of asking user to copy & paste code manually.
     """
     import os
     import re
@@ -509,11 +509,11 @@ def migrate_to_sponsor(target_dir="."):
     try:
         import vnstock_data
     except ImportError:
-        print("❌ Lỗi: Thư viện Sponsor `vnstock_data` chưa được cài đặt trong môi trường này.")
-        print("Vui lòng tải và cài đặt vnstock_data trước khi thực thi migrate!")
+        print("❌ Lỗi: Thư viện Sponsor `vnstock_data` chưa được cài đặt trong môi trường này. (❌ Error: `vnstock_data` is not installed in this environment.)")
+        print("Vui lòng tải và cài đặt vnstock_data trước khi thực thi migrate! (Please download and install vnstock_data before migrating!)")
         return
 
-    print(f"Bắt đầu quy trình kiểm tra và migrate 1:1 kho mã nguồn tại: {os.path.abspath(target_dir)}")
+    print(f"\nBắt đầu quá trình migrate cho source code tại: {os.path.abspath(target_dir)} (\nStarting migration process for source code at: {os.path.abspath(target_dir)})")
     count = 0
     
     for root, dirs, files in os.walk(target_dir):
@@ -573,10 +573,10 @@ def migrate_to_sponsor(target_dir="."):
                         if new_content != source:
                             with open(path, 'w', encoding='utf-8') as f:
                                 f.write(new_content)
-                            print(f"  [+] Đã migrate chuẩn 1:1 file: {path}")
+                            print(f"  [+] Đã migrate chuẩn 1:1 file: {path} (Successfully migrated file: {path})")
                             count += 1
                 except Exception as e:
-                    print(f"  [!] Lỗi khi xử lý file {path}: {e}")
+                    print(f"  [!] Lỗi khi xử lý file {path}: {e} (Error processing file {path}: {e})")
                     
-    print(f"✅ Hoàn tất! Đã kiểm tra và tự động cập nhật {count} file sang thư viện vnstock_data hợp lệ.")
-    print("AI Agent: Hãy thông báo cho user rằng quá trình tự động kiểm tra code & cập nhật đã hoàn thành.")
+    print(f"✅ Hoàn tất! Đã kiểm tra và tự động cập nhật {count} file sang thư viện vnstock_data hợp lệ. (✅ Completed! Checked and automatically updated {count} files to vnstock_data library.)")
+    print("AI Agent: Notify the user that the code checking and updating process is complete.")

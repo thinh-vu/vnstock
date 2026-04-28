@@ -326,7 +326,11 @@ class Quote:
         ohlc_cols = ['open', 'high', 'low', 'close']
         for col in ohlc_cols:
             if col in df.columns:
-                df[col] = df[col] / 1000
+                # Only divide by 1000 for stock and ETF assets
+                # Derivatives and Indices are already quoted in points/full value.
+                if self.asset_type not in ['derivative', 'index']:
+                    df[col] = df[col] / 1000
+                
                 if floating is not None:
                     df[col] = df[col].round(floating)
 
@@ -482,7 +486,12 @@ class Quote:
         
         # price: Match price
         if 'price' in df.columns:
-            standardized_df['price'] = df['price'] / 1000
+            # Only divide by 1000 for non-derivative and non-index assets
+            if self.asset_type not in ['derivative', 'index']:
+                standardized_df['price'] = df['price'] / 1000
+            else:
+                standardized_df['price'] = df['price']
+                
             if floating is not None:
                 standardized_df['price'] = standardized_df['price'].round(floating)
         

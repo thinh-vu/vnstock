@@ -62,6 +62,7 @@ class Listing(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
+
     @dynamic_method
     def all_symbols(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve all symbols (filtered to STOCK)."""
@@ -75,6 +76,7 @@ class Listing(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
+
     @dynamic_method
     def symbols_by_industries(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve symbols grouped by ICB industries."""
@@ -88,6 +90,7 @@ class Listing(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
+
     @dynamic_method
     def symbols_by_exchange(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve symbols by exchange/board."""
@@ -101,6 +104,7 @@ class Listing(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
+
     @dynamic_method
     def industries_icb(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve ICB code hierarchy and mapping."""
@@ -114,10 +118,60 @@ class Listing(BaseAdapter):
             max=Config.BACKOFF_MAX
         )
     )
+
     @dynamic_method
     def symbols_by_group(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve symbols by predefined group (VN30, HNX30, CW, etc.)."""
         pass
+
+    @retry(
+        stop=stop_after_attempt(Config.RETRIES),
+        wait=wait_exponential(
+            multiplier=Config.BACKOFF_MULTIPLIER,
+            min=Config.BACKOFF_MIN,
+            max=Config.BACKOFF_MAX
+        )
+    )
+
+    @dynamic_method
+    def get_supported_groups(self, *args: Any, **kwargs: Any) -> Any:
+        """Retrieve all supported index groups."""
+        pass
+
+    @dynamic_method
+    def all_etf(self, *args: Any, **kwargs: Any) -> Any:
+        """Retrieve all Exchange-Traded Funds (ETFs)."""
+        pass
+
+    @dynamic_method
+    def search_symbol(self, *args: Any, **kwargs: Any) -> Any:
+
+
+
+
+        """Search for symbols matching the query."""
+        pass
+
+    # @retry(
+    #     stop=stop_after_attempt(Config.RETRIES),
+    #     wait=wait_exponential(
+    #         multiplier=Config.BACKOFF_MULTIPLIER,
+    #         min=Config.BACKOFF_MIN,
+    #         max=Config.BACKOFF_MAX
+    #     )
+    # )
+
+    @dynamic_method
+    def events_calendar(self, *args: Any, **kwargs: Any) -> Any:
+        """Retrieve events calendar (dividends, AGM, etc.)."""
+        pass
+
+    @dynamic_method
+    def info(self, *args: Any, **kwargs: Any) -> Any:
+        """Retrieve detailed symbol/asset information."""
+        pass
+
+
 
     # shortcuts that delegate to symbols_by_group
     @retry(

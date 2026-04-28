@@ -10,6 +10,8 @@ from vnstock.core.registry import ProviderRegistry
 def dynamic_method(func):
     """
     Decorator for adapter methods:
+    - Calls the original function (allowing for parameter mapping/logic)
+    - If the function returns None (e.g. 'pass'), falls back to automatic delegation
     - Ensures the loaded provider supports this method
     - Filters kwargs to only those the provider’s signature accepts
     """
@@ -17,16 +19,24 @@ def dynamic_method(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        # 1. Try calling the decorated function first (custom logic)
+        result = func(self, *args, **kwargs)
+        if result is not None:
+            return result
+
+        # 2. Automated delegation fallback
         if not hasattr(self._provider, method_name):
             raise NotImplementedError(
                 f"Source '{self.source}' does not support '{method_name}'"
             )
+            
         provider_method = getattr(self._provider, method_name)
         sig = inspect.signature(provider_method)
         filtered = {k: v for k, v in kwargs.items() if k in sig.parameters}
         return provider_method(*args, **filtered)
 
     return wrapper
+
 
 
 class BaseAdapter(ABC):
@@ -46,6 +56,7 @@ class BaseAdapter(ABC):
         # Preserve original for error messages
         self.source = source
         self.symbol = symbol
+        self._init_kwargs = kwargs # Store for re-initialization
 
         # Get provider class from registry
         try:
@@ -55,17 +66,26 @@ class BaseAdapter(ABC):
 
         # Inspect constructor signature and filter kwargs
         sig = inspect.signature(impl_cls.__init__)
-        init_kwargs = {}
+        init_params = {}
         # Only pass symbol if accepted
         if symbol is not None and 'symbol' in sig.parameters:
-            init_kwargs['symbol'] = symbol
+            init_params['symbol'] = symbol
         # Pass only recognized provider kwargs
         for key, val in kwargs.items():
             if key in sig.parameters:
-                init_kwargs[key] = val
+                init_params[key] = val
 
         # Instantiate the provider
-        self._provider = impl_cls(**init_kwargs)
+        self._provider = impl_cls(**init_params)
+
+    @property
+    def provider(self):
+        """Access the underlying explorer/connector provider."""
+        return self._provider
+
+    def _update_provider(self):
+        """Re-initialize the provider if source or symbol has changed."""
+        self.__init__(source=self.source, symbol=self.symbol, **self._init_kwargs)
 
     def __getattr__(self, name):
         # Delegate attribute access to the provider
@@ -82,3 +102,4 @@ class BaseAdapter(ABC):
     def history(self, *args, **kwargs):
         # Generic retry wrapper for any .history() calls
         return self._provider.history(*args, **kwargs)
+

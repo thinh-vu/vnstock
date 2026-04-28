@@ -100,13 +100,14 @@ def get_authorization_header(
 ) -> Dict[str, str]:
     """
     Tạo Authorization header theo scheme cụ thể.
+    Create Authorization header according to specific scheme.
 
     Args:
-        token (str): Token hoặc credentials
+        token (str): Token hoặc credentials (Token or credentials)
         scheme (str): Authorization scheme (Bearer, Basic, ApiKey, Token, JWT)
 
     Returns:
-        Dict[str, str]: Dictionary chứa Authorization header
+        Dict[str, str]: Dictionary chứa Authorization header (Dictionary containing Authorization header)
 
     Examples:
         >>> get_authorization_header('my-token')
@@ -124,11 +125,11 @@ def get_authorization_header(
 
 def merge_headers(*header_dicts: Optional[Dict[str, str]]) -> Dict[str, str]:
     """
-    Merge nhiều dictionaries của headers với thứ tự ưu tiên từ trái sang phải.
-    Headers ở các dict sau sẽ override headers ở các dict trước.
+    Merge multiple header dictionaries with left-to-right priority.
+    Headers from later dicts will override headers from earlier dicts.
 
     Args:
-        *header_dicts: Các dictionaries cần merge
+        *header_dicts: Dictionaries to merge
 
     Returns:
         Dict[str, str]: Merged headers dictionary
@@ -152,17 +153,17 @@ def merge_headers(*header_dicts: Optional[Dict[str, str]]) -> Dict[str, str]:
 
 def validate_headers(headers: Dict[str, str]) -> Dict[str, str]:
     """
-    Validate và clean headers dictionary.
+    Validate and clean headers dictionary.
 
     Args:
-        headers (Dict[str, str]): Headers cần validate
+        headers (Dict[str, str]): Headers to validate
 
     Returns:
         Dict[str, str]: Validated headers
 
     Note:
-        - Loại bỏ các giá trị None hoặc empty string
-        - Đảm bảo tất cả keys và values là strings
+        - Remove None or empty string values
+        - Ensure all keys and values are strings
     """
     validated = {}
     for key, value in headers.items():
@@ -287,7 +288,7 @@ def get_headers(
 
     # Step 9: Source-specific dynamic transformations
     if data_source.upper() == 'VCI':
-        # Inject randomized device identifier for VCI to bypass security wall
+        # Inject randomized device identifier for VCI
         vci_device_id = _generate_vci_device_id()
         headers['Device-Id'] = vci_device_id
         # Ensure it is also in the Cookie

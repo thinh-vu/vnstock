@@ -27,6 +27,7 @@ def convert_unix_to_datetime(df_to_convert: pd.DataFrame, columns: List[str]) ->
 class Fund:
     def __init__(self, random_agent:bool=False) -> None:
         """
+        Initialize object to access data from Fmarket.
         Khởi tạo đối tượng để truy cập dữ liệu từ Fmarket.
         """
         self.random_agent = random_agent
@@ -39,15 +40,14 @@ class Fund:
     @optimize_execution("fmarket")
     def listing(self, fund_type:str="") -> pd.DataFrame:
         """
+        Retrieve a list of all existing mutual funds on Fmarket via API. View directly at https://fmarket.vn
         Truy xuất danh sách tất cả các quỹ mở hiện có trên Fmarket thông qua API. Xem trực tiếp tại https://fmarket.vn
 
-        Tham số:
-        ----------
-            fund_type (str): Loại quỹ cần lọc. Mặc định là rỗng để lấy tất cả các quỹ. Các loại quỹ hợp lệ bao gồm: 'BALANCED', 'BOND', 'STOCK'
+        Args:
+            fund_type (str): Loại quỹ cần lọc. Mặc định là rỗng để lấy tất cả các quỹ. Các loại quỹ hợp lệ bao gồm: 'BALANCED', 'BOND', 'STOCK' (Type of fund to filter. Default is empty to get all funds. Valid fund types include: 'BALANCED', 'BOND', 'STOCK')
         
-        Trả về:
-        -------
-            pd.DataFrame: DataFrame chứa thông tin của tất cả các quỹ mở hiện có trên Fmarket. 
+        Returns:
+            pd.DataFrame: DataFrame chứa thông tin của tất cả các quỹ mở hiện có trên Fmarket. (DataFrame containing information of all existing mutual funds on Fmarket.)
         """
         fund_type = fund_type.upper()
         fundAssetTypes = _FUND_TYPE_MAPPING.get(fund_type, [])
@@ -178,15 +178,14 @@ class Fund:
     @optimize_execution("fmarket")
     def filter(self, symbol:str="") -> pd.DataFrame:
         """
+        Retrieve a list of funds by abbreviation (short_name) and fund id. Default is empty to list all funds.
         Truy xuất danh sách quỹ theo tên viết tắt (short_name) và mã id của quỹ. Mặc định là rỗng để liệt kê tất cả các quỹ.
 
-        Tham số:
-        ----------
-            symbol (str): Tên viết tắt của quỹ cần tìm kiếm. Mặc định là rỗng để lấy tất cả các quỹ.
+        Args:
+            symbol (str): Tên viết tắt của quỹ cần tìm kiếm. Mặc định là rỗng để lấy tất cả các quỹ. (Abbreviation of the fund to search for. Default is empty to list all funds.)
 
-        Trả về:
-        -------
-            pd.DataFrame: DataFrame chứa thông tin của quỹ cần tìm kiếm.
+        Returns:
+            pd.DataFrame: DataFrame chứa thông tin của quỹ cần tìm kiếm. (DataFrame containing information of the searched fund.)
         """
         symbol = symbol.upper()
 
@@ -221,7 +220,7 @@ class Fund:
             raise
 
     @optimize_execution("fmarket")
-    def top_holding(self, fundId:int=23) -> pd.DataFrame:
+    def top_holding(self, fundId:int=23, symbol:str=None) -> pd.DataFrame:
         """
         Retrieve list of top 10 holdings in the specified fund. Live data is retrieved from the Fmarket API.
 
@@ -229,11 +228,17 @@ class Fund:
         ----------
             fundId : int
                 id of a fund in fmarket database
+            symbol : str, optional
+                ticker/short name of the fund. If provided, fundId will be resolved automatically.
+
         Returns
         -------
             df : pd.DataFrame
                 DataFrame of the current top 10 holdings of the selected fund.
         """
+        if symbol:
+            fundId = int(self.filter(symbol)["id"][0])
+
         # API call - Logic: there are funds which allocate to either equities or fixed income securities, or both
         url = f"{_BASE_URL}/{fundId}"
         
@@ -299,19 +304,24 @@ class Fund:
             raise
 
     @optimize_execution("fmarket")
-    def industry_holding(self, fundId:int=23) -> pd.DataFrame:
+    def industry_holding(self, fundId:int=23, symbol:str=None) -> pd.DataFrame:
         """Retrieve list of industries and fund distribution for specific fundID. Live data is retrieved from the Fmarket API.
 
         Parameters
         ----------
             fundId : int
                 id of a fund in fmarket database
+            symbol : str, optional
+                ticker/short name of the fund. If provided, fundId will be resolved automatically.
 
         Returns
         -------
             df : pd.DataFrame
                 DataFrame of the current top industries in the selected fund.
         """
+        if symbol:
+            fundId = int(self.filter(symbol)["id"][0])
+
         url = f"{_BASE_URL}/{fundId}"
         
         try:
@@ -350,19 +360,24 @@ class Fund:
             raise
 
     @optimize_execution("fmarket")
-    def nav_report(self, fundId:int=23) -> pd.DataFrame:
+    def nav_report(self, fundId:int=23, symbol:str=None) -> pd.DataFrame:
         """Retrieve all available daily NAV data point of the specified fund. Live data is retrieved from the Fmarket API.
 
         Parameters
         ----------
             fundId : int
                 id of a fund in fmarket database.
+            symbol : str, optional
+                ticker/short name of the fund. If provided, fundId will be resolved automatically.
 
         Returns
         -------
             df : pd.DataFrame
                 DataFrame of all avalaible daily NAV data points of the selected fund.
         """
+        if symbol:
+            fundId = int(self.filter(symbol)["id"][0])
+
         # Set the date range to the current date
         current_date = datetime.now().strftime("%Y%m%d")
         url = f"{_BASE_URL[:-1]}/get-nav-history"
@@ -410,19 +425,24 @@ class Fund:
             raise
 
     @optimize_execution("fmarket")
-    def asset_holding(self, fundId:int=23) -> pd.DataFrame:
+    def asset_holding(self, fundId:int=23, symbol:str=None) -> pd.DataFrame:
         """Retrieve list of assets holding allocation for specific fundID. Live data is retrieved from the Fmarket API.
 
         Parameters
         ----------
             fundId : int
                 id of a fund in fmarket database.
+            symbol : str, optional
+                ticker/short name of the fund. If provided, fundId will be resolved automatically.
 
         Returns
         -------
             df : pd.DataFrame
                 DataFrame of assets holding allocation of the selected fund.
         """
+        if symbol:
+            fundId = int(self.filter(symbol)["id"][0])
+
         url = f"{_BASE_URL}/{fundId}"
         
         try:
