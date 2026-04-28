@@ -81,7 +81,7 @@ class EquityFundamental(BaseDetailUI):
     @optimize_execution("UI")
     def ratio(self, orient: str = 'report', **kwargs) -> Any:
         """Get financial ratios."""
-        df = self._dispatch('Fundamental', 'equity', 'ratios', **kwargs)
+        df = self._dispatch('Fundamental', 'equity', 'ratio', **kwargs)
         if isinstance(df, pd.DataFrame):
             return self._format_output(df, orient)
         return df
@@ -89,7 +89,5 @@ class EquityFundamental(BaseDetailUI):
     @optimize_execution("UI")
     def ratios(self, orient: str = 'report', **kwargs) -> Any:
         """Get financial ratios (alias)."""
-        df = self._dispatch('Fundamental', 'equity', 'ratios', **kwargs)
-        if isinstance(df, pd.DataFrame):
-            return self._format_output(df, orient)
-        return df
+        return self.ratio(orient=orient, **kwargs)
+

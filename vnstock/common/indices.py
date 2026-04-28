@@ -99,7 +99,10 @@ def is_valid_index(symbol: str) -> bool:
     Returns:
         bool: True if index exists
     """
-    return symbol.upper() in INDICES_INFO
+    # Standard market indices
+    market_indices = {'VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'HNX30'}
+    symbol = symbol.upper()
+    return symbol in INDICES_INFO or symbol in market_indices
 
 
 # =============================================================================

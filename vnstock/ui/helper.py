@@ -262,13 +262,15 @@ def show_api(node: Any = None, level: int = 0) -> None:
             layer, sub_mod, cls, func, source, r_type, summary = meta
             print(f"{indent}{prefix}{m_name}() [{source}] -> {r_type} # {summary}")
         elif m_type != 'sub' and m_name not in instrument_names:
-            # Get description from docstring fallback
-            member_attr = getattr(node, m_name, None)
-            doc = inspect.getdoc(member_attr) if member_attr else None
-            # Fix: don't split if None
-            clean_doc = doc.split('.')[0] if doc else ""
-            desc = f" # {clean_doc}." if clean_doc else ""
-            print(f"{indent}{prefix}{m_name}(){desc}")
+            # ONLY show if in MAP (official API)
+            if meta:
+                # Get description from docstring fallback if summary is missing
+                member_attr = getattr(node, m_name, None)
+                doc = inspect.getdoc(member_attr) if member_attr else None
+                clean_doc = doc.split('.')[0] if doc else ""
+                desc = f" # {clean_doc}." if clean_doc else ""
+                print(f"{indent}{prefix}{m_name}(){desc}")
+
 
 def check_sponsor_package() -> bool:
     """Helper to check if sponsor package is available."""

@@ -44,13 +44,6 @@ class IndexReference(BaseUI):
         
         return self._dispatch('Reference', 'index', 'members', group=target, source=source)
 
-    @optimize_execution("UI")
-    def info(self, symbol: str = None, source: str = None) -> Any:
-        """Get metadata/information for a specific index or all indices."""
-        target = self._normalize_symbol(symbol or self.symbol)
-        if target:
-            # Map index info for specific symbol
-            return self._dispatch('Reference', 'index', 'info_single', symbol=target, source=source)
-        return self._dispatch('Reference', 'index', 'info', source=source)
+
 
 

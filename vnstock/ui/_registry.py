@@ -72,8 +72,6 @@ MAP = {
             "list": ("api", "common.indices", None, "get_all_indices", "KBS", "DataFrame", "List all market indices."),
             "members": ("api", "api.listing", "Listing", "symbols_by_group", "KBS", "DataFrame", "List constituents of an index."),
             "groups": ("api", "api.listing", "Listing", "get_supported_groups", "KBS", "DataFrame", "List supported index groups."),
-            "info": ("api", "common.indices", None, "get_all_indices", "KBS", "DataFrame", "Get all market indices metadata."),
-            "info_single": ("api", "common.indices", None, "get_index_info", "KBS", "Dict", "Get specific index metadata."),
         },
 
 
@@ -84,16 +82,14 @@ MAP = {
         },
         "futures": {
             "list": ("api", "api.listing", "Listing", "all_future_indices", "KBS", "DataFrame", "List all futures instruments."),
-            "info": ("api", "api.listing", "Listing", "futures_specifications", "KBS", "Dict", "Get futures specifications."),
         },
         "warrant": {
             "list": ("api", "api.listing", "Listing", "all_covered_warrant", "KBS", "DataFrame", "List all covered warrants."),
-            "info": ("api", "api.listing", "Listing", "warrant_specifications", "KBS", "Dict", "Get warrant specifications."),
         },
         "bond": {
+            "list": ("ui", "domains.reference.bond", "BondReference", "list", "Unified", "DataFrame", "List all debt/bonds."),
             "corporate": ("api", "api.listing", "Listing", "all_bonds", "KBS", "DataFrame", "List all corporate bonds."),
             "government": ("api", "api.listing", "Listing", "all_government_bonds", "VCI", "DataFrame", "List all government bonds."),
-
         },
 
         "fund": {
@@ -171,11 +167,12 @@ MAP = {
             "balance_sheet": ("api", "api.financial", "Finance", "balance_sheet", "KBS", "DataFrame", "Get balance sheet."),
             "cash_flow": ("api", "api.financial", "Finance", "cash_flow", "KBS", "DataFrame", "Get cash flow."),
             "income_statement": ("api", "api.financial", "Finance", "income_statement", "KBS", "DataFrame", "Get income statement."),
-            "ratios": ("api", "api.financial", "Finance", "ratio", "KBS", "DataFrame", "Financial ratios."),
+            "ratio": ("api", "api.financial", "Finance", "ratio", "KBS", "DataFrame", "Financial ratios."),
         }
     },
     "Retail": {
         "gold": ("retail", "gold"), # Reference to top-level retail
+        "exchange_rate": ("retail", "exchange_rate"), # Reference to top-level retail
     },
     "Broker": {
         "dnse": {

@@ -13,11 +13,7 @@ class WarrantReference(BaseUI):
         self.symbol = symbol
         return self
 
-    @optimize_execution("UI")
-    def info(self, symbol: str = None, source: str = 'kbs') -> Any:
-        """Get information and contract specifications for a specific warrant."""
-        target = symbol or self.symbol
-        return self._dispatch('Reference', 'warrant', 'info', symbol=target, source=source)
+
 
 
 

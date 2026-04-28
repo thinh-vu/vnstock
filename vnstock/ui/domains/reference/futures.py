@@ -12,10 +12,7 @@ class FuturesReference(BaseUI):
         self.symbol = symbol
         return self
 
-    def info(self, symbol: str = None, source: str = 'kbs') -> Any:
-        """Get information and contract specifications for a specific futures."""
-        target = symbol or self.symbol
-        return self._dispatch('Reference', 'futures', 'info', symbol=target, source=source)
+
 
 
 

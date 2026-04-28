@@ -187,6 +187,66 @@ INDICES_INFO = {
         'group': 'VNX Indices',
         'index_id': 1,
     },
+
+# HNX Sub-Indices
+    'HNXFIN': {
+        'name': 'HNXFIN',
+        'description': 'Chỉ số Ngành Tài chính HNX',
+        'full_name': 'HNX Financials Index',
+        'group': 'HNX Indices',
+        'index_id': None,
+    },
+    'HNXCON': {
+        'name': 'HNXCON',
+        'description': 'Chỉ số Ngành Xây dựng HNX',
+        'full_name': 'HNX Construction Index',
+        'group': 'HNX Indices',
+        'index_id': None,
+    },
+    'HNXLCAP': {
+        'name': 'HNXLCAP',
+        'description': 'Chỉ số Cổ phiếu Quy mô lớn HNX (Top 50)',
+        'full_name': 'HNX Large Cap Index',
+        'group': 'HNX Indices',
+        'index_id': None,
+    },
+    'HNXMAN': {
+        'name': 'HNXMAN',
+        'description': 'Chỉ số Ngành Công nghiệp HNX',
+        'full_name': 'HNX Manufacturing Index',
+        'group': 'HNX Indices',
+        'index_id': None,
+    },
+    'HNXMSCAP': {
+        'name': 'HNXMSCAP',
+        'description': 'Chỉ số Cổ phiếu Quy mô Vừa và Nhỏ HNX',
+        'full_name': 'HNX Mid/Small Cap Index',
+        'group': 'HNX Indices',
+        'index_id': None,
+    },
+
+    # UPCOM Sub-Indices (Dựa trên phân bảng quy mô vốn hóa của UPCoM)
+    'UPCOMLAR': {
+        'name': 'UPCOMLAR',
+        'description': 'Chỉ số UPCoM Quy mô Lớn',
+        'full_name': 'UPCoM Large Index',
+        'group': 'UPCOM Indices',
+        'index_id': None,
+    },
+    'UPCOMMID': {
+        'name': 'UPCOMMID',
+        'description': 'Chỉ số UPCoM Quy mô Vừa',
+        'full_name': 'UPCoM Medium Index',
+        'group': 'UPCOM Indices',
+        'index_id': None,
+    },
+    'UPCOMSML': {
+        'name': 'UPCOMSML',
+        'description': 'Chỉ số UPCoM Quy mô Nhỏ',
+        'full_name': 'UPCoM Small Index',
+        'group': 'UPCOM Indices',
+        'index_id': None,
+    }
 }
 
 # Quick lookup: symbol -> ID (for backward compatibility)
@@ -206,6 +266,13 @@ INDEX_GROUPS = {
     ],
     'VNX Indices': [
         'VNX50', 'VNXALL'
+    ],
+    'HNX Indices': [
+        'HNX30', 'HNXFIN', 'HNXCON',
+        'HNXLCAP', 'HNXMAN', 'HNXMSCAP'
+    ],
+    'UPCOM Indices': [
+        'UPCOMLAR', 'UPCOMMID', 'UPCOMSML'
     ],
 }
 

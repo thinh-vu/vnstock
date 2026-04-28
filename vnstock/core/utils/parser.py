@@ -50,13 +50,9 @@ def get_asset_type(symbol: str) -> str:
     """
     symbol = symbol.upper()
     
-    # Standard market indices and HOSE managed indices
-    market_indices = {'VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'HNX30'}
-    # Combine with indices from constants
-    indices_info = _get_indices_info()
-    known_indices = market_indices.union(indices_info.keys())
-
-    if symbol in known_indices:
+    # Use standardized index check from indices.py
+    from vnstock.common.indices import is_valid_index
+    if is_valid_index(symbol):
         return 'index'
     
     # Stock symbols (assumed to have 3 characters)
@@ -213,13 +209,9 @@ def get_asset_type(symbol: str) -> str:
     """
     symbol = symbol.upper()
     
-    # Standard market indices and HOSE managed indices
-    market_indices = {'VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'HNX30'}
-    # Combine with indices from constants
-    indices_info = _get_indices_info()
-    known_indices = market_indices.union(indices_info.keys())
-
-    if symbol in known_indices:
+    # Use standardized index check from indices.py
+    from vnstock.common.indices import is_valid_index
+    if is_valid_index(symbol):
         return 'index'
     
     # Stock symbols (assumed to have 3 characters)
