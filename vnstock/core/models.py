@@ -10,8 +10,9 @@ Consolidated from:
 - vnstock/explorer/msn/models.py
 """
 
-from pydantic import BaseModel
 from typing import Optional
+
+from pydantic import BaseModel
 
 # ============================================================================
 # CORE MODELS - Used across multiple data sources
@@ -21,12 +22,13 @@ from typing import Optional
 class TickerModel(BaseModel):
     """
     Validates ticker symbol and date range parameters.
-    
+
     Used by:
     - VCI quote data fetching
     - TCBS quote data fetching
     - MSN quote data fetching
     """
+
     symbol: str
     start: Optional[str] = None
     end: Optional[str] = None
@@ -41,12 +43,13 @@ class TickerModel(BaseModel):
 class PaginationModel(BaseModel):
     """
     Pagination parameters for TCBS API requests.
-    
+
     Attributes:
         page: Starting page number for pagination
         size: Number of results per page
         period: Number of reporting periods to fetch
     """
+
     page: int
     size: int
     period: int
@@ -55,11 +58,12 @@ class PaginationModel(BaseModel):
 class FinancialReportModel(BaseModel):
     """
     Financial report request parameters for TCBS.
-    
+
     Attributes:
         type: Type of financial report
         frequency: Reporting frequency (quarter, year, etc.)
     """
+
     type: str
     frequency: str
 

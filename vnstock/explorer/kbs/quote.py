@@ -1,22 +1,31 @@
 """Quote module for KB Securities (KBS) data source."""
 
-import pandas as pd
 import json
-from datetime import datetime, timedelta
-from typing import Optional, Union, List
+from datetime import datetime
+from typing import List, Optional, Union
+
+import pandas as pd
 from vnai import optimize_execution
+
 from vnstock.core.models import TickerModel
+from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
+from vnstock.core.utils.client import ProxyConfig, send_request
 from vnstock.core.utils.logger import get_logger
-from vnstock.core.utils.parser import get_asset_type, convert_derivative_symbol
-from vnstock.core.utils.lookback import get_start_date_from_lookback, interpret_lookback_length
-from vnstock.core.utils.client import send_request, ProxyConfig
+from vnstock.core.utils.lookback import (
+    get_start_date_from_lookback,
+    interpret_lookback_length,
+)
+from vnstock.core.utils.parser import convert_derivative_symbol, get_asset_type
 from vnstock.core.utils.transform import process_match_types
 from vnstock.core.utils.user_agent import get_headers
-from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
 from vnstock.explorer.kbs.const import (
-    _IIS_BASE_URL, _SAS_HISTORICAL_QUOTES_URL,
-    _OHLC_MAP, _OHLC_DTYPE, _INTERVAL_MAP, _RESAMPLE_MAP,
-    _INTRADAY_MAP, _INTRADAY_DTYPE, _INDEX_MAPPING
+    _IIS_BASE_URL,
+    _INDEX_MAPPING,
+    _INTERVAL_MAP,
+    _INTRADAY_DTYPE,
+    _INTRADAY_MAP,
+    _OHLC_DTYPE,
+    _OHLC_MAP,
 )
 
 logger = get_logger(__name__)
@@ -48,57 +57,60 @@ class Quote:
             proxy_list: Danh sách proxy URLs. Mặc định None.
         """
         self.symbol = symbol.upper()
-        self.data_source = 'KBS'
+        self.data_source = "KBS"
         self.asset_type = get_asset_type(self.symbol)
-        
+
         # Auto-convert derivative symbols to new KRX format
-        if self.asset_type == 'derivative':
+        if self.asset_type == "derivative":
             try:
                 # Try to convert if it matches old patterns (e.g. starts with VN30F)
                 # The parser handles checks internally or via try/except
                 new_symbol = convert_derivative_symbol(self.symbol)
-                logger.info(f"Converted derivative symbol {self.symbol} to {new_symbol} (KRX format)")
+                logger.info(
+                    f"Converted derivative symbol {self.symbol} to {new_symbol} (KRX format)"
+                )
                 self.symbol = new_symbol
             except Exception as e:
                 # If conversion fails (e.g. already new format or unsupported), keep original
                 logger.debug(f"Symbol conversion skipped for {self.symbol}: {e}")
-                
+
         self.base_url = _IIS_BASE_URL
-        self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
+        self.headers = get_headers(
+            data_source=self.data_source, random_agent=random_agent
+        )
         self.show_log = show_log
         self.interval_map = _INTERVAL_MAP
-        
+
         # Handle proxy configuration
         if proxy_config is None:
             # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else 'try'
+            p_mode = proxy_mode if proxy_mode else "try"
             # If user provides list, set request_mode to PROXY
-            req_mode = 'direct'
+            req_mode = "direct"
             if proxy_list and len(proxy_list) > 0:
-                req_mode = 'proxy'
-                
+                req_mode = "proxy"
+
             self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode,
-                proxy_list=proxy_list,
-                request_mode=req_mode
+                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
             )
         else:
             self.proxy_config = proxy_config
 
         if not show_log:
-            logger.setLevel('CRITICAL')
-
+            logger.setLevel("CRITICAL")
 
         # Validate index symbols
-        if self.asset_type == 'index':
+        if self.asset_type == "index":
             if self.symbol not in _INDEX_MAPPING:
-                valid_indices = ', '.join(_INDEX_MAPPING.keys())
+                valid_indices = ", ".join(_INDEX_MAPPING.keys())
                 raise ValueError(
                     f"Mã chỉ số '{self.symbol}' không được hỗ trợ bởi KBS. "
                     f"Các chỉ số hợp lệ: {valid_indices}"
                 )
 
-    def _input_validation(self, start: Optional[str], end: str, interval: str) -> TickerModel:
+    def _input_validation(
+        self, start: Optional[str], end: str, interval: str
+    ) -> TickerModel:
         """
         Validate input parameters.
 
@@ -113,15 +125,17 @@ class Quote:
         Raises:
             ValueError: Nếu interval không hợp lệ.
         """
-        ticker = TickerModel(symbol=self.symbol, start=start, end=end, interval=interval)
-        
+        ticker = TickerModel(
+            symbol=self.symbol, start=start, end=end, interval=interval
+        )
+
         if interval not in self.interval_map:
-            valid_intervals = ', '.join(self.interval_map.keys())
+            valid_intervals = ", ".join(self.interval_map.keys())
             raise ValueError(
                 f"Giá trị interval không hợp lệ: {interval}. "
                 f"Vui lòng chọn: {valid_intervals}"
             )
-        
+
         return ticker
 
     def _format_date_for_api(self, date_str: str) -> str:
@@ -152,7 +166,7 @@ class Quote:
         count_back: Optional[int] = None,
         floating: Optional[int] = 2,
         length: Optional[Union[str, int]] = None,
-        get_all: Optional[bool] = False
+        get_all: Optional[bool] = False,
     ) -> Union[pd.DataFrame, str]:
         """
         Tải lịch sử giá của mã chứng khoán từ KBS.
@@ -176,22 +190,22 @@ class Quote:
             >>> df = quote.history(start='2024-01-01', end='2024-12-31', interval='1D')
             >>> print(df.columns.tolist())
             ['time', 'open', 'high', 'low', 'close', 'volume']
-            
+
             >>> # Sử dụng length để lấy dữ liệu 1 tháng gần nhất
             >>> df_1m = quote.history(length='1M', interval='1D')
-            
+
             >>> # Lấy 100 nến dữ liệu
             >>> df_100 = quote.history(count_back=100, interval='1D')
-            
+
             >>> # Lấy dữ liệu 150 ngày
             >>> df_150d = quote.history(length=150, interval='1D')
-            
+
             >>> # Lấy dữ liệu 3 tháng với kết thúc vào ngày cụ thể
             >>> df_3m = quote.history(end='2024-12-31', length='3M', interval='1D')
-            
+
             >>> # Lấy tất cả các cột (bao gồm cả cột value)
             >>> df_all = quote.history(length='1M', interval='1D', get_all=True)
-        """
+        """  # noqa: W293
         # Set end date to today if not provided
         if end is None:
             end = datetime.now().strftime("%Y-%m-%d")
@@ -203,21 +217,18 @@ class Quote:
                 bars_from_len, len_remainder = interpret_lookback_length(length)
                 if bars_from_len is not None:
                     count_back = bars_from_len
-                    length = None # Consumed as bars
+                    length = None  # Consumed as bars
                 else:
                     length = len_remainder
-            
+
             if length is not None:
                 start = get_start_date_from_lookback(
-                    lookback_length=length,
-                    end_date=end
+                    lookback_length=length, end_date=end
                 )
             elif count_back is not None:
                 # For count_back, calculate start date based on interval and bars
                 start = get_start_date_from_lookback(
-                    bars=count_back,
-                    interval=interval,
-                    end_date=end
+                    bars=count_back, interval=interval, end_date=end
                 )
             else:
                 raise ValueError(
@@ -231,7 +242,9 @@ class Quote:
         else:
             # Create a minimal ticker model for validation of interval only
             # Use end as start temporarily since start is None
-            ticker = TickerModel(symbol=self.symbol, start=end, end=end, interval=interval)
+            ticker = TickerModel(
+                symbol=self.symbol, start=end, end=end, interval=interval
+            )
             # Override start with None for later processing
             ticker.start = start
 
@@ -241,15 +254,15 @@ class Quote:
 
         # Get the KBS API endpoint suffix for the interval
         interval_suffix = self.interval_map[interval]
-        
+
         # Build URL based on asset type
-        if self.asset_type == 'index':
-             url = f'{_IIS_BASE_URL}/index/{self.symbol}/data_{interval_suffix}'
+        if self.asset_type == "index":
+            url = f"{_IIS_BASE_URL}/index/{self.symbol}/data_{interval_suffix}"
         else:
-             url = f'{_IIS_BASE_URL}/stocks/{self.symbol}/data_{interval_suffix}'
+            url = f"{_IIS_BASE_URL}/stocks/{self.symbol}/data_{interval_suffix}"
         params = {
-            'sdate': start_date_kbs,
-            'edate': end_date_kbs,
+            "sdate": start_date_kbs,
+            "edate": end_date_kbs,
         }
 
         # Make API request
@@ -261,7 +274,7 @@ class Quote:
             show_log=show_log or self.show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode
+            request_mode=self.proxy_config.request_mode,
         )
 
         if not json_data:
@@ -271,7 +284,7 @@ class Quote:
             )
 
         # Extract OHLC data based on interval
-        data_key = f'data_{interval_suffix}'
+        data_key = f"data_{interval_suffix}"
         if data_key not in json_data:
             raise ValueError(
                 f"Không tìm thấy dữ liệu cho interval {interval}. "
@@ -294,20 +307,20 @@ class Quote:
         # Handle 'va' column - remove from standard output, keep as 'value' if get_all=True
         # Rename columns first
         df = df.rename(columns=_OHLC_MAP)
-        
+
         # If not get_all, strictly keep only standard columns
         if not get_all:
-             base_cols = ['time', 'open', 'high', 'low', 'close', 'volume']
-             existing_cols = [c for c in base_cols if c in df.columns]
-             df = df[existing_cols]
-        # logic for 'value' column is already handled by _OHLC_MAP if 'va' maps to 'value', 
+            base_cols = ["time", "open", "high", "low", "close", "volume"]
+            existing_cols = [c for c in base_cols if c in df.columns]
+            df = df[existing_cols]
+        # logic for 'value' column is already handled by _OHLC_MAP if 'va' maps to 'value',
         # or we accept that strict mode excludes it unless 'value' is inherently part of standard set (usually not)
 
         # Convert time column to datetime
-        df['time'] = pd.to_datetime(df['time'])
+        df["time"] = pd.to_datetime(df["time"])
 
         # Sort by time
-        df = df.sort_values('time').reset_index(drop=True)
+        df = df.sort_values("time").reset_index(drop=True)
 
         # Set data types
         for col, dtype in _OHLC_DTYPE.items():
@@ -317,42 +330,42 @@ class Quote:
                 except ValueError:
                     # Handle cases where API returns float string for int (e.g. '100.0')
                     df[col] = df[col].astype(float).astype(dtype)
-        
+
         # Set data type for 'value' column if present
-        if 'value' in df.columns:
-            df['value'] = df['value'].astype('float64')
+        if "value" in df.columns:
+            df["value"] = df["value"].astype("float64")
 
         # Apply floating point precision to OHLC columns
-        ohlc_cols = ['open', 'high', 'low', 'close']
+        ohlc_cols = ["open", "high", "low", "close"]
         for col in ohlc_cols:
             if col in df.columns:
                 # Only divide by 1000 for stock and ETF assets
                 # Derivatives and Indices are already quoted in points/full value.
-                if self.asset_type not in ['derivative', 'index']:
+                if self.asset_type not in ["derivative", "index"]:
                     df[col] = df[col] / 1000
-                
+
                 if floating is not None:
                     df[col] = df[col].round(floating)
 
         # Trim data to start time if needed
-        df = df[df['time'] >= pd.to_datetime(start)].reset_index(drop=True)
+        df = df[df["time"] >= pd.to_datetime(start)].reset_index(drop=True)
 
         # Apply count_back if specified
         if count_back is not None:
             df = df.tail(count_back).reset_index(drop=True)
 
         # Add metadata
-        df.attrs['symbol'] = self.symbol
-        df.attrs['source'] = self.data_source
-        df.attrs['interval'] = interval
-        df.attrs['start'] = start
-        df.attrs['end'] = end
-        df.attrs['length'] = length
+        df.attrs["symbol"] = self.symbol
+        df.attrs["source"] = self.data_source
+        df.attrs["interval"] = interval
+        df.attrs["start"] = start
+        df.attrs["end"] = end
+        df.attrs["length"] = length
 
         if show_log or self.show_log:
             logger.info(
-                f'Truy xuất thành công {len(df)} bản ghi giá cho {self.symbol} '
-                f'({interval}) từ {start_date_kbs} đến {end_date_kbs}.'
+                f"Truy xuất thành công {len(df)} bản ghi giá cho {self.symbol} "
+                f"({interval}) từ {start_date_kbs} đến {end_date_kbs}."
             )
 
         return df
@@ -369,7 +382,7 @@ class Quote:
     ) -> Union[pd.DataFrame, str]:
         """
         Truy xuất dữ liệu khớp lệnh intraday (real-time matching data) của mã chứng khoán từ KBS.
-        
+
         Mặc định trả về các cột chuẩn hóa (time, price, volume, match_type, id).
         Sử dụng get_all=True để lấy tất cả các cột từ API response.
 
@@ -384,14 +397,14 @@ class Quote:
 
         Returns:
             DataFrame hoặc JSON string chứa dữ liệu khớp lệnh intraday.
-            
+
             **Cột chuẩn hóa (Core columns):**
             - time: Thời gian giao dịch (YYYY-MM-DD HH:MM:SS)
             - price: Giá khớp
             - volume: Khối lượng khớp
             - match_type: Loại khớp lệnh (buy, sell, atc, ato)
             - id: ID giao dịch (từ KBS: timestamp + price + volume)
-            
+
             **Cột bổ sung (nếu get_all=True):**
             - trading_date: Ngày giao dịch (DD/MM/YYYY)
             - symbol: Mã chứng khoán
@@ -401,27 +414,29 @@ class Quote:
 
         Examples:
             >>> quote = Quote('ACB')
-            
+
             >>> # Lấy 100 bản ghi (cột chuẩn hóa)
             >>> df = quote.intraday(page_size=100)
-            
+
             >>> # Lấy trang thứ 2
             >>> df_page2 = quote.intraday(page=2, page_size=100)
-            
+
             >>> # Lấy tất cả các cột
             >>> df_all = quote.intraday(get_all=True)
-        """
+        """  # noqa: W293
         # Validator: Intraday data is not supported for indices
-        if self.asset_type == 'index':
-            raise ValueError(f"Dữ liệu intraday không được hỗ trợ cho chỉ số {self.symbol}.")
+        if self.asset_type == "index":
+            raise ValueError(
+                f"Dữ liệu intraday không được hỗ trợ cho chỉ số {self.symbol}."
+            )
 
         # Build URL for intraday trade history
-        url = f'{_IIS_BASE_URL}/trade/history/{self.symbol}'
-        
+        url = f"{_IIS_BASE_URL}/trade/history/{self.symbol}"
+
         # Add pagination parameters
         params = {
-            'page': page,
-            'limit': page_size,
+            "page": page,
+            "limit": page_size,
         }
 
         # Make API request
@@ -433,21 +448,19 @@ class Quote:
             show_log=show_log or self.show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode
+            request_mode=self.proxy_config.request_mode,
         )
 
-        if not json_data or 'data' not in json_data:
+        if not json_data or "data" not in json_data:
             raise ValueError(
                 f"Không tìm thấy dữ liệu intraday cho mã {self.symbol}. "
                 "Vui lòng kiểm tra lại mã chứng khoán hoặc thử lại sau."
             )
 
-        intraday_data = json_data.get('data', [])
+        intraday_data = json_data.get("data", [])
 
         if not intraday_data:
-            raise ValueError(
-                f"Dữ liệu intraday trống cho mã {self.symbol}."
-            )
+            raise ValueError(f"Dữ liệu intraday trống cho mã {self.symbol}.")
 
         if not to_df:
             return json.dumps(intraday_data)
@@ -460,9 +473,11 @@ class Quote:
 
         # Convert timestamp to datetime
         # KBS format: "2026-01-14 14:27:23:15" (with milliseconds as :MS instead of .MS)
-        if 'timestamp' in df.columns:
-            df['timestamp'] = df['timestamp'].apply(
-                lambda x: pd.to_datetime(x.rsplit(':', 1)[0]) if isinstance(x, str) else x
+        if "timestamp" in df.columns:
+            df["timestamp"] = df["timestamp"].apply(
+                lambda x: (
+                    pd.to_datetime(x.rsplit(":", 1)[0]) if isinstance(x, str) else x
+                )
             )
 
         # Set data types
@@ -475,63 +490,66 @@ class Quote:
                     pass
 
         # Sort by timestamp (newest first)
-        df = df.sort_values('timestamp', ascending=False).reset_index(drop=True)
+        df = df.sort_values("timestamp", ascending=False).reset_index(drop=True)
 
         # Create standardized DataFrame with core columns
         standardized_df = pd.DataFrame()
-        
+
         # time: Full timestamp (YYYY-MM-DD HH:MM:SS)
-        if 'timestamp' in df.columns:
-            standardized_df['time'] = df['timestamp']
-        
+        if "timestamp" in df.columns:
+            standardized_df["time"] = df["timestamp"]
+
         # price: Match price
-        if 'price' in df.columns:
+        if "price" in df.columns:
             # Only divide by 1000 for non-derivative and non-index assets
-            if self.asset_type not in ['derivative', 'index']:
-                standardized_df['price'] = df['price'] / 1000
+            if self.asset_type not in ["derivative", "index"]:
+                standardized_df["price"] = df["price"] / 1000
             else:
-                standardized_df['price'] = df['price']
-                
+                standardized_df["price"] = df["price"]
+
             if floating is not None:
-                standardized_df['price'] = standardized_df['price'].round(floating)
-        
+                standardized_df["price"] = standardized_df["price"].round(floating)
+
         # volume: Match volume (KBS uses 'match_volume')
-        if 'match_volume' in df.columns:
-            standardized_df['volume'] = df['match_volume']
-        
+        if "match_volume" in df.columns:
+            standardized_df["volume"] = df["match_volume"]
+
         # match_type: Trade side ('B' = buy, 'S' = sell)
         # Use existing process_match_types utility for ATO/ATC logic
-        if 'side' in df.columns:
+        if "side" in df.columns:
             # Map KBS side values to match_type format
-            standardized_df['match_type'] = df['side'].fillna('')
-        
+            standardized_df["match_type"] = df["side"].fillna("")
+
         # Apply the standard process_match_types function
-        if 'match_type' in standardized_df.columns:
+        if "match_type" in standardized_df.columns:
             # Ensure time column is datetime for process_match_types
-            standardized_df['time'] = pd.to_datetime(standardized_df['time'])
+            standardized_df["time"] = pd.to_datetime(standardized_df["time"])
             standardized_df = process_match_types(
-                standardized_df, 
-                asset_type=self.asset_type, 
-                source='KBS'
+                standardized_df, asset_type=self.asset_type, source="KBS"
             )
             # Convert to lowercase for final output
-            standardized_df['match_type'] = standardized_df['match_type'].str.lower()
-        
+            standardized_df["match_type"] = standardized_df["match_type"].str.lower()
+
         # id: Generate ID from timestamp, price, and volume (KBS doesn't have transaction ID)
-        if 'timestamp' in df.columns:
+        if "timestamp" in df.columns:
             # Create unique ID combining timestamp, price, and volume
-            standardized_df['id'] = (
-                df['timestamp'].astype(str).str.replace(' ', '_').str.replace(':', '') + 
-                '_' + df['price'].astype(str).str.replace('.', '') +
-                '_' + df['match_volume'].astype(str)
+            standardized_df["id"] = (
+                df["timestamp"].astype(str).str.replace(" ", "_").str.replace(":", "")
+                + "_"
+                + df["price"].astype(str).str.replace(".", "")
+                + "_"
+                + df["match_volume"].astype(str)
             )
-        
+
         # Select columns based on get_all parameter
         if get_all:
             # Add all KBS-specific columns to standardized columns
             kbs_specific_cols = [
-                'trading_date', 'symbol', 'price_change', 
-                'accumulated_volume', 'accumulated_value'
+                "trading_date",
+                "symbol",
+                "price_change",
+                "accumulated_volume",
+                "accumulated_value",
             ]
             for col in kbs_specific_cols:
                 if col in df.columns:
@@ -539,24 +557,23 @@ class Quote:
             result_df = standardized_df
         else:
             # Return only core standardized columns
-            result_df = standardized_df[['time', 'price', 'volume', 'match_type', 'id']]
+            result_df = standardized_df[["time", "price", "volume", "match_type", "id"]]
 
         # Add metadata
-        result_df.attrs['symbol'] = self.symbol
-        result_df.attrs['source'] = self.data_source
-        result_df.attrs['page'] = page
-        result_df.attrs['page_size'] = page_size
-        result_df.attrs['get_all'] = get_all
+        result_df.attrs["symbol"] = self.symbol
+        result_df.attrs["source"] = self.data_source
+        result_df.attrs["page"] = page
+        result_df.attrs["page_size"] = page_size
+        result_df.attrs["get_all"] = get_all
 
         if show_log or self.show_log:
             logger.info(
-                f'Truy xuất thành công {len(result_df)} bản ghi khớp lệnh intraday cho {self.symbol} '
-                f'(trang {page}, page_size={page_size}).'
+                f"Truy xuất thành công {len(result_df)} bản ghi khớp lệnh intraday cho {self.symbol} "
+                f"(trang {page}, page_size={page_size})."
             )
 
         return result_df
 
 
 # Register KBS Quote provider
-from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
-ProviderRegistry.register('quote', 'kbs', Quote)
+ProviderRegistry.register("quote", "kbs", Quote)

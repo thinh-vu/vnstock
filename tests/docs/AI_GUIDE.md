@@ -151,7 +151,7 @@ def test_quote(self, mock_get, mock_response_factory):
 def test_listing(self, df_validators):
     listing = Listing()
     df = listing.all_symbols()
-    
+
     # Validator examples
     validators = df_validators
     assert validators['has_columns'](df, ['symbol', 'name'])
@@ -181,7 +181,7 @@ def test_history_all_intervals(self, interval):
 def test_multiple_symbols(self, diverse_test_symbols):
     """Test quote for symbols from all exchanges."""
     symbols = diverse_test_symbols['all']
-    
+
     for symbol in symbols:
         quote = Quote(symbol=symbol)
         assert quote.symbol == symbol
@@ -209,7 +209,7 @@ def test_quote_with_mock(self, mock_get, mock_response_factory):
     mock_get.return_value = mock_response_factory(
         json_data={'data': [{'close': 100.0, 'volume': 1000}]}
     )
-    
+
     quote = Quote(symbol='ACB')
     df = quote.history()
     assert df is not None
@@ -227,9 +227,9 @@ def test_api_timeout(self, monkeypatch):
     """Test quote when API times out."""
     def mock_timeout(*args, **kwargs):
         raise requests.Timeout("API timeout")
-    
+
     monkeypatch.setattr("requests.get", mock_timeout)
-    
+
     with pytest.raises(requests.Timeout):
         Quote(symbol='ACB').history()
 ```
@@ -428,19 +428,19 @@ from vnstock.api.quote import Quote
 @pytest.mark.api
 class TestMyNewFeature:
     """Test [feature/module] functionality."""
-    
+
     def test_basic_functionality(self):
         """Test basic usage."""
         obj = Quote(symbol='ACB')
         assert obj is not None
-    
+
     def test_with_symbols(self, diverse_test_symbols):
         """Test with real symbols."""
         symbols = diverse_test_symbols['hose']
         for symbol in symbols[:5]:  # Test first 5
             quote = Quote(symbol=symbol)
             assert quote.symbol == symbol
-    
+
     @patch('requests.get')
     def test_with_mock(self, mock_get, mock_response_factory):
         """Test with mocked response."""
@@ -449,7 +449,7 @@ class TestMyNewFeature:
         )
         quote = Quote(symbol='ACB')
         assert quote is not None
-    
+
     @pytest.mark.parametrize('interval', ['1D', '1W', '1M'])
     def test_parameters(self, interval):
         """Test with different parameters."""
@@ -459,7 +459,7 @@ class TestMyNewFeature:
 
 ---
 
-**Last Updated**: November 12, 2025  
-**For AI Analysis**: Yes ✅  
-**Difficulty Level**: Intermediate  
+**Last Updated**: November 12, 2025
+**For AI Analysis**: Yes ✅
+**Difficulty Level**: Intermediate
 **Time to Implement**: 15-30 minutes per new test

@@ -5,12 +5,13 @@ This module provides a centralized registry for all data providers
 (both scraping-based in explorer/ and API-based in connector/).
 """
 
-from typing import Dict, List, Optional, Type, Any, Callable
-from vnstock.core.types import DataCategory, ProviderType
+from typing import Any, Callable, Dict, List, Optional, Type
+
 from vnstock.core.exceptions import (
-    UnsupportedProviderError,
     ProviderInitializationError,
+    UnsupportedProviderError,
 )
+from vnstock.core.types import DataCategory, ProviderType
 
 
 class ProviderRegistry:
@@ -109,9 +110,7 @@ class ProviderRegistry:
         return decorator
 
     @classmethod
-    def get_provider(
-        cls, category: DataCategory, name: str
-    ) -> Type:
+    def get_provider(cls, category: DataCategory, name: str) -> Type:
         """
         Get provider class by category and name.
 
@@ -145,9 +144,7 @@ class ProviderRegistry:
         return cls._registry[category][name]["class"]
 
     @classmethod
-    def get_provider_info(
-        cls, category: DataCategory, name: str
-    ) -> Dict[str, Any]:
+    def get_provider_info(cls, category: DataCategory, name: str) -> Dict[str, Any]:
         """
         Get full provider information.
 
@@ -161,20 +158,13 @@ class ProviderRegistry:
         Raises:
             UnsupportedProviderError: If provider not found
         """
-        if (
-            category not in cls._registry
-            or name not in cls._registry[category]
-        ):
-            raise UnsupportedProviderError(
-                provider=name, category=category.value
-            )
+        if category not in cls._registry or name not in cls._registry[category]:
+            raise UnsupportedProviderError(provider=name, category=category.value)
 
         return cls._registry[category][name]
 
     @classmethod
-    def list_providers(
-        cls, category: Optional[DataCategory] = None
-    ) -> Dict[str, Any]:
+    def list_providers(cls, category: Optional[DataCategory] = None) -> Dict[str, Any]:
         """
         List all registered providers.
 
@@ -210,9 +200,7 @@ class ProviderRegistry:
         """
         result = {}
 
-        categories = (
-            [category] if category else list(cls._registry.keys())
-        )
+        categories = [category] if category else list(cls._registry.keys())
 
         for cat in categories:
             if cat not in cls._registry:
@@ -223,9 +211,7 @@ class ProviderRegistry:
             for name, info in cls._registry[cat].items():
                 provider_type = info["type"]
                 type_key = (
-                    "scraping"
-                    if provider_type == ProviderType.SCRAPING
-                    else "api"
+                    "scraping" if provider_type == ProviderType.SCRAPING else "api"
                 )
                 result[cat.value][type_key].append(name)
 
@@ -243,10 +229,7 @@ class ProviderRegistry:
         Returns:
             True if registered, False otherwise
         """
-        return (
-            category in cls._registry
-            and name in cls._registry[category]
-        )
+        return category in cls._registry and name in cls._registry[category]
 
     @classmethod
     def is_api_provider(cls, name: str) -> bool:
@@ -302,9 +285,7 @@ class ProviderRegistry:
         return list(names)
 
     @classmethod
-    def get_providers_by_type(
-        cls, provider_type: ProviderType
-    ) -> List[str]:
+    def get_providers_by_type(cls, provider_type: ProviderType) -> List[str]:
         """
         Get all providers of a specific type.
 
@@ -343,14 +324,9 @@ class ProviderRegistry:
         for category, providers in cls._registry.items():
             lines.append(f"\n{category.value.upper()}:")
             for name, info in sorted(providers.items()):
-                type_str = (
-                    "API"
-                    if info["type"] == ProviderType.API
-                    else "Scraping"
-                )
+                type_str = "API" if info["type"] == ProviderType.API else "Scraping"
                 lines.append(
-                    f"  - {name:15s} [{type_str:8s}] "
-                    f"({info['class'].__name__})"
+                    f"  - {name:15s} [{type_str:8s}] ({info['class'].__name__})"
                 )
 
         return "\n".join(lines)

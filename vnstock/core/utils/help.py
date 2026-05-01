@@ -8,7 +8,7 @@ def help(obj, method_path):
     - method_path: Path to the method as a dot-separated string,
                    e.g., 'module.class.method'.
     """
-    parts = method_path.split('.')
+    parts = method_path.split(".")
     current_obj = obj
     for part in parts[:-1]:
         try:
@@ -18,11 +18,12 @@ def help(obj, method_path):
             msg += f"'{current_obj.__class__.__name__}'."
             print(msg)
             return
-    
+
     method_name = parts[-1]
     try:
         method = getattr(current_obj, method_name)
         import inspect
+
         print(inspect.getdoc(method))
     except AttributeError:
         msg = f"Method or attribute '{method_name}' not found in "

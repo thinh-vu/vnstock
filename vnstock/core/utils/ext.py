@@ -1,6 +1,7 @@
 import importlib
 from types import MethodType
 
+
 def load_extensions(target_instance, module_name, function_names):
     """
     Dynamically import functions from a specified module and bind them to the target instance.
@@ -24,6 +25,7 @@ def load_extensions(target_instance, module_name, function_names):
         if hasattr(module, func_name):
             func = getattr(module, func_name)
             setattr(target_instance, func_name, MethodType(func, target_instance))
+
 
 def check_plugins_installed(plugins):
     """

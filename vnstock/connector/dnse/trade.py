@@ -1,12 +1,14 @@
-import requests
 import json
-import pandas as pd
-from pandas import json_normalize
 from typing import Optional
+
+import pandas as pd
+import requests
+from pandas import json_normalize
+
 
 class Trade:
     BASE_URL = "https://api.dnse.com.vn"
-    
+
     def __init__(self):
         self.token: Optional[str] = None
         self.trading_token: Optional[str] = None
@@ -23,15 +25,15 @@ class Trade:
             Optional[str]: JWT token if successful, None otherwise.
         """
         url = f"{self.BASE_URL}/auth-service/login"
-        payload = json.dumps({'username': user_name, 'password': password})
-        headers = {'Content-Type': 'application/json'}
+        payload = json.dumps({"username": user_name, "password": password})
+        headers = {"Content-Type": "application/json"}
         response = requests.post(url, headers=headers, data=payload)
         if response.status_code == 200:
-            print('Login successfully')
-            self.token = response.json().get('token')
+            print("Login successfully")
+            self.token = response.json().get("token")
             return self.token
         else:
-            print(f'Login failed: {response.text}')
+            print(f"Login failed: {response.text}")
             return None
 
     def account(self) -> Optional[pd.DataFrame]:
@@ -44,15 +46,15 @@ class Trade:
         """
         url = f"{self.BASE_URL}/user-service/api/me"
         headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.token}'
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}",
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
-            print('Get profile successfully')
+            print("Get profile successfully")
             return pd.DataFrame(response.json(), index=[0])
         else:
-            print(f'Get profile failed: {response.text}')
+            print(f"Get profile failed: {response.text}")
             return None
 
     def sub_accounts(self) -> Optional[pd.DataFrame]:
@@ -68,7 +70,7 @@ class Trade:
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             result = response.json()
-            return json_normalize(result.get('accounts', []))
+            return json_normalize(result.get("accounts", []))
         else:
             print(f"Error: {response.text}")
             return None
@@ -109,11 +111,7 @@ class Trade:
         else:
             print(f"Error: {response.text}")
 
-    def get_trading_token(
-        self,
-        otp: str,
-        smart_otp: bool = True
-    ) -> Optional[str]:
+    def get_trading_token(self, otp: str, smart_otp: bool = True) -> Optional[str]:
         """
         Authenticate using OTP and get the trading token.
 
@@ -127,7 +125,7 @@ class Trade:
         url = f"{self.BASE_URL}/order-service/trading-token"
         headers = {
             "Authorization": f"Bearer {self.token}",
-            "smart-otp" if smart_otp else "otp": otp
+            "smart-otp" if smart_otp else "otp": otp,
         }
         response = requests.post(url, headers=headers)
         if response.status_code == 200:
@@ -140,9 +138,7 @@ class Trade:
             return None
 
     def loan_packages(
-        self,
-        sub_account: str,
-        asset_type: str = 'stock'
+        self, sub_account: str, asset_type: str = "stock"
     ) -> Optional[pd.DataFrame]:
         """
         Get the list of loan packages for a specific sub account.
@@ -155,18 +151,18 @@ class Trade:
             Optional[pd.DataFrame]: DataFrame with loan packages if successful,
                 None otherwise.
         """
-        if asset_type == 'stock':
+        if asset_type == "stock":
             url = f"{self.BASE_URL}/order-service/v2/accounts/"
             url += f"{sub_account}/loan-packages"
         else:
             url = f"{self.BASE_URL}/order-service/accounts/"
             url += f"{sub_account}/derivative-loan-packages"
-        
+
         headers = {"Authorization": f"Bearer {self.token}"}
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             result = response.json()
-            return json_normalize(result.get('loanPackages', []))
+            return json_normalize(result.get("loanPackages", []))
         else:
             print(f"Error: {response.text}")
             return None
@@ -176,8 +172,8 @@ class Trade:
         symbol: str,
         price: float,
         sub_account: str,
-        asset_type: str = 'stock',
-        loan_package_id: Optional[int] = None
+        asset_type: str = "stock",
+        loan_package_id: Optional[int] = None,
     ) -> Optional[pd.DataFrame]:
         """
         Get trade capacities (buying/selling power) for a sub account.
@@ -193,17 +189,15 @@ class Trade:
             Optional[pd.DataFrame]: DataFrame with trade capacities if
                 successful, None otherwise.
         """
-        if asset_type == 'stock':
+        if asset_type == "stock":
             url = f"{self.BASE_URL}/order-service/accounts/"
             url += f"{sub_account}/ppse"
             query_params = {
                 "symbol": symbol,
                 "price": price,
-                "loanPackageId": loan_package_id
+                "loanPackageId": loan_package_id,
             }
-            query_params = {
-                k: v for k, v in query_params.items() if v is not None
-            }
+            query_params = {k: v for k, v in query_params.items() if v is not None}
             if query_params:
                 params_str = "&".join(
                     [f"{key}={value}" for key, value in query_params.items()]
@@ -215,11 +209,9 @@ class Trade:
             query_params = {
                 "symbol": symbol,
                 "price": price,
-                "loanPackageId": loan_package_id
+                "loanPackageId": loan_package_id,
             }
-            query_params = {
-                k: v for k, v in query_params.items() if v is not None
-            }
+            query_params = {k: v for k, v in query_params.items() if v is not None}
             if query_params:
                 params_str = "&".join(
                     [f"{key}={value}" for key, value in query_params.items()]
@@ -243,7 +235,7 @@ class Trade:
         price: float,
         order_type: str,
         loan_package_id: Optional[int],
-        asset_type: str = 'stock'
+        asset_type: str = "stock",
     ) -> Optional[pd.DataFrame]:
         """
         Place an order for stocks or derivatives.
@@ -262,16 +254,16 @@ class Trade:
             Optional[pd.DataFrame]: DataFrame with order info if successful,
                 None otherwise.
         """
-        side_code = 'NB' if side == 'buy' else 'NS'
+        side_code = "NB" if side == "buy" else "NS"
 
-        if asset_type == 'stock':
+        if asset_type == "stock":
             url = f"{self.BASE_URL}/order-service/v2/orders"
         else:
             url = f"{self.BASE_URL}/order-service/derivative/orders"
-        
+
         headers = {
             "Authorization": f"Bearer {self.token}",
-            "Trading-Token": self.trading_token
+            "Trading-Token": self.trading_token,
         }
         payload = {
             "accountNo": sub_account,
@@ -279,8 +271,8 @@ class Trade:
             "side": side_code,
             "quantity": quantity,
             "price": price,
-            'orderType': order_type,
-            "loanPackageId": loan_package_id
+            "orderType": order_type,
+            "loanPackageId": loan_package_id,
         }
         response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 200:
@@ -290,9 +282,7 @@ class Trade:
             return None
 
     def order_list(
-        self,
-        sub_account: str,
-        asset_type: str = 'stock'
+        self, sub_account: str, asset_type: str = "stock"
     ) -> Optional[pd.DataFrame]:
         """
         Get the list of orders for a specific account.
@@ -305,27 +295,24 @@ class Trade:
             Optional[pd.DataFrame]: DataFrame with list of orders if
                 successful, None otherwise.
         """
-        if asset_type == 'stock':
+        if asset_type == "stock":
             url = f"{self.BASE_URL}/order-service/v2/orders"
             url += f"?accountNo={sub_account}"
         else:
             url = f"{self.BASE_URL}/order-service/derivative/orders"
             url += f"?accountNo={sub_account}"
-        
+
         headers = {"Authorization": f"Bearer {self.token}"}
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
-            print('Order list retrieved')
-            return json_normalize(response.json().get('orders', []))
+            print("Order list retrieved")
+            return json_normalize(response.json().get("orders", []))
         else:
             print(f"Error: {response.text}")
             return None
 
     def order_detail(
-        self,
-        order_id: str,
-        sub_account: str,
-        asset_type: str = 'stock'
+        self, order_id: str, sub_account: str, asset_type: str = "stock"
     ) -> Optional[pd.DataFrame]:
         """
         Get the details of a specific order for a sub account.
@@ -339,13 +326,13 @@ class Trade:
             Optional[pd.DataFrame]: DataFrame with order details if
                 successful, None otherwise.
         """
-        if asset_type == 'stock':
+        if asset_type == "stock":
             url = f"{self.BASE_URL}/order-service/v2/orders/{order_id}"
             url += f"?accountNo={sub_account}"
         else:
             url = f"{self.BASE_URL}/order-service/derivative/orders/"
             url += f"{order_id}?accountNo={sub_account}"
-        
+
         headers = {"Authorization": f"Bearer {self.token}"}
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -355,10 +342,7 @@ class Trade:
             return None
 
     def cancel_order(
-        self,
-        order_id: str,
-        sub_account: str,
-        asset_type: str = 'stock'
+        self, order_id: str, sub_account: str, asset_type: str = "stock"
     ) -> Optional[pd.DataFrame]:
         """
         Cancel an order.
@@ -372,16 +356,16 @@ class Trade:
             Optional[pd.DataFrame]: DataFrame with cancellation result if
                 successful, None otherwise.
         """
-        if asset_type == 'stock':
+        if asset_type == "stock":
             url = f"{self.BASE_URL}/order-service/v2/orders/{order_id}"
             url += f"?accountNo={sub_account}"
         else:
             url = f"{self.BASE_URL}/order-service/derivative/orders/"
             url += f"{order_id}?accountNo={sub_account}"
-        
+
         headers = {
             "Authorization": f"Bearer {self.token}",
-            "Trading-Token": self.trading_token
+            "Trading-Token": self.trading_token,
         }
         response = requests.delete(url, headers=headers)
         if response.status_code == 200:
@@ -392,9 +376,7 @@ class Trade:
             return None
 
     def deals_list(
-        self,
-        sub_account: str,
-        asset_type: str = 'stock'
+        self, sub_account: str, asset_type: str = "stock"
     ) -> Optional[pd.DataFrame]:
         """
         Get the list of deals for a specific sub account.
@@ -407,27 +389,23 @@ class Trade:
             Optional[pd.DataFrame]: DataFrame with list of deals if
                 successful, None otherwise.
         """
-        if asset_type == 'stock':
-            url = f'{self.BASE_URL}/deal-service/deals'
-            url += f'?accountNo={sub_account}'
+        if asset_type == "stock":
+            url = f"{self.BASE_URL}/deal-service/deals"
+            url += f"?accountNo={sub_account}"
         else:
-            url = f'{self.BASE_URL}/derivative-core/deals'
-            url += f'?accountNo={sub_account}'
-        
+            url = f"{self.BASE_URL}/derivative-core/deals"
+            url += f"?accountNo={sub_account}"
+
         headers = {"Authorization": f"Bearer {self.token}"}
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
-            print('Deals list retrieved')
-            return json_normalize(response.json().get('data', []))
+            print("Deals list retrieved")
+            return json_normalize(response.json().get("data", []))
         else:
             print(f"Error: {response.text}")
             return None
 
-    def set_deal_pnl_config(
-        self,
-        deal_id: int,
-        config: dict
-    ) -> Optional[pd.DataFrame]:
+    def set_deal_pnl_config(self, deal_id: int, config: dict) -> Optional[pd.DataFrame]:
         """
         Set take profit/stop loss config for a specific deal.
 
@@ -454,7 +432,7 @@ class Trade:
         url = f"{self.BASE_URL}/derivative-deal-risk/pnl-configs/{deal_id}"
         headers = {
             "Authorization": f"Bearer {self.token}",
-            "Trading-Token": self.trading_token
+            "Trading-Token": self.trading_token,
         }
         response = requests.post(url, headers=headers, json=config)
         if response.status_code == 200:
@@ -465,9 +443,7 @@ class Trade:
             return None
 
     def set_account_pnl_config(
-        self,
-        account_no: str,
-        config: dict
+        self, account_no: str, config: dict
     ) -> Optional[pd.DataFrame]:
         """
         Set take profit/stop loss config for an account.
@@ -493,7 +469,7 @@ class Trade:
         url += f"account-pnl-configs/{account_no}"
         headers = {
             "Authorization": f"Bearer {self.token}",
-            "Trading-Token": self.trading_token
+            "Trading-Token": self.trading_token,
         }
         response = requests.patch(url, headers=headers, json=config)
         if response.status_code == 200:
@@ -517,7 +493,7 @@ class Trade:
         url = f"{self.BASE_URL}/derivative-core/deals/{deal_id}/close"
         headers = {
             "Authorization": f"Bearer {self.token}",
-            "Trading-Token": self.trading_token
+            "Trading-Token": self.trading_token,
         }
         response = requests.post(url, headers=headers)
         if response.status_code == 200:
@@ -534,7 +510,7 @@ class Trade:
         loan_package_id: int,
         amount: int,
         via: str,
-        otp: str
+        otp: str,
     ) -> Optional[pd.DataFrame]:
         """
         Deposit margin for derivative trading.
@@ -552,16 +528,13 @@ class Trade:
                 None otherwise.
         """
         url = f"{self.BASE_URL}/derivative-asset-service/deposit"
-        headers = {
-            "Authorization": f"Bearer {self.token}",
-            "smart-otp": otp
-        }
+        headers = {"Authorization": f"Bearer {self.token}", "smart-otp": otp}
         payload = {
             "accountNo": account_no,
             "sourceAccountNo": source_account_no,
             "loanPackageId": loan_package_id,
             "amount": amount,
-            "via": via
+            "via": via,
         }
         response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 200:
@@ -578,7 +551,7 @@ class Trade:
         loan_package_id: int,
         amount: int,
         via: str,
-        otp: str
+        otp: str,
     ) -> Optional[pd.DataFrame]:
         """
         Withdraw margin from derivative trading.
@@ -596,16 +569,13 @@ class Trade:
                 None otherwise.
         """
         url = f"{self.BASE_URL}/derivative-asset-service/withdraw"
-        headers = {
-            "Authorization": f"Bearer {self.token}",
-            "smart-otp": otp
-        }
+        headers = {"Authorization": f"Bearer {self.token}", "smart-otp": otp}
         payload = {
             "accountNo": account_no,
             "sourceAccountNo": source_account_no,
             "loanPackageId": loan_package_id,
             "amount": amount,
-            "via": via
+            "via": via,
         }
         response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 200:
@@ -615,10 +585,7 @@ class Trade:
             print(f"Error: {response.text}")
             return None
 
-    def get_derivative_cash_account(
-        self,
-        account_no: str
-    ) -> Optional[pd.DataFrame]:
+    def get_derivative_cash_account(self, account_no: str) -> Optional[pd.DataFrame]:
         """
         Get derivative cash account information.
 
@@ -641,7 +608,7 @@ class Trade:
         url += f"?accountNo={account_no}"
         headers = {
             "Authorization": f"Bearer {self.token}",
-            "accept": "application/json, text/plain,/"
+            "accept": "application/json, text/plain,/",
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -651,9 +618,7 @@ class Trade:
             return None
 
     def get_derivative_ppse(
-        self,
-        account_no: str,
-        loan_package_id: int
+        self, account_no: str, loan_package_id: int
     ) -> Optional[pd.DataFrame]:
         """
         Get derivative buying power (PP0) information.
@@ -688,7 +653,7 @@ class Trade:
         target_order: dict,
         props: dict,
         time_in_force: dict,
-        category: str = "STOP"
+        category: str = "STOP",
     ) -> Optional[pd.DataFrame]:
         """
         Place a conditional order.
@@ -724,7 +689,7 @@ class Trade:
             "props": props,
             "accountNo": account_no,
             "category": category,
-            "timeInForce": time_in_force
+            "timeInForce": time_in_force,
         }
         response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 200:
@@ -744,7 +709,7 @@ class Trade:
         page: int = 1,
         size: int = 10000,
         status: Optional[list] = None,
-        symbol: Optional[str] = None
+        symbol: Optional[str] = None,
     ) -> Optional[pd.DataFrame]:
         """
         Get list of conditional orders.
@@ -773,7 +738,7 @@ class Trade:
             "marketId": market_id,
             "daily": daily,
             "page": page,
-            "size": size
+            "size": size,
         }
         if from_date:
             params["from"] = from_date
@@ -787,15 +752,12 @@ class Trade:
         response = requests.get(url, headers=headers, params=params)
         if response.status_code == 200:
             result = response.json()
-            return json_normalize(result.get('content', []))
+            return json_normalize(result.get("content", []))
         else:
             print(f"Error: {response.text}")
             return None
 
-    def conditional_order_detail(
-        self,
-        order_id: str
-    ) -> Optional[pd.DataFrame]:
+    def conditional_order_detail(self, order_id: str) -> Optional[pd.DataFrame]:
         """
         Get details of a specific conditional order.
 
@@ -815,10 +777,7 @@ class Trade:
             print(f"Error: {response.text}")
             return None
 
-    def cancel_conditional_order(
-        self,
-        order_id: str
-    ) -> Optional[pd.DataFrame]:
+    def cancel_conditional_order(self, order_id: str) -> Optional[pd.DataFrame]:
         """
         Cancel a conditional order.
 

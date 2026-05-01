@@ -69,7 +69,7 @@ def test_quote(mock_response_factory):
         json_data={'close': 100.0},
         status_code=200
     )
-    
+
     # Your test code
     assert mock.status_code == 200
 ```
@@ -224,7 +224,7 @@ from vnstock.explorer.mysource import MyClass
 @pytest.mark.mysource
 class TestMyNewSource:
     """Test MyNewSource functionality."""
-    
+
     def test_basic_functionality(self):
         obj = MyClass()
         assert obj is not None
@@ -243,7 +243,7 @@ def test_with_symbols(self, diverse_test_symbols):
     symbols = diverse_test_symbols['hose']  # 10 HOSE symbols
     for symbol in symbols:
         # Test each symbol
-        
+
 def test_with_mocks(self, mock_response_factory):
     mock = mock_response_factory({'data': [...]})
     # Use mock in test
@@ -298,15 +298,15 @@ pytest -m slow -v           # Slow tests verbose
 # Symbol fixtures
 def test_example(random_hose_symbols):
     symbol = random_hose_symbols[0]  # One symbol
-    
+
 def test_example(diverse_test_symbols):
     all_symbols = diverse_test_symbols['all']  # 30 symbols
     hose = diverse_test_symbols['hose']  # 10 HOSE symbols
-    
+
 # Mock fixtures
 def test_example(mock_response_factory):
     mock = mock_response_factory(json_data={'key': 'value'})
-    
+
 # Validation fixtures
 def test_example(df_validators):
     validators = df_validators
@@ -401,7 +401,7 @@ pytest runs
 
 ---
 
-**Last Updated**: November 12, 2025  
-**Test Status**: ✅ All 36 unit tests passing  
-**Coverage**: 29% (unit tests), 81% ProxyManager  
+**Last Updated**: November 12, 2025
+**Test Status**: ✅ All 36 unit tests passing
+**Coverage**: 29% (unit tests), 81% ProxyManager
 **Ready for AI**: Yes - use this guide for context ✨

@@ -8,7 +8,7 @@ Location: tests/examples/proxy_examples.py (Demo code, not core utils)
 Usage: python -m tests.examples.proxy_examples
 """
 
-from vnstock.core.utils.proxy_manager import ProxyManager, Proxy
+from vnstock.core.utils.proxy_manager import Proxy, ProxyManager
 from vnstock.explorer.vci.quote import Quote
 
 
@@ -45,9 +45,7 @@ def example_2_test_proxies():
 
     # Test each proxy
     working, failed = manager.test_proxies(
-        proxies,
-        test_url='https://httpbin.org/ip',
-        timeout=5
+        proxies, test_url="https://httpbin.org/ip", timeout=5
     )
 
     print(f"✓ Working: {len(working)} proxies")
@@ -84,24 +82,9 @@ def example_4_create_custom_proxy():
 
     # Create custom proxies
     proxies = [
-        Proxy(
-            protocol='http',
-            ip='192.168.1.100',
-            port=8080,
-            country='Vietnam'
-        ),
-        Proxy(
-            protocol='https',
-            ip='10.0.0.1',
-            port=3128,
-            country='USA'
-        ),
-        Proxy(
-            protocol='socks5',
-            ip='172.16.0.1',
-            port=1080,
-            country='UK'
-        ),
+        Proxy(protocol="http", ip="192.168.1.100", port=8080, country="Vietnam"),
+        Proxy(protocol="https", ip="10.0.0.1", port=3128, country="USA"),
+        Proxy(protocol="socks5", ip="172.16.0.1", port=1080, country="UK"),
     ]
 
     print("Custom Proxies:")
@@ -114,23 +97,14 @@ def example_5_proxy_with_vci_quote():
     print("\n=== Example 5: Proxy with VCI Quote ===")
 
     # Create a proxy
-    proxy = Proxy(
-        protocol='http',
-        ip='127.0.0.1',
-        port=3128,
-        country='Local'
-    )
+    proxy = Proxy(protocol="http", ip="127.0.0.1", port=3128, country="Local")
 
     print(f"Proxy configuration: {proxy.address}")
     print(f"Proxy dict format: {proxy.dict_format}")
 
     # Create VCI Quote instance
     try:
-        quote = Quote(
-            symbol='ACB',
-            random_agent=False,
-            show_log=False
-        )
+        quote = Quote(symbol="ACB", random_agent=False, show_log=False)
         print(f"✓ VCI Quote initialized for symbol: {quote.symbol}")
 
         # Note: To actually use the proxy, you would need to
@@ -145,7 +119,7 @@ def example_6_batch_proxy_processing():
     """Example 6: Process multiple symbols with proxy rotation."""
     print("\n=== Example 6: Proxy Rotation Example ===")
 
-    symbols = ['ACB', 'VCB', 'TCB']
+    symbols = ["ACB", "VCB", "TCB"]
     manager = ProxyManager()
 
     # Fetch proxies for rotation
@@ -190,8 +164,8 @@ def example_7_proxy_manager_workflow():
         # Step 3: Test best proxy
         print("\nStep 3: Testing best proxy...")
         works = manager.test_proxy(best)
-        status = 'works' if works else 'failed'
-        symbol = '✓' if works else '✗'
+        status = "works" if works else "failed"
+        symbol = "✓" if works else "✗"
         print(f"{symbol} Proxy {status}")
 
         # Step 4: Display all proxies
@@ -223,16 +197,16 @@ def example_8_proxy_error_handling():
 
         # Fallback: Create static proxy list
         fallback_proxies = [
-            Proxy('http', 'proxy1.example.com', 8080),
-            Proxy('http', 'proxy2.example.com', 3128),
+            Proxy("http", "proxy1.example.com", 8080),
+            Proxy("http", "proxy2.example.com", 3128),
         ]
         print(f"✓ Created {len(fallback_proxies)} fallback proxies")
 
 
-if __name__ == '__main__':
-    print("\n" + "="*60)
+if __name__ == "__main__":
+    print("\n" + "=" * 60)
     print("ProxyManager Examples for vnstock")
-    print("="*60)
+    print("=" * 60)
 
     # Run examples (comment out as needed)
     example_1_basic_proxy_fetch()
@@ -244,6 +218,6 @@ if __name__ == '__main__':
     # example_7_proxy_manager_workflow()  # Comprehensive
     example_8_proxy_error_handling()
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Examples complete!")
-    print("="*60)
+    print("=" * 60)

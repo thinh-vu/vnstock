@@ -5,17 +5,18 @@ This module provides the base class that all providers (both
 scraping and API-based) should inherit from.
 """
 
-from typing import Optional, Dict, Any
 from abc import ABC
+from typing import Any, Dict, Optional
+
+from vnstock.core.exceptions import (
+    ConfigurationError,
+    MissingAPIKeyError,
+)
 from vnstock.core.settings import get_config
 from vnstock.core.types import DataCategory, ProviderType
-from vnstock.core.exceptions import (
-    MissingAPIKeyError,
-    ConfigurationError,
-)
 
 
-class BaseProvider(ABC):
+class BaseProvider(ABC):  # noqa: B024
     """
     Base class for all data providers.
 
@@ -134,9 +135,7 @@ class BaseProvider(ABC):
             "name": self.provider_name,
             "type": self.provider_type.value if self.provider_type else None,
             "category": (
-                self.provider_category.value
-                if self.provider_category
-                else None
+                self.provider_category.value if self.provider_category else None
             ),
             "class": self.__class__.__name__,
             "symbol": self.symbol,
@@ -184,7 +183,7 @@ class QuoteProviderMixin:
                     details={"start": start, "end": end},
                 )
         except ValueError as e:
-            raise ConfigurationError(
+            raise ConfigurationError(  # noqa: B904
                 f"Invalid date format: {e}. Use YYYY-MM-DD",
                 config_key="date_format",
             )
@@ -219,9 +218,7 @@ class CompanyProviderMixin:
         # Basic validation
         sym = sym.strip().upper()
         if not sym:
-            raise ConfigurationError(
-                "Symbol cannot be empty", config_key="symbol"
-            )
+            raise ConfigurationError("Symbol cannot be empty", config_key="symbol")
 
         return sym
 

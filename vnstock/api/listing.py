@@ -1,10 +1,13 @@
 # vnstock/api/listing.py
 
 from typing import Any
+
 from tenacity import retry, stop_after_attempt, wait_exponential
 from vnai import optimize_execution
-from vnstock.config import Config
+
 from vnstock.base import BaseAdapter, dynamic_method
+from vnstock.config import Config
+
 
 class Listing(BaseAdapter):
     _module_name = "listing"
@@ -28,32 +31,29 @@ class Listing(BaseAdapter):
         group = lst.symbols_by_group(group="VN30")
         fu = lst.all_future_indices()
     """
+
     def __init__(
-        self,
-        source: str = "kbs",
-        random_agent: bool = False,
-        show_log: bool = False
+        self, source: str = "kbs", random_agent: bool = False, show_log: bool = False
     ):
         # Ensure explorer modules are loaded (lazy load to avoid deadlock)
         from vnstock import _ensure_explorer_modules_loaded
+
         _ensure_explorer_modules_loaded()
-        
+
         # Store parameters for later use
         self.source = source
         self.random_agent = random_agent
         self.show_log = show_log
-        
+
         # Validate the source to only accept vci or msn
         if source.lower() not in ["kbs", "vci", "msn"]:
-            raise ValueError("Lớp Listing chỉ nhận giá trị tham số source là 'KBS', 'VCI' hoặc 'MSN'.")
-        
+            raise ValueError(
+                "Lớp Listing chỉ nhận giá trị tham số source là 'KBS', 'VCI' hoặc 'MSN'."
+            )
+
         # BaseAdapter will discover vnstock.explorer.<real_source>.listing
         # and pass only the kwargs its __init__ accepts (random_agent, show_log).
-        super().__init__(
-            source=source,
-            random_agent=random_agent,
-            show_log=show_log
-        )
+        super().__init__(source=source, random_agent=random_agent, show_log=show_log)
 
     @optimize_execution("API")
     @retry(
@@ -61,8 +61,8 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def all_symbols(self, *args: Any, **kwargs: Any) -> Any:
@@ -75,8 +75,8 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def symbols_by_industries(self, *args: Any, **kwargs: Any) -> Any:
@@ -89,8 +89,8 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def symbols_by_exchange(self, *args: Any, **kwargs: Any) -> Any:
@@ -103,8 +103,8 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def industries_icb(self, *args: Any, **kwargs: Any) -> Any:
@@ -117,8 +117,8 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def symbols_by_group(self, *args: Any, **kwargs: Any) -> Any:
@@ -131,12 +131,18 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def get_supported_groups(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve all supported index groups."""
+        pass
+
+    @optimize_execution("API")
+    @dynamic_method
+    def market_status(self, *args: Any, **kwargs: Any) -> Any:
+        """Get live market status."""
         pass
 
     @optimize_execution("API")
@@ -148,10 +154,6 @@ class Listing(BaseAdapter):
     @optimize_execution("API")
     @dynamic_method
     def search_symbol(self, *args: Any, **kwargs: Any) -> Any:
-
-
-
-
         """Search for symbols matching the query."""
         pass
 
@@ -176,8 +178,6 @@ class Listing(BaseAdapter):
         """Retrieve detailed symbol/asset information."""
         pass
 
-
-
     # shortcuts that delegate to symbols_by_group
     @optimize_execution("API")
     @retry(
@@ -185,8 +185,8 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     def all_future_indices(self, **kwargs: Any) -> Any:
         """Retrieve all futures indices (group='FU_INDEX')."""
@@ -198,8 +198,8 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     def all_government_bonds(self, **kwargs: Any) -> Any:
         """Retrieve all government bonds (group='FU_BOND')."""
@@ -211,8 +211,8 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     def all_covered_warrant(self, **kwargs: Any) -> Any:
         """Retrieve all covered warrants (group='CW')."""
@@ -224,13 +224,13 @@ class Listing(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     def all_bonds(self, **kwargs: Any) -> Any:
         """Retrieve all bonds (group='BOND')."""
         return self.symbols_by_group(group="BOND", **kwargs)
-        
+
     def _delegate_to_provider(self, method_name: str, **kwargs: Any) -> Any:
         """
         Delegate method call to the provider.

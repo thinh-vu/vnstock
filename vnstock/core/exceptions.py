@@ -5,12 +5,12 @@ This module provides a hierarchy of exceptions with error codes
 for better error handling and debugging.
 """
 
-from typing import Optional, Dict, Any
-
+from typing import Any, Dict, Optional
 
 # ============================================================================
 # BASE EXCEPTION
 # ============================================================================
+
 
 class VnstockError(Exception):
     """Base exception for all vnstock errors."""
@@ -38,9 +38,7 @@ class VnstockError(Exception):
         """Format error message with code and details."""
         msg = f"[{self.error_code}] {self.message}"
         if self.details:
-            details_str = ", ".join(
-                f"{k}={v}" for k, v in self.details.items()
-            )
+            details_str = ", ".join(f"{k}={v}" for k, v in self.details.items())
             msg += f" ({details_str})"
         return msg
 
@@ -60,6 +58,7 @@ class VnstockError(Exception):
 # ============================================================================
 # PROVIDER ERRORS
 # ============================================================================
+
 
 class ProviderError(VnstockError):
     """Base exception for provider-related errors."""
@@ -186,6 +185,7 @@ class ProviderInitializationError(ProviderError):
 # DATA ERRORS
 # ============================================================================
 
+
 class DataFetchError(VnstockError):
     """Raised when data fetching fails."""
 
@@ -290,6 +290,7 @@ class DataValidationError(VnstockError):
 # CONFIGURATION ERRORS
 # ============================================================================
 
+
 class ConfigurationError(VnstockError):
     """Raised when configuration is invalid or missing."""
 
@@ -351,6 +352,7 @@ class MissingAPIKeyError(ConfigurationError):
 # ============================================================================
 # NETWORK ERRORS
 # ============================================================================
+
 
 class NetworkError(VnstockError):
     """Raised when network request fails."""
@@ -449,8 +451,10 @@ class TimeoutError(NetworkError):
 # DEPRECATION WARNING
 # ============================================================================
 
+
 class DeprecationWarning(UserWarning):
     """Warning for deprecated features."""
+
     pass
 
 

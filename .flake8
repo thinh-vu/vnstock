@@ -1,7 +1,7 @@
 [flake8]
 max-line-length = 127
 max-complexity = 10
-exclude = 
+exclude =
     .git,
     __pycache__,
     .venv,
@@ -18,7 +18,7 @@ exclude =
     docs,
     tests/fixtures
 
-ignore = 
+ignore =
     E203,
     E266,
     E501,

@@ -9,20 +9,22 @@ All data sources (VCI, TCBS, MSN) use this module to provide a unified,
 consistent interface for index and sector lookups.
 """
 
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
+
 import pandas as pd
+
 from vnstock.constants import (
+    EXCHANGES,
+    INDEX_GROUPS,
     INDICES_INFO,
     INDICES_MAP,
-    INDEX_GROUPS,
     SECTOR_IDS,
-    EXCHANGES,
 )
-
 
 # =============================================================================
 # INDEX INFORMATION QUERIES
 # =============================================================================
+
 
 def get_all_indices() -> pd.DataFrame:
     """
@@ -35,16 +37,16 @@ def get_all_indices() -> pd.DataFrame:
     data = []
     for symbol, info in INDICES_INFO.items():
         row = {
-            'symbol': symbol,
-            'name': info['name'],
-            'description': info['description'],
-            'full_name': info['full_name'],
-            'group': info['group'],
-            'index_id': info['index_id'],
+            "symbol": symbol,
+            "name": info["name"],
+            "description": info["description"],
+            "full_name": info["full_name"],
+            "group": info["group"],
+            "index_id": info["index_id"],
         }
         # sector_id chỉ có với sector indices
-        if 'sector_id' in info:
-            row['sector_id'] = info['sector_id']
+        if "sector_id" in info:
+            row["sector_id"] = info["sector_id"]
         data.append(row)
     return pd.DataFrame(data)
 
@@ -86,7 +88,7 @@ def get_index_description(symbol: str) -> Optional[str]:
         Optional[str]: Description or None if not found
     """
     info = INDICES_INFO.get(symbol.upper())
-    return info['description'] if info else None
+    return info["description"] if info else None
 
 
 def is_valid_index(symbol: str) -> bool:
@@ -100,7 +102,7 @@ def is_valid_index(symbol: str) -> bool:
         bool: True if index exists
     """
     # Standard market indices
-    market_indices = {'VNINDEX', 'HNXINDEX', 'UPCOMINDEX', 'HNX30'}
+    market_indices = {"VNINDEX", "HNXINDEX", "UPCOMINDEX", "HNX30"}
     symbol = symbol.upper()
     return symbol in INDICES_INFO or symbol in market_indices
 
@@ -108,6 +110,7 @@ def is_valid_index(symbol: str) -> bool:
 # =============================================================================
 # INDEX GROUP QUERIES
 # =============================================================================
+
 
 def get_indices_by_group(group: str) -> Optional[pd.DataFrame]:
     """
@@ -128,16 +131,16 @@ def get_indices_by_group(group: str) -> Optional[pd.DataFrame]:
         if symbol in INDICES_INFO:
             info = INDICES_INFO[symbol]
             row = {
-                'symbol': symbol,
-                'name': info['name'],
-                'description': info['description'],
-                'full_name': info['full_name'],
-                'group': info['group'],
-                'index_id': info['index_id'],
+                "symbol": symbol,
+                "name": info["name"],
+                "description": info["description"],
+                "full_name": info["full_name"],
+                "group": info["group"],
+                "index_id": info["index_id"],
             }
             # sector_id chỉ có với sector indices
-            if 'sector_id' in info:
-                row['sector_id'] = info['sector_id']
+            if "sector_id" in info:
+                row["sector_id"] = info["sector_id"]
             data.append(row)
     return pd.DataFrame(data) if data else None
 
@@ -169,6 +172,7 @@ def get_indices_symbols_by_group(group: str) -> Optional[List[str]]:
 # SECTOR QUERIES
 # =============================================================================
 
+
 def get_sector_name(sector_id: int) -> Optional[str]:
     """
     Get sector name by ID.
@@ -189,16 +193,14 @@ def get_all_sectors() -> pd.DataFrame:
     Returns:
         pd.DataFrame: Columns [sector_id, name]
     """
-    data = [
-        {'sector_id': sid, 'name': sname}
-        for sid, sname in SECTOR_IDS.items()
-    ]
+    data = [{"sector_id": sid, "name": sname} for sid, sname in SECTOR_IDS.items()]
     return pd.DataFrame(data)
 
 
 # =============================================================================
 # EXCHANGE QUERIES
 # =============================================================================
+
 
 def get_all_exchanges() -> List[str]:
     """

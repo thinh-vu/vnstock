@@ -6,8 +6,8 @@ variable support using dataclasses.
 """
 
 import os
-from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
+from typing import Any, Dict, Optional
 
 
 @dataclass
@@ -276,6 +276,7 @@ def reset_config() -> None:
 # ============================================================================
 # CONVENIENCE FUNCTIONS
 # ============================================================================
+
 
 def get_api_key(provider: str) -> Optional[str]:
     """

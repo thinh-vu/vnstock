@@ -8,8 +8,9 @@ Tests cover:
 - Different date ranges
 """
 
-import pytest
 import pandas as pd
+import pytest
+
 from vnstock.explorer.vci.quote import Quote
 
 
@@ -24,55 +25,45 @@ class TestVCIQuoteComprehensive:
         self, diverse_test_symbols, test_intervals
     ):
         """Test history() with all intervals on HOSE samples."""
-        hose_samples = diverse_test_symbols['hose'][:3]
-        
+        hose_samples = diverse_test_symbols["hose"][:3]
+
         for symbol in hose_samples:
             quote = Quote(symbol=symbol, random_agent=False, show_log=False)
-            
-            for interval in ['1D', '1W', '1M']:  # Start with longer intervals
+
+            for interval in ["1D", "1W", "1M"]:  # Start with longer intervals
                 try:
                     df = quote.history(
-                        start='2024-01-01',
-                        end='2024-11-11',
-                        interval=interval
+                        start="2024-01-01", end="2024-11-11", interval=interval
                     )
-                    
-                    assert isinstance(df, pd.DataFrame), \
+
+                    assert isinstance(df, pd.DataFrame), (
                         f"Failed for {symbol} with interval {interval}"
-                    
+                    )
+
                     if not df.empty:
-                        expected_cols = ['open', 'high', 'low', 'close']
+                        expected_cols = ["open", "high", "low", "close"]
                         for col in expected_cols:
-                            assert col in df.columns, \
+                            assert col in df.columns, (
                                 f"Missing {col} in {symbol} {interval}"
-                
+                            )
+
                 except Exception as e:
                     pytest.fail(
-                        f"history() failed for {symbol} "
-                        f"interval={interval}: {e}"
+                        f"history() failed for {symbol} interval={interval}: {e}"
                     )
 
     # @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_random_hose_symbols(self, random_hose_symbols):
         """Test history() with random HOSE symbols."""
         test_symbols = random_hose_symbols[:10]
-        
+
         for symbol in test_symbols:
             try:
-                quote = Quote(
-                    symbol=symbol,
-                    random_agent=False,
-                    show_log=False
-                )
-                df = quote.history(
-                    start='2024-10-01',
-                    end='2024-10-31',
-                    interval='1D'
-                )
-                
-                assert isinstance(df, pd.DataFrame), \
-                    f"Failed for HOSE symbol {symbol}"
-            
+                quote = Quote(symbol=symbol, random_agent=False, show_log=False)
+                df = quote.history(start="2024-10-01", end="2024-10-31", interval="1D")
+
+                assert isinstance(df, pd.DataFrame), f"Failed for HOSE symbol {symbol}"
+
             except Exception as e:
                 pytest.fail(f"HOSE {symbol} history failed: {e}")
 
@@ -80,23 +71,14 @@ class TestVCIQuoteComprehensive:
     def test_history_random_hnx_symbols(self, random_hnx_symbols):
         """Test history() with random HNX symbols."""
         test_symbols = random_hnx_symbols[:10]
-        
+
         for symbol in test_symbols:
             try:
-                quote = Quote(
-                    symbol=symbol,
-                    random_agent=False,
-                    show_log=False
-                )
-                df = quote.history(
-                    start='2024-10-01',
-                    end='2024-10-31',
-                    interval='1D'
-                )
-                
-                assert isinstance(df, pd.DataFrame), \
-                    f"Failed for HNX symbol {symbol}"
-            
+                quote = Quote(symbol=symbol, random_agent=False, show_log=False)
+                df = quote.history(start="2024-10-01", end="2024-10-31", interval="1D")
+
+                assert isinstance(df, pd.DataFrame), f"Failed for HNX symbol {symbol}"
+
             except Exception as e:
                 pytest.fail(f"HNX {symbol} history failed: {e}")
 
@@ -105,113 +87,84 @@ class TestVCIQuoteComprehensive:
         """Test history() with random UPCOM symbols."""
         test_symbols = random_upcom_symbols[:10]
         success_count = 0
-        
+
         for symbol in test_symbols:
             try:
-                quote = Quote(
-                    symbol=symbol,
-                    random_agent=False,
-                    show_log=False
-                )
-                df = quote.history(
-                    start='2024-10-01',
-                    end='2024-10-31',
-                    interval='1D'
-                )
-                
+                quote = Quote(symbol=symbol, random_agent=False, show_log=False)
+                df = quote.history(start="2024-10-01", end="2024-10-31", interval="1D")
+
                 if isinstance(df, pd.DataFrame) and not df.empty:
                     success_count += 1
-            
+
             except Exception as e:
                 print(f"UPCOM {symbol} history failed: {e}")
-                
+
         # If at least one symbol worked, we consider the test passed.
         # UPCOM symbols often have liquidity issues or missing data.
         if success_count == 0:
-             pytest.skip("No data available for any of the tested UPCOM symbols")
+            pytest.skip("No data available for any of the tested UPCOM symbols")
 
     # @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_derivatives(self):
         """Test history() with derivative symbols."""
         # Dynamically fetch future indices to ensure valid symbols
         from vnstock.explorer.vci.listing import Listing
+
         listing = Listing(random_agent=False, show_log=False)
         try:
             derivative_symbols = listing.all_future_indices()
             if isinstance(derivative_symbols, pd.Series):
                 derivative_symbols = derivative_symbols.tolist()
             elif isinstance(derivative_symbols, pd.DataFrame):
-                derivative_symbols = derivative_symbols['symbol'].tolist()
+                derivative_symbols = derivative_symbols["symbol"].tolist()
         except Exception:
-            derivative_symbols = ['VN30F1M'] # Fallback
-            
+            derivative_symbols = ["VN30F1M"]  # Fallback
+
         if not derivative_symbols:
             pytest.skip("No derivative symbols found")
 
         success_count = 0
         for symbol in derivative_symbols[:3]:
             try:
-                quote = Quote(
-                    symbol=symbol,
-                    random_agent=False,
-                    show_log=False
-                )
-                df = quote.history(
-                    start='2024-10-01',
-                    end='2024-10-31',
-                    interval='1D'
-                )
-                
-                assert isinstance(df, pd.DataFrame), \
-                    f"Failed for derivative {symbol}"
+                quote = Quote(symbol=symbol, random_agent=False, show_log=False)
+                df = quote.history(start="2024-10-01", end="2024-10-31", interval="1D")
+
+                assert isinstance(df, pd.DataFrame), f"Failed for derivative {symbol}"
                 success_count += 1
-            
+
             except Exception as e:
                 print(f"Derivative {symbol} failed: {e}")
-        
+
         if success_count == 0 and len(derivative_symbols) > 0:
-             pytest.skip("All tested derivatives failed to return data (likely expired or no data in range)")
+            pytest.skip(
+                "All tested derivatives failed to return data (likely expired or no data in range)"
+            )
 
     # @pytest.mark.skip(reason="Integration test - requires live API")
-    @pytest.mark.parametrize("interval", ['1D', '1W', '1M'])
-    def test_history_intervals_parametrized(
-        self, diverse_test_symbols, interval
-    ):
+    @pytest.mark.parametrize("interval", ["1D", "1W", "1M"])
+    def test_history_intervals_parametrized(self, diverse_test_symbols, interval):
         """Test history() with parametrized intervals."""
-        symbol = diverse_test_symbols['hose'][0]
-        
+        symbol = diverse_test_symbols["hose"][0]
+
         quote = Quote(symbol=symbol, random_agent=False, show_log=False)
-        df = quote.history(
-            start='2024-01-01',
-            end='2024-11-11',
-            interval=interval
-        )
-        
+        df = quote.history(start="2024-01-01", end="2024-11-11", interval=interval)
+
         assert isinstance(df, pd.DataFrame)
         if not df.empty:
-            assert 'close' in df.columns
+            assert "close" in df.columns
 
     # @pytest.mark.skip(reason="Integration test - requires live API")
     def test_intraday_hose_samples(self, diverse_test_symbols):
         """Test intraday() with HOSE samples."""
-        hose_samples = diverse_test_symbols['hose'][:3]
-        
+        hose_samples = diverse_test_symbols["hose"][:3]
+
         for symbol in hose_samples:
             try:
-                quote = Quote(
-                    symbol=symbol,
-                    random_agent=False,
-                    show_log=False
-                )
-                df = quote.intraday(
-                    symbol=symbol,
-                    page_size=100,
-                    show_log=False
-                )
-                
-                assert isinstance(df, pd.DataFrame), \
-                    f"intraday() failed for {symbol}"
-            
+                quote = Quote(symbol=symbol, random_agent=False, show_log=False)
+                df = quote.intraday(symbol=symbol, page_size=100, show_log=False)
+
+                assert isinstance(df, pd.DataFrame), f"intraday() failed for {symbol}"
+
             except Exception as e:
                 # Intraday may not be available for all symbols
                 print(f"Intraday not available for {symbol}: {e}")
@@ -221,43 +174,32 @@ class TestVCIQuoteComprehensive:
         self, diverse_test_symbols, test_date_ranges
     ):
         """Test history() with different date ranges."""
-        symbol = diverse_test_symbols['hose'][0]
+        symbol = diverse_test_symbols["hose"][0]
         quote = Quote(symbol=symbol, random_agent=False, show_log=False)
-        
+
         for range_name, dates in test_date_ranges.items():
             try:
                 df = quote.history(
-                    start=dates['start'],
-                    end=dates['end'],
-                    interval='1D'
+                    start=dates["start"], end=dates["end"], interval="1D"
                 )
-                
-                assert isinstance(df, pd.DataFrame), \
-                    f"Failed for {range_name} range"
-            
+
+                assert isinstance(df, pd.DataFrame), f"Failed for {range_name} range"
+
             except Exception as e:
                 pytest.fail(f"Date range {range_name} failed: {e}")
 
     # @pytest.mark.skip(reason="Integration test - requires live API")
     def test_history_edge_cases(self, diverse_test_symbols):
         """Test history() edge cases."""
-        symbol = diverse_test_symbols['hose'][0]
+        symbol = diverse_test_symbols["hose"][0]
         quote = Quote(symbol=symbol, random_agent=False, show_log=False)
-        
+
         # Same start and end date
-        df = quote.history(
-            start='2024-10-01',
-            end='2024-10-01',
-            interval='1D'
-        )
+        df = quote.history(start="2024-10-01", end="2024-10-01", interval="1D")
         assert isinstance(df, pd.DataFrame)
-        
+
         # Very recent date range
-        df = quote.history(
-            start='2024-11-10',
-            end='2024-11-11',
-            interval='1D'
-        )
+        df = quote.history(start="2024-11-10", end="2024-11-11", interval="1D")
         assert isinstance(df, pd.DataFrame)
 
     # @pytest.mark.skip(reason="Integration test - requires live API")
@@ -265,49 +207,32 @@ class TestVCIQuoteComprehensive:
         """Test history() with covered warrants if available."""
         if not sample_covered_warrants:
             pytest.skip("No covered warrants available")
-        
+
         for symbol in sample_covered_warrants[:5]:
             try:
-                quote = Quote(
-                    symbol=symbol,
-                    random_agent=False,
-                    show_log=False
-                )
-                df = quote.history(
-                    start='2024-10-01',
-                    end='2024-10-31',
-                    interval='1D'
-                )
-                
+                quote = Quote(symbol=symbol, random_agent=False, show_log=False)
+                df = quote.history(start="2024-10-01", end="2024-10-31", interval="1D")
+
                 assert isinstance(df, pd.DataFrame)
-            
+
             except Exception as e:
                 print(f"CW {symbol} not supported or failed: {e}")
 
     # @pytest.mark.skip(reason="Integration test - requires live API")
     def test_batch_symbols_performance(self, diverse_test_symbols):
         """Test fetching data for multiple symbols (performance check)."""
-        symbols = diverse_test_symbols['all'][:5]
-        
+        symbols = diverse_test_symbols["all"][:5]
+
         results = {}
         for symbol in symbols:
             try:
-                quote = Quote(
-                    symbol=symbol,
-                    random_agent=False,
-                    show_log=False
-                )
-                df = quote.history(
-                    start='2024-10-01',
-                    end='2024-10-31',
-                    interval='1D'
-                )
+                quote = Quote(symbol=symbol, random_agent=False, show_log=False)
+                df = quote.history(start="2024-10-01", end="2024-10-31", interval="1D")
                 results[symbol] = not df.empty
             except Exception as e:
                 results[symbol] = False
                 print(f"Batch test failed for {symbol}: {e}")
-        
+
         # At least 50% should succeed
         success_rate = sum(results.values()) / len(results)
-        assert success_rate >= 0.5, \
-            f"Success rate too low: {success_rate}"
+        assert success_rate >= 0.5, f"Success rate too low: {success_rate}"

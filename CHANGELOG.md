@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.1] - 2026-05-02
+
+### Added
+- **Unified UI Test Suite**: Comprehensive tests for Market, Reference, Fundamental domains, and Provider Registry.
+- **Live API Testing**: Re-enabled and verified live API testing for VCI data sources.
+
+### Fixed
+- **VCI API Access**: Fixed a critical WAF blocking issue caused by double-slashes in VCI endpoints.
+- **Pandas Compatibility**: Standardized frequency normalization (M vs ME) across all Pandas versions (2.x).
+- **Code Quality**: Fixed YAML syntax in workflows, linting errors, and trailing whitespace in tests.
+
 ## [4.0.0] - 2026-04-28
 
 ### Added

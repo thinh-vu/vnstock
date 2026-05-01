@@ -1,10 +1,13 @@
 # vnstock/api/company.py
 
 from typing import Any
+
 from tenacity import retry, stop_after_attempt, wait_exponential
 from vnai import optimize_execution
-from vnstock.config import Config
+
 from vnstock.base import BaseAdapter, dynamic_method
+from vnstock.config import Config
+
 
 class Company(BaseAdapter):
     _module_name = "company"
@@ -28,36 +31,36 @@ class Company(BaseAdapter):
         df_news = c.news()
         df_evt = c.events()
     """
+
     def __init__(
         self,
         source: str = "KBS",
         symbol: str = None,
         random_agent: bool = False,
-        show_log: bool = False
+        show_log: bool = False,
     ):
         # Ensure explorer modules are loaded (lazy load to avoid deadlock)
         from vnstock import _ensure_explorer_modules_loaded
+
         _ensure_explorer_modules_loaded()
-        
+
         # Store parameters for later use
         self.source = source
         self.symbol = symbol if symbol else ""
         self.random_agent = random_agent
         self.show_log = show_log
-        
+
         # Validate the source to only accept kbs, vci
         if source.lower() not in ["kbs", "vci"]:
-            raise ValueError("Lớp Company chỉ nhận giá trị tham số source là 'VCI' hoặc 'KBS'.")
-        
+            raise ValueError(
+                "Lớp Company chỉ nhận giá trị tham số source là 'VCI' hoặc 'KBS'."
+            )
+
         # BaseAdapter will discover vnstock.explorer.<real_source>.company
         # and pass only the kwargs its __init__ accepts (random_agent, show_log).
         super().__init__(
-            source=source,
-            symbol=symbol,
-            random_agent=random_agent,
-            show_log=show_log
+            source=source, symbol=symbol, random_agent=random_agent, show_log=show_log
         )
-
 
     @optimize_execution("API")
     @retry(
@@ -65,8 +68,8 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def overview(self, *args: Any, **kwargs: Any) -> Any:
@@ -84,8 +87,8 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def shareholders(self, *args: Any, **kwargs: Any) -> Any:
@@ -98,8 +101,8 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def officers(self, *args: Any, **kwargs: Any) -> Any:
@@ -115,8 +118,8 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def subsidiaries(self, *args: Any, **kwargs: Any) -> Any:
@@ -132,8 +135,8 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def affiliate(self, *args: Any, **kwargs: Any) -> Any:
@@ -146,8 +149,8 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def news(self, *args: Any, **kwargs: Any) -> Any:
@@ -160,8 +163,8 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def events(self, *args: Any, **kwargs: Any) -> Any:
@@ -174,8 +177,8 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def ownership(self, *args: Any, **kwargs: Any) -> Any:
@@ -188,8 +191,8 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def capital_history(self, *args: Any, **kwargs: Any) -> Any:
@@ -202,15 +205,17 @@ class Company(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def insider_trading(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve company insider trading history."""
         pass
-        
-    def _delegate_to_provider(self, method_name: str, symbol: str = None, **kwargs: Any) -> Any:
+
+    def _delegate_to_provider(
+        self, method_name: str, symbol: str = None, **kwargs: Any
+    ) -> Any:
         """
         Delegate method call to the provider with symbol update if needed.
 
@@ -229,7 +234,7 @@ class Company(BaseAdapter):
                 original_symbol = self.symbol
                 self.symbol = symbol.upper()
                 self._update_provider()
-                
+
             # Get the method from the provider
             method = getattr(self.provider, method_name)
             return method(**kwargs)

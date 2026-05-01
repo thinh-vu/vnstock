@@ -1,10 +1,12 @@
 # vnstock/api/financial.py
 
 from typing import Any
+
 from tenacity import retry, stop_after_attempt, wait_exponential
 from vnai import optimize_execution
-from vnstock.config import Config
+
 from vnstock.base import BaseAdapter, dynamic_method
+from vnstock.config import Config
 
 
 class Finance(BaseAdapter):
@@ -30,24 +32,27 @@ class Finance(BaseAdapter):
         symbol: str,
         period: str = "quarter",
         get_all: bool = True,
-        show_log: bool = False
+        show_log: bool = False,
     ):
         # Ensure explorer modules and vnai patches are loaded
         from vnstock import _ensure_explorer_modules_loaded, _ensure_vnai_initialized
+
         _ensure_explorer_modules_loaded()
         _ensure_vnai_initialized()
-        
+
         # Store parameters for later use
         self.source = source
         self.symbol = symbol if symbol else ""
         self.period = period
         self.get_all = get_all
         self.show_log = show_log
-        
+
         # Validate the source to only accept vci or kbs
         if source.lower() not in ["kbs", "vci"]:
-            raise ValueError("Lớp Finance chỉ nhận giá trị tham số source là 'VCI' hoặc 'KBS'.")
-        
+            raise ValueError(
+                "Lớp Finance chỉ nhận giá trị tham số source là 'VCI' hoặc 'KBS'."
+            )
+
         # BaseAdapter will discover vnstock.explorer.<real_source>.financial
         # and pass only the kwargs its __init__ accepts (symbol, period, get_all, show_log).
         super().__init__(
@@ -55,7 +60,7 @@ class Finance(BaseAdapter):
             symbol=symbol,
             period=period,
             get_all=get_all,
-            show_log=show_log
+            show_log=show_log,
         )
 
     @optimize_execution("API")
@@ -64,8 +69,8 @@ class Finance(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def balance_sheet(self, *args: Any, **kwargs: Any) -> Any:
@@ -78,8 +83,8 @@ class Finance(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def income_statement(self, *args: Any, **kwargs: Any) -> Any:
@@ -92,8 +97,8 @@ class Finance(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def cash_flow(self, *args: Any, **kwargs: Any) -> Any:
@@ -106,15 +111,17 @@ class Finance(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def ratio(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve financial ratio data."""
         pass
-        
-    def _delegate_to_provider(self, method_name: str, symbol: str = None, **kwargs: Any) -> Any:
+
+    def _delegate_to_provider(
+        self, method_name: str, symbol: str = None, **kwargs: Any
+    ) -> Any:
         """
         Delegate method call to the provider with symbol update if needed.
 
@@ -133,7 +140,7 @@ class Finance(BaseAdapter):
                 original_symbol = self.symbol
                 self.symbol = symbol.upper()
                 self._update_provider()
-                
+
             # Get the method from the provider
             method = getattr(self.provider, method_name)
             return method(**kwargs)

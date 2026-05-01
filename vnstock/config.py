@@ -2,6 +2,7 @@
 
 import logging
 
+
 class Config:
     # -------------------------------------------------------------------------
     # HTTP request settings
@@ -14,8 +15,8 @@ class Config:
 
     # Tenacity backoff strategy parameters
     BACKOFF_MULTIPLIER: float = 1.0
-    BACKOFF_MIN: float = 2    # minimum wait between retries (seconds)
-    BACKOFF_MAX: float = 10   # maximum wait between retries (seconds)
+    BACKOFF_MIN: float = 2  # minimum wait between retries (seconds)
+    BACKOFF_MAX: float = 10  # maximum wait between retries (seconds)
 
     # -------------------------------------------------------------------------
     # Caching
@@ -46,13 +47,11 @@ VERSION_REQUIREMENTS = {
     "3.4.0": {
         "vnai": ">=2.3.0",
         "vnii": ">=0.1.5",
-        
         # # Core dependencies - required for vnstock to work
         # "requests": ">=2.25.0,<3.0.0",
         # "pandas": ">=1.3.0,<3.0.0",
         # "beautifulsoup4": ">=4.9.0,<5.0.0",
         # "packaging": ">=20.0",
-        
         # # Recommended optional dependencies
         # "openpyxl": ">=3.0.0",
         # "psutil": ">=5.8.0"
@@ -70,7 +69,4 @@ VERSION_NOTICES = {
 }
 
 # Python version compatibility matrix
-PYTHON_VERSION_SUPPORT = {
-    "3.4.0": ["3.10", "3.11", "3.12", "3.13", "3.14"]
-}
-
+PYTHON_VERSION_SUPPORT = {"3.4.0": ["3.10", "3.11", "3.12", "3.13", "3.14"]}

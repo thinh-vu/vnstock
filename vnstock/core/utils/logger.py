@@ -1,15 +1,18 @@
 import logging
-from logging.handlers import RotatingFileHandler
 import os
+from logging.handlers import RotatingFileHandler
 
-def advanced_logger(name, 
-                    level='DEBUG', 
-                    handler_type='stream', 
-                    filename=None, 
-                    log_format=None, 
-                    date_format=None, 
-                    max_bytes=10485760, 
-                    backup_count=5):
+
+def advanced_logger(
+    name,
+    level="DEBUG",
+    handler_type="stream",
+    filename=None,
+    log_format=None,
+    date_format=None,
+    max_bytes=10485760,
+    backup_count=5,
+):
     """
     Configure and return a customizable logger with various options.
 
@@ -33,20 +36,22 @@ def advanced_logger(name,
 
     # Set default file name if none provided
     if filename is None:
-        filename = os.path.join(os.getcwd(), f'{name}.log')
+        filename = os.path.join(os.getcwd(), f"{name}.log")
 
     # Set default log format if not provided
-    log_format = log_format or '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    date_format = date_format or '%Y-%m-%d %H:%M:%S'
+    log_format = log_format or "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    date_format = date_format or "%Y-%m-%d %H:%M:%S"
 
     # Create formatter
     formatter = logging.Formatter(log_format, date_format)
 
     # Determine the handler type
-    if handler_type == 'file':
+    if handler_type == "file":
         handler = logging.FileHandler(filename)
-    elif handler_type == 'rotating':
-        handler = RotatingFileHandler(filename, maxBytes=max_bytes, backupCount=backup_count)
+    elif handler_type == "rotating":
+        handler = RotatingFileHandler(
+            filename, maxBytes=max_bytes, backupCount=backup_count
+        )
     else:  # Default to stream handler
         handler = logging.StreamHandler()
 
@@ -59,14 +64,17 @@ def advanced_logger(name,
 
     return logger
 
-def get_logger(name, 
-               level='DEBUG', 
-               handler_type='stream', 
-               filename=None, 
-               log_format=None, 
-               date_format=None, 
-               max_bytes=10485760, 
-               backup_count=5):
+
+def get_logger(
+    name,
+    level="DEBUG",
+    handler_type="stream",
+    filename=None,
+    log_format=None,
+    date_format=None,
+    max_bytes=10485760,
+    backup_count=5,
+):
     """
     Wrapper for advanced_logger that allows custom logging configurations.
     Provides backward compatibility while allowing advanced customizations.
@@ -77,11 +85,13 @@ def get_logger(name,
     Returns:
     - logger: logging.Logger instance.
     """
-    return advanced_logger(name=name, 
-                           level=level, 
-                           handler_type=handler_type, 
-                           filename=filename, 
-                           log_format=log_format, 
-                           date_format=date_format, 
-                           max_bytes=max_bytes, 
-                           backup_count=backup_count)
+    return advanced_logger(
+        name=name,
+        level=level,
+        handler_type=handler_type,
+        filename=filename,
+        log_format=log_format,
+        date_format=date_format,
+        max_bytes=max_bytes,
+        backup_count=backup_count,
+    )

@@ -5,13 +5,16 @@ Handles fetching and processing stock price data from FMP API.
 Following VCI patterns for consistency.
 """
 
-import pandas as pd
 from typing import Optional
+
+import pandas as pd
+
 from vnstock.core.types import TimeFrame
 from vnstock.core.utils.interval import normalize_interval
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.parser import camel_to_snake
 from vnstock.core.utils.transform import resample_ohlcv
+
 from .config import FMPConfig, make_fmp_request
 from .const import _OHLCV_MAP
 
@@ -26,8 +29,12 @@ class Quote:
     historical EOD (End-Of-Day) prices, and intraday price movements.
     """
 
-    def __init__(self, symbol: str, api_key: Optional[str] = None,
-                 show_log: Optional[bool] = True):
+    def __init__(
+        self,
+        symbol: str,
+        api_key: Optional[str] = None,
+        show_log: Optional[bool] = True,
+    ):
         """
         Initialize Quote instance.
 
@@ -52,13 +59,14 @@ class Quote:
         Returns:
             Optional[pd.DataFrame]: DataFrame with real-time quote data
         """
-        url = self.config.get_endpoint_url('quote_short', self.symbol)
-        df = make_fmp_request(url, timeout=self.config.timeout,
-                              show_log=self.show_log or False)
+        url = self.config.get_endpoint_url("quote_short", self.symbol)
+        df = make_fmp_request(
+            url, timeout=self.config.timeout, show_log=self.show_log or False
+        )
 
         if df is not None and not df.empty:
-            if 'symbol' in df.columns:
-                df['symbol'] = df['symbol'].str.upper()
+            if "symbol" in df.columns:
+                df["symbol"] = df["symbol"].str.upper()
             # Convert all column names to snake_case
             df.columns = [camel_to_snake(col) for col in df.columns]
 
@@ -75,22 +83,26 @@ class Quote:
         Returns:
             Optional[pd.DataFrame]: DataFrame with complete quote data
         """
-        url = self.config.get_endpoint_url('quote', self.symbol)
-        df = make_fmp_request(url, timeout=self.config.timeout,
-                              show_log=self.show_log or False)
+        url = self.config.get_endpoint_url("quote", self.symbol)
+        df = make_fmp_request(
+            url, timeout=self.config.timeout, show_log=self.show_log or False
+        )
 
         if df is not None and not df.empty:
-            if 'symbol' in df.columns:
-                df['symbol'] = df['symbol'].str.upper()
+            if "symbol" in df.columns:
+                df["symbol"] = df["symbol"].str.upper()
             # Convert all column names to snake_case
             df.columns = [camel_to_snake(col) for col in df.columns]
 
         return df
 
-    def history(self, start: Optional[str] = None,
-                end: Optional[str] = None,
-                interval: str = 'd',
-                adj_type: str = 'full') -> Optional[pd.DataFrame]:
+    def history(
+        self,
+        start: Optional[str] = None,
+        end: Optional[str] = None,
+        interval: str = "d",
+        adj_type: str = "full",
+    ) -> Optional[pd.DataFrame]:
         """
         Fetch historical End-Of-Day (EOD) price data.
 
@@ -121,13 +133,9 @@ class Quote:
         """
         # Normalize interval to standard format
         timeframe = normalize_interval(interval)
-        
+
         # Only EOD intervals are supported by this method
-        eod_intervals = [
-            TimeFrame.DAY_1,
-            TimeFrame.WEEK_1,
-            TimeFrame.MONTH_1
-        ]
+        eod_intervals = [TimeFrame.DAY_1, TimeFrame.WEEK_1, TimeFrame.MONTH_1]
 
         if timeframe not in eod_intervals:
             if self.show_log:
@@ -139,26 +147,29 @@ class Quote:
             return None
 
         # Fetch daily data from EOD endpoint
-        url = (f"{self.config.domain}/historical-price-eod/"
-               f"{adj_type}?symbol={self.symbol}&apikey="
-               f"{self.config.api_key}")
+        url = (
+            f"{self.config.domain}/historical-price-eod/"
+            f"{adj_type}?symbol={self.symbol}&apikey="
+            f"{self.config.api_key}"
+        )
 
         if start:
             url = f"{url}&from={start}"
         if end:
             url = f"{url}&to={end}"
 
-        df = make_fmp_request(url, timeout=self.config.timeout,
-                              show_log=self.show_log or False)
+        df = make_fmp_request(
+            url, timeout=self.config.timeout, show_log=self.show_log or False
+        )
 
         if df is not None and not df.empty:
             # Normalize column names to vnstock standard
             df = self._normalize_ohlcv_columns(df)
 
             # Ensure date column is datetime
-            if 'time' in df.columns:
-                df['time'] = pd.to_datetime(df['time'])
-                df = df.sort_values('time', ascending=True)
+            if "time" in df.columns:
+                df["time"] = pd.to_datetime(df["time"])
+                df = df.sort_values("time", ascending=True)
 
                 # Resample to weekly or monthly if needed
                 if timeframe in [TimeFrame.WEEK_1, TimeFrame.MONTH_1]:
@@ -168,9 +179,12 @@ class Quote:
 
         return df
 
-    def intraday(self, interval: str = 'm',
-                 start: Optional[str] = None,
-                 end: Optional[str] = None) -> Optional[pd.DataFrame]:
+    def intraday(
+        self,
+        interval: str = "m",
+        start: Optional[str] = None,
+        end: Optional[str] = None,
+    ) -> Optional[pd.DataFrame]:
         """
         Fetch intraday (minute/hour level) price data.
 
@@ -219,20 +233,22 @@ class Quote:
 
         # Map TimeFrame to FMP API endpoint
         timeframe_to_fmp_endpoint = {
-            TimeFrame.MINUTE_1: 'historical-chart/1min',
-            TimeFrame.MINUTE_5: 'historical-chart/5min',
-            TimeFrame.MINUTE_15: 'historical-chart/15min',
-            TimeFrame.MINUTE_30: 'historical-chart/30min',
-            TimeFrame.HOUR_1: 'historical-chart/1hour',
-            TimeFrame.HOUR_4: 'historical-chart/4hour',
+            TimeFrame.MINUTE_1: "historical-chart/1min",
+            TimeFrame.MINUTE_5: "historical-chart/5min",
+            TimeFrame.MINUTE_15: "historical-chart/15min",
+            TimeFrame.MINUTE_30: "historical-chart/30min",
+            TimeFrame.HOUR_1: "historical-chart/1hour",
+            TimeFrame.HOUR_4: "historical-chart/4hour",
         }
 
         # Build complete API URL
         # Example: https://financialmodelingprep.com/stable/
         # historical-chart/1min
         interval_path = timeframe_to_fmp_endpoint[timeframe]
-        url = (f"{self.config.domain}/{interval_path}?"
-               f"symbol={self.symbol}&apikey={self.config.api_key}")
+        url = (
+            f"{self.config.domain}/{interval_path}?"
+            f"symbol={self.symbol}&apikey={self.config.api_key}"
+        )
 
         # Add date filters if provided
         if start:
@@ -240,18 +256,18 @@ class Quote:
         if end:
             url = f"{url}&to={end}"
 
-        df = make_fmp_request(url, timeout=self.config.timeout,
-                              show_log=self.show_log or False)
+        df = make_fmp_request(
+            url, timeout=self.config.timeout, show_log=self.show_log or False
+        )
 
         if df is not None and not df.empty:
             # Normalize column names to vnstock standard
             df = self._normalize_ohlcv_columns(df)
 
             # Ensure date column is datetime
-            if 'time' in df.columns:
-                df['time'] = pd.to_datetime(df['time'])
-                df = df.sort_values('time', ascending=True).reset_index(
-                    drop=True)
+            if "time" in df.columns:
+                df["time"] = pd.to_datetime(df["time"])
+                df = df.sort_values("time", ascending=True).reset_index(drop=True)
 
         return df
 
@@ -287,4 +303,5 @@ class Quote:
 
 # Register FMP Quote provider
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
-ProviderRegistry.register('quote', 'fmp', Quote)
+
+ProviderRegistry.register("quote", "fmp", Quote)

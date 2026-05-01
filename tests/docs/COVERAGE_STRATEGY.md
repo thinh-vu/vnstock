@@ -2,7 +2,7 @@
 
 ## Current Status: ✅ Fixed
 
-**Total Coverage**: 29.27% (baseline for unit tests)  
+**Total Coverage**: 29.27% (baseline for unit tests)
 **Status**: ✅ All tests passing with adjusted coverage threshold
 
 ---
@@ -21,7 +21,7 @@ vnstock/api/listing.py                      49     12    76%  ✅ GOOD
 
 ### Medium Coverage (30-70%)
 ```
-vnstock/explorer/vci/listing.py            116     72    38%  
+vnstock/explorer/vci/listing.py            116     72    38%
 vnstock/core/utils/browser_profiles.py      13      4    69%
 vnstock/core/utils/upgrade.py               57     18    68%
 vnstock/core/utils/user_agent.py            27      8    70%
@@ -116,7 +116,7 @@ def test_quote_validation(symbol, expected):
 ```python
 def test_quote_api_timeout():
     # Test when API times out
-    
+
 def test_quote_invalid_response():
     # Test malformed JSON response
 ```

@@ -10,6 +10,8 @@ New code should use types.py (DataSource, TimeFrame enums).
 # Import from types.py for unified definitions
 from vnstock.core.types import (
     DataSource as _DataSource,
+)
+from vnstock.core.types import (
     TimeFrame as _TimeFrame,
 )
 
@@ -17,26 +19,28 @@ from vnstock.core.types import (
 class DataSources:
     """
     DEPRECATED: Use vnstock.core.types.DataSource enum instead.
-    
+
     Data sources supported by vnstock.
     """
-    "KBS" = _DataSource.KBS.value
+
+    KBS = _DataSource.KBS.value
     VCI = _DataSource.VCI.value
     TCBS = _DataSource.TCBS.value
     MSN = _DataSource.MSN.value
     DNSE = _DataSource.DNSE.value
     BINANCE = _DataSource.BINANCE.value
     FMP = _DataSource.FMP.value
-    
+
     ALL_SOURCES = _DataSource.all_sources()
 
 
 class TimeResolutions:
     """
     DEPRECATED: Use vnstock.core.types.TimeFrame enum instead.
-    
+
     Time resolutions for historical data.
     """
+
     MINUTE_1 = _TimeFrame.MINUTE_1.value
     MINUTE_5 = _TimeFrame.MINUTE_5.value
     MINUTE_15 = _TimeFrame.MINUTE_15.value
@@ -49,6 +53,7 @@ class TimeResolutions:
 
 class ParameterNames:
     """Standardized parameter names."""
+
     SYMBOL = "symbol"
     START = "start"
     END = "end"
@@ -59,6 +64,7 @@ class ParameterNames:
 
 class MethodNames:
     """Method names for dynamic method detection."""
+
     HISTORY = "history"
     INTRADAY = "intraday"
     PRICE_DEPTH = "price_depth"

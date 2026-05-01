@@ -1,21 +1,24 @@
 """Data transformation utilities for vnstock data sources."""
 
 import re
-import pytz
-import numpy as np
+from datetime import datetime, time, timedelta
+from typing import Any, Dict, List, Optional
+
 import pandas as pd
+import pytz
 from bs4 import BeautifulSoup
-from typing import Dict, Any, List, Optional, Union
-from datetime import datetime, timedelta, time
-from vnstock.core.utils.parser import localize_timestamp
+
+from vnstock.core.utils.compat import normalize_frequency_string
 from vnstock.core.utils.logger import get_logger
+from vnstock.core.utils.parser import localize_timestamp
 
 logger = get_logger(__name__)
 
 # Vietnam timezone
-vietnam_tz = pytz.timezone('Asia/Ho_Chi_Minh')
+vietnam_tz = pytz.timezone("Asia/Ho_Chi_Minh")
 
 # ==== Utils functions for data transformation ====
+
 
 def clean_numeric_string(s: Any) -> Any:
     """
@@ -23,16 +26,17 @@ def clean_numeric_string(s: Any) -> Any:
     """
     if not isinstance(s, str):
         return s
-    s = s.replace('\u00A0', '').replace(',', '')
+    s = s.replace("\u00a0", "").replace(",", "")
     # If only one comma exists (as decimal), convert to period
-    if s.count('.') == 0 and s.count(',') == 1:
-        s = s.replace(',', '.')
+    if s.count(".") == 0 and s.count(",") == 1:
+        s = s.replace(",", ".")
     return s.strip()
+
 
 def get_trading_date() -> datetime.date:
     """
     Determine the appropriate trading date based on current day and time in Vietnam timezone.
-    
+
     Returns:
         - datetime.date: The appropriate trading date to use
     """
@@ -40,7 +44,7 @@ def get_trading_date() -> datetime.date:
     now = datetime.now(vietnam_tz)
     weekday = now.weekday()  # Monday is 0, Sunday is 6
     current_time = now.time()
-    
+
     if weekday >= 5:  # Weekend (Saturday or Sunday)
         # Calculate days to previous Friday
         days_to_subtract = weekday - 4
@@ -52,10 +56,11 @@ def get_trading_date() -> datetime.date:
         # Regular trading day
         return now.date()
 
+
 def process_match_types(df, asset_type, source):
     """
     Process match_type labels with special handling for stock ATO/ATC transactions.
-    
+
     For VCI:
         - Replace 'b' with 'Buy' and 's' with 'Sell'.
         - Missing values are represented by the string 'unknown'.
@@ -68,80 +73,85 @@ def process_match_types(df, asset_type, source):
     For KBS:
         - Replace 'B' with 'Buy' and 'S' with 'Sell'.
         - Missing values are assumed to be an empty string.
-    
+
     Once basic replacements are done, if the asset type is 'stock' and missing
     match_type values are present, the code will mark the ATO (at the earliest
     morning transaction in the 9:13–9:17 window) and ATC (at the latest afternoon
     transaction in the 14:43–14:47 window) within each trading day.
-    
+
     Parameters:
         df (DataFrame): The input DataFrame with a 'time' and 'match_type' column.
         asset_type (str): The asset type (for example, 'stock').
         source (str): The data source (e.g., 'VCI', 'MAS', 'TCBS', or 'KBS').
-        
+
     Returns:
         DataFrame: The modified DataFrame with updated match_type values.
     """
     # --- Basic replacement and normalization ---
-    if source == 'VCI':
-        df['match_type'] = df['match_type'].replace({'b': 'Buy', 's': 'Sell'})
-    elif source == 'MAS':
-        df['match_type'] = df['match_type'].replace({'BUY': 'Buy', 'SELL': 'Sell'})
-        df['match_type'] = df['match_type'].fillna('unknown')
-    elif source == 'TCBS':
-        df['match_type'] = df['match_type'].replace({'BU': 'Buy', 'SD': 'Sell'})
-    elif source == 'KBS':
-        df['match_type'] = df['match_type'].replace({'B': 'Buy', 'S': 'Sell'})
-    
+    if source == "VCI":
+        df["match_type"] = df["match_type"].replace({"b": "Buy", "s": "Sell"})
+    elif source == "MAS":
+        df["match_type"] = df["match_type"].replace({"BUY": "Buy", "SELL": "Sell"})
+        df["match_type"] = df["match_type"].fillna("unknown")
+    elif source == "TCBS":
+        df["match_type"] = df["match_type"].replace({"BU": "Buy", "SD": "Sell"})
+    elif source == "KBS":
+        df["match_type"] = df["match_type"].replace({"B": "Buy", "S": "Sell"})
+
     # Determine the unknown value to check for based on the source
-    unknown_val = 'unknown' if source in ['VCI', 'MAS'] else ''
-    
+    unknown_val = "unknown" if source in ["VCI", "MAS"] else ""
+
     # --- Process ATO/ATC labeling for stock assets ---
     # Only run ATO/ATC logic if match_type contains missing values
-    if asset_type == 'stock' and (df['match_type'].eq(unknown_val).any() or df['match_type'].eq('').any()):
+    if asset_type == "stock" and (
+        df["match_type"].eq(unknown_val).any() or df["match_type"].eq("").any()
+    ):
         # Sort by time and add a temporary date column to group by trading day
-        df = df.sort_values('time')
-        df['date'] = df['time'].dt.date
-        
+        df = df.sort_values("time")
+        df["date"] = df["time"].dt.date
+
         # Group by date and process each day
         def process_day(day_df):
             # Identify rows with missing match_type
-            unknown_df = day_df[day_df['match_type'] == unknown_val]
+            unknown_df = day_df[day_df["match_type"] == unknown_val]
             if unknown_df.empty:
                 return day_df
 
             # Morning session: filter for transactions between 9:13 and 9:17
             morning_df = unknown_df[
-                (unknown_df['time'].dt.hour == 9) &
-                (unknown_df['time'].dt.minute.between(13, 17))
+                (unknown_df["time"].dt.hour == 9)
+                & (unknown_df["time"].dt.minute.between(13, 17))
             ]
             if not morning_df.empty:
                 # Set the earliest transaction time as ATO
-                min_idx = morning_df['time'].idxmin()
-                day_df.loc[min_idx, 'match_type'] = 'ATO'
-            
+                min_idx = morning_df["time"].idxmin()
+                day_df.loc[min_idx, "match_type"] = "ATO"
+
             # Afternoon session: filter for transactions between 14:43 and 14:47
             afternoon_df = unknown_df[
-                (unknown_df['time'].dt.hour == 14) &
-                (unknown_df['time'].dt.minute.between(43, 47))
+                (unknown_df["time"].dt.hour == 14)
+                & (unknown_df["time"].dt.minute.between(43, 47))
             ]
             if not afternoon_df.empty:
                 # Set the latest transaction time as ATC
-                max_idx = afternoon_df['time'].idxmax()
-                day_df.loc[max_idx, 'match_type'] = 'ATC'
-            
+                max_idx = afternoon_df["time"].idxmax()
+                day_df.loc[max_idx, "match_type"] = "ATC"
+
             return day_df
-        
+
         # Apply the processing function to each trading day
         try:
-            df = df.groupby('date', group_keys=False).apply(process_day, include_groups=False)
+            df = df.groupby("date", group_keys=False).apply(
+                process_day, include_groups=False
+            )
         except TypeError:
-            df = df.groupby('date', group_keys=False).apply(process_day)
+            df = df.groupby("date", group_keys=False).apply(process_day)
         # Drop date column if it exists
-        if 'date' in df.columns:
-            df.drop(columns=['date'], inplace=True)
-    
+        if "date" in df.columns:
+            df.drop(columns=["date"], inplace=True)
+
     return df
+
 
 def ohlc_to_df(
     data: Dict[str, Any],
@@ -152,14 +162,14 @@ def ohlc_to_df(
     source: str,
     interval: str = "1D",
     floating: int = 2,
-    resample_map: Optional[Dict[str, str]] = None
+    resample_map: Optional[Dict[str, str]] = None,
 ) -> pd.DataFrame:
     """Convert OHLC data from any source to standardized DataFrame format."""
     if not data:
         raise ValueError("Input data is empty or not provided.")
-    
+
     # Handle different data source formats
-    if source == 'TCBS' or isinstance(data, list):
+    if source == "TCBS" or isinstance(data, list):
         # TCBS and VCI list responses are already list of dictionaries
         df = pd.DataFrame(data)
         # Apply column mapping directly through rename
@@ -168,65 +178,63 @@ def ohlc_to_df(
         # Other sources with dict data
         # Select and rename columns using dictionary comprehension
         columns_of_interest = {
-            key: column_map[key]
-            for key in column_map.keys()
-            if key in data
+            key: column_map[key] for key in column_map.keys() if key in data
         }
-        df = pd.DataFrame(data)[columns_of_interest.keys()].rename(
-            columns=column_map
-        )
-    
+        df = pd.DataFrame(data)[columns_of_interest.keys()].rename(columns=column_map)
+
     # Ensure all required columns exist
-    required_columns = ['time', 'open', 'high', 'low', 'close', 'volume']
-    missing_columns = [
-        col for col in required_columns if col not in df.columns
-    ]
+    required_columns = ["time", "open", "high", "low", "close", "volume"]
+    missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
         msg = (
             f"Missing required columns: {missing_columns}. "
             f"Available columns: {df.columns.tolist()}"
         )
         raise ValueError(msg)
-    
+
     # Standard column order
-    df = df[['time', 'open', 'high', 'low', 'close', 'volume']]
-    
+    df = df[["time", "open", "high", "low", "close", "volume"]]
+
     # Time conversion - handle different formats based on source
-    if 'time' in df.columns:
-        if source == 'VCI':
+    if "time" in df.columns:
+        if source == "VCI":
             # VCI uses integer timestamps
-            df['time'] = pd.to_datetime(df['time'].astype(int), unit='s').dt.tz_localize('UTC')
-            df['time'] = df['time'].dt.tz_convert('Asia/Ho_Chi_Minh')
+            df["time"] = pd.to_datetime(
+                df["time"].astype(int), unit="s"
+            ).dt.tz_localize("UTC")
+            df["time"] = df["time"].dt.tz_convert("Asia/Ho_Chi_Minh")
         else:
             # TCBS and others might use string formats
-            df['time'] = pd.to_datetime(df['time'], errors='coerce')
-    
+            df["time"] = pd.to_datetime(df["time"], errors="coerce")
+
     # Price scaling for non-index/derivative assets
     if asset_type not in ["index", "derivative"]:
-        df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].div(1000)
-    
+        df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].div(
+            1000
+        )
+
     # Round price columns
-    df[["open", "high", "low", "close"]] = (
-        df[["open", "high", "low", "close"]].round(floating)
+    df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].round(
+        floating
     )
 
     # Resample if needed - use shared utility for consistency
     if resample_map and interval not in ["1m", "1H", "1D"]:
-        df = resample_ohlcv(
-            df, interval, freq_map=resample_map, time_col='time'
-        )
+        df = resample_ohlcv(df, interval, freq_map=resample_map, time_col="time")
 
     # Apply data types
     for col, dtype in dtype_map.items():
         if col in df.columns:
             # Only convert datetime to date for daily interval
-            if (dtype == "datetime64[ns]" and
-                    hasattr(df[col], 'dt') and
-                    df[col].dt.tz is not None):
+            if (
+                dtype == "datetime64[ns]"
+                and hasattr(df[col], "dt")
+                and df[col].dt.tz is not None
+            ):
                 df[col] = df[col].dt.tz_localize(None)
 
             # Only remove timezone and convert to date for "1D"
-            if col == 'time' and interval == "1D":
+            if col == "time" and interval == "1D":
                 df[col] = df[col].dt.date
 
             df[col] = df[col].astype(dtype)
@@ -238,17 +246,18 @@ def ohlc_to_df(
 
     return df
 
+
 def intraday_to_df(
     data: List[Dict[str, Any]],
     column_map: Dict[str, str],
     dtype_map: Dict[str, str],
     symbol: str,
     asset_type: str,
-    source: str
+    source: str,
 ) -> pd.DataFrame:
     """
     Convert intraday trading data to standardized DataFrame format.
-    
+
     Pre-processes numeric strings for price and volume, applies source-based
     scaling (not hardcoded division), handles NaN safely with volume rounding,
     and processes time and match_type consistently.
@@ -256,7 +265,7 @@ def intraday_to_df(
     # --- Early exit ---
     if not data:
         empty_df = pd.DataFrame(columns=list(column_map.values()))
-        empty_df.attrs['symbol'] = symbol
+        empty_df.attrs["symbol"] = symbol
         empty_df.category = asset_type
         empty_df.source = source
         return empty_df
@@ -267,19 +276,17 @@ def intraday_to_df(
     available = [c for c in column_map if c in df.columns]
     if not available:
         raise ValueError(
-            f"Expected columns {list(column_map)} not found, "
-            f"got {df.columns.tolist()}"
+            f"Expected columns {list(column_map)} not found, got {df.columns.tolist()}"
         )
-    df = df[available].rename(columns={k: column_map[k]
-                                       for k in available})
+    df = df[available].rename(columns={k: column_map[k] for k in available})
 
     # --- Clean and convert to numeric ---
-    for col in ('price', 'volume'):
+    for col in ("price", "volume"):
         if col in df.columns:
             # Pre-process string
             df[col] = df[col].map(clean_numeric_string)
             # Convert to float, errors become NaN
-            df[col] = pd.to_numeric(df[col], errors='coerce')
+            df[col] = pd.to_numeric(df[col], errors="coerce")
             n_bad = df[col].isna().sum()
             if n_bad:
                 msg = (
@@ -289,90 +296,102 @@ def intraday_to_df(
                 print(msg)
 
     # --- Scale price by source ---
-    scale_map = {'VCI': 1000, 'MAS': 1000}
+    scale_map = {"VCI": 1000, "MAS": 1000}
     scale = scale_map.get(source, 1)
-    if 'price' in df.columns:
-        df['price'] = df['price'] / scale
+    if "price" in df.columns:
+        df["price"] = df["price"] / scale
 
     # --- Volume: round and cast to int ---
-    if 'volume' in df.columns:
-        vol = df['volume'].fillna(0)
+    if "volume" in df.columns:
+        vol = df["volume"].fillna(0)
         # Check if there are decimal values
-        mask = (vol % 1 != 0)
+        mask = vol % 1 != 0
         if mask.any():
             msg = (
-                f"[Info] {int(mask.sum())} volume values have "
-                f"decimals, will be rounded"
+                f"[Info] {int(mask.sum())} volume values have decimals, will be rounded"
             )
             print(msg)
-        df['volume'] = vol.round().astype(int)
+        df["volume"] = vol.round().astype(int)
 
     # --- Process time column ---
-    if 'time' in df.columns:
+    if "time" in df.columns:
         trading_date = get_trading_date()
 
-        if source == 'VCI':
-            df['time'] = localize_timestamp(df['time'].astype(int), unit='s')
-        elif source == 'MAS':
-            df['time'] = localize_timestamp(df['time'].astype(int), unit='ms')
-            df['time'] = df['time'].dt.floor('s')
+        if source == "VCI":
+            df["time"] = localize_timestamp(df["time"].astype(int), unit="s")
+        elif source == "MAS":
+            df["time"] = localize_timestamp(df["time"].astype(int), unit="ms")
+            df["time"] = df["time"].dt.floor("s")
         else:  # TCBS
-            sample = str(df['time'].iloc[0]) if not df.empty else ''
-            if ':' in sample and len(sample) <= 8:
-                df['time'] = df['time'].apply(
-                    lambda x: datetime.combine(
-                        trading_date,
-                        datetime.strptime(x, '%H:%M:%S').time()
-                    ) if isinstance(x, str) and ':' in x else pd.NaT
+            sample = str(df["time"].iloc[0]) if not df.empty else ""
+            if ":" in sample and len(sample) <= 8:
+                df["time"] = df["time"].apply(
+                    lambda x: (
+                        datetime.combine(
+                            trading_date, datetime.strptime(x, "%H:%M:%S").time()
+                        )
+                        if isinstance(x, str) and ":" in x
+                        else pd.NaT
+                    )
                 )
-                df['time'] = localize_timestamp(df['time'], return_string=False)
+                df["time"] = localize_timestamp(df["time"], return_string=False)
             else:
-                df['time'] = pd.to_datetime(df['time'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
-                if df['time'].dt.tz is None:
-                    df['time'] = localize_timestamp(df['time'], return_string=False)
+                df["time"] = pd.to_datetime(
+                    df["time"], format="%Y-%m-%d %H:%M:%S", errors="coerce"
+                )
+                if df["time"].dt.tz is None:
+                    df["time"] = localize_timestamp(df["time"], return_string=False)
 
     # --- Process match types as defined ---
-    if 'match_type' in df.columns:
+    if "match_type" in df.columns:
         df = process_match_types(df, asset_type, source)
 
     # --- Sort, reset index and apply data types ---
-    if 'time' in df.columns:
-        df = df.sort_values('time')
+    if "time" in df.columns:
+        df = df.sort_values("time")
     df = df.reset_index(drop=True)
 
     # Apply dtype_map (excluding time)
-    type_map = {k: v for k, v in dtype_map.items() if k in df.columns and k != 'time'}
+    type_map = {k: v for k, v in dtype_map.items() if k in df.columns and k != "time"}
     if type_map:
         df = df.astype(type_map)
 
     # --- Metadata ---
-    df.attrs['symbol'] = symbol
+    df.attrs["symbol"] = symbol
     df.category = asset_type
     df.source = source
 
     return df
 
+
 def replace_in_column_names(df, old_text, new_text, regex=False):
     """
     Replace text in column names.
-    
+
     Parameters:
         df (pd.DataFrame): DataFrame with column names to modify
         old_text (str): Text to be replaced
         new_text (str): New text to replace with
         regex (bool): Whether to treat old_text as a regular expression pattern
-        
+
     Returns:
         pd.DataFrame: DataFrame with modified column names
     """
     df.columns = df.columns.str.replace(old_text, new_text, regex=regex)
     return df
 
-def flatten_hierarchical_index(df, separator="_", text_replacements=None, handle_duplicates=True, 
-                              drop_levels=None, keep_levels=None):
+
+def flatten_hierarchical_index(
+    df,
+    separator="_",
+    text_replacements=None,
+    handle_duplicates=True,
+    drop_levels=None,
+    keep_levels=None,
+):
     """
     Flatten hierarchical (multi-level) column indexes into a single level for easier Excel export.
-    
+
     Parameters:
         df (pd.DataFrame): DataFrame with hierarchical index to flatten
         separator (str): Character(s) to use when joining index levels
@@ -383,23 +402,23 @@ def flatten_hierarchical_index(df, separator="_", text_replacements=None, handle
                                    To drop highest level, use drop_levels=0
         keep_levels (list or int): Levels to keep (by position); can be a list of indices or a single index.
                                    This takes precedence over drop_levels if both are specified.
-    
+
     Returns:
         pd.DataFrame: DataFrame with flattened column index
     """
     # Make a copy to avoid modifying the original DataFrame
     result_df = df.copy()
-    
+
     # If the DataFrame doesn't have a hierarchical index, just return it
     if not isinstance(result_df.columns, pd.MultiIndex):
         return result_df
-    
+
     # Get the number of levels in the MultiIndex
     num_levels = result_df.columns.nlevels
-    
+
     # Convert to flat index (list of tuples where each tuple contains all level values for a column)
     flat_cols = result_df.columns.to_flat_index()
-    
+
     # Determine which levels to include based on parameters
     if keep_levels is not None:
         # Convert single value to list if necessary
@@ -416,7 +435,7 @@ def flatten_hierarchical_index(df, separator="_", text_replacements=None, handle
     else:
         # If no levels specified to keep or drop, include all levels
         level_indices = list(range(num_levels))
-    
+
     # Apply text replacements if provided
     if text_replacements:
         # Process each column name tuple
@@ -424,7 +443,7 @@ def flatten_hierarchical_index(df, separator="_", text_replacements=None, handle
         for col in flat_cols:
             # Process each level in the column
             processed_col = []
-            for i, level in enumerate(col):
+            for _i, level in enumerate(col):
                 level_str = str(level)
                 # Apply all text replacements to this level
                 for old_text, new_text in text_replacements.items():
@@ -432,18 +451,20 @@ def flatten_hierarchical_index(df, separator="_", text_replacements=None, handle
                 processed_col.append(level_str)
             processed_cols.append(tuple(processed_col))
         flat_cols = processed_cols
-    
+
     # Join selected levels with separator, ignoring empty strings
     flattened_cols = []
     for col in flat_cols:
         # Filter to only include the selected levels
-        selected_levels = [str(col[i]) for i in level_indices if i < len(col) and col[i] != '']
+        selected_levels = [
+            str(col[i]) for i in level_indices if i < len(col) and col[i] != ""
+        ]
         # Join the levels with the separator
         flattened_cols.append(separator.join(selected_levels))
-    
+
     # Assign the flattened column names
     result_df.columns = flattened_cols
-    
+
     # Handle duplicated column names
     if handle_duplicates:
         duplicated_cols = result_df.columns[result_df.columns.duplicated()].tolist()
@@ -456,26 +477,32 @@ def flatten_hierarchical_index(df, separator="_", text_replacements=None, handle
                     # Create a new column name with '_' prefix
                     new_col_name = f"_{result_df.columns[idx]}"
                     # Rename the column in-place
-                    result_df.rename(columns={result_df.columns[idx]: new_col_name}, inplace=True)
-    
+                    result_df.rename(
+                        columns={result_df.columns[idx]: new_col_name}, inplace=True
+                    )
+
     return result_df
+
 
 # ==== Process nested JSON data to DataFrame ====
 
-def flatten_dict_to_df(data: Dict[str, Any], nested_key: str = 'financialRatio') -> pd.DataFrame:
+
+def flatten_dict_to_df(
+    data: Dict[str, Any], nested_key: str = "financialRatio"
+) -> pd.DataFrame:
     """
     Flatten nested dictionary data into a pandas DataFrame.
-    
+
     Extracts all fields from input dictionary, including nested fields from a specified
     structure, preserving all underlying data while removing the top-level label.
-    
+
     Parameters:
     -----------
     data : Dict[str, Any]
         Dictionary/JSON data containing nested structures
     nested_key : str, optional
         Key of the nested structure to flatten (default: 'financialRatio')
-        
+
     Returns:
     --------
     pd.DataFrame
@@ -483,45 +510,46 @@ def flatten_dict_to_df(data: Dict[str, Any], nested_key: str = 'financialRatio')
     """
     # Copy top-level data excluding the nested structure
     result = {k: v for k, v in data.items() if k != nested_key}
-    
+
     # Process nested structure if it exists
     if nested_key in data:
         nested_data = data[nested_key]
-        
+
         # Handle key conflicts between top level and nested data
         for key, value in nested_data.items():
             if key in result:
                 result[f"{nested_key}_{key}"] = value  # Add prefix to avoid conflicts
             else:
                 result[key] = value  # Add directly if no conflict
-    
+
     # Flatten any remaining nested structures
     flat_data = {}
     _flatten_nested(result, flat_data)
-    
+
     # Return as DataFrame
     return pd.DataFrame([flat_data])
 
-def flatten_list_to_df(data_list, nested_key='subOrListingInfo'):
+
+def flatten_list_to_df(data_list, nested_key="subOrListingInfo"):
     """
     Flatten a list of dictionaries with a nested key into a pandas DataFrame.
-    
+
     Parameters:
     -----------
     data_list : list
         List of dictionaries where each dictionary contains a nested structure
     nested_key : str, optional
         Key in each dictionary containing the nested data (default: 'subOrListingInfo')
-        
+
     Returns:
     --------
     pd.DataFrame
         DataFrame with all fields flattened (nested data combined with top-level data)
-        
+
     Example:
     --------
     >>> data = [
-    ...     {'id': '21592027', 'organCode': 'VNM', 
+    ...     {'id': '21592027', 'organCode': 'VNM',
     ...      'subOrListingInfo': {'enOrganName': 'Apis Corporation'}},
     ...     {'id': '21592028', 'organCode': 'VNM',
     ...      'subOrListingInfo': {'enOrganName': 'Asia Coconut Processing JSC'}}
@@ -529,28 +557,29 @@ def flatten_list_to_df(data_list, nested_key='subOrListingInfo'):
     >>> flatten_list_to_df(data)
     """
     import pandas as pd
-    
+
     # Initialize an empty list to store flattened rows
     flattened_rows = []
-    
+
     for item in data_list:
         # Create a copy of the item to avoid modifying the original
         item_copy = item.copy()
-        
+
         # Extract and remove the nested data
         nested_data = item_copy.pop(nested_key, {})
-        
+
         # Merge top-level data with nested data
         flattened_row = {**item_copy, **nested_data}
         flattened_rows.append(flattened_row)
-    
+
     # Convert the list of flattened rows to a DataFrame
     return pd.DataFrame(flattened_rows)
 
-def _flatten_nested(obj: Any, output: Dict[str, Any], prefix: str = '') -> None:
+
+def _flatten_nested(obj: Any, output: Dict[str, Any], prefix: str = "") -> None:
     """
     Recursively flatten nested structures into a single-level dictionary.
-    
+
     Parameters:
     -----------
     obj : Any
@@ -577,20 +606,23 @@ def _flatten_nested(obj: Any, output: Dict[str, Any], prefix: str = '') -> None:
     else:
         output[prefix] = obj
 
-def clean_html_dict(data: Dict[str, Any], html_keys: Optional[List[str]] = None) -> Dict[str, Any]:
+
+def clean_html_dict(
+    data: Dict[str, Any], html_keys: Optional[List[str]] = None
+) -> Dict[str, Any]:
     """
     Convert HTML to plain text in dictionary values.
-    
+
     Processes string values containing HTML and converts them to readable plain text
     while preserving basic formatting like lists and line breaks.
-    
+
     Parameters:
     -----------
     data : Dict[str, Any]
         Dictionary containing HTML content in values
     html_keys : List[str], optional
         Keys to process as HTML; if None, auto-detects HTML content
-        
+
     Returns:
     --------
     Dict[str, Any]
@@ -598,46 +630,49 @@ def clean_html_dict(data: Dict[str, Any], html_keys: Optional[List[str]] = None)
     """
     if not isinstance(data, dict):
         return data
-    
+
     result = data.copy()
-    
+
     # Auto-detect HTML keys if not specified
     if html_keys is None:
-        html_keys = [k for k, v in data.items() 
-                    if isinstance(v, str) and '<' in v and '>' in v]
-    
+        html_keys = [
+            k for k, v in data.items() if isinstance(v, str) and "<" in v and ">" in v
+        ]
+
     # Process HTML in identified keys
     for key in html_keys:
         if key in result and isinstance(result[key], str):
             try:
                 # Parse and clean HTML
-                soup = BeautifulSoup(result[key], 'html.parser')
-                
+                soup = BeautifulSoup(result[key], "html.parser")
+
                 # Preserve line breaks
-                for br in soup.find_all('br'):
-                    br.replace_with('\n')
-                
+                for br in soup.find_all("br"):
+                    br.replace_with("\n")
+
                 # Format list items
-                for li in soup.find_all('li'):
-                    li.insert_before('- ')
-                
+                for li in soup.find_all("li"):
+                    li.insert_before("- ")
+
                 # Clean and format text
                 text = soup.get_text()
-                text = ' '.join(text.split())
-                text = text.replace('- ', '\n- ')  # Preserve list formatting
-                
+                text = " ".join(text.split())
+                text = text.replace("- ", "\n- ")  # Preserve list formatting
+
                 result[key] = text
-            except:
+            except Exception:
                 pass  # Keep original if processing fails
-    
+
     return result
+
 
 # ==== Data presentation and readability ====
 
-def reorder_cols(df, cols, position='first'):
+
+def reorder_cols(df, cols, position="first"):
     """
     Move specified columns to the first or last position in a DataFrame.
-    
+
     Parameters:
     -----------
     df : pd.DataFrame
@@ -646,48 +681,49 @@ def reorder_cols(df, cols, position='first'):
         Column name(s) to move
     position : str, optional
         Target position: 'first' or 'last' (default: 'first')
-        
+
     Returns:
     --------
     pd.DataFrame
         DataFrame with reordered columns
-        
+
     Examples:
     ---------
     # Move 'symbol' to the first position
     df = reorder_cols(df, 'symbol')
-    
+
     # Move multiple columns to the end
     df = reorder_cols(df, ['created_at', 'updated_at'], 'last')
     """
     # Convert single column to list
     if isinstance(cols, str):
         cols = [cols]
-    
+
     # Filter to include only columns that exist
     move_cols = [col for col in cols if col in df.columns]
-    
+
     if not move_cols:
         return df  # No valid columns to move
-    
+
     # Get remaining columns
     other_cols = [col for col in df.columns if col not in move_cols]
-    
+
     # Create new column order based on position
-    if position.lower() == 'first':
+    if position.lower() == "first":
         new_order = move_cols + other_cols
-    elif position.lower() == 'last':
+    elif position.lower() == "last":
         new_order = other_cols + move_cols
     else:
         raise ValueError("Position must be 'first' or 'last'")
-    
+
     # Return reordered DataFrame
     return df[new_order]
+
 
 def drop_cols_by_pattern(df, patterns, regex=True, case_sensitive=False):
     """
     Drop columns from DataFrame where names match specified pattern(s).
-    
+
     Parameters:
     -----------
     df : pd.DataFrame
@@ -698,29 +734,28 @@ def drop_cols_by_pattern(df, patterns, regex=True, case_sensitive=False):
         Whether to treat patterns as regex (default: True)
     case_sensitive : bool, optional
         Whether matching should be case-sensitive (default: False)
-        
+
     Returns:
     --------
     pd.DataFrame
         DataFrame with matching columns removed
-        
+
     Examples:
     ---------
     # Drop columns containing 'date'
     df = drop_cols_by_pattern(df, 'date', regex=False)
-    
+
     # Drop columns ending with '_id' or '_key'
     df = drop_cols_by_pattern(df, ['_id$', '_key$'])
     """
-    import re
-    
+
     # Convert single pattern to list
     if isinstance(patterns, str):
         patterns = [patterns]
-    
+
     # Identify columns to drop
     cols_to_drop = []
-    
+
     for col in df.columns:
         for pattern in patterns:
             if regex:
@@ -729,8 +764,8 @@ def drop_cols_by_pattern(df, patterns, regex=True, case_sensitive=False):
                     if re.search(pattern, col, flags):
                         cols_to_drop.append(col)
                         break
-                except re.error:
-                    raise ValueError(f"Invalid regex pattern: {pattern}")
+                except re.error as e:
+                    raise ValueError(f"Invalid regex pattern: {pattern}") from e
             else:
                 if case_sensitive:
                     if pattern in col:
@@ -740,14 +775,17 @@ def drop_cols_by_pattern(df, patterns, regex=True, case_sensitive=False):
                     if pattern.lower() in col.lower():
                         cols_to_drop.append(col)
                         break
-    
+
     # Return DataFrame with matched columns removed
     return df.drop(columns=cols_to_drop)
 
-def resample_ohlcv(df: pd.DataFrame,
-                   interval: str,
-                   freq_map: Optional[Dict[str, str]] = None,
-                   time_col: str = 'time') -> pd.DataFrame:
+
+def resample_ohlcv(
+    df: pd.DataFrame,
+    interval: str,
+    freq_map: Optional[Dict[str, str]] = None,
+    time_col: str = "time",
+) -> pd.DataFrame:
     """
     Resample OHLCV data to different time frequencies.
 
@@ -806,7 +844,7 @@ def resample_ohlcv(df: pd.DataFrame,
         * volume: sums all values
         * other columns: uses last value
     - Result is sorted by time with index reset
-    - For pandas 2.2+ compatibility with month-end frequency ('ME'), 
+    - For pandas 2.2+ compatibility with month-end frequency ('ME'),
       consider using safe_resample_dataframe() from vnstock.core.utils.compat
     """
     if time_col not in df.columns:
@@ -818,29 +856,32 @@ def resample_ohlcv(df: pd.DataFrame,
     # Default frequency mapping
     if freq_map is None:
         freq_map = {
-            '1W': 'W',
-            '1M': 'ME',
-            '1H': 'H',
-            '5min': '5min',
-            '15min': '15min',
-            '30min': '30min',
-            '4H': '4h',
-            '4hour': '4h',
+            "1W": "W",
+            "1M": "ME",
+            "1H": "H",
+            "5min": "5min",
+            "15min": "15min",
+            "30min": "30min",
+            "4H": "4h",
+            "4hour": "4h",
         }
 
     # Get the actual frequency string
     freq = freq_map.get(interval, interval)
+
+    # Normalize frequency string for pandas version compatibility
+    freq = normalize_frequency_string(freq)
 
     # Set time column as index
     df_resample = df.set_index(time_col)
 
     # Define resampling aggregation rules for OHLCV columns
     agg_rules = {
-        'open': 'first',
-        'high': 'max',
-        'low': 'min',
-        'close': 'last',
-        'volume': 'sum',
+        "open": "first",
+        "high": "max",
+        "low": "min",
+        "close": "last",
+        "volume": "sum",
     }
 
     # Build aggregation dict for available columns
@@ -850,7 +891,7 @@ def resample_ohlcv(df: pd.DataFrame,
             agg_dict[col] = agg_rules[col]
         else:
             # For other columns, use last value
-            agg_dict[col] = 'last'
+            agg_dict[col] = "last"
 
     # Validate that we have at least one OHLCV column
     if not agg_dict:
@@ -867,10 +908,8 @@ def resample_ohlcv(df: pd.DataFrame,
 
     # Sort by time and reset index
     if time_col in df_result.columns:
-        df_result = (
-            df_result
-            .sort_values(time_col, ascending=True)
-            .reset_index(drop=True)
+        df_result = df_result.sort_values(time_col, ascending=True).reset_index(
+            drop=True
         )
 
     return df_result

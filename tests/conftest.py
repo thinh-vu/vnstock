@@ -8,13 +8,13 @@ HTTP Mocking:
   - mock_response_factory: Create custom mock responses
   - mock_http_get: Mock requests.get globally
   - mock_http_post: Mock requests.post globally
-  
+
 Symbol Data:
   - Imported from tests.fixtures.symbols
   - real_symbols_dataset: Live API data (HOSE/HNX/UPCOM)
   - random_hose_symbols, random_hnx_symbols, etc: 100 random per exchange
   - diverse_test_symbols: 30 symbols (10 per exchange)
-  
+
 Utilities:
   - df_validators: Dictionary of DataFrame validation helpers
   - disable_logging: Auto-disable logging noise in tests (autouse)
@@ -40,21 +40,23 @@ Validate DataFrame:
 
 import json
 from typing import Dict, List, Optional
-import pytest
+
 import pandas as pd
+import pytest
 import requests
 
 # Import symbol fixtures from local fixtures module
-pytest_plugins = ['fixtures.symbols']
+pytest_plugins = ["fixtures.symbols"]
 
 
 # ============================================================================
 # HTTP Mocking Fixtures - For testing API calls without network access
 # ============================================================================
 
+
 class MockResponse:
     """Mock HTTP response object that simulates requests.Response.
-    
+
     Attributes:
         json_data: Parsed JSON response body
         status_code: HTTP status code (200, 404, etc)
@@ -62,13 +64,13 @@ class MockResponse:
         content: Response content as bytes
     """
 
-    def __init__(self, json_data: Optional[Dict] = None,
-                 status_code: int = 200,
-                 text: str = ""):
+    def __init__(
+        self, json_data: Optional[Dict] = None, status_code: int = 200, text: str = ""
+    ):
         self._json_data = json_data or {}
         self.status_code = status_code
         self.text = text or json.dumps(json_data or {})
-        self.content = self.text.encode('utf-8')
+        self.content = self.text.encode("utf-8")
 
     def json(self):
         """Return parsed JSON data from response."""
@@ -83,9 +85,9 @@ class MockResponse:
 @pytest.fixture
 def mock_response_factory():
     """Factory for creating customized mock HTTP responses.
-    
+
     Returns a function to create MockResponse objects with custom data.
-    
+
     Example:
         mock = mock_response_factory(
             json_data={'close': 100.0},
@@ -93,8 +95,10 @@ def mock_response_factory():
         )
         assert mock.status_code == 200
     """
+
     def _create(json_data=None, status_code=200, text=""):
         return MockResponse(json_data, status_code, text)
+
     return _create
 
 
@@ -107,13 +111,14 @@ def mock_successful_response(mock_response_factory):
 @pytest.fixture
 def mock_http_get(monkeypatch, mock_response_factory):
     """Mock requests.get globally for all tests using this fixture.
-    
+
     Returns empty 200 response by default.
     Can be overridden per test with @patch or by setting side_effect.
     """
+
     def _mock_get(*args, **kwargs):
         return mock_response_factory(json_data={"data": []})
-    
+
     monkeypatch.setattr("requests.get", _mock_get)
     return _mock_get
 
@@ -121,13 +126,14 @@ def mock_http_get(monkeypatch, mock_response_factory):
 @pytest.fixture
 def mock_http_post(monkeypatch, mock_response_factory):
     """Mock requests.post globally for all tests using this fixture.
-    
+
     Returns empty 200 response by default.
     Can be overridden per test with @patch or by setting side_effect.
     """
+
     def _mock_post(*args, **kwargs):
         return mock_response_factory(json_data={"data": []})
-    
+
     monkeypatch.setattr("requests.post", _mock_post)
     return _mock_post
 
@@ -140,43 +146,41 @@ def mock_http_post(monkeypatch, mock_response_factory):
 @pytest.fixture
 def mock_vci_company(monkeypatch):
     """Mock VCI Company._fetch_data."""
+
     def _mock_fetch(*args, **kwargs):
         return {
             "CompanyListingInfo": {
                 "icbName4": "Bán lẻ phức hợp",
                 "ticker": "AAA",
-                "organName": "Test Company"
+                "organName": "Test Company",
             }
         }
-    
-    monkeypatch.setattr(
-        "vnstock.explorer.vci.company.Company._fetch_data",
-        _mock_fetch
-    )
+
+    monkeypatch.setattr("vnstock.explorer.vci.company.Company._fetch_data", _mock_fetch)
 
 
 @pytest.fixture
 def mock_vci_send_request(monkeypatch):
     """Mock vnstock.core.utils.client.send_request for VCI."""
+
     def _mock_send(*args, **kwargs):
         return {"data": {}}
-    
-    monkeypatch.setattr(
-        "vnstock.core.utils.client.send_request",
-        _mock_send
-    )
+
+    monkeypatch.setattr("vnstock.core.utils.client.send_request", _mock_send)
 
 
 # ============================================================================
 # TCBS-specific Mocking
 # ============================================================================
 
+
 @pytest.fixture
 def mock_tcbs_response(monkeypatch, mock_response_factory):
     """Mock TCBS API responses."""
+
     def _mock_get(*args, **kwargs):
         return mock_response_factory(json_data={"data": []})
-    
+
     monkeypatch.setattr("requests.get", _mock_get)
 
 
@@ -184,18 +188,19 @@ def mock_tcbs_response(monkeypatch, mock_response_factory):
 # MSN-specific Mocking
 # ============================================================================
 
+
 @pytest.fixture
 def mock_msn_apikey(monkeypatch):
     """Mock MSN API key generation."""
     monkeypatch.setattr(
-        "vnstock.explorer.msn.quote.msn_apikey",
-        lambda *args, **kwargs: "mock_api_key"
+        "vnstock.explorer.msn.quote.msn_apikey", lambda *args, **kwargs: "mock_api_key"
     )
 
 
 # ============================================================================
 # DataFrame Validation Helpers
 # ============================================================================
+
 
 def assert_is_dataframe(obj, msg="Expected pandas DataFrame"):
     """Assert object is a pandas DataFrame."""
@@ -218,18 +223,19 @@ def assert_column_types(df: pd.DataFrame, type_map: Dict[str, type]):
     for col, expected_type in type_map.items():
         if col in df.columns:
             actual_type = df[col].dtype
-            assert actual_type == expected_type, \
+            assert actual_type == expected_type, (
                 f"Column {col}: expected {expected_type}, got {actual_type}"
+            )
 
 
 @pytest.fixture
 def df_validators():
     """Provide DataFrame validation helpers."""
     return {
-        'is_dataframe': assert_is_dataframe,
-        'has_columns': assert_has_columns,
-        'not_empty': assert_not_empty,
-        'column_types': assert_column_types,
+        "is_dataframe": assert_is_dataframe,
+        "has_columns": assert_has_columns,
+        "not_empty": assert_not_empty,
+        "column_types": assert_column_types,
     }
 
 
@@ -237,19 +243,17 @@ def df_validators():
 # Sample Data Fixtures
 # ============================================================================
 
+
 @pytest.fixture
 def sample_stock_symbols():
     """Sample stock symbols for testing."""
-    return ['VCB', 'ACB', 'TCB', 'BID', 'VNM']
+    return ["VCB", "ACB", "TCB", "BID", "VNM"]
 
 
 @pytest.fixture
 def sample_date_range():
     """Sample date range for testing."""
-    return {
-        'start': '2024-01-01',
-        'end': '2024-03-31'
-    }
+    return {"start": "2024-01-01", "end": "2024-03-31"}
 
 
 @pytest.fixture
@@ -260,13 +264,13 @@ def sample_listing_data():
             "symbol": "AAA",
             "organ_name": "Company A",
             "type": "STOCK",
-            "exchange": "HOSE"
+            "exchange": "HOSE",
         },
         {
             "symbol": "BBB",
             "organ_name": "Company B",
             "type": "STOCK",
-            "exchange": "HNX"
+            "exchange": "HNX",
         },
     ]
 
@@ -281,7 +285,7 @@ def sample_quote_data():
             "high": 105.0,
             "low": 98.0,
             "close": 103.0,
-            "volume": 1000000
+            "volume": 1000000,
         },
         {
             "time": "2024-01-02",
@@ -289,7 +293,7 @@ def sample_quote_data():
             "high": 108.0,
             "low": 102.0,
             "close": 107.0,
-            "volume": 1200000
+            "volume": 1200000,
         },
     ]
 
@@ -298,59 +302,60 @@ def sample_quote_data():
 # Test Configuration
 # ============================================================================
 
+
 @pytest.fixture(autouse=True)
 def disable_logging(monkeypatch):
     """Disable logging during tests to reduce noise."""
     import logging
-    
+
     # Create a null logger
-    null_logger = logging.getLogger('null')
+    null_logger = logging.getLogger("null")
     null_logger.setLevel(logging.CRITICAL)
-    
+
     # Mock getLogger to return the null logger
-    monkeypatch.setattr(
-        logging, 'getLogger',
-        lambda name='': null_logger
-    )
+    monkeypatch.setattr(logging, "getLogger", lambda name="": null_logger)
 
 
 @pytest.fixture(autouse=True, scope="session")
 def setup_api_key():
     """
     Setup API key from environment variable for tests.
-    
+
     Automatically registers VNSTOCK_API_KEY from environment if available.
     This increases rate limit from 20 to 60 requests/minute.
-    
+
     Environment Variables:
         VNSTOCK_API_KEY: API key for authenticated requests (Community tier)
-        
+
     Usage:
         # Automatically runs before any test begins
         # No manual action needed in test code
-        
+
     GitHub Actions Setup:
         1. Register free account at https://vnstocks.com/login
         2. Get API key from dashboard
         3. Add to GitHub Secrets: Settings → Secrets → Actions → New
-        4. Use in workflow: 
+        4. Use in workflow:
            env:
              VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
     """
     import os
-    
-    api_key = os.getenv('VNSTOCK_API_KEY')
+
+    api_key = os.getenv("VNSTOCK_API_KEY")
     if api_key:
         try:
             # Try to import and setup the API key
             from vnstock.core.utils.auth import register_user
+
             success = register_user(api_key=api_key)
-            
+
             if success:
                 masked_key = f"{api_key[:4]}***{api_key[-4:]}"
                 print(f"\n✓ API Key Setup: {masked_key} (Community: 60 req/min)")
             else:
-                print("\n⚠ API Key setup failed, continuing with guest tier (20 req/min)")
+                print(
+                    "\n⚠ API Key setup failed, continuing with guest tier (20 req/min)"
+                )
         except Exception as e:
             print(f"\n⚠ Could not setup API key: {e}")
             print("  Continuing with guest tier (20 req/min)")
@@ -368,11 +373,12 @@ def temp_cache_dir(tmp_path):
 # Performance Testing Utilities
 # ============================================================================
 
+
 @pytest.fixture
 def benchmark_threshold():
     """Default performance thresholds for benchmarking."""
     return {
-        'parsing': 0.1,  # seconds per 1000 records
-        'api_call': 2.0,  # seconds per API call
-        'memory': 100,  # MB max memory increase
+        "parsing": 0.1,  # seconds per 1000 records
+        "api_call": 2.0,  # seconds per API call
+        "memory": 100,  # MB max memory increase
     }

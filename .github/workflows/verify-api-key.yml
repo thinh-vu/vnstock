@@ -12,63 +12,63 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
         cache: 'pip'
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -e .
-    
+
     - name: Verify API Key Setup (with secret)
       run: |
         python verify_api_key_setup.py
       env:
         VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
       continue-on-error: true
-    
+
     - name: Quick Test with API Key
       run: |
-        python << 'EOF'
-import os
-from vnstock.core.utils.auth import register_user
+        python -c "
+        import os
+        from vnstock.core.utils.auth import register_user
 
-api_key = os.getenv('VNSTOCK_API_KEY')
-if api_key:
-    print('✓ API Key found')
-    success = register_user(api_key=api_key)
-    if success:
-        print('✓ API Key registered - Community tier (60 req/min)')
-    else:
-        print('⚠ API Key registration failed')
-else:
-    print('ℹ No API Key - Guest tier (20 req/min)')
-EOF
+        api_key = os.getenv('VNSTOCK_API_KEY')
+        if api_key:
+            print('✓ API Key found')
+            success = register_user(api_key=api_key)
+            if success:
+                print('✓ API Key registered - Community tier (60 req/min)')
+            else:
+                print('⚠ API Key registration failed')
+        else:
+            print('ℹ No API Key - Guest tier (20 req/min)')
+        "
       env:
         VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
       continue-on-error: true
-    
+
     - name: Test API Connection
       run: |
-        python << 'EOF'
-from vnstock import listing
-try:
-    symbols = listing.all_symbols()
-    print(f'✓ Successfully fetched {len(symbols)} symbols')
-except Exception as e:
-    print(f'⚠ API Call failed: {e}')
-EOF
+        python -c "
+        from vnstock import listing
+        try:
+            symbols = listing.all_symbols()
+            print(f'✓ Successfully fetched {len(symbols)} symbols')
+        except Exception as e:
+            print(f'⚠ API Call failed: {e}')
+        "
       env:
         VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
       continue-on-error: true
-    
+
     - name: Print Summary
       if: always()
       run: |

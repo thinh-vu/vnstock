@@ -5,22 +5,21 @@ Supports pandas 1.x through 2.2+ with graceful fallbacks for deprecated methods.
 Compatible with Python 3.10+.
 """
 
-import pandas as pd
 import logging
-from typing import Callable, Any
+from typing import Any, Callable
+
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
 # Get pandas version
-PANDAS_VERSION = tuple(int(x) for x in pd.__version__.split('.')[:3])
+PANDAS_VERSION = tuple(int(x) for x in pd.__version__.split(".")[:3])
 PANDAS_GE_210 = PANDAS_VERSION >= (2, 1, 0)
 PANDAS_GE_220 = PANDAS_VERSION >= (2, 2, 0)
 
 
 def apply_to_dataframe(
-    df: pd.DataFrame,
-    func: Callable[[Any], Any],
-    method: str = "auto"
+    df: pd.DataFrame, func: Callable[[Any], Any], method: str = "auto"
 ) -> pd.DataFrame:
     """
     Apply a function to all elements in a DataFrame with pandas version compatibility.
@@ -54,14 +53,14 @@ def apply_to_dataframe(
     """
     if method == "auto":
         # Try map() first (pandas 2.1+)
-        if PANDAS_GE_210 and hasattr(df, 'map'):
+        if PANDAS_GE_210 and hasattr(df, "map"):
             try:
                 return df.map(func)
             except (AttributeError, TypeError) as e:
                 logger.debug(f"map() failed, falling back to applymap(): {e}")
-        
+
         # Fallback to applymap() (pandas <2.1)
-        if hasattr(df, 'applymap'):
+        if hasattr(df, "applymap"):
             return df.applymap(func)
         else:
             # If neither is available, raise an error
@@ -69,9 +68,9 @@ def apply_to_dataframe(
                 f"DataFrame has neither 'map' nor 'applymap' methods. "
                 f"Pandas version: {pd.__version__}"
             )
-    
+
     elif method == "map":
-        if hasattr(df, 'map'):
+        if hasattr(df, "map"):
             return df.map(func)
         else:
             logger.warning(
@@ -79,9 +78,9 @@ def apply_to_dataframe(
                 "falling back to applymap()"
             )
             return df.applymap(func)
-    
+
     elif method == "applymap":
-        if hasattr(df, 'applymap'):
+        if hasattr(df, "applymap"):
             return df.applymap(func)
         else:
             logger.warning(
@@ -89,7 +88,7 @@ def apply_to_dataframe(
                 "using map() instead"
             )
             return df.map(func)
-    
+
     else:
         raise ValueError(f"Unknown method: {method}. Use 'auto', 'map', or 'applymap'")
 
@@ -106,15 +105,17 @@ def get_pandas_info() -> dict:
     return {
         "version": pd.__version__,
         "version_tuple": PANDAS_VERSION,
-        "has_map": hasattr(pd.DataFrame, 'map'),
-        "has_applymap": hasattr(pd.DataFrame, 'applymap'),
+        "has_map": hasattr(pd.DataFrame, "map"),
+        "has_applymap": hasattr(pd.DataFrame, "applymap"),
         "ge_210": PANDAS_GE_210,
         "ge_220": PANDAS_GE_220,
     }
 
 
 # Convenience functions for common string replacement operations
-def replace_newlines_in_dataframe(df: pd.DataFrame, replacement: str = ' ') -> pd.DataFrame:
+def replace_newlines_in_dataframe(
+    df: pd.DataFrame, replacement: str = " "
+) -> pd.DataFrame:
     """
     Replace newline characters with a string in all DataFrame columns.
 
@@ -141,11 +142,12 @@ def replace_newlines_in_dataframe(df: pd.DataFrame, replacement: str = ' ') -> p
     0 a b
     1 c d
     """
+
     def _replace_fn(x):
         if isinstance(x, str):
-            return x.replace('\n', replacement)
+            return x.replace("\n", replacement)
         return x
-    
+
     return apply_to_dataframe(df, _replace_fn)
 
 
@@ -163,11 +165,12 @@ def strip_whitespace_in_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     pd.DataFrame
         DataFrame with whitespace stripped from all string columns
     """
+
     def _strip_fn(x):
         if isinstance(x, str):
             return x.strip()
         return x
-    
+
     return apply_to_dataframe(df, _strip_fn)
 
 
@@ -209,28 +212,37 @@ def normalize_frequency_string(freq_str: str) -> str:
     """
     if not isinstance(freq_str, str):
         return freq_str
-    
+
     # For pandas 2.2+, 'M' is no longer supported, use 'ME' instead
     if PANDAS_GE_220:
         # Replace 'M' with 'ME' but only for month-end frequency
         # Be careful with patterns like '5min', '1H', etc.
-        if freq_str.endswith('M') and not any(freq_str.endswith(x) for x in ['min', 'h']):
+        if freq_str.endswith("M") and not any(
+            freq_str.endswith(x) for x in ["min", "h"]
+        ):
             # It's a month frequency like 'M', '1M', etc.
-            if freq_str == 'M':
-                return 'ME'
-            elif freq_str.endswith('M'):
+            if freq_str == "M":
+                return "ME"
+            elif freq_str.endswith("M"):
                 # Handle cases like '1M', '2M', etc.
                 prefix = freq_str[:-1]  # Get everything except the last 'M'
-                return f'{prefix}ME'
-    
+                return f"{prefix}ME"
+    else:
+        # For pandas < 2.2, 'ME' is not supported, use 'M' instead
+        if freq_str.endswith("ME") and not any(
+            freq_str.endswith(x) for x in ["min", "h"]
+        ):
+            if freq_str == "ME":
+                return "M"
+            elif freq_str.endswith("ME"):
+                prefix = freq_str[:-2]
+                return f"{prefix}M"
+
     return freq_str
 
 
 def safe_resample_dataframe(
-    df: pd.DataFrame,
-    freq: str,
-    time_col: str = 'time',
-    agg_rules: dict = None
+    df: pd.DataFrame, freq: str, time_col: str = "time", agg_rules: dict = None
 ) -> pd.DataFrame:
     """
     Safely resample a DataFrame with pandas version compatibility.
@@ -269,27 +281,27 @@ def safe_resample_dataframe(
     """
     if time_col not in df.columns:
         raise KeyError(f"Time column '{time_col}' not found in DataFrame")
-    
+
     # Normalize frequency string for current pandas version
     normalized_freq = normalize_frequency_string(freq)
-    
+
     # Default OHLCV aggregation rules
     if agg_rules is None:
         agg_rules = {
-            'open': 'first',
-            'high': 'max',
-            'low': 'min',
-            'close': 'last',
-            'volume': 'sum',
+            "open": "first",
+            "high": "max",
+            "low": "min",
+            "close": "last",
+            "volume": "sum",
         }
-    
+
     # Build aggregation dict for available columns
     agg_dict = {}
     for col in df.columns:
         if col == time_col:
             continue
-        agg_dict[col] = agg_rules.get(col, 'last')
-    
+        agg_dict[col] = agg_rules.get(col, "last")
+
     # Perform resampling
     try:
         df_resampled = df.set_index(time_col).resample(normalized_freq).agg(agg_dict)

@@ -1,39 +1,50 @@
 """History module for VCI."""
 
-from typing import Optional, Union
 from datetime import datetime
+from typing import Optional, Union
+
 import pandas as pd
 from vnai import optimize_execution
-from vnstock.core.types import TimeFrame
-from vnstock.core.utils.interval import normalize_interval
-from .const import (
-    _TRADING_URL, _INTERVAL_MAP, _RESAMPLE_MAP,
-    _OHLC_MAP, _OHLC_DTYPE, _INTRADAY_URL,
-    _INTRADAY_MAP, _INTRADAY_DTYPE, _PRICE_DEPTH_MAP, _INDEX_MAPPING
-)
+
 from vnstock.core.models import TickerModel
+from vnstock.core.utils.client import ProxyConfig, send_request
+from vnstock.core.utils.interval import normalize_interval
 from vnstock.core.utils.logger import get_logger
+from vnstock.core.utils.lookback import (
+    get_start_date_from_lookback,
+    interpret_lookback_length,
+)
 from vnstock.core.utils.market import trading_hours
-from vnstock.core.utils.parser import get_asset_type, convert_time_flexible
-from vnstock.core.utils.validation import validate_symbol
+from vnstock.core.utils.parser import convert_time_flexible, get_asset_type
+from vnstock.core.utils.transform import intraday_to_df, ohlc_to_df
 from vnstock.core.utils.user_agent import get_headers
-from vnstock.core.utils.client import send_request, ProxyConfig
-from vnstock.core.utils.transform import ohlc_to_df, intraday_to_df
-from vnstock.core.utils.lookback import get_start_date_from_lookback, interpret_lookback_length
+from vnstock.core.utils.validation import validate_symbol
+
+from .const import (
+    _INDEX_MAPPING,
+    _INTERVAL_MAP,
+    _INTRADAY_DTYPE,
+    _INTRADAY_MAP,
+    _INTRADAY_URL,
+    _OHLC_DTYPE,
+    _OHLC_MAP,
+    _RESAMPLE_MAP,
+    _TRADING_URL,
+)
 
 logger = get_logger(__name__)
 
 # TimeFrame to interval key mapping
 # Standard format: m/1m=minute, h/1H=hour, d/1D=day, w/1W=week, M/1M=month
 _TIMEFRAME_MAP = {
-    '1D': '1D',
-    '1H': '1H',
-    '1W': '1W',
-    '1M': '1M',
-    '1m': '1m',
-    '5m': '5m',
-    '15m': '15m',
-    '30m': '30m'
+    "1D": "1D",
+    "1H": "1H",
+    "1W": "1W",
+    "1M": "1M",
+    "1m": "1m",
+    "5m": "5m",
+    "15m": "15m",
+    "30m": "30m",
 }
 
 
@@ -56,41 +67,38 @@ class Quote:
         proxy_config: Optional[ProxyConfig] = None,
         show_log=True,
         proxy_mode: Optional[str] = None,
-        proxy_list: Optional[list] = None
+        proxy_list: Optional[list] = None,
     ):
         self.symbol = validate_symbol(symbol)
-        self.data_source = 'VCI'
+        self.data_source = "VCI"
         self._history = None  # Cache for historical data
         self.asset_type = get_asset_type(self.symbol)
         self.base_url = _TRADING_URL
         self.headers = get_headers(
-            data_source=self.data_source,
-            random_agent=random_agent
+            data_source=self.data_source, random_agent=random_agent
         )
         self.interval_map = _INTERVAL_MAP
         self.show_log = show_log
-        
+
         # Handle proxy configuration
         if proxy_config is None:
             # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else 'try'
+            p_mode = proxy_mode if proxy_mode else "try"
             # If user asks for 'auto' or provides list, set request_mode to PROXY
-            req_mode = 'direct'
-            if proxy_mode == 'auto' or (proxy_list and len(proxy_list) > 0):
-                req_mode = 'proxy'
-                
+            req_mode = "direct"
+            if proxy_mode == "auto" or (proxy_list and len(proxy_list) > 0):
+                req_mode = "proxy"
+
             self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode,
-                proxy_list=proxy_list,
-                request_mode=req_mode
+                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
             )
         else:
             self.proxy_config = proxy_config
 
         if not show_log:
-            logger.setLevel('CRITICAL')
+            logger.setLevel("CRITICAL")
 
-        if self.asset_type == 'index':
+        if self.asset_type == "index":
             self.symbol = self._index_validation()
 
     def _index_validation(self) -> str:
@@ -98,7 +106,7 @@ class Quote:
         Validate and map index symbol with _INDEX_MAPPING.
         """
         if self.symbol not in _INDEX_MAPPING.keys():
-            valid_indices = ', '.join(_INDEX_MAPPING.keys())
+            valid_indices = ", ".join(_INDEX_MAPPING.keys())
             raise ValueError(
                 f"Không tìm thấy mã chứng khoán {self.symbol}. "
                 f"Các giá trị hợp lệ: {valid_indices}"
@@ -106,28 +114,19 @@ class Quote:
         return _INDEX_MAPPING[self.symbol]
 
     def _input_validation(
-        self,
-        start: str,
-        end: Optional[str],
-        interval: Optional[str]
+        self, start: str, end: Optional[str], interval: Optional[str]
     ) -> tuple:
         """
         Validate input data and return TickerModel and interval_key.
         """
         timeframe = normalize_interval(interval)
         ticker = TickerModel(
-            symbol=self.symbol,
-            start=start,
-            end=end,
-            interval=str(timeframe)
+            symbol=self.symbol, start=start, end=end, interval=str(timeframe)
         )
 
         interval_key = _TIMEFRAME_MAP.get(timeframe.value)
-        if (
-            interval_key is None or
-            interval_key not in self.interval_map.keys()
-        ):
-            valid_intervals = ', '.join(self.interval_map.keys())
+        if interval_key is None or interval_key not in self.interval_map.keys():
+            valid_intervals = ", ".join(self.interval_map.keys())
             msg = (
                 f"Giá trị interval không hợp lệ: {interval}. "
                 f"Vui lòng chọn: {valid_intervals}"
@@ -146,7 +145,7 @@ class Quote:
         show_log: Optional[bool] = False,
         count_back: Optional[int] = None,
         floating: Optional[int] = 2,
-        length: Optional[Union[str, int]] = None
+        length: Optional[Union[str, int]] = None,
     ) -> pd.DataFrame:
         """
         Tải lịch sử giá của mã chứng khoán từ nguồn dữ liệu VCI.
@@ -170,20 +169,17 @@ class Quote:
                 bars_from_len, len_remainder = interpret_lookback_length(length)
                 if bars_from_len is not None:
                     count_back = bars_from_len
-                    length = None # Consumed as bars
+                    length = None  # Consumed as bars
                 else:
                     length = len_remainder
-            
+
             if length is not None:
                 start = get_start_date_from_lookback(
-                    lookback_length=length,
-                    end_date=end
+                    lookback_length=length, end_date=end
                 )
             elif count_back is not None:
                 start = get_start_date_from_lookback(
-                    bars=count_back,
-                    interval=interval,
-                    end_date=end
+                    bars=count_back, interval=interval, end_date=end
                 )
             else:
                 raise ValueError(
@@ -192,25 +188,18 @@ class Quote:
                 )
 
         # Validate inputs
-        ticker, interval_key = self._input_validation(
-            start,
-            end,
-            interval
-        )
+        ticker, interval_key = self._input_validation(start, end, interval)
 
         # Parse start time - support both date and datetime formats
         try:
             # Try datetime format first
-            start_time = datetime.strptime(
-                ticker.start,
-                "%Y-%m-%d %H:%M:%S"
-            )
+            start_time = datetime.strptime(ticker.start, "%Y-%m-%d %H:%M:%S")
         except ValueError:
             try:
                 # Try date only format
                 start_time = datetime.strptime(ticker.start, "%Y-%m-%d")
             except ValueError:
-                raise ValueError(
+                raise ValueError(  # noqa: B904
                     f"Định dạng ngày không hợp lệ: {ticker.start}. "
                     f"Sử dụng định dạng YYYY-MM-DD hoặc "
                     f"YYYY-MM-DD HH:MM:SS"
@@ -220,19 +209,15 @@ class Quote:
         if end is not None:
             try:
                 # Try datetime format first
-                end_time = datetime.strptime(
-                    ticker.end,
-                    "%Y-%m-%d %H:%M:%S"
-                )
+                end_time = datetime.strptime(ticker.end, "%Y-%m-%d %H:%M:%S")
             except ValueError:
                 try:
                     # Try date only format
-                    end_time = datetime.strptime(
-                        ticker.end,
-                        "%Y-%m-%d"
-                    ) + pd.Timedelta(days=1)
+                    end_time = datetime.strptime(ticker.end, "%Y-%m-%d") + pd.Timedelta(
+                        days=1
+                    )
                 except ValueError:
-                    raise ValueError(
+                    raise ValueError(  # noqa: B904
                         f"Định dạng ngày không hợp lệ: {ticker.end}. "
                         f"Sử dụng định dạng YYYY-MM-DD hoặc "
                         f"YYYY-MM-DD HH:MM:SS"
@@ -240,8 +225,7 @@ class Quote:
 
             if start_time > end_time:
                 raise ValueError(
-                    "Thời gian bắt đầu không thể lớn hơn "
-                    "thời gian kết thúc."
+                    "Thời gian bắt đầu không thể lớn hơn thời gian kết thúc."
                 )
             end_stamp = int(end_time.timestamp())
         else:
@@ -273,12 +257,12 @@ class Quote:
             auto_count_back = count_back
 
         # Prepare request
-        url = f'{self.base_url}chart/OHLCChart/gap-chart'
+        url = f"{self.base_url}/chart/OHLCChart/gap-chart"
         payload = {
             "timeFrame": interval_value,
             "symbols": [self.symbol],
             "to": end_stamp,
-            "countBack": auto_count_back
+            "countBack": auto_count_back,
         }
 
         # Use the send_request utility
@@ -290,43 +274,43 @@ class Quote:
             show_log=show_log if show_log is not None else False,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode
+            request_mode=self.proxy_config.request_mode,
         )
 
         # Debug: log response structure
         if show_log:
             logger.info(f"API Response type: {type(json_data)}")
-            data_len = (
-                len(json_data) if hasattr(json_data, '__len__') else 'N/A'
-            )
+            data_len = len(json_data) if hasattr(json_data, "__len__") else "N/A"
             logger.info(f"Response length: {data_len}")
 
         # Handle both list and dict responses
         if isinstance(json_data, list):
             # API returns list of OHLC data directly
             pass  # json_data is already in correct format
-        elif isinstance(json_data, dict) and 'data' in json_data:
+        elif isinstance(json_data, dict) and "data" in json_data:
             # API returns dict with 'data' key
-            json_data = json_data['data']
+            json_data = json_data["data"]
 
         # Transform VCI array format to row format
         if isinstance(json_data, list) and len(json_data) > 0:
             list_data = json_data
             symbol_data = list_data[0]
             if (
-                isinstance(symbol_data, dict) and
-                'o' in symbol_data and
-                isinstance(symbol_data['o'], list)
+                isinstance(symbol_data, dict)
+                and "o" in symbol_data
+                and isinstance(symbol_data["o"], list)
             ):
                 # Vectorized conversion using pandas
-                json_data = pd.DataFrame({
-                    't': symbol_data['t'],
-                    'o': symbol_data['o'],
-                    'h': symbol_data['h'],
-                    'l': symbol_data['l'],
-                    'c': symbol_data['c'],
-                    'v': symbol_data['v']
-                }).to_dict('records')
+                json_data = pd.DataFrame(
+                    {
+                        "t": symbol_data["t"],
+                        "o": symbol_data["o"],
+                        "h": symbol_data["h"],
+                        "l": symbol_data["l"],
+                        "c": symbol_data["c"],
+                        "v": symbol_data["v"],
+                    }
+                ).to_dict("records")
 
         if not json_data:
             raise ValueError(
@@ -343,13 +327,13 @@ class Quote:
             asset_type=self.asset_type,
             source=self.data_source,
             interval=interval_key,
-            resample_map=_RESAMPLE_MAP
+            resample_map=_RESAMPLE_MAP,
         )
 
         if to_df:
             return df
         else:
-            return df.to_json(orient='records')
+            return df.to_json(orient="records")
 
     @optimize_execution("VCI")
     def intraday(
@@ -357,7 +341,7 @@ class Quote:
         page_size: Optional[int] = 100,
         last_time: Optional[Union[str, int, float]] = None,
         last_time_format: Optional[str] = None,
-        show_log: bool = False
+        show_log: bool = False,
     ) -> pd.DataFrame:
         """
         Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ
@@ -376,13 +360,15 @@ class Quote:
               dễ dàng. Mặc định là False.
         """
         # Validator: Intraday data is not supported for indices
-        if self.asset_type == 'index':
-            raise ValueError(f"Dữ liệu intraday không được hỗ trợ cho chỉ số {self.symbol}.")
+        if self.asset_type == "index":
+            raise ValueError(
+                f"Dữ liệu intraday không được hỗ trợ cho chỉ số {self.symbol}."
+            )
 
         market_status = trading_hours("HOSE")
         if (
-            market_status['is_trading_hour'] is False and
-            market_status['data_status'] == 'preparing'
+            market_status["is_trading_hour"] is False
+            and market_status["data_status"] == "preparing"
         ):
             raise ValueError(
                 f"{market_status['time']}: Dữ liệu khớp lệnh không "
@@ -392,8 +378,7 @@ class Quote:
 
         if self.symbol is None:
             raise ValueError(
-                "Vui lòng nhập mã chứng khoán cần truy xuất khi "
-                "khởi tạo Trading Class."
+                "Vui lòng nhập mã chứng khoán cần truy xuất khi khởi tạo Trading Class."
             )
 
         if page_size and page_size > 30_000:
@@ -405,11 +390,11 @@ class Quote:
         # Parse last_time to epoch timestamp
         parsed_last_time = convert_time_flexible(last_time, last_time_format)
 
-        url = f'{self.base_url}{_INTRADAY_URL}/LEData/getAll'
+        url = f"{self.base_url}/{_INTRADAY_URL}/LEData/getAll"
         payload = {
             "symbol": self.symbol,
             "limit": page_size,
-            "truncTime": parsed_last_time
+            "truncTime": parsed_last_time,
         }
 
         # Fetch data using the send_request utility
@@ -421,12 +406,12 @@ class Quote:
             show_log=show_log,
             proxy_list=self.proxy_config.proxy_list,
             proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode
+            request_mode=self.proxy_config.request_mode,
         )
 
         # Ensure data is a list
         if isinstance(data, dict):
-            data = data.get('data', []) if 'data' in data else []
+            data = data.get("data", []) if "data" in data else []
 
         # Transform data using intraday_to_df utility
         df = intraday_to_df(
@@ -435,11 +420,13 @@ class Quote:
             dtype_map=_INTRADAY_DTYPE,
             symbol=self.symbol,
             asset_type=self.asset_type,
-            source=self.data_source
+            source=self.data_source,
         )
 
         return df
 
+
 # Register VCI Quote provider
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
-ProviderRegistry.register('quote', 'vci', Quote)
+
+ProviderRegistry.register("quote", "vci", Quote)

@@ -10,22 +10,21 @@ Usage:
     # hoặc trong Colab: !python vci_proxy_demo.py
 """
 
+import logging
 import sys
 import time
-import logging
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 # Setup logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 try:
-    from vnstock.core.utils.proxy_manager import ProxyManager, Proxy
+    from vnstock.core.utils.proxy_manager import ProxyManager
     from vnstock.explorer.vci.quote import Quote
-    from vnstock.explorer.vci.listing import Listing
+
     logger.info("✅ Successfully imported vnstock modules")
 except ImportError as e:
     logger.error(f"❌ Failed to import vnstock: {e}")
@@ -57,9 +56,7 @@ class VCIProxyDemo:
         # Test proxies
         print("🧪 Testing proxies (this may take 1-2 minutes)...")
         working, failed = self.proxy_manager.test_proxies(
-            proxies,
-            test_url='https://httpbin.org/ip',
-            timeout=15
+            proxies, test_url="https://httpbin.org/ip", timeout=15
         )
 
         print(f"✅ Working proxies: {len(working)}")
@@ -74,11 +71,15 @@ class VCIProxyDemo:
         # Show best proxy
         best_proxy = self.proxy_manager.get_best_proxy(working)
         if best_proxy:
-            print(f"🚀 Best proxy: {best_proxy.address} ({best_proxy.speed:.1f}ms from {best_proxy.country})")
+            print(
+                f"🚀 Best proxy: {best_proxy.address} ({best_proxy.speed:.1f}ms from {best_proxy.country})"
+            )
 
         return True
 
-    def test_vci_quote_with_proxy(self, symbol: str, max_retries: int = 3) -> Optional[Dict[str, Any]]:
+    def test_vci_quote_with_proxy(
+        self, symbol: str, max_retries: int = 3
+    ) -> Optional[Dict[str, Any]]:
         """Test VCI quote với proxy rotation."""
         print(f"\n📈 Testing VCI Quote for {symbol}")
 
@@ -91,15 +92,13 @@ class VCIProxyDemo:
             proxy_index = attempt % len(self.working_proxies)
             current_proxy = self.working_proxies[proxy_index]
 
-            print(f"🔄 Attempt {attempt + 1}/{max_retries} with proxy: {current_proxy.address}")
+            print(
+                f"🔄 Attempt {attempt + 1}/{max_retries} with proxy: {current_proxy.address}"
+            )
 
             try:
                 # Khởi tạo VCI Quote
-                quote = Quote(
-                    symbol=symbol,
-                    random_agent=True,
-                    show_log=False
-                )
+                Quote(symbol=symbol, random_agent=True, show_log=False)
 
                 # Trong thực tế, đây là nơi bạn sẽ inject proxy vào VCI requests
                 # Hiện tại chỉ mô phỏng
@@ -110,18 +109,18 @@ class VCIProxyDemo:
 
                 # Mock successful response
                 mock_response = {
-                    'symbol': symbol,
-                    'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
-                    'proxy_used': current_proxy.address,
-                    'proxy_country': current_proxy.country,
-                    'proxy_speed': f"{current_proxy.speed:.1f}ms",
-                    'attempt': attempt + 1,
-                    'status': 'success',
-                    'mock_data': {
-                        'price': '45,000 ± 500',
-                        'change': '+1.2% ± 0.5%',
-                        'volume': '1,234,567 ± 100,000'
-                    }
+                    "symbol": symbol,
+                    "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "proxy_used": current_proxy.address,
+                    "proxy_country": current_proxy.country,
+                    "proxy_speed": f"{current_proxy.speed:.1f}ms",
+                    "attempt": attempt + 1,
+                    "status": "success",
+                    "mock_data": {
+                        "price": "45,000 ± 500",
+                        "change": "+1.2% ± 0.5%",
+                        "volume": "1,234,567 ± 100,000",
+                    },
                 }
 
                 print("✅ Success!")
@@ -152,7 +151,7 @@ class VCIProxyDemo:
         results = {}
 
         for i, symbol in enumerate(symbols):
-            print(f"\n[{i+1}/{len(symbols)}] Processing {symbol}...")
+            print(f"\n[{i + 1}/{len(symbols)}] Processing {symbol}...")
 
             result = self.test_vci_quote_with_proxy(symbol)
             results[symbol] = result
@@ -182,14 +181,14 @@ class VCIProxyDemo:
         print(f"📈 Total symbols tested: {total}")
         print(f"✅ Successful: {successful}")
         print(f"❌ Failed: {failed}")
-        print(f"📊 Success rate: {successful/total*100:.1f}%")
+        print(f"📊 Success rate: {successful / total * 100:.1f}%")
         print("\n📋 Detailed Results:")
         print("-" * 60)
 
         for symbol, result in results.items():
             if result:
-                proxy = result['proxy_used']
-                speed = result['proxy_speed']
+                proxy = result["proxy_used"]
+                speed = result["proxy_speed"]
                 print(f"✅ {symbol}: {proxy} ({speed})")
             else:
                 print(f"❌ {symbol}: Failed")
@@ -199,11 +198,11 @@ class VCIProxyDemo:
 
 def detect_environment():
     """Detect if running in Google Colab."""
-    try:
-        import google.colab
+    import importlib.util
+
+    if importlib.util.find_spec("google.colab") is not None:
         return "Google Colab"
-    except ImportError:
-        return "Local environment"
+    return "Local environment"
 
 
 def main():
@@ -228,7 +227,7 @@ def main():
         return
 
     # Test symbols
-    test_symbols = ['VCB', 'ACB', 'TCB', 'BID', 'CTG']
+    test_symbols = ["VCB", "ACB", "TCB", "BID", "CTG"]
 
     # Run batch test
     results = demo.batch_test_symbols(test_symbols, delay=2.0)

@@ -84,7 +84,7 @@ proxies_list = manager.fetch_proxies(limit=1)
 if proxies_list:
     proxy = proxies_list[0]
     proxy_config = proxy.dict_format  # {'http': '...', 'https': '...'}
-    
+
     # Use with requests
     response = requests.get('https://api.example.com', proxies=proxy_config)
 ```
@@ -118,7 +118,7 @@ urls = ['https://api1.example.com', 'https://api2.example.com', 'https://api3.ex
 for i, url in enumerate(urls):
     proxy = proxies[i % len(proxies)]
     print(f"Requesting {url} with {proxy.address}")
-    
+
     response = requests.get(url, proxies=proxy.dict_format, timeout=10)
     print(f"Status: {response.status_code}")
 ```
@@ -527,10 +527,10 @@ def save_proxies(proxies, filename='proxies.json'):
 
 def load_proxies(filename='proxies.json'):
     from vnstock.core.utils.proxy_manager import Proxy
-    
+
     with open(filename) as f:
         data = json.load(f)
-    
+
     return [Proxy(**item) for item in data]
 
 # Usage

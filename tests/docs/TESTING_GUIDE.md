@@ -226,13 +226,13 @@ def test_listing_data_validation(data_validator, mock_listing_data):
     """Test listing data validation."""
     import pandas as pd
     df = pd.DataFrame(mock_listing_data)
-    
+
     schema = {
         'symbol': 'object',
         'name': 'object',
         'exchange': 'object'
     }
-    
+
     errors = data_validator.validate_dataframe_schema(df, schema)
     assert len(errors) == 0
 ```

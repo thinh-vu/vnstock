@@ -2,20 +2,28 @@
 
 # Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê
 # hành vi thị tường
+from datetime import datetime
+from typing import Dict, Optional
+
 import pandas as pd
 import requests
-from datetime import datetime
-from typing import Optional, Dict
 from vnai import optimize_execution
-from vnstock.core.types import TimeFrame
+
+from vnstock.core.models import TickerModel
 from vnstock.core.utils.interval import normalize_interval
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
-from vnstock.explorer.msn.listing import Listing
-from vnstock.explorer.msn.helper import msn_apikey
-from vnstock.core.models import TickerModel
-from vnstock.explorer.msn.helper import get_asset_type
-from .const import _BASE_URL, _RESAMPLE_MAP, _OHLC_MAP, _OHLC_DTYPE, _CRYPTO_ID_MAP, _CURRENCY_ID_MAP, _GLOBAL_INDICES
+from vnstock.explorer.msn.helper import get_asset_type, msn_apikey
+
+from .const import (
+    _BASE_URL,
+    _CRYPTO_ID_MAP,
+    _CURRENCY_ID_MAP,
+    _GLOBAL_INDICES,
+    _OHLC_DTYPE,
+    _OHLC_MAP,
+    _RESAMPLE_MAP,
+)
 
 logger = get_logger(__name__)
 
@@ -24,8 +32,14 @@ class Quote:
     """
     MSN data source for fetching stock market data, accommodating requests with large date ranges.
     """
-    def __init__(self, symbol_id:str, api_version='20240430', random_agent:Optional[bool]=False):
-        self.data_source = 'MSN'
+
+    def __init__(
+        self,
+        symbol_id: str,
+        api_version="20240430",
+        random_agent: Optional[bool] = False,
+    ):
+        self.data_source = "MSN"
         symbol_id_upper = symbol_id.upper()
         # Resolve SecId from common maps if symbol is passed instead of ID
         if symbol_id_upper in _CRYPTO_ID_MAP:
@@ -36,13 +50,17 @@ class Quote:
             self.symbol_id = _GLOBAL_INDICES[symbol_id_upper]
         else:
             self.symbol_id = symbol_id.lower()
-            
+
         self.asset_type = get_asset_type(self.symbol_id)
         self.base_url = _BASE_URL
-        self.headers = get_headers(data_source=self.data_source, random_agent=random_agent)
+        self.headers = get_headers(
+            data_source=self.data_source, random_agent=random_agent
+        )
         self.apikey = msn_apikey(headers=self.headers, version=api_version)
 
-    def _input_validation(self, start: Optional[str], end: Optional[str], interval: Optional[str]):
+    def _input_validation(
+        self, start: Optional[str], end: Optional[str], interval: Optional[str]
+    ):
         """
         Validate input data
         """
@@ -62,12 +80,22 @@ class Quote:
 
         # Create ticker model with standardized interval
         ticker = TickerModel(
-            symbol=self.symbol_id, start=start, end=end,
-            interval=timeframe_value
+            symbol=self.symbol_id, start=start, end=end, interval=timeframe_value
         )
         return ticker
-    @optimize_execution('MSN')
-    def history(self, start: Optional[str] = None, end: Optional[str] = None, interval: Optional[str] = "1D", show_log: bool = False, count_back: Optional[int] = 365, asset_type: Optional[str] = None, timezone: str = 'Asia/Ho_Chi_Minh', **kwargs) -> pd.DataFrame:
+
+    @optimize_execution("MSN")
+    def history(
+        self,
+        start: Optional[str] = None,
+        end: Optional[str] = None,
+        interval: Optional[str] = "1D",
+        show_log: bool = False,
+        count_back: Optional[int] = 365,
+        asset_type: Optional[str] = None,
+        timezone: str = "Asia/Ho_Chi_Minh",
+        **kwargs,
+    ) -> pd.DataFrame:
         """
         Truy xuất dữ liệu giá lịch sử.
         Fetch historical price data.
@@ -82,13 +110,13 @@ class Quote:
 
         # Default dates if not provided
         if start is None:
-            start = '2000-01-01'
+            start = "2000-01-01"
         if end is None:
             end = datetime.now().strftime("%Y-%m-%d")
 
         # Validate inputs
         ticker = self._input_validation(start, end, interval)
-        
+
         if count_back is None:
             count_back = 365
 
@@ -110,84 +138,98 @@ class Quote:
 
         params = {
             "apikey": self.apikey,
-            'StartTime': f'{start}T17:00:00.000Z',
-            'EndTime': f'{end}T16:59:00.858Z',
-            'timeframe': 1,
-                    "ocid": "finance-utils-peregrine",
-                    "cm": "vi-vn",
-                    "it": "web",
-                    "scn": "ANON",
-                    "ids": self.symbol_id,
-                    "type": "All",
-                    "wrapodata": "false",
-                    "disableSymbol": "false"
-                }
+            "StartTime": f"{start}T17:00:00.000Z",
+            "EndTime": f"{end}T16:59:00.858Z",
+            "timeframe": 1,
+            "ocid": "finance-utils-peregrine",
+            "cm": "vi-vn",
+            "it": "web",
+            "scn": "ANON",
+            "ids": self.symbol_id,
+            "type": "All",
+            "wrapodata": "false",
+            "disableSymbol": "false",
+        }
 
         if show_log:
-            logger.info(f"Tải dữ liệu từ {url} cho {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}.\nParams: {params}")
+            logger.info(
+                f"Tải dữ liệu từ {url} cho {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}.\nParams: {params}"
+            )
 
         # Send a GET request to fetch the data
         response = requests.request("GET", url, headers=self.headers, params=params)
 
         if response.status_code != 200:
-            raise ConnectionError(f"Tải dữ liệu không thành công: {response.status_code} - {response.reason}")
+            raise ConnectionError(
+                f"Tải dữ liệu không thành công: {response.status_code} - {response.reason}"
+            )
 
-        json_data = response.json()[0]['series']
+        json_data = response.json()[0]["series"]
 
         if show_log:
-            logger.info(f'Truy xuất thành công dữ liệu {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}.')
+            logger.info(
+                f"Truy xuất thành công dữ liệu {ticker.symbol} từ {ticker.start} đến {ticker.end}, khung thời gian {ticker.interval}."
+            )
 
         df = self._as_df(json_data, timeframe_value, timezone=timezone)
 
         # index df's data by start and end date
-        df = df[(df['time'] >= ticker.start) & (df['time'] <= ticker.end)]
+        df = df[(df["time"] >= ticker.start) & (df["time"] <= ticker.end)]
 
         df.source = self.data_source
 
         if count_back is not None:
             df = df.tail(count_back)
-        
+
         return df.reset_index(drop=True)
-    
-    def _as_df(self, history_data: Dict, interval:str, floating: Optional[int] = 2, timezone: str = 'Asia/Ho_Chi_Minh') -> pd.DataFrame:
+
+    def _as_df(
+        self,
+        history_data: Dict,
+        interval: str,
+        floating: Optional[int] = 2,
+        timezone: str = "Asia/Ho_Chi_Minh",
+    ) -> pd.DataFrame:
         """
         Convert fetched historical stock data into a Pandas DataFrame.
         """
         df = pd.DataFrame(history_data)
-        df.drop(columns=['priceHigh', 'priceLow', 'startTime', 'endTime'], inplace=True)
-        
+        df.drop(columns=["priceHigh", "priceLow", "startTime", "endTime"], inplace=True)
+
         # rename columns using OHLC_MAP
         df.rename(columns=_OHLC_MAP, inplace=True)
 
         # parse the df['time'] from string to datetime, it can be in format of "2023-01-01 00:00:00" or "2023-01-01"
-        df["time"] = pd.to_datetime(df["time"], errors='coerce')
+        df["time"] = pd.to_datetime(df["time"], errors="coerce")
 
         # Convert time based on requested timezone (default is Asia/Ho_Chi_Minh / GMT+7)
-        if timezone.upper() == 'UTC':
-             pass # Already UTC
-        elif timezone == 'Asia/Ho_Chi_Minh':
-            df['time'] = df['time'] + pd.Timedelta(hours=7)
+        if timezone.upper() == "UTC":
+            pass  # Already UTC
+        elif timezone == "Asia/Ho_Chi_Minh":
+            df["time"] = df["time"] + pd.Timedelta(hours=7)
         else:
-            # For other timezones, we might need more complex logic, 
+            # For other timezones, we might need more complex logic,
             # but for now handle common ones or use pandas tz_convert if we had tz info
             try:
                 # If timezone is an offset like '+7', '7'
-                offset = int(timezone.replace('+', ''))
-                df['time'] = df['time'] + pd.Timedelta(hours=offset)
+                offset = int(timezone.replace("+", ""))
+                df["time"] = df["time"] + pd.Timedelta(hours=offset)
             except (ValueError, TypeError):
                 # Default fallback for VN users if unknown timezone
-                df['time'] = df['time'] + pd.Timedelta(hours=7)
+                df["time"] = df["time"] + pd.Timedelta(hours=7)
 
         # remove hours info from time if not intraday
         if interval in ["1D", "1W", "1M"]:
-            df['time'] = df['time'].dt.floor('D')
+            df["time"] = df["time"].dt.floor("D")
 
         # round open, high, low, close to 2 decimal places
-        df[["open", "high", "low", "close"]] = df[["open", "high", "low", "close"]].round(floating)
+        df[["open", "high", "low", "close"]] = df[
+            ["open", "high", "low", "close"]
+        ].round(floating)
 
         # set datatype for each column using _OHLC_DTYPE
         for col, dtype in _OHLC_DTYPE.items():
-            if col == 'time':
+            if col == "time":
                 if pd.api.types.is_datetime64_any_dtype(df[col]):
                     if df[col].dt.tz is not None:
                         df[col] = df[col].dt.tz_localize(None)
@@ -197,30 +239,38 @@ class Quote:
                 df[col] = df[col].astype(dtype)
 
         # Define column order for clarity and maintainability
-        column_order = ['time', 'open', 'high', 'low', 'close', 'volume']
+        column_order = ["time", "open", "high", "low", "close", "volume"]
         # Reorder columns for the final DataFrame
         df = df[column_order]
 
         if interval not in ["1D"]:
-            df = df.set_index('time').resample(_RESAMPLE_MAP[interval]).agg({
-                'open': 'first',
-                'high': 'max',
-                'low': 'min',
-                'close': 'last',
-                'volume': 'sum'
-            }).reset_index()
-        
+            df = (
+                df.set_index("time")
+                .resample(_RESAMPLE_MAP[interval])
+                .agg(
+                    {
+                        "open": "first",
+                        "high": "max",
+                        "low": "min",
+                        "close": "last",
+                        "volume": "sum",
+                    }
+                )
+                .reset_index()
+            )
+
         if self.asset_type == "currency":
-            df.drop(columns=['volume'], inplace=True)
-        
+            df.drop(columns=["volume"], inplace=True)
+
         # replace value -99999901.0	by NaN
         df = df.replace(-99999901.0, None)
         # drop rows with NaN values in open, high, low
-        df = df.dropna(subset=['open', 'high', 'low'])
+        df = df.dropna(subset=["open", "high", "low"])
 
         return df
 
 
 # Register MSN Quote provider
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
-ProviderRegistry.register('quote', 'msn', Quote)
+
+ProviderRegistry.register("quote", "msn", Quote)

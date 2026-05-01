@@ -3,18 +3,20 @@ import platform
 import subprocess
 from typing import List, Optional
 
+
 def change_dir(path: str) -> None:
     """
     Change the current working directory in the Python environment.
 
     Parameters:
         - path (str): Path to the new directory.
-    
+
     Returns:
         - None
     """
     os.chdir(path)
-    print(f'Changed directory to {path}')
+    print(f"Changed directory to {path}")
+
 
 def execute_command(command: Optional[List[str]] = None) -> None:
     """
@@ -26,24 +28,27 @@ def execute_command(command: Optional[List[str]] = None) -> None:
           in the current directory.
     """
     if command is None:
-        command = ['echo', 'Hello, World!']
-    
+        command = ["echo", "Hello, World!"]
+
     # On Windows, prepend command with cmd.exe /c to handle internal
     # commands like dir
-    if platform.system() == 'Windows':
-        command = ['cmd.exe', '/c'] + command
-    
+    if platform.system() == "Windows":
+        command = ["cmd.exe", "/c"] + command
+
     try:
         result = subprocess.run(
-            command, check=True, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, text=True
+            command,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
         )
         if result.stdout:
             print("Output:\n", result.stdout)
         if result.stderr:
             print("Error:\n", result.stderr)
     except subprocess.CalledProcessError as e:
-        msg = f'Error executing command: {e}\nError Output:\n{e.stderr}'
+        msg = f"Error executing command: {e}\nError Output:\n{e.stderr}"
         print(msg)
     except FileNotFoundError:
         print(f"Command not found: {' '.join(command)}")

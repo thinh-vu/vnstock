@@ -6,16 +6,22 @@ Module quản lý dữ liệu giá chứng khoán với phát hiện phương th
 """
 
 from typing import Any, Optional
+
 import pandas as pd
 from tenacity import retry, stop_after_attempt, wait_exponential
 from vnai import optimize_execution
-from vnstock.config import Config
+
 from vnstock.base import BaseAdapter, dynamic_method
+from vnstock.config import Config
 from vnstock.core.types import (
-    ParameterNames as P,
-    MethodNames as M,
     DataSource,
     TimeFrame,
+)
+from vnstock.core.types import (
+    MethodNames as M,
+)
+from vnstock.core.types import (
+    ParameterNames as P,
 )
 
 # Backward compatibility aliases
@@ -35,12 +41,13 @@ class Quote(BaseAdapter):
         df2 = q.intraday(page_size=100)
         depth = q.price_depth()
     """
+
     def __init__(
         self,
         source: str = DataSources.KBS,
         symbol: str = "",
         random_agent: bool = False,
-        show_log: bool = False
+        show_log: bool = False,
     ):
         """
         Initialize a Quote instance.
@@ -54,29 +61,27 @@ class Quote(BaseAdapter):
         """
         # Ensure explorer modules are loaded (lazy load to avoid deadlock)
         from vnstock import _ensure_explorer_modules_loaded
+
         _ensure_explorer_modules_loaded()
-        
+
         # Store parameters for later use
         self.source = source
         self.symbol = symbol if symbol else ""
         self.random_agent = random_agent
         self.show_log = show_log
-        
+
         # Validate the source to only accept vci or msn
         all_sources = DataSources.all_sources()
         if source.lower() not in [s.lower() for s in all_sources]:
-            sources_str = ', '.join(all_sources)
+            sources_str = ", ".join(all_sources)
             raise ValueError(
                 f"Lớp Quote chỉ nhận giá trị tham số source là {sources_str}."
             )
-        
+
         # BaseAdapter will discover vnstock.explorer.<real_source>.quote
         # and pass only the kwargs its __init__ accepts (symbol, random_agent, show_log).
         super().__init__(
-            source=source,
-            symbol=symbol,
-            random_agent=random_agent,
-            show_log=show_log
+            source=source, symbol=symbol, random_agent=random_agent, show_log=show_log
         )
 
     @optimize_execution("API")
@@ -85,12 +90,18 @@ class Quote(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
-    def history(self, symbol: Optional[str] = None, start: str = None, end: str = None, 
-               interval: str = TimeResolutions.DAILY, **kwargs: Any) -> pd.DataFrame:
+    def history(
+        self,
+        symbol: Optional[str] = None,
+        start: str = None,
+        end: str = None,
+        interval: str = TimeResolutions.DAILY,
+        **kwargs: Any,
+    ) -> pd.DataFrame:
         """
         Load historical OHLC data for the symbol.
         Tải dữ liệu OHLC lịch sử cho mã chứng khoán.
@@ -106,7 +117,7 @@ class Quote(BaseAdapter):
 
         Returns:
             pandas.DataFrame: Historical price data. Dữ liệu giá lịch sử.
-            
+
         Examples:
             >>> quote = Quote(symbol="VCI", source="vci")
             >>> df = quote.history(start="2024-01-01", end="2024-04-18")
@@ -114,9 +125,9 @@ class Quote(BaseAdapter):
             >>> df = quote.history(symbol="FPT", start="2024-01-01 09:00:00", end="2024-01-01 14:30:00", interval=TimeResolutions.MINUTE_5)
         """
         # Support for backward compatibility with old parameter names
-        if 'resolution' in kwargs:
-            interval = kwargs.pop('resolution')
-            
+        if "resolution" in kwargs:
+            interval = kwargs.pop("resolution")
+
         # Prepare parameters
         params = {}
         if start:
@@ -125,12 +136,12 @@ class Quote(BaseAdapter):
             params[P.END] = end
         if interval:
             params[P.INTERVAL] = interval
-            
+
         # Add any remaining kwargs
         params.update(kwargs)
-            
+
         return self._delegate_to_provider(M.HISTORY, symbol, **params)
-    
+
     # Aliases
     ohlcv = history
 
@@ -140,11 +151,17 @@ class Quote(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
-    def intraday(self, symbol: Optional[str] = None, page_size: int = 100, page: int = 1, **kwargs: Any) -> pd.DataFrame:
+    def intraday(
+        self,
+        symbol: Optional[str] = None,
+        page_size: int = 100,
+        page: int = 1,
+        **kwargs: Any,
+    ) -> pd.DataFrame:
         """
         Load intraday trade data for the symbol.
         Tải dữ liệu giao dịch trong ngày cho mã chứng khoán.
@@ -156,21 +173,18 @@ class Quote(BaseAdapter):
 
         Returns:
             pandas.DataFrame: Intraday trade data. Dữ liệu giao dịch trong ngày.
-            
+
         Examples:
             >>> quote = Quote(symbol="VCI", source="vci")
             >>> df = quote.intraday()
             >>> df = quote.intraday(symbol="FPT", page_size=200)
         """
         # Prepare parameters
-        params = {
-            P.PAGE_SIZE: page_size,
-            P.PAGE: page
-        }
-        
+        params = {P.PAGE_SIZE: page_size, P.PAGE: page}
+
         # Add any remaining kwargs
         params.update(kwargs)
-        
+
         return self._delegate_to_provider(M.INTRADAY, symbol, **params)
 
     @optimize_execution("API")
@@ -179,8 +193,8 @@ class Quote(BaseAdapter):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     @dynamic_method
     def price_depth(self, symbol: Optional[str] = None, **kwargs: Any) -> pd.DataFrame:
@@ -193,15 +207,17 @@ class Quote(BaseAdapter):
 
         Returns:
             pandas.DataFrame: Price depth data. Dữ liệu độ sâu giá.
-            
+
         Examples:
             >>> quote = Quote(symbol="VCI", source="vci")
             >>> df = quote.price_depth()
             >>> df = quote.price_depth(symbol="FPT")
         """
         return self._delegate_to_provider(M.PRICE_DEPTH, symbol, **kwargs)
-        
-    def _delegate_to_provider(self, method_name: str, symbol: Optional[str] = None, **kwargs: Any) -> Any:
+
+    def _delegate_to_provider(
+        self, method_name: str, symbol: Optional[str] = None, **kwargs: Any
+    ) -> Any:
         """
         Delegate method call to the provider with symbol update if needed.
         Ủy thác cuộc gọi phương thức cho nhà cung cấp với cập nhật mã chứng khoán nếu cần.
@@ -221,7 +237,7 @@ class Quote(BaseAdapter):
                 original_symbol = self.symbol
                 self.symbol = symbol.upper()
                 self._update_provider()
-                
+
             # Get the method from the provider
             method = getattr(self.provider, method_name)
             return method(**kwargs)

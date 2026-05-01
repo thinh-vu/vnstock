@@ -16,22 +16,22 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ['3.10', '3.11', '3.12', '3.13']
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
         pip install -e ".[test]"
         pip install pytest-xdist pytest-timeout pytest-mock pytest-rerunfailures
-    
+
     - name: Run unit tests
       run: |
         pytest tests/unit/ -v --tb=short --timeout=60 -n auto --durations=10 --reruns 2 --reruns-delay 5
@@ -39,7 +39,7 @@ jobs:
         PYTEST_CURRENT_TEST: true
         CI: true
         VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
-    
+
     - name: Run integration tests
       run: |
         pytest tests/integration/ -v --tb=short --timeout=120 --maxfail=5
@@ -47,7 +47,7 @@ jobs:
       env:
         PYTEST_XDIST_WORKER_COUNT: 2
         VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
-    
+
     - name: Generate coverage report
       run: |
         pip install pytest-cov
@@ -55,7 +55,7 @@ jobs:
       continue-on-error: true
       env:
         VNSTOCK_API_KEY: ${{ secrets.VNSTOCK_API_KEY }}
-    
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
@@ -66,38 +66,38 @@ jobs:
 
   code-quality:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
         cache: 'pip'
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -e ".[test]"
         pip install flake8 pylint black isort mypy
-    
+
     - name: Lint with flake8
       run: |
         flake8 vnstock --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 vnstock --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       continue-on-error: true
-    
+
     - name: Check code formatting with black
       run: |
         black --check vnstock --diff
       continue-on-error: true
-    
+
     - name: Check import sorting with isort
       run: |
         isort --check-only vnstock --diff
       continue-on-error: true
-    
+
     - name: Type checking with mypy
       run: |
         mypy vnstock --ignore-missing-imports --no-error-summary
@@ -105,25 +105,25 @@ jobs:
 
   security:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
+
     - name: Install security tools
       run: |
         python -m pip install --upgrade pip
         pip install bandit safety
-    
+
     - name: Run Bandit security scan
       run: |
         bandit -r vnstock -f json -o bandit-report.json
       continue-on-error: true
-    
+
     - name: Check dependencies with Safety
       run: |
         safety check --json
@@ -132,29 +132,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: [test, code-quality]
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
+
     - name: Install build dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel build
-    
+
     - name: Build package
       run: |
         python -m build
-    
+
     - name: Check package with twine
       run: |
         pip install twine
         twine check dist/*
       continue-on-error: true
-    
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -165,7 +165,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     if: always()
-    
+
     steps:
     - name: Download coverage reports
       uses: actions/download-artifact@v4
@@ -173,7 +173,7 @@ jobs:
       with:
         pattern: coverage-*
         merge-multiple: true
-    
+
     - name: Publish test results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()

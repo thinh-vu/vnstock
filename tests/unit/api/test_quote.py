@@ -5,8 +5,9 @@ Tests the Quote class adapter pattern, parameter filtering,
 and delegation to underlying explorer quote implementations.
 """
 
-import pytest
 import pandas as pd
+import pytest
+
 from vnstock.api.quote import Quote
 
 
@@ -17,30 +18,28 @@ class TestQuoteAdapter:
 
     def test_quote_instantiation_vci(self):
         """Test Quote can be instantiated with VCI source."""
-        quote = Quote(source='VCI', symbol='ACB', show_log=False)
+        quote = Quote(source="VCI", symbol="ACB", show_log=False)
         assert quote is not None
-        assert quote.source.lower() == 'vci'
-
-
+        assert quote.source.lower() == "vci"
 
     @pytest.mark.skip(reason="MSN Quote uses symbol_id instead of symbol")
     def test_quote_instantiation_msn(self):
         """Test Quote can be instantiated with MSN source."""
         # MSN explorer uses symbol_id parameter instead of symbol
         # This is a known incompatibility with the adapter pattern
-        quote = Quote(source='MSN', symbol='ACB', show_log=False)
+        quote = Quote(source="MSN", symbol="ACB", show_log=False)
         assert quote is not None
-        assert quote.source.lower() == 'msn'
+        assert quote.source.lower() == "msn"
 
     def test_quote_invalid_source_raises_error(self):
         """Test Quote raises ValueError for invalid source."""
         with pytest.raises(ValueError, match="chỉ nhận giá trị"):
-            Quote(source='INVALID', symbol='ACB')
+            Quote(source="INVALID", symbol="ACB")
 
     def test_quote_has_history_method(self):
         """Test Quote has history method."""
-        quote = Quote(source='VCI', symbol='ACB', show_log=False)
-        assert hasattr(quote, 'history')
+        quote = Quote(source="VCI", symbol="ACB", show_log=False)
+        assert hasattr(quote, "history")
         assert callable(quote.history)
 
     @pytest.mark.integration
@@ -48,33 +47,32 @@ class TestQuoteAdapter:
         self, monkeypatch, mock_response_factory
     ):
         """Test Quote.history returns DataFrame for VCI source."""
+
         # Mock HTTP response
         def mock_get(*args, **kwargs):
-            return mock_response_factory(json_data={
-                "data": [
-                    {
-                        "time": "2024-01-01",
-                        "open": 100.0,
-                        "high": 105.0,
-                        "low": 98.0,
-                        "close": 103.0,
-                        "volume": 1000000
-                    }
-                ]
-            })
+            return mock_response_factory(
+                json_data={
+                    "data": [
+                        {
+                            "time": "2024-01-01",
+                            "open": 100.0,
+                            "high": 105.0,
+                            "low": 98.0,
+                            "close": 103.0,
+                            "volume": 1000000,
+                        }
+                    ]
+                }
+            )
 
         monkeypatch.setattr("requests.get", mock_get)
         monkeypatch.setattr("requests.post", mock_get)
 
-        quote = Quote(source='VCI', symbol='ACB', show_log=False)
+        quote = Quote(source="VCI", symbol="ACB", show_log=False)
         # This will likely fail without proper mocking
         # but shows the test structure
         try:
-            df = quote.history(
-                start='2024-01-01',
-                end='2024-01-31',
-                interval='1D'
-            )
+            df = quote.history(start="2024-01-01", end="2024-01-31", interval="1D")
             assert isinstance(df, pd.DataFrame)
         except Exception:
             # Expected to fail without full mock infrastructure
@@ -82,18 +80,18 @@ class TestQuoteAdapter:
 
     def test_quote_accepts_symbol_parameter(self):
         """Test Quote accepts and stores symbol parameter."""
-        quote = Quote(source='VCI', symbol='TCB', show_log=False)
+        quote = Quote(source="VCI", symbol="TCB", show_log=False)
         # Symbol should be accessible (implementation dependent)
-        assert hasattr(quote, 'symbol') or hasattr(quote.client, 'symbol')
+        assert hasattr(quote, "symbol") or hasattr(quote.client, "symbol")
 
     def test_quote_default_source_is_kbs(self):
         """Test Quote defaults to KBS source."""
-        quote = Quote(symbol='ACB', show_log=False)
-        assert quote.source.lower() == 'kbs'
+        quote = Quote(symbol="ACB", show_log=False)
+        assert quote.source.lower() == "kbs"
 
-    @pytest.mark.parametrize("source", ['VCI', 'KBS'])
+    @pytest.mark.parametrize("source", ["VCI", "KBS"])
     def test_quote_supports_multiple_sources(self, source):
         """Test Quote supports VCI and TCBS sources."""
         # MSN is excluded as it uses incompatible symbol_id parameter
-        quote = Quote(source=source, symbol='VNM', show_log=False)
+        quote = Quote(source=source, symbol="VNM", show_log=False)
         assert quote.source.lower() == source.lower()

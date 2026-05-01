@@ -19,12 +19,11 @@ Formats:
 """
 
 from typing import Union
+
 from vnstock.core.types import TimeFrame
 
 
-def normalize_interval(
-    interval: Union[str, TimeFrame, None]
-) -> TimeFrame:
+def normalize_interval(interval: Union[str, TimeFrame, None]) -> TimeFrame:
     """
     Normalize any interval format to TimeFrame enum.
 
@@ -72,33 +71,33 @@ def normalize_interval(
     # Standard aliases (case-sensitive for M vs m):
     # m/1m/5m/15m/30m = MINUTE, M/1M = MONTH
     # h/1H = HOUR, d/1D = DAY, w/1W = WEEK
-    
+
     # Handle MONTH: capital M only
-    if interval_orig in ('M', '1M'):
+    if interval_orig in ("M", "1M"):
         return TimeFrame.MONTH_1
-    
+
     # Mapping: any input format → TimeFrame enum
     interval_map = {
         # Aliases (convenience)
-        'm': TimeFrame.MINUTE_1,
-        'h': TimeFrame.HOUR_1,
-        'd': TimeFrame.DAY_1,
-        'w': TimeFrame.WEEK_1,
+        "m": TimeFrame.MINUTE_1,
+        "h": TimeFrame.HOUR_1,
+        "d": TimeFrame.DAY_1,
+        "w": TimeFrame.WEEK_1,
         # Human readable
-        'minute': TimeFrame.MINUTE_1,
-        'hour': TimeFrame.HOUR_1,
-        'day': TimeFrame.DAY_1,
-        'week': TimeFrame.WEEK_1,
-        'month': TimeFrame.MONTH_1,
+        "minute": TimeFrame.MINUTE_1,
+        "hour": TimeFrame.HOUR_1,
+        "day": TimeFrame.DAY_1,
+        "week": TimeFrame.WEEK_1,
+        "month": TimeFrame.MONTH_1,
         # vnstock format (lowercase for comparison)
-        '1m': TimeFrame.MINUTE_1,
-        '5m': TimeFrame.MINUTE_5,
-        '15m': TimeFrame.MINUTE_15,
-        '30m': TimeFrame.MINUTE_30,
-        '1h': TimeFrame.HOUR_1,
-        '4h': TimeFrame.HOUR_4,
-        '1d': TimeFrame.DAY_1,
-        '1w': TimeFrame.WEEK_1,
+        "1m": TimeFrame.MINUTE_1,
+        "5m": TimeFrame.MINUTE_5,
+        "15m": TimeFrame.MINUTE_15,
+        "30m": TimeFrame.MINUTE_30,
+        "1h": TimeFrame.HOUR_1,
+        "4h": TimeFrame.HOUR_4,
+        "1d": TimeFrame.DAY_1,
+        "1w": TimeFrame.WEEK_1,
     }
 
     result = interval_map.get(interval_str)
@@ -106,11 +105,13 @@ def normalize_interval(
         return result
 
     # If not found, raise error
-    msg = (f"Invalid interval: {interval}. "
-           f"Use TimeFrame enum or formats like: "
-           f"1D, 1H, 1W, 1M (vnstock), "
-           f"d, h, m, w, M (alias - case-sensitive), "
-           f"or day, hour, minute, week, month (human readable)")
+    msg = (
+        f"Invalid interval: {interval}. "
+        f"Use TimeFrame enum or formats like: "
+        f"1D, 1H, 1W, 1M (vnstock), "
+        f"d, h, m, w, M (alias - case-sensitive), "
+        f"or day, hour, minute, week, month (human readable)"
+    )
     raise ValueError(msg)
 
 
@@ -134,9 +135,9 @@ def get_interval_aliases() -> dict:
         <TimeFrame.MONTH_1: '1M'>
     """
     return {
-        'm': TimeFrame.MINUTE_1,
-        'h': TimeFrame.HOUR_1,
-        'd': TimeFrame.DAY_1,
-        'w': TimeFrame.WEEK_1,
-        'M': TimeFrame.MONTH_1,
+        "m": TimeFrame.MINUTE_1,
+        "h": TimeFrame.HOUR_1,
+        "d": TimeFrame.DAY_1,
+        "w": TimeFrame.WEEK_1,
+        "M": TimeFrame.MONTH_1,
     }

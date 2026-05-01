@@ -1,8 +1,10 @@
-from typing import Optional
 import inspect
 from abc import ABC
 from functools import wraps
+from typing import Optional
+
 from tenacity import retry, stop_after_attempt, wait_exponential
+
 from vnstock.config import Config
 from vnstock.core.registry import ProviderRegistry
 
@@ -29,14 +31,13 @@ def dynamic_method(func):
             raise NotImplementedError(
                 f"Source '{self.source}' does not support '{method_name}'"
             )
-            
+
         provider_method = getattr(self._provider, method_name)
         sig = inspect.signature(provider_method)
         filtered = {k: v for k, v in kwargs.items() if k in sig.parameters}
         return provider_method(*args, **filtered)
 
     return wrapper
-
 
 
 class BaseAdapter(ABC):
@@ -47,16 +48,11 @@ class BaseAdapter(ABC):
 
     _module_name: str  # e.g. "quote", "company", etc.
 
-    def __init__(
-        self,
-        source: str,
-        symbol: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, source: str, symbol: Optional[str] = None, **kwargs):
         # Preserve original for error messages
         self.source = source
         self.symbol = symbol
-        self._init_kwargs = kwargs # Store for re-initialization
+        self._init_kwargs = kwargs  # Store for re-initialization
 
         # Get provider class from registry
         try:
@@ -69,10 +65,10 @@ class BaseAdapter(ABC):
         init_params = {}
         # Only pass symbol if accepted (handle both 'symbol' and 'symbol_id' names)
         if symbol is not None:
-            if 'symbol' in sig.parameters:
-                init_params['symbol'] = symbol
-            elif 'symbol_id' in sig.parameters:
-                init_params['symbol_id'] = symbol
+            if "symbol" in sig.parameters:
+                init_params["symbol"] = symbol
+            elif "symbol_id" in sig.parameters:
+                init_params["symbol_id"] = symbol
         # Pass only recognized provider kwargs
         for key, val in kwargs.items():
             if key in sig.parameters:
@@ -99,10 +95,9 @@ class BaseAdapter(ABC):
         wait=wait_exponential(
             multiplier=Config.BACKOFF_MULTIPLIER,
             min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX
-        )
+            max=Config.BACKOFF_MAX,
+        ),
     )
     def history(self, *args, **kwargs):
         # Generic retry wrapper for any .history() calls
         return self._provider.history(*args, **kwargs)
-

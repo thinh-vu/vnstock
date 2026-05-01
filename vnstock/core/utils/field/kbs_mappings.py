@@ -582,7 +582,7 @@ KBS_BUILTIN_MAPPINGS = {
         "was_standardized": False,
     },
     "40": {
-        "original_vi": "XII. Tài sản \"Có\" khác",
+        "original_vi": 'XII. Tài sản "Có" khác',
         "original_en": "XII. Other assets",
         "snake_case": "xii_tai_san_co_khac",
         "base_name": "xii_tai_san_co_khac",

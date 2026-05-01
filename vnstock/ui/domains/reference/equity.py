@@ -1,44 +1,51 @@
 from typing import Any
+
 from vnai import optimize_execution
+
 from vnstock.ui._base import BaseUI
+
 
 class EquityReference(BaseUI):
     """Equity symbols and grouping reference."""
+
     def __init__(self, symbol: str = None, **kwargs):
         super().__init__(**kwargs)
         self.symbol = symbol
 
-    def __call__(self, symbol: str = None) -> 'EquityReference':
+    def __call__(self, symbol: str = None) -> "EquityReference":
         """Allow calling the domain object with a symbol."""
         self.symbol = symbol
         return self
 
-
     @optimize_execution("UI")
-    def list(self, source: str = 'kbs') -> Any:
+    def list(self, source: str = "kbs") -> Any:
         """List all equity symbols."""
-        return self._dispatch('Reference', 'equity', 'list', source=source)
+        return self._dispatch("Reference", "equity", "list", source=source)
 
     @optimize_execution("UI")
     def list_by_industry(self, source: str = None) -> Any:
         """List equities grouped by ICB industry."""
         from vnstock.core.utils.env import is_colab
+
         if source is None:
             if is_colab():
-                source = 'kbs'
-                print("💡 Tip: Detect Google Colab environment. Switching to KBS as default source for industry data (VCI may block Google IP).")
+                source = "kbs"
+                print(
+                    "💡 Tip: Detect Google Colab environment. Switching to KBS as default source for industry data (VCI may block Google IP)."
+                )
             else:
-                source = 'vci'
-        return self._dispatch('Reference', 'equity', 'list_by_industry', source=source)
+                source = "vci"
+        return self._dispatch("Reference", "equity", "list_by_industry", source=source)
 
     @optimize_execution("UI")
-    def list_by_exchange(self, source: str = 'kbs') -> Any:
+    def list_by_exchange(self, source: str = "kbs") -> Any:
         """List symbols by exchange/board."""
-        return self._dispatch('Reference', 'equity', 'list_by_exchange', source=source)
+        return self._dispatch("Reference", "equity", "list_by_exchange", source=source)
 
     @optimize_execution("UI")
-    def list_by_group(self, group: str = 'VN30', source: str = 'kbs') -> Any:
+    def list_by_group(self, group: str = "VN30", source: str = "kbs") -> Any:
         """List equities by predefined group (e.g., VN30, HOSE)."""
         target = group or self.symbol
-        return self._dispatch('Reference', 'equity', 'list_by_group', group=target, source=source)
-
+        return self._dispatch(
+            "Reference", "equity", "list_by_group", group=target, source=source
+        )

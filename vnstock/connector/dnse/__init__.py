@@ -1,1 +1,1 @@
-from .trade import Trade
+from .trade import Trade  # noqa: F401

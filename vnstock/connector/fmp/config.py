@@ -7,16 +7,19 @@ Following VCI patterns for consistency.
 """
 
 import os
-import requests
-import pandas as pd
-from pandas import json_normalize
 from typing import Optional
+
+import pandas as pd
+import requests
+from pandas import json_normalize
+
 from vnstock.core.utils.logger import get_logger
-from .const import _FMP_DOMAIN, _ENDPOINTS, _DEFAULT_TIMEOUT
+
+from .const import _DEFAULT_TIMEOUT, _ENDPOINTS, _FMP_DOMAIN
 
 logger = get_logger(__name__)
 
-FMP_DOMAIN = 'https://financialmodelingprep.com/stable'
+FMP_DOMAIN = "https://financialmodelingprep.com/stable"
 
 
 class FMPConfig:
@@ -28,8 +31,7 @@ class FMPConfig:
     Following VCI patterns for consistency.
     """
 
-    def __init__(self, api_key: Optional[str] = None,
-                 show_log: Optional[bool] = True):
+    def __init__(self, api_key: Optional[str] = None, show_log: Optional[bool] = True):
         """
         Initialize FMP configuration.
 
@@ -43,7 +45,7 @@ class FMPConfig:
         self.show_log = show_log
 
         if not show_log:
-            logger.setLevel('CRITICAL')
+            logger.setLevel("CRITICAL")
 
     def _get_api_key(self) -> str:
         """
@@ -59,9 +61,9 @@ class FMPConfig:
             ValueError: If no API key found in environment variables
         """
         # Try FMP_TOKEN first (like in terminal)
-        api_key = os.getenv('FMP_TOKEN')
+        api_key = os.getenv("FMP_TOKEN")
         if not api_key:
-            api_key = os.getenv('FMP_API_KEY')
+            api_key = os.getenv("FMP_API_KEY")
 
         if api_key:
             if self.show_log:
@@ -83,9 +85,12 @@ class FMPConfig:
         logger.error(error_msg)
         raise ValueError(error_msg)
 
-    def get_endpoint_url(self, endpoint_name: str,
-                         symbol: Optional[str] = None,
-                         query: Optional[str] = None) -> str:
+    def get_endpoint_url(
+        self,
+        endpoint_name: str,
+        symbol: Optional[str] = None,
+        query: Optional[str] = None,
+    ) -> str:
         """
         Build complete API endpoint URL.
 
@@ -127,8 +132,9 @@ class FMPConfig:
         return url
 
 
-def make_fmp_request(url: str, timeout: int = _DEFAULT_TIMEOUT,
-                     show_log: bool = True) -> Optional[pd.DataFrame]:
+def make_fmp_request(
+    url: str, timeout: int = _DEFAULT_TIMEOUT, show_log: bool = True
+) -> Optional[pd.DataFrame]:
     """
     Execute HTTP request to FMP API and return data as DataFrame.
 
@@ -162,12 +168,12 @@ def make_fmp_request(url: str, timeout: int = _DEFAULT_TIMEOUT,
 
             elif isinstance(data, dict):
                 # Handle historical data format from FMP API
-                if 'historical' in data:
-                    historical_data = data['historical']
+                if "historical" in data:
+                    historical_data = data["historical"]
                     df = pd.DataFrame(historical_data)
                     # Add metadata if available
-                    if 'symbol' in data:
-                        df['symbol'] = data['symbol']
+                    if "symbol" in data:
+                        df["symbol"] = data["symbol"]
                     return df
                 else:
                     return json_normalize(data)
@@ -177,9 +183,7 @@ def make_fmp_request(url: str, timeout: int = _DEFAULT_TIMEOUT,
                 return None
 
         elif response.status_code == 403:
-            error_msg = (
-                "API access denied. Check subscription plan."
-            )
+            error_msg = "API access denied. Check subscription plan."
             if show_log:
                 logger.error(error_msg)
             return None
@@ -212,9 +216,9 @@ def make_fmp_request(url: str, timeout: int = _DEFAULT_TIMEOUT,
         return None
 
 
-def normalize_dataframe(df: pd.DataFrame,
-                        date_columns: Optional[list] = None,
-                        show_log: bool = True) -> pd.DataFrame:
+def normalize_dataframe(
+    df: pd.DataFrame, date_columns: Optional[list] = None, show_log: bool = True
+) -> pd.DataFrame:
     """
     Normalize DataFrame: convert date and numeric columns.
 
@@ -242,27 +246,31 @@ def normalize_dataframe(df: pd.DataFrame,
     for col in date_columns:
         if col in df.columns:
             try:
-                df[col] = pd.to_datetime(df[col], errors='coerce')
+                df[col] = pd.to_datetime(df[col], errors="coerce")
             except Exception as e:
                 if show_log:
-                    logger.warning(
-                        f"Cannot convert {col} to datetime: {e}"
-                    )
+                    logger.warning(f"Cannot convert {col} to datetime: {e}")
 
     # Convert symbol column to uppercase
-    if 'symbol' in df.columns:
-        df['symbol'] = df['symbol'].str.upper()
+    if "symbol" in df.columns:
+        df["symbol"] = df["symbol"].str.upper()
 
     # Convert numeric columns from string if needed
     numeric_candidates = [
-        'price', 'change', 'changePercentage', 'volume',
-        'marketCap', 'revenue', 'netIncome', 'eps'
+        "price",
+        "change",
+        "changePercentage",
+        "volume",
+        "marketCap",
+        "revenue",
+        "netIncome",
+        "eps",
     ]
 
     for col in numeric_candidates:
-        if col in df.columns and df[col].dtype == 'object':
+        if col in df.columns and df[col].dtype == "object":
             try:
-                df[col] = pd.to_numeric(df[col], errors='coerce')
+                df[col] = pd.to_numeric(df[col], errors="coerce")
             except Exception:
                 pass
 

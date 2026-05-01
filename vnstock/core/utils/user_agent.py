@@ -2,22 +2,23 @@
 
 import random
 import secrets
-from typing import Optional, Dict
+from typing import Dict, Optional
+
 from vnstock.core.utils.browser_profiles import USER_AGENTS
 
 DEFAULT_HEADERS = {
-    'Accept': 'application/json, text/plain, */*',
-    'Accept-Language': 'en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7',
-    'Connection': 'keep-alive',
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache',
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'same-site',
-    'DNT': '1',
-    'Pragma': 'no-cache',
-    'sec-ch-ua-platform': '"Windows"',
-    'sec-ch-ua-mobile': '?0',
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9,vi-VN;q=0.8,vi;q=0.7",
+    "Connection": "keep-alive",
+    "Content-Type": "application/json",
+    "Cache-Control": "no-cache",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-site",
+    "DNT": "1",
+    "Pragma": "no-cache",
+    "sec-ch-ua-platform": '"Windows"',
+    "sec-ch-ua-mobile": "?0",
 }
 
 
@@ -53,51 +54,42 @@ BROWSER_PROFILES = {
 
 # Enhanced HEADERS_MAPPING_SOURCE with support for source-specific headers
 HEADERS_MAPPING_SOURCE = {
-    'SSI': {
-        'Referer': 'https://iboard.ssi.com.vn',
-        'Origin': 'https://iboard.ssi.com.vn'
+    "SSI": {
+        "Referer": "https://iboard.ssi.com.vn",
+        "Origin": "https://iboard.ssi.com.vn",
     },
-    'VND': {
-        'Referer': 'https://dchart.vndirect.com.vn',
-        'Origin': 'https://dchart.vndirect.com.vn'
+    "VND": {
+        "Referer": "https://dchart.vndirect.com.vn",
+        "Origin": "https://dchart.vndirect.com.vn",
     },
-    'TCBS': {
-        'Referer': 'https://tcinvest.tcbs.com.vn/',
-        'Origin': 'https://tcinvest.tcbs.com.vn/'
+    "TCBS": {
+        "Referer": "https://tcinvest.tcbs.com.vn/",
+        "Origin": "https://tcinvest.tcbs.com.vn/",
     },
-    'VCI': {
-        'Referer': 'https://trading.vietcap.com.vn/',
-        'Origin': 'https://trading.vietcap.com.vn/'
+    "VCI": {
+        "Referer": "https://trading.vietcap.com.vn/",
+        "Origin": "https://trading.vietcap.com.vn/",
     },
-    'MSN': {
-        'Referer': 'https://www.msn.com/',
-        'Origin': 'https://www.msn.com/'
+    "MSN": {"Referer": "https://www.msn.com/", "Origin": "https://www.msn.com/"},
+    "FMARKET": {"Referer": "https://fmarket.vn/", "Origin": "https://fmarket.vn/"},
+    "SJC": {
+        "Referer": "https://sjc.com.vn/bieu-do-gia-vang",
+        "Origin": "https://sjc.com.vn",
     },
-    'FMARKET': {
-        'Referer': 'https://fmarket.vn/',
-        'Origin': 'https://fmarket.vn/'
-    },
-    'SJC': {
-        'Referer': 'https://sjc.com.vn/bieu-do-gia-vang',
-        'Origin': 'https://sjc.com.vn'
-    }
 }
 
 
 # Supported authorization schemes
 AUTH_SCHEMES = {
-    'bearer': 'Bearer',
-    'basic': 'Basic',
-    'apikey': 'ApiKey',
-    'token': 'Token',
-    'jwt': 'Bearer',
+    "bearer": "Bearer",
+    "basic": "Basic",
+    "apikey": "ApiKey",
+    "token": "Token",
+    "jwt": "Bearer",
 }
 
 
-def get_authorization_header(
-    token: str,
-    scheme: str = 'Bearer'
-) -> Dict[str, str]:
+def get_authorization_header(token: str, scheme: str = "Bearer") -> Dict[str, str]:
     """
     Tạo Authorization header theo scheme cụ thể.
     Create Authorization header according to specific scheme.
@@ -120,7 +112,7 @@ def get_authorization_header(
     scheme_normalized = scheme.lower()
     auth_prefix = AUTH_SCHEMES.get(scheme_normalized, scheme)
 
-    return {'Authorization': f'{auth_prefix} {token}'}
+    return {"Authorization": f"{auth_prefix} {token}"}
 
 
 def merge_headers(*header_dicts: Optional[Dict[str, str]]) -> Dict[str, str]:
@@ -167,21 +159,21 @@ def validate_headers(headers: Dict[str, str]) -> Dict[str, str]:
     """
     validated = {}
     for key, value in headers.items():
-        if value is not None and value != '':
+        if value is not None and value != "":
             validated[str(key)] = str(value)
     return validated
 
 
 def get_headers(
-    data_source: str = 'SSI',
+    data_source: str = "SSI",
     random_agent: bool = True,
-    browser: str = 'chrome',
-    platform: str = 'windows',
+    browser: str = "chrome",
+    platform: str = "windows",
     authorization: Optional[str] = None,
-    auth_scheme: str = 'Bearer',
+    auth_scheme: str = "Bearer",
     custom_headers: Optional[Dict[str, str]] = None,
     override_headers: Optional[Dict[str, str]] = None,
-    include_defaults: bool = True
+    include_defaults: bool = True,
 ) -> Dict[str, str]:
     """
     Generate browser-like headers with optional referer/origin, realistic User-Agent,
@@ -240,7 +232,7 @@ def get_headers(
     source_config = HEADERS_MAPPING_SOURCE.get(data_source.upper(), {})
 
     # Step 3: Add source-specific headers (if any)
-    source_headers = source_config.get('headers', {})
+    source_headers = source_config.get("headers", {})
     if source_headers:
         headers.update(source_headers)
 
@@ -287,16 +279,16 @@ def get_headers(
         headers.update(override_headers)
 
     # Step 9: Source-specific dynamic transformations
-    if data_source.upper() == 'VCI':
+    if data_source.upper() == "VCI":
         # Inject randomized device identifier for VCI
         vci_device_id = _generate_vci_device_id()
-        headers['Device-Id'] = vci_device_id
+        headers["Device-Id"] = vci_device_id
         # Ensure it is also in the Cookie
-        current_cookie = headers.get('Cookie', '')
+        current_cookie = headers.get("Cookie", "")
         if current_cookie:
-            headers['Cookie'] = f'device_id={vci_device_id}; {current_cookie}'
+            headers["Cookie"] = f"device_id={vci_device_id}; {current_cookie}"
         else:
-            headers['Cookie'] = f'device_id={vci_device_id}'
+            headers["Cookie"] = f"device_id={vci_device_id}"
 
     # Step 10: Validate and return
     return validate_headers(headers)
