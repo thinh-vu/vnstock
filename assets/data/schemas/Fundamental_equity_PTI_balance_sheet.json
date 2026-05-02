@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('PTI').balance_sheet()",
+  "module": "Fundamental (Insurance)",
+  "ticker_used": "PTI",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "TÀI SẢN ",
+      "item_id": "assets",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "A. TÀI SẢN NGẮN HẠN (100=110+120+130+140+150+190)",
+      "item_id": "a.short_term_assets",
+      "2025": 6713045344.0,
+      "2024": 6756021843.0,
+      "2023": 7127718367.0,
+      "2022": 7466558159.0
+    },
+    {
+      "item": "I.   Tiền và các khoản tương đương tiền",
+      "item_id": "i.cash_and_cash_equivalents",
+      "2025": 730008718.0,
+      "2024": 30380551.0,
+      "2023": 704507364.0,
+      "2022": 239722746.0
+    }
+  ]
+}

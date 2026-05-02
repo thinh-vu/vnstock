@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('CTG').income_statement()",
+  "module": "Fundamental (Banking)",
+  "ticker_used": "CTG",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "1. Thu nhập lãi và các khoản thu nhập tương tự",
+      "item_id": "n_1.interest_income_and_similar_income",
+      "2025": 143142328000.0,
+      "2024": 124460685000.0,
+      "2023": 132671737000.0,
+      "2022": 104664634000.0
+    },
+    {
+      "item": "2. Chi phí lãi và các chi phí tương tự",
+      "item_id": "n_2.interest_expense_and_similar_expenses",
+      "2025": 76689083000.0,
+      "2024": 62057891000.0,
+      "2023": 79714259000.0,
+      "2022": 56872679000.0
+    },
+    {
+      "item": "I. Thu nhập lãi thuần",
+      "item_id": "i.net_interest_income",
+      "2025": 66453245000.0,
+      "2024": 62402794000.0,
+      "2023": 52957478000.0,
+      "2022": 47791955000.0
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('HPG').ratio()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "HPG",
+  "columns": [
+    "item",
+    "item_id",
+    "2025-Q4",
+    "2025-Q3",
+    "2025-Q2",
+    "2025-Q1"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025-Q4": "float64",
+    "2025-Q3": "float64",
+    "2025-Q2": "float64",
+    "2025-Q1": "float64"
+  },
+  "sample": [
+    {
+      "item": "Thu nhập trên mỗi cổ phần của 4 quý gần nhất (EPS)",
+      "item_id": "trailing_eps",
+      "2025-Q4": 2203.18,
+      "2025-Q3": 2157.16,
+      "2025-Q2": 2099.79,
+      "2025-Q1": 1983.64
+    },
+    {
+      "item": "Giá trị sổ sách của cổ phiếu (BVPS)",
+      "item_id": "book_value_per_share_bvps",
+      "2025-Q4": 17096.0,
+      "2025-Q3": 16613.0,
+      "2025-Q2": 19130.0,
+      "2025-Q1": 18448.0
+    },
+    {
+      "item": "Chỉ số giá thị trường trên thu nhập (P/E)",
+      "item_id": "p_e",
+      "2025-Q4": 11.98,
+      "2025-Q3": 13.05,
+      "2025-Q2": 10.81,
+      "2025-Q1": 13.49
+    }
+  ]
+}

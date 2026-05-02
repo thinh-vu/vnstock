@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('HPG').income_statement()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "HPG",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "1. Doanh thu bán hàng và cung cấp dịch vụ ",
+      "item_id": "n_1.revenue",
+      "2025": 158332317934.0,
+      "2024": 140561387449.0,
+      "2023": 120355231616.0,
+      "2022": 142770810677.0
+    },
+    {
+      "item": "2. Các khoản giảm trừ doanh thu",
+      "item_id": "n_2.deduction_from_revenue",
+      "2025": 2216223316.0,
+      "2024": 1706275317.0,
+      "2023": 1402203722.0,
+      "2022": 1361536216.0
+    },
+    {
+      "item": "3. Doanh thu thuần về bán hàng và cung cấp dịch vụ",
+      "item_id": "n_3.net_revenue",
+      "2025": 156116094618.0,
+      "2024": 138855112131.0,
+      "2023": 118953027894.0,
+      "2022": 141409274461.0
+    }
+  ]
+}

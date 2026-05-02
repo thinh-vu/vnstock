@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('VIC').income_statement()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "VIC",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "1. Doanh thu bán hàng và cung cấp dịch vụ ",
+      "item_id": "n_1.revenue",
+      "2025": 331874704000.0,
+      "2024": 189090599000.0,
+      "2023": 161452751000.0,
+      "2022": 101809529000.0
+    },
+    {
+      "item": "2. Các khoản giảm trừ doanh thu",
+      "item_id": "n_2.deduction_from_revenue",
+      "2025": 37143000.0,
+      "2024": 22559000.0,
+      "2023": 25183000.0,
+      "2022": 15947000.0
+    },
+    {
+      "item": "3. Doanh thu thuần về bán hàng và cung cấp dịch vụ",
+      "item_id": "n_3.net_revenue",
+      "2025": 331837561000.0,
+      "2024": 189068040000.0,
+      "2023": 161427568000.0,
+      "2022": 101793582000.0
+    }
+  ]
+}

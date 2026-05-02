@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('BVH').balance_sheet()",
+  "module": "Fundamental (Insurance)",
+  "ticker_used": "BVH",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "TÀI SẢN ",
+      "item_id": "assets",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "A. TÀI SẢN NGẮN HẠN (100=110+120+130+140+150+190)",
+      "item_id": "a.short_term_assets",
+      "2025": 150363051574.0,
+      "2024": 121226741292.0,
+      "2023": 122398176223.0,
+      "2022": 117373071557.0
+    },
+    {
+      "item": "I.   Tiền và các khoản tương đương tiền",
+      "item_id": "i.cash_and_cash_equivalents",
+      "2025": 4194682648.0,
+      "2024": 1464088127.0,
+      "2023": 4783513587.0,
+      "2022": 2206497560.0
+    }
+  ]
+}

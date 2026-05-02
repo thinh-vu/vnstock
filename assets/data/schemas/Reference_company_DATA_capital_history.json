@@ -1,0 +1,32 @@
+{
+  "notation": "Reference().company('SSI').capital_history()",
+  "module": "Company Reference (KBS)",
+  "ticker_used": "SSI",
+  "columns": [
+    "date",
+    "charter_capital",
+    "currency"
+  ],
+  "dtypes": {
+    "date": "datetime64[ns]",
+    "charter_capital": "int64",
+    "currency": "object"
+  },
+  "sample": [
+    {
+      "date": "2026-03-02T00:00:00",
+      "charter_capital": 24930892200000,
+      "currency": "VND"
+    },
+    {
+      "date": null,
+      "charter_capital": 20779062620000,
+      "currency": "VND"
+    },
+    {
+      "date": null,
+      "charter_capital": 19738639180000,
+      "currency": "VND"
+    }
+  ]
+}

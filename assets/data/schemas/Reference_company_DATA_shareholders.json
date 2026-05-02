@@ -1,0 +1,42 @@
+{
+  "notation": "Reference().company('SSI').shareholders()",
+  "module": "Company Reference (KBS)",
+  "ticker_used": "SSI",
+  "columns": [
+    "symbol",
+    "name",
+    "total_shares",
+    "rate",
+    "date"
+  ],
+  "dtypes": {
+    "symbol": "object",
+    "name": "object",
+    "total_shares": "int64",
+    "rate": "float64",
+    "date": "object"
+  },
+  "sample": [
+    {
+      "symbol": "SSI",
+      "name": "Daiwa Securities Group Inc",
+      "total_shares": 380585607,
+      "rate": 0.15265,
+      "date": "2026-01-26T09:10:35.883"
+    },
+    {
+      "symbol": "SSI",
+      "name": "Công ty TNHH Đầu Tư Ndh",
+      "total_shares": 197116185,
+      "rate": 0.07907,
+      "date": "2026-01-26T09:10:46.203"
+    },
+    {
+      "symbol": "SSI",
+      "name": "Công ty TNHH Bất Động Sản Sài Gòn Đan Linh",
+      "total_shares": 91885664,
+      "rate": 0.03685,
+      "date": "2026-01-09T17:52:07.347"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('VCB').balance_sheet()",
+  "module": "Fundamental (Banking)",
+  "ticker_used": "VCB",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "A. TÀI SẢN",
+      "item_id": "assets",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "I. Tiền mặt, vàng bạc, đá quý",
+      "item_id": "i.cash_gold_and_silver_precious_stones",
+      "2025": 15542769000.0,
+      "2024": 14268064000.0,
+      "2023": 14504849000.0,
+      "2022": 18348534000.0
+    },
+    {
+      "item": "II. Tiền gửi tại NHNN",
+      "item_id": "ii.balances_with_the_state_bank_of_vietnam",
+      "2025": 37445504000.0,
+      "2024": 49340493000.0,
+      "2023": 58104503000.0,
+      "2022": 92557809000.0
+    }
+  ]
+}

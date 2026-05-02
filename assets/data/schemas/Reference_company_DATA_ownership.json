@@ -1,0 +1,31 @@
+{
+  "notation": "Reference().company('SSI').ownership()",
+  "module": "Company Reference (KBS)",
+  "ticker_used": "SSI",
+  "columns": [
+    "owner_type",
+    "ownership_percentage",
+    "shares_owned",
+    "update_date"
+  ],
+  "dtypes": {
+    "owner_type": "object",
+    "ownership_percentage": "float64",
+    "shares_owned": "int64",
+    "update_date": "object"
+  },
+  "sample": [
+    {
+      "owner_type": "Cổ  phiếu quỹ",
+      "ownership_percentage": 0.1,
+      "shares_owned": 1991468,
+      "update_date": "2025-12-31T00:00:00"
+    },
+    {
+      "owner_type": "CĐ khác",
+      "ownership_percentage": 99.9,
+      "shares_owned": 2075914794,
+      "update_date": "2025-12-31T00:00:00"
+    }
+  ]
+}

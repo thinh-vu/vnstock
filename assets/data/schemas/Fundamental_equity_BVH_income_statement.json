@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('BVH').income_statement()",
+  "module": "Fundamental (Insurance)",
+  "ticker_used": "BVH",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "1. Doanh thu phí bảo hiểm (01= (01.1+01.2-01.3)",
+      "item_id": "n_1.insurance_premium_01_01_1_01_2_01_3",
+      "2025": 43728345354.0,
+      "2024": 42669681560.0,
+      "2023": 42659877832.0,
+      "2022": 42650508302.0
+    },
+    {
+      "item": "- Thu phí bảo hiểm gốc",
+      "item_id": "n_1.gross_written_premium",
+      "2025": 43716183433.0,
+      "2024": 42591775980.0,
+      "2023": 42637147156.0,
+      "2022": 42961317756.0
+    },
+    {
+      "item": "- Thu phí nhận tái bảo hiểm",
+      "item_id": "n_2.reinsurance_premium_assumed",
+      "2025": 399971248.0,
+      "2024": 217571102.0,
+      "2023": 214862851.0,
+      "2022": 159740171.0
+    }
+  ]
+}

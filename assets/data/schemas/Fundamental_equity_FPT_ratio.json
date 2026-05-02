@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('FPT').ratio()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "FPT",
+  "columns": [
+    "item",
+    "item_id",
+    "2026-Q1",
+    "2025-Q4",
+    "2025-Q4_1",
+    "2025-Q3"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2026-Q1": "float64",
+    "2025-Q4": "float64",
+    "2025-Q4_1": "float64",
+    "2025-Q3": "float64"
+  },
+  "sample": [
+    {
+      "item": "Thu nhập trên mỗi cổ phần của 4 quý gần nhất (EPS)",
+      "item_id": "trailing_eps",
+      "2026-Q1": 6016.81,
+      "2025-Q4": 5988.42,
+      "2025-Q4_1": 5772.14,
+      "2025-Q3": 5862.01
+    },
+    {
+      "item": "Giá trị sổ sách của cổ phiếu (BVPS)",
+      "item_id": "book_value_per_share_bvps",
+      "2026-Q1": 25682.0,
+      "2025-Q4": 25141.0,
+      "2025-Q4_1": 25759.0,
+      "2025-Q3": 26918.0
+    },
+    {
+      "item": "Chỉ số giá thị trường trên thu nhập (P/E)",
+      "item_id": "p_e",
+      "2026-Q1": 15.92,
+      "2025-Q4": 15.53,
+      "2025-Q4_1": 20.96,
+      "2025-Q3": 20.16
+    }
+  ]
+}

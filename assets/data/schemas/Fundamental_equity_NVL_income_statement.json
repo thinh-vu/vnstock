@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('NVL').income_statement()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "NVL",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "1. Doanh thu bán hàng và cung cấp dịch vụ ",
+      "item_id": "n_1.revenue",
+      "2025": 6966355811.0,
+      "2024": 9079619602.0,
+      "2023": 4769950330.0,
+      "2022": 11150728887.0
+    },
+    {
+      "item": "2. Các khoản giảm trừ doanh thu",
+      "item_id": "n_2.deduction_from_revenue",
+      "2025": 607525.0,
+      "2024": 6244128.0,
+      "2023": 13048116.0,
+      "2022": 16498409.0
+    },
+    {
+      "item": "3. Doanh thu thuần về bán hàng và cung cấp dịch vụ",
+      "item_id": "n_3.net_revenue",
+      "2025": 6965748286.0,
+      "2024": 9073375474.0,
+      "2023": 4756902214.0,
+      "2022": 11134230478.0
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "notation": "Reference().equity.list()",
+  "module": "Equity Reference (KBS)",
+  "ticker_used": null,
+  "columns": [
+    "symbol",
+    "organ_name"
+  ],
+  "dtypes": {
+    "symbol": "object",
+    "organ_name": "object"
+  },
+  "sample": [
+    {
+      "symbol": "TCB",
+      "organ_name": "Ngân hàng TMCP Kỹ thương Việt Nam"
+    },
+    {
+      "symbol": "VGI",
+      "organ_name": "Tổng Công ty cổ phần Đầu tư Quốc tế Viettel"
+    },
+    {
+      "symbol": "VKP",
+      "organ_name": "CTCP Nhựa Tân Hóa"
+    }
+  ]
+}

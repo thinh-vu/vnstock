@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('HCM').ratio()",
+  "module": "Fundamental (Securities)",
+  "ticker_used": "HCM",
+  "columns": [
+    "item",
+    "item_id",
+    "2026-Q1",
+    "2025-Q4",
+    "2025-Q4_1",
+    "2025-Q3"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2026-Q1": "float64",
+    "2025-Q4": "float64",
+    "2025-Q4_1": "float64",
+    "2025-Q3": "float64"
+  },
+  "sample": [
+    {
+      "item": "Thu nhập trên mỗi cổ phần của 4 quý gần nhất (EPS)",
+      "item_id": "trailing_eps",
+      "2026-Q1": 1468.91,
+      "2025-Q4": 1510.68,
+      "2025-Q4_1": 1401.02,
+      "2025-Q3": 1214.37
+    },
+    {
+      "item": "Giá trị sổ sách của cổ phiếu (BVPS)",
+      "item_id": "book_value_per_share_bvps",
+      "2026-Q1": 13466.41,
+      "2025-Q4": 14756.78,
+      "2025-Q4_1": 14320.96,
+      "2025-Q3": 14144.9
+    },
+    {
+      "item": "Chỉ số giá thị trường trên thu nhập (P/E)",
+      "item_id": "p_e",
+      "2026-Q1": 15.25,
+      "2025-Q4": 17.67,
+      "2025-Q4_1": 21.84,
+      "2025-Q3": 17.62
+    }
+  ]
+}

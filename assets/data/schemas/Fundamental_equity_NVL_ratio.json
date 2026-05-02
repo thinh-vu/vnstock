@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('NVL').ratio()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "NVL",
+  "columns": [
+    "item",
+    "item_id",
+    "2025-Q4",
+    "2025-Q3",
+    "2025-Q2",
+    "2025-Q1"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025-Q4": "float64",
+    "2025-Q3": "float64",
+    "2025-Q2": "float64",
+    "2025-Q1": "float64"
+  },
+  "sample": [
+    {
+      "item": "Thu nhập trên mỗi cổ phần của 4 quý gần nhất (EPS)",
+      "item_id": "trailing_eps",
+      "2025-Q4": 863.1,
+      "2025-Q3": -1943.13,
+      "2025-Q2": 107.05,
+      "2025-Q1": 672.14
+    },
+    {
+      "item": "Giá trị sổ sách của cổ phiếu (BVPS)",
+      "item_id": "book_value_per_share_bvps",
+      "2025-Q4": 28741.0,
+      "2025-Q3": 26057.0,
+      "2025-Q2": 26649.0,
+      "2025-Q1": 25053.0
+    },
+    {
+      "item": "Chỉ số giá thị trường trên thu nhập (P/E)",
+      "item_id": "p_e",
+      "2025-Q4": 15.47,
+      "2025-Q3": -7.85,
+      "2025-Q2": 141.52,
+      "2025-Q1": 15.32
+    }
+  ]
+}

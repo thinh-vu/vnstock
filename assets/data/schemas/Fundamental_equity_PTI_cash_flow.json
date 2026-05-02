@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('PTI').cash_flow()",
+  "module": "Fundamental (Insurance)",
+  "ticker_used": "PTI",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "I. Lưu chuyển tiền từ hoạt động kinh doanh",
+      "item_id": "i.cash_flows_from_operating_activities",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "1. Lợi nhuận trước thuế",
+      "item_id": "n_1.profit_before_tax",
+      "2025": 372808653.0,
+      "2024": 402743365.0,
+      "2023": 319758228.0,
+      "2022": -343573779.0
+    },
+    {
+      "item": "2. Điều chỉnh cho các khoản:",
+      "item_id": "n_2_adjustments_for",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    }
+  ]
+}

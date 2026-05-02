@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('VCI').income_statement()",
+  "module": "Fundamental (Securities)",
+  "ticker_used": "VCI",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "I. DOANH THU HOẠT ĐỘNG",
+      "item_id": "operating_income",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "1.1. Lãi từ các tài sản tài chính ghi nhận thông qua lãi/lỗ (FVTPL)",
+      "item_id": "n_1.1.gains_from_financial_assets_at_fair_value_through_profit_or_loss_fvtpl",
+      "2025": 2356278274.0,
+      "2024": 1778614821.0,
+      "2023": 943098379.0,
+      "2022": 1201683322.0
+    },
+    {
+      "item": "a. Lãi bán các tài sản tài chính",
+      "item_id": "a.realised_gains_on_disposals_of_fvtpl_financial_assets",
+      "2025": 2349486722.0,
+      "2024": 1759391703.0,
+      "2023": 856242543.0,
+      "2022": 1431873905.0
+    }
+  ]
+}

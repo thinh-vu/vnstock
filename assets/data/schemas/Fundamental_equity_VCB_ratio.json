@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('VCB').ratio()",
+  "module": "Fundamental (Banking)",
+  "ticker_used": "VCB",
+  "columns": [
+    "item",
+    "item_id",
+    "2026-Q1",
+    "2025-Q4",
+    "2025-Q4_1",
+    "2025-Q3"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2026-Q1": "float64",
+    "2025-Q4": "float64",
+    "2025-Q4_1": "float64",
+    "2025-Q3": "float64"
+  },
+  "sample": [
+    {
+      "item": "Thu nhập trên mỗi cổ phần của 4 quý gần nhất (EPS)",
+      "item_id": "trailing_eps",
+      "2026-Q1": 4542.29,
+      "2025-Q4": 5008.22,
+      "2025-Q4_1": 6037.9,
+      "2025-Q3": 5501.45
+    },
+    {
+      "item": "Giá trị sổ sách của cổ phiếu (BVPS)",
+      "item_id": "book_value_per_share_bvps",
+      "2026-Q1": 27231.3,
+      "2025-Q4": 26663.5,
+      "2025-Q4_1": 24527.26,
+      "2025-Q3": 25581.35
+    },
+    {
+      "item": "Chỉ số giá thị trường trên thu nhập (P/E)",
+      "item_id": "p_e",
+      "2026-Q1": 12.66,
+      "2025-Q4": 12.38,
+      "2025-Q4_1": 10.6,
+      "2025-Q3": 10.36
+    }
+  ]
+}

@@ -342,6 +342,7 @@ class Quote:
         last_time: Optional[Union[str, int, float]] = None,
         last_time_format: Optional[str] = None,
         show_log: bool = False,
+        **kwargs,
     ) -> pd.DataFrame:
         """
         Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ

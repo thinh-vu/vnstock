@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('PTI').income_statement()",
+  "module": "Fundamental (Insurance)",
+  "ticker_used": "PTI",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "1. Doanh thu phí bảo hiểm (01= (01.1+01.2-01.3)",
+      "item_id": "n_1.insurance_premium_01_01_1_01_2_01_3",
+      "2025": 4023922943.0,
+      "2024": 4725346643.0,
+      "2023": 5911877014.0,
+      "2022": 6105621475.0
+    },
+    {
+      "item": "- Thu phí bảo hiểm gốc",
+      "item_id": "n_1.gross_written_premium",
+      "2025": 3757886216.0,
+      "2024": 4016112654.0,
+      "2023": 5076713036.0,
+      "2022": 6265961553.0
+    },
+    {
+      "item": "- Thu phí nhận tái bảo hiểm",
+      "item_id": "n_2.reinsurance_premium_assumed",
+      "2025": 84388707.0,
+      "2024": 82871846.0,
+      "2023": 114202830.0,
+      "2022": 104456023.0
+    }
+  ]
+}

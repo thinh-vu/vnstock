@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('PVI').income_statement()",
+  "module": "Fundamental (Insurance)",
+  "ticker_used": "PVI",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "1. Doanh thu bán hàng và cung cấp dịch vụ ",
+      "item_id": "n_1.revenue",
+      "2025": 27319153390.0,
+      "2024": 20376218972.0,
+      "2023": 14661051651.0,
+      "2022": 13378373078.0
+    },
+    {
+      "item": "2. Các khoản giảm trừ doanh thu",
+      "item_id": "n_2.deduction_from_revenue",
+      "2025": 17773415402.0,
+      "2024": 12637961931.0,
+      "2023": 7951711779.0,
+      "2022": 6883292680.0
+    },
+    {
+      "item": "3. Doanh thu thuần về bán hàng và cung cấp dịch vụ",
+      "item_id": "n_3.net_revenue",
+      "2025": 9545737988.0,
+      "2024": 7738257041.0,
+      "2023": 6709339871.0,
+      "2022": 6495080398.0
+    }
+  ]
+}

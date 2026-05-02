@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('PVI').ratio()",
+  "module": "Fundamental (Insurance)",
+  "ticker_used": "PVI",
+  "columns": [
+    "item",
+    "item_id",
+    "2025-Q4",
+    "2025-Q3",
+    "2025-Q2",
+    "2025-Q1"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025-Q4": "float64",
+    "2025-Q3": "float64",
+    "2025-Q2": "float64",
+    "2025-Q1": "float64"
+  },
+  "sample": [
+    {
+      "item": "Thu nhập trên mỗi cổ phần của 4 quý gần nhất (EPS)",
+      "item_id": "trailing_eps",
+      "2025-Q4": 4814.31,
+      "2025-Q3": 5234.3,
+      "2025-Q2": 4156.35,
+      "2025-Q1": 3544.88
+    },
+    {
+      "item": "Giá trị sổ sách của cổ phiếu (BVPS)",
+      "item_id": "book_value_per_share_bvps",
+      "2025-Q4": 36417.0,
+      "2025-Q3": 39877.0,
+      "2025-Q2": 38111.0,
+      "2025-Q1": 36315.0
+    },
+    {
+      "item": "Chỉ số giá thị trường trên thu nhập (P/E)",
+      "item_id": "p_e",
+      "2025-Q4": 19.32,
+      "2025-Q3": 13.95,
+      "2025-Q2": 13.83,
+      "2025-Q1": 18.62
+    }
+  ]
+}

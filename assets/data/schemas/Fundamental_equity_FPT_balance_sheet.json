@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('FPT').balance_sheet()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "FPT",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "TÀI SẢN ",
+      "item_id": "assets",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "A. TÀI SẢN NGẮN HẠN",
+      "item_id": "a.short_term_assets",
+      "2025": 58137438255.0,
+      "2024": 45535942846.0,
+      "2023": 36705751752.0,
+      "2022": 30937711076.0
+    },
+    {
+      "item": "I. Tiền và các khoản tương đương tiền",
+      "item_id": "i.cash_and_cash_equivalents",
+      "2025": 10522105730.0,
+      "2024": 9315440439.0,
+      "2023": 8279156683.0,
+      "2022": 6440177174.0
+    }
+  ]
+}

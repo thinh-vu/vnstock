@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('HCM').cash_flow()",
+  "module": "Fundamental (Securities)",
+  "ticker_used": "HCM",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "I. LƯU CHUYỂN TIỀN TỪ HOẠT ĐỘNG KINH DOANH CHỨNG KHOÁN",
+      "item_id": "i.cash_flow_from_securities_trading_activities",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "1. Lợi nhuận trước thuế",
+      "item_id": "n_1.profit_before_tax",
+      "2025": 1474303181.0,
+      "2024": 1295564057.0,
+      "2023": 842230532.0,
+      "2022": 1067806140.0
+    },
+    {
+      "item": "2. Điều chỉnh cho các khoản",
+      "item_id": "n_2.adjustments_for",
+      "2025": 1374249708.0,
+      "2024": 808819667.0,
+      "2023": 446688814.0,
+      "2022": 612711087.0
+    }
+  ]
+}

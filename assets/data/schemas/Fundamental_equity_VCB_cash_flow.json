@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('VCB').cash_flow()",
+  "module": "Fundamental (Banking)",
+  "ticker_used": "VCB",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "Lưu chuyển tiền từ hoạt động kinh doanh",
+      "item_id": "i.cash_flows_from_operating_activities",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "1. Thu nhập lãi và các khoản thu nhập tương tự nhận được",
+      "item_id": "n_1.receipts_from_interest_and_similar_income",
+      "2025": 104376654000.0,
+      "2024": 93772270000.0,
+      "2023": 108115649000.0,
+      "2022": 86084771000.0
+    },
+    {
+      "item": "2. Chi phí lãi và các chi phí tương tự đã trả ",
+      "item_id": "n_2.payments_for_interest_and_similar_expenses",
+      "2025": -44982264000.0,
+      "2024": -43790244000.0,
+      "2023": -47454819000.0,
+      "2022": -31709129000.0
+    }
+  ]
+}

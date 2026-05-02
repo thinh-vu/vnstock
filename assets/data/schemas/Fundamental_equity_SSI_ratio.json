@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('SSI').ratio()",
+  "module": "Fundamental (Securities)",
+  "ticker_used": "SSI",
+  "columns": [
+    "item",
+    "item_id",
+    "2026-Q1",
+    "2025-Q4",
+    "2025-Q4_1",
+    "2025-Q3"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2026-Q1": "float64",
+    "2025-Q4": "float64",
+    "2025-Q4_1": "float64",
+    "2025-Q3": "float64"
+  },
+  "sample": [
+    {
+      "item": "Thu nhập trên mỗi cổ phần của 4 quý gần nhất (EPS)",
+      "item_id": "trailing_eps",
+      "2026-Q1": 2052.63,
+      "2025-Q4": 1911.6,
+      "2025-Q4_1": 1706.52,
+      "2025-Q3": 1668.51
+    },
+    {
+      "item": "Giá trị sổ sách của cổ phiếu (BVPS)",
+      "item_id": "book_value_per_share_bvps",
+      "2026-Q1": 15446.84,
+      "2025-Q4": 15056.24,
+      "2025-Q4_1": 14120.87,
+      "2025-Q3": 14580.77
+    },
+    {
+      "item": "Chỉ số giá thị trường trên thu nhập (P/E)",
+      "item_id": "p_e",
+      "2026-Q1": 14.74,
+      "2025-Q4": 20.17,
+      "2025-Q4_1": 15.24,
+      "2025-Q3": 14.8
+    }
+  ]
+}

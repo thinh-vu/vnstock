@@ -1,0 +1,47 @@
+{
+  "notation": "Market().index('VN30').ohlcv()",
+  "module": "Index Market (KBS)",
+  "ticker_used": null,
+  "columns": [
+    "time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume"
+  ],
+  "dtypes": {
+    "time": "datetime64[ns]",
+    "open": "float64",
+    "high": "float64",
+    "low": "float64",
+    "close": "float64",
+    "volume": "int64"
+  },
+  "sample": [
+    {
+      "time": "2025-12-03T07:00:00",
+      "open": 1958.96,
+      "high": 1983.06,
+      "low": 1950.12,
+      "close": 1971.99,
+      "volume": 397133423
+    },
+    {
+      "time": "2025-12-04T07:00:00",
+      "open": 1977.15,
+      "high": 1986.17,
+      "low": 1965.46,
+      "close": 1979.53,
+      "volume": 351815669
+    },
+    {
+      "time": "2025-12-05T07:00:00",
+      "open": 1998.28,
+      "high": 1998.28,
+      "low": 1975.5,
+      "close": 1975.5,
+      "volume": 277947905
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('HPG').cash_flow()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "HPG",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "I. Lưu chuyển tiền từ hoạt động kinh doanh",
+      "item_id": "i_cash_flows_from_operating_activities",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "1. Lợi nhuận trước thuế",
+      "item_id": "n_1.profit_before_tax",
+      "2025": 18040591978.0,
+      "2024": 13693502261.0,
+      "2023": 7792728743.0,
+      "2022": 9922941127.0
+    },
+    {
+      "item": "2. Điều chỉnh cho các khoản",
+      "item_id": "n_2_adjustments_for",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    }
+  ]
+}

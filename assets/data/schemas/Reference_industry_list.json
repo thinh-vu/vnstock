@@ -1,0 +1,37 @@
+{
+  "notation": "Reference().industry.list()",
+  "module": "Industry Reference (VCI)",
+  "ticker_used": null,
+  "columns": [
+    "icb_name",
+    "en_icb_name",
+    "icb_code",
+    "level"
+  ],
+  "dtypes": {
+    "icb_name": "object",
+    "en_icb_name": "object",
+    "icb_code": "object",
+    "level": "int64"
+  },
+  "sample": [
+    {
+      "icb_name": "Dầu khí",
+      "en_icb_name": "Oil & Gas",
+      "icb_code": "0001",
+      "level": 1
+    },
+    {
+      "icb_name": "Dầu khí",
+      "en_icb_name": "Oil & Gas",
+      "icb_code": "0500",
+      "level": 2
+    },
+    {
+      "icb_name": "Sản xuất Dầu khí",
+      "en_icb_name": "Oil & Gas Producers",
+      "icb_code": "0530",
+      "level": 3
+    }
+  ]
+}

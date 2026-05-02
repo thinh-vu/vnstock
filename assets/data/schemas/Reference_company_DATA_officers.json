@@ -1,0 +1,42 @@
+{
+  "notation": "Reference().company('SSI').officers()",
+  "module": "Company Reference (KBS)",
+  "ticker_used": "SSI",
+  "columns": [
+    "symbol",
+    "name",
+    "position",
+    "total_shares",
+    "rate"
+  ],
+  "dtypes": {
+    "symbol": "object",
+    "name": "object",
+    "position": "object",
+    "total_shares": "int64",
+    "rate": "float64"
+  },
+  "sample": [
+    {
+      "symbol": "SSI",
+      "name": "Nguyễn Duy Hưng",
+      "position": "Chủ tịch Hội đồng Quản trị",
+      "total_shares": 19416198,
+      "rate": 0.00779
+    },
+    {
+      "symbol": "SSI",
+      "name": "Nguyễn Hồng Nam",
+      "position": "Thành viên Hội đồng Quản trị",
+      "total_shares": 9961615,
+      "rate": 0.004
+    },
+    {
+      "symbol": "SSI",
+      "name": "Nguyễn Duy Khánh",
+      "position": "Thành viên Hội đồng Quản trị",
+      "total_shares": 5698435,
+      "rate": 0.00229
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('VIC').balance_sheet()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "VIC",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "TÀI SẢN ",
+      "item_id": "assets",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "A. TÀI SẢN NGẮN HẠN",
+      "item_id": "a.short_term_assets",
+      "2025": 658772464000.0,
+      "2024": 396479911000.0,
+      "2023": 343536472000.0,
+      "2022": 283116653000.0
+    },
+    {
+      "item": "I. Tiền và các khoản tương đương tiền",
+      "item_id": "i.cash_and_cash_equivalents",
+      "2025": 73542242000.0,
+      "2024": 42582366000.0,
+      "2023": 27982623000.0,
+      "2022": 26213302000.0
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('TCB').income_statement()",
+  "module": "Fundamental (Banking)",
+  "ticker_used": "TCB",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "1. Thu nhập lãi và các khoản thu nhập tương tự",
+      "item_id": "n_1.interest_income_and_similar_income",
+      "2025": 68017450000.0,
+      "2024": 60089462000.0,
+      "2023": 56707759000.0,
+      "2022": 44752636000.0
+    },
+    {
+      "item": "2. Chi phí lãi và các chi phí tương tự",
+      "item_id": "n_2.interest_expense_and_similar_expenses",
+      "2025": 29862359000.0,
+      "2024": 24581499000.0,
+      "2023": 29016639000.0,
+      "2022": 14462861000.0
+    },
+    {
+      "item": "I. Thu nhập lãi thuần",
+      "item_id": "i.net_interest_income",
+      "2025": 38155091000.0,
+      "2024": 35507963000.0,
+      "2023": 27691120000.0,
+      "2022": 30289775000.0
+    }
+  ]
+}

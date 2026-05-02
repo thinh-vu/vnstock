@@ -1,0 +1,31 @@
+{
+  "notation": "Reference().company('SSI').info()",
+  "module": "Company Reference (KBS)",
+  "ticker_used": "SSI",
+  "columns": [
+    "symbol",
+    "name",
+    "sector",
+    "profile",
+    "listing_date",
+    "issued_share"
+  ],
+  "dtypes": {
+    "symbol": "object",
+    "name": "object",
+    "sector": "object",
+    "profile": "object",
+    "listing_date": "object",
+    "issued_share": "float64"
+  },
+  "sample": [
+    {
+      "symbol": "SSI",
+      "name": "Công ty Cổ phần Chứng khoán SSI",
+      "sector": "Financial Services",
+      "profile": "Công ty Cổ phần Chứng khoán SSI (SSI) có tiền thân là Công ty Cổ phần Chứng khoán Sài Gòn được thành lập vào năm 1999. SSI chuyên cung cấp dịch vụ môi giới, tư vấn và đầu tư tài chính, chứng khoán với mạng lưới hoạt động rộng tại những thành phố lớn như Hà Nội, Thành phố Hồ Chí Minh, Hải Phòng, Nha Trang, Vũng Tàu. Công ty đã cung cấp dịch vụ cho các nhà đầu tư trong nước và nhiều nhà đầu tư nước ngoài danh tiếng với các khách hàng tiêu biểu như Công ty bao gồm Morgan Stanley, HSBC, Vinamilk, Credit Suisse, BIDV, ANZ, Prudential VN, Deutsche Bank. Trong năm 2025, Công ty xếp ở vị trí 2 với 11.53% thị phần môi giới cổ phiếu niêm yết tại HOSE, vị trí thứ 3 với 8.18% thị phần môi giới cổ phiếu niêm yết tại HNX và vị trí thứ 3 với 7.07% thị phần môi giới cổ phiếu đăng ký giao dịch trên thị trường UPCOM. Trên thị trường phái sinh, SSI đứng vị trí thứ 5 thị phần môi giới chứng khoán phái sinh với 5.09%. Doanh thu nghiệp vụ môi giới chứng khoán có giá trị bằng 2.344,72 tỷ đồng, tăng 40.62% so với cùng kỳ. Nợ vay ký quỹ/Vốn chủ sở hữu ở mức 120.43%, tăng 39.11%. Lợi nhuận trước thuế có giá trị bằng 5.082,97 tỷ đồng, tăng 43.44%. Tỷ lệ sinh lời trên vốn chủ sở hữu (ROE) ở mức 14.01%, tăng 3.15%. Cổ phiếu của Công ty được niêm yết trên sàn HNX vào năm 2006 và chuyển sang sàn HOSE từ năm 2007.",
+      "listing_date": "2006-12-15T00:00:00",
+      "issued_share": 2491097752.0
+    }
+  ]
+}

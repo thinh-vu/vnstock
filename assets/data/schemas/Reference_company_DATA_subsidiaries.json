@@ -1,0 +1,37 @@
+{
+  "notation": "Reference().company('SSI').subsidiaries()",
+  "module": "Company Reference (KBS)",
+  "ticker_used": "SSI",
+  "columns": [
+    "symbol",
+    "name",
+    "rate",
+    "sub_symbol"
+  ],
+  "dtypes": {
+    "symbol": "object",
+    "name": "object",
+    "rate": "float64",
+    "sub_symbol": "object"
+  },
+  "sample": [
+    {
+      "symbol": "SSI",
+      "name": "Công ty TNHH Quản lý quỹ SSI",
+      "rate": 1.0,
+      "sub_symbol": "SSIAM"
+    },
+    {
+      "symbol": "SSI",
+      "name": "Quỹ Đầu Tư Thành Viên SSI",
+      "rate": 0.7615,
+      "sub_symbol": "SSIIMF"
+    },
+    {
+      "symbol": "SSI",
+      "name": "Quỹ Đầu Tư Công Nghệ Số Việt Nam",
+      "rate": 0.2,
+      "sub_symbol": "2040155"
+    }
+  ]
+}

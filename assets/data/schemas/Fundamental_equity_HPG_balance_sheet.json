@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('HPG').balance_sheet()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "HPG",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "TÀI SẢN ",
+      "item_id": "assets",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "A. TÀI SẢN NGẮN HẠN",
+      "item_id": "a.short_term_assets",
+      "2025": 103659402760.0,
+      "2024": 86674276273.0,
+      "2023": 82716439173.0,
+      "2022": 80514710854.0
+    },
+    {
+      "item": "I. Tiền và các khoản tương đương tiền",
+      "item_id": "i.cash_and_cash_equivalents",
+      "2025": 8300890304.0,
+      "2024": 6887646140.0,
+      "2023": 12252001161.0,
+      "2022": 8324588920.0
+    }
+  ]
+}

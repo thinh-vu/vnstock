@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('FPT').income_statement()",
+  "module": "Fundamental (Regular)",
+  "ticker_used": "FPT",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "1. Doanh thu bán hàng và cung cấp dịch vụ ",
+      "item_id": "n_1.revenue",
+      "2025": 70207688945.0,
+      "2024": 62962652135.0,
+      "2023": 52625174861.0,
+      "2022": 44023010881.0
+    },
+    {
+      "item": "2. Các khoản giảm trừ doanh thu",
+      "item_id": "n_2.deduction_from_revenue",
+      "2025": 94863844.0,
+      "2024": 113857783.0,
+      "2023": 7274034.0,
+      "2022": 13483200.0
+    },
+    {
+      "item": "3. Doanh thu thuần về bán hàng và cung cấp dịch vụ",
+      "item_id": "n_3.net_revenue",
+      "2025": 70112825101.0,
+      "2024": 62848794351.0,
+      "2023": 52617900827.0,
+      "2022": 44009527681.0
+    }
+  ]
+}

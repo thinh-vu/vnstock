@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('PVI').balance_sheet()",
+  "module": "Fundamental (Insurance)",
+  "ticker_used": "PVI",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "TÀI SẢN ",
+      "item_id": "assets",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "A. TÀI SẢN NGẮN HẠN",
+      "item_id": "a.short_term_assets",
+      "2025": 40004987574.0,
+      "2024": 26187880114.0,
+      "2023": 21466480852.0,
+      "2022": 22625450091.0
+    },
+    {
+      "item": "I. Tiền và các khoản tương đương tiền",
+      "item_id": "i.cash_and_cash_equivalents",
+      "2025": 1012811045.0,
+      "2024": 388792765.0,
+      "2023": 877163096.0,
+      "2022": 1423599922.0
+    }
+  ]
+}

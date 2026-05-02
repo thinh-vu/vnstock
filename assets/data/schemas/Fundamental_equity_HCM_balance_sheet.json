@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('HCM').balance_sheet()",
+  "module": "Fundamental (Securities)",
+  "ticker_used": "HCM",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "TÀI SẢN ",
+      "item_id": "assets",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "A. TÀI SẢN NGẮN HẠN",
+      "item_id": "a.short_term_assets",
+      "2025": 46331257961.0,
+      "2024": 31172158785.0,
+      "2023": 17728214114.0,
+      "2022": 15262466983.0
+    },
+    {
+      "item": "I. Tài sản tài chính ngắn hạn",
+      "item_id": "short_term_financial_assets",
+      "2025": 46273573431.0,
+      "2024": 30941762438.0,
+      "2023": 17544806470.0,
+      "2022": 15196106202.0
+    }
+  ]
+}

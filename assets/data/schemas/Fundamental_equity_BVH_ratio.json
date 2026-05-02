@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('BVH').ratio()",
+  "module": "Fundamental (Insurance)",
+  "ticker_used": "BVH",
+  "columns": [
+    "item",
+    "item_id",
+    "2025-Q4",
+    "2025-Q3",
+    "2025-Q2",
+    "2025-Q1"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025-Q4": "float64",
+    "2025-Q3": "float64",
+    "2025-Q2": "float64",
+    "2025-Q1": "float64"
+  },
+  "sample": [
+    {
+      "item": "Thu nhập trên mỗi cổ phần của 4 quý gần nhất (EPS)",
+      "item_id": "trailing_eps",
+      "2025-Q4": 4012.27,
+      "2025-Q3": 3577.84,
+      "2025-Q2": 3262.31,
+      "2025-Q1": 2924.74
+    },
+    {
+      "item": "Giá trị sổ sách của cổ phiếu (BVPS)",
+      "item_id": "book_value_per_share_bvps",
+      "2025-Q4": 34499.89,
+      "2025-Q3": 34429.53,
+      "2025-Q2": 33411.91,
+      "2025-Q1": 32671.29
+    },
+    {
+      "item": "Chỉ số giá thị trường trên thu nhập (P/E)",
+      "item_id": "p_e",
+      "2025-Q4": 14.16,
+      "2025-Q3": 15.46,
+      "2025-Q2": 16.28,
+      "2025-Q1": 18.22
+    }
+  ]
+}

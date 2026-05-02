@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('ACB').balance_sheet()",
+  "module": "Fundamental (Banking)",
+  "ticker_used": "ACB",
+  "columns": [
+    "item",
+    "item_id",
+    "2025",
+    "2024",
+    "2023",
+    "2022"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2025": "float64",
+    "2024": "float64",
+    "2023": "float64",
+    "2022": "float64"
+  },
+  "sample": [
+    {
+      "item": "A. TÀI SẢN",
+      "item_id": "assets",
+      "2025": null,
+      "2024": null,
+      "2023": null,
+      "2022": null
+    },
+    {
+      "item": "I. Tiền mặt, vàng bạc, đá quý",
+      "item_id": "i.cash_gold_and_silver_precious_stones",
+      "2025": 8624548000.0,
+      "2024": 5696449000.0,
+      "2023": 6909300000.0,
+      "2022": 8460892000.0
+    },
+    {
+      "item": "II. Tiền gửi tại NHNN",
+      "item_id": "ii.balances_with_the_state_bank_of_vietnam",
+      "2025": 16574958000.0,
+      "2024": 25219753000.0,
+      "2023": 18504814000.0,
+      "2022": 13657531000.0
+    }
+  ]
+}

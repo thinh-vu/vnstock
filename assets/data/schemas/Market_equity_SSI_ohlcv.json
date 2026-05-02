@@ -1,0 +1,47 @@
+{
+  "notation": "Market().equity('SSI').ohlcv()",
+  "module": "Equity Market (KBS)",
+  "ticker_used": null,
+  "columns": [
+    "time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume"
+  ],
+  "dtypes": {
+    "time": "datetime64[ns]",
+    "open": "float64",
+    "high": "float64",
+    "low": "float64",
+    "close": "float64",
+    "volume": "int64"
+  },
+  "sample": [
+    {
+      "time": "2025-12-03T07:00:00",
+      "open": 29.54,
+      "high": 29.67,
+      "low": 29.31,
+      "close": 29.49,
+      "volume": 22047800
+    },
+    {
+      "time": "2025-12-04T07:00:00",
+      "open": 29.67,
+      "high": 30.22,
+      "low": 29.63,
+      "close": 29.9,
+      "volume": 32017100
+    },
+    {
+      "time": "2025-12-05T07:00:00",
+      "open": 30.04,
+      "high": 30.08,
+      "low": 29.35,
+      "close": 29.4,
+      "volume": 47092900
+    }
+  ]
+}

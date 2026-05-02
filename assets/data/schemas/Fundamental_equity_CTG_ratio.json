@@ -1,0 +1,47 @@
+{
+  "notation": "Fundamental().equity('CTG').ratio()",
+  "module": "Fundamental (Banking)",
+  "ticker_used": "CTG",
+  "columns": [
+    "item",
+    "item_id",
+    "2026-Q1",
+    "2025-Q4",
+    "2025-Q4_1",
+    "2025-Q3"
+  ],
+  "dtypes": {
+    "item": "object",
+    "item_id": "object",
+    "2026-Q1": "float64",
+    "2025-Q4": "float64",
+    "2025-Q4_1": "float64",
+    "2025-Q3": "float64"
+  },
+  "sample": [
+    {
+      "item": "Thu nhập trên mỗi cổ phần của 4 quý gần nhất (EPS)",
+      "item_id": "trailing_eps",
+      "2026-Q1": 6441.47,
+      "2025-Q4": 6206.54,
+      "2025-Q4_1": 4804.77,
+      "2025-Q3": 5606.37
+    },
+    {
+      "item": "Giá trị sổ sách của cổ phiếu (BVPS)",
+      "item_id": "book_value_per_share_bvps",
+      "2026-Q1": 33452.79,
+      "2025-Q4": 31635.24,
+      "2025-Q4_1": 28674.56,
+      "2025-Q3": 30507.72
+    },
+    {
+      "item": "Chỉ số giá thị trường trên thu nhập (P/E)",
+      "item_id": "p_e",
+      "2026-Q1": 5.55,
+      "2025-Q4": 8.18,
+      "2025-Q4_1": 8.63,
+      "2025-Q3": 7.47
+    }
+  ]
+}
