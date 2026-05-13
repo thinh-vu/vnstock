@@ -13,14 +13,14 @@ class EquityMarket(BaseDetailUI):
         self,
         start: Optional[str] = None,
         end: Optional[str] = None,
-        resolution: str = "1D",
+        interval: str = "1D",
         count: int = 100,
         source: str = "kbs",
         **kwargs,
     ) -> Any:
         """Get historical OHLCV data."""
         # Handle parameter aliases
-        interval = kwargs.pop("interval", resolution)
+        interval = kwargs.pop("resolution", interval)
         count_back = kwargs.pop("length", count)
         return self._dispatch(
             "equity_market",

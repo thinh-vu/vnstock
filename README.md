@@ -353,13 +353,13 @@ ref = Reference()
 fund = Fundamental()
 
 # 1. Lấy dữ liệu lịch sử giá cổ phiếu (OHLCV)
-df_history = market.equity.ohlcv(symbol='VNM', start='2024-01-01', end='2024-05-01')
+df_history = market.equity('VNM').ohlcv(start='2024-01-01', end='2024-05-01')
 
 # 2. Lấy thông tin hồ sơ doanh nghiệp tổng quan
-df_profile = ref.company.info(symbol='FPT')
+df_profile = ref.company('FPT').info()
 
 # 3. Lấy báo cáo tài chính (Bảng cân đối kế toán) theo năm
-df_balance = fund.equity.balance_sheet(symbol='TCB', period='year')
+df_balance = fund.equity('TCB').balance_sheet(period='year')
 
 print(df_history.head())
 ```
@@ -574,22 +574,25 @@ fund.listing()
 ## 8.14. Dữ liệu thị trường quốc tế: Cổ phiếu, FX, Index
 
 ```python
-from vnstock import Vnstock
-fx = Vnstock().fx(symbol='JPYVND', source='MSN')
-df = fx.quote.history(start='2025-01-02', end='2025-03-20', interval='1D')
-df
+from vnstock import Market
+market = Market()
+
+# Lấy dữ liệu tỷ giá ngoại hối (Forex)
+df_fx = market.forex('JPYVND').ohlcv(start='2025-01-02', end='2025-03-20', interval='1D')
+df_fx.head()
 ```
 
-## 8.15. Tỷ giá & giá vàng
+## 8.15. Tỷ giá & giá vàng (Retail)
 
 ```python
-from vnstock.explorer.misc import *
+from vnstock import Retail
+retail = Retail()
 
 # Tỷ giá ngoại tệ VCB
-vcb_exchange_rate(date='2024-03-21')
+fx_rates = retail.exchange_rate()
 
 # Giá vàng SJC
-sjc_gold_price()
+gold_prices = retail.gold(source='sjc')
 ```
 
 ## 8.16. Xuất dữ liệu
@@ -949,13 +952,13 @@ ref = Reference()
 fund = Fundamental()
 
 # 1. Fetch historical stock prices (OHLCV)
-df_history = market.equity.ohlcv(symbol='VNM', start='2024-01-01', end='2024-05-01')
+df_history = market.equity('VNM').ohlcv(start='2024-01-01', end='2024-05-01')
 
 # 2. Fetch general company profile
-df_profile = ref.company.info(symbol='FPT')
+df_profile = ref.company('FPT').info()
 
 # 3. Fetch financial reports (Balance Sheet) by year
-df_balance = fund.equity.balance_sheet(symbol='TCB', period='year')
+df_balance = fund.equity('TCB').balance_sheet(period='year')
 
 print(df_history.head())
 ```
@@ -1019,7 +1022,7 @@ quote.history(start='2024-01-01', end='2025-03-19', interval='d')
 > Retrieves granular trade data per tick:
 
 ```python
-stock.quote.intraday(symbol='ACB', page_size=10_000, show_log=False)
+quote.intraday(symbol='ACB', page_size=10_000, show_log=False)
 ```
 
 ---
@@ -1090,24 +1093,27 @@ fund.listing()
 ## 8.13. International Markets: Stocks, FX, Indices
 
 ```python
-from vnstock import Vnstock
-fx = Vnstock().fx(symbol='JPYVND', source='MSN')
-df = fx.quote.history(start='2025-01-02', end='2025-03-20', interval='1D')
-df
+from vnstock import Market
+market = Market()
+
+# Fetch Forex data
+df_fx = market.forex('JPYVND').ohlcv(start='2025-01-02', end='2025-03-20', interval='1D')
+df_fx.head()
 ```
 
 ---
 
-## 8.14. Exchange Rates & Gold Prices
+## 8.14. Exchange Rates & Gold Prices (Retail)
 
 ```python
-from vnstock.explorer.misc import *
+from vnstock import Retail
+retail = Retail()
 
 # VCB exchange rate
-vcb_exchange_rate(date='2024-03-21')
+fx_rates = retail.exchange_rate()
 
 # SJC gold price
-sjc_gold_price()
+gold_prices = retail.gold(source='sjc')
 ```
 
 ---
