@@ -1,9 +1,11 @@
-import pandas as pd
+import datetime
 import json
 import os
-import datetime
+
+import pandas as pd
 import toml
-from vnstock import Market, Reference, Fundamental
+
+from vnstock import Fundamental, Market, Reference
 
 # Expanded Universe to ensure we find data for snapshots
 # VN30 + High-activity stocks + Stocks with diverse data
@@ -16,13 +18,13 @@ def get_project_version():
         with open('pyproject.toml', 'r', encoding='utf-8') as f:
             data = toml.load(f)
             return data.get('project', {}).get('version', 'Unknown')
-    except Exception as e:
+    except Exception:
         return 'Unknown'
 
 def get_metadata(df, notation, module_path, ticker_used=None):
     if df is None:
         return None
-    
+
     if isinstance(df, dict):
         return {
             "notation": notation,
@@ -32,10 +34,10 @@ def get_metadata(df, notation, module_path, ticker_used=None):
             "dtypes": {k: type(v).__name__ for k, v in df.items()},
             "sample": [df]
         }
-    
+
     if not isinstance(df, pd.DataFrame):
         return None
-        
+
     if df.empty:
         return {
             "notation": notation,
@@ -45,7 +47,7 @@ def get_metadata(df, notation, module_path, ticker_used=None):
             "dtypes": {col: str(dtype) for col, dtype in df.dtypes.items()},
             "sample": []
         }
-    
+
     sample = df.head(3).to_dict(orient='records')
     for record in sample:
         for key, value in record.items():
@@ -81,7 +83,7 @@ def generate_markdown(all_data, version, timestamp, industry_groups):
     md += f"**Version**: `{version}`  \n"
     md += f"**Generated At**: `{timestamp}`  \n\n"
     md += "This document provides a comprehensive reference for the data structures and sample data returned by the Unified UI functions.\n\n"
-    
+
     md += "# 1. Core UI Functions\n\n"
     sorted_notations = sorted([k for k in all_data.keys() if "Fundamental" not in k])
     for notation in sorted_notations:
@@ -100,7 +102,7 @@ def generate_markdown(all_data, version, timestamp, industry_groups):
     for group_name, tickers in industry_groups.items():
         md += f"## Industry: {group_name}\n"
         md += f"Representative Tickers: {', '.join(tickers)}\n\n"
-        
+
         for statement in ["income_statement", "balance_sheet", "cash_flow", "ratio"]:
             found = False
             for ticker in tickers:
@@ -119,13 +121,13 @@ def generate_markdown(all_data, version, timestamp, industry_groups):
                     found = True
                     break
         md += "---\n\n"
-        
+
     return md
 
 def main():
     os.makedirs('assets/data/schemas', exist_ok=True)
     all_snapshots = {}
-    
+
     version = get_project_version()
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
