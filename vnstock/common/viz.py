@@ -62,11 +62,17 @@ except ImportError:
 # Fallback to vnstock_ezchart if vnstock_chart not available
 HAS_VNSTOCK_EZCHART = False
 try:
-    from vnstock_ezchart.mplot import MPlot
+    from vnstock_ezchart import Chart as EzChart
 
     HAS_VNSTOCK_EZCHART = True
 except ImportError:
-    pass
+    try:
+        # Fallback for older versions of vnstock_ezchart
+        from vnstock_ezchart.mplot import MPlot as EzChart
+
+        HAS_VNSTOCK_EZCHART = True
+    except ImportError:
+        pass
 
 # Ensure at least one charting library is available
 if not HAS_VNSTOCK_CHART and not HAS_VNSTOCK_EZCHART:
@@ -98,7 +104,8 @@ class Chart:
 
     vnstock_ezchart methods (fallback):
         - bar(), hist(), pie(), scatter(), heatmap(), boxplot(), pairplot()
-        - timeseries(), treemap(), wordcloud(), table(), combo_chart()
+        - line(), timeseries(), treemap(), wordcloud(), table()
+        - combo(), combo_chart(), candle(), equity_curve(), returns_heatmap(), summary_card()
 
     Example:
         >>> df = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
@@ -148,7 +155,7 @@ class Chart:
         if backend == "vnstock_ezchart":
             if HAS_VNSTOCK_EZCHART:
                 self.backend = "vnstock_ezchart"
-                self.chart = MPlot()
+                self.chart = EzChart()
             else:
                 raise ImportError(
                     "vnstock_ezchart is not installed. To install:\n"
@@ -161,7 +168,7 @@ class Chart:
                 self.backend = "vnstock_chart"
             elif HAS_VNSTOCK_EZCHART:
                 self.backend = "vnstock_ezchart"
-                self.chart = MPlot()
+                self.chart = EzChart()
             else:
                 raise RuntimeError("No charting backend available")
 
@@ -208,6 +215,8 @@ class Chart:
                     logger.error(f"Error creating line chart: {e}")
                 raise
         elif self.backend == "vnstock_ezchart" and self.chart:
+            if hasattr(self.chart, "line"):
+                return self.chart.line(self.data, **kwargs)
             return self.chart.timeseries(self.data, **kwargs)
         else:
             raise AttributeError(f"line chart not available in {self.backend} backend")
@@ -369,7 +378,11 @@ class Chart:
                     logger.error(f"Error creating candlestick chart: {e}")
                 raise
         elif self.backend == "vnstock_ezchart" and self.chart:
-            # vnstock_ezchart doesn't have candlestick, fallback to line
+            if hasattr(self.chart, "candle"):
+                return self.chart.candle(self.data, **kwargs)
+            # vnstock_ezchart older versions don't have candlestick, fallback to line
+            if hasattr(self.chart, "line"):
+                return self.chart.line(self.data, **kwargs)
             return self.chart.timeseries(self.data, **kwargs)
         else:
             raise AttributeError(
@@ -498,6 +511,8 @@ class Chart:
     def timeseries(self, **kwargs):
         """Create time series chart using vnstock_ezchart."""
         if self.backend == "vnstock_ezchart" and self.chart:
+            if hasattr(self.chart, "line"):
+                return self.chart.line(self.data, **kwargs)
             return self.chart.timeseries(self.data, **kwargs)
         elif self.backend == "vnstock_chart":
             # Use line chart for vnstock_chart
@@ -578,9 +593,72 @@ class Chart:
                 # If line_data is column name, extract the Series
                 line_data = self.data[line_data]
 
+            if hasattr(self.chart, "combo"):
+                return self.chart.combo(bar_data, line_data, **kwargs)
             return self.chart.combo_chart(bar_data, line_data, **kwargs)
         else:
             raise AttributeError(f"combo chart not available in {self.backend} backend")
+
+    def combo(self, bar_data=None, line_data=None, **kwargs):
+        """Create combo chart using vnstock_ezchart."""
+        if self.backend == "vnstock_ezchart" and self.chart:
+            if bar_data is None and line_data is None:
+                if isinstance(self.data, pd.DataFrame) and len(self.data.columns) >= 2:
+                    bar_data = self.data.iloc[:, 0]
+                    line_data = self.data.iloc[:, 1]
+                else:
+                    raise ValueError(
+                        "Combo chart requires DataFrame with at least 2 columns"
+                    )
+            elif isinstance(bar_data, str) and isinstance(self.data, pd.DataFrame):
+                bar_data = self.data[bar_data]
+            if isinstance(line_data, str) and isinstance(self.data, pd.DataFrame):
+                line_data = self.data[line_data]
+
+            if hasattr(self.chart, "combo"):
+                return self.chart.combo(bar_data, line_data, **kwargs)
+            return self.chart.combo_chart(bar_data, line_data, **kwargs)
+        else:
+            raise AttributeError(f"combo chart not available in {self.backend} backend")
+
+    def equity_curve(self, benchmark=None, **kwargs):
+        """Create equity curve chart using vnstock_ezchart."""
+        if self.backend == "vnstock_ezchart" and self.chart:
+            if hasattr(self.chart, "equity_curve"):
+                return self.chart.equity_curve(self.data, benchmark=benchmark, **kwargs)
+            raise AttributeError(
+                "equity_curve not available in the installed version of vnstock_ezchart"
+            )
+        else:
+            raise AttributeError(
+                f"equity_curve not available in {self.backend} backend"
+            )
+
+    def returns_heatmap(self, **kwargs):
+        """Create returns heatmap using vnstock_ezchart."""
+        if self.backend == "vnstock_ezchart" and self.chart:
+            if hasattr(self.chart, "returns_heatmap"):
+                return self.chart.returns_heatmap(self.data, **kwargs)
+            raise AttributeError(
+                "returns_heatmap not available in the installed version of vnstock_ezchart"
+            )
+        else:
+            raise AttributeError(
+                f"returns_heatmap not available in {self.backend} backend"
+            )
+
+    def summary_card(self, *args, **kwargs):
+        """Create summary card using vnstock_ezchart."""
+        if self.backend == "vnstock_ezchart" and self.chart:
+            if hasattr(self.chart, "summary_card"):
+                return self.chart.summary_card(*args, **kwargs)
+            raise AttributeError(
+                "summary_card not available in the installed version of vnstock_ezchart"
+            )
+        else:
+            raise AttributeError(
+                f"summary_card not available in {self.backend} backend"
+            )
 
     def pairplot(self, **kwargs):
         """Create pair plot using vnstock_ezchart."""

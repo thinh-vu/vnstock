@@ -57,6 +57,19 @@ class MarketType(str, Enum):
     FOREX = "forex"
 
 
+class InstrumentType(str, Enum):
+    """Specific instrument/security types."""
+
+    STOCK = "STOCK"
+    ETF = "ETF"
+    FUND = "FUND"
+    WARRANT = "WARRANT"
+    FUTURE = "FUTURE"
+    BOND = "BOND"
+    FUND_BOND = "FUND_BOND"
+    INDEX = "INDEX"
+
+
 class ExchangeType(str, Enum):
     """Stock exchange types."""
 

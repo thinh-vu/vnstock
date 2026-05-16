@@ -126,7 +126,11 @@ class Finance:
         return mappings.get(report_type, {})
 
     def _parse_financial_response(
-        self, response: Dict, report_key: str, include_metadata: bool = False
+        self,
+        response: Dict,
+        report_key: str,
+        include_metadata: bool = False,
+        unit_multiplier: float = 1.0,
     ) -> pd.DataFrame:
         """
         Parse KBS API response and extract financial data with proper structure.
@@ -135,6 +139,7 @@ class Finance:
             response: API response containing Audit, Unit, Head, Content
             report_key: Key in Content (e.g., 'Kết quả kinh doanh')
             include_metadata: Whether to include Audit and Unit info as rows in DataFrame
+            unit_multiplier: Multiplier to apply to values (e.g. 1000.0)
 
         Returns:
             DataFrame with proper financial data structure
@@ -218,13 +223,9 @@ class Finance:
 
             # Generate item_id using field handler
             if item_en and item_en.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(
-                    item_en, preserve_hierarchy=True
-                )
+                item_id = self.field_handler.normalize_field_name(item_en)
             elif item and item.strip():
-                item_id = self.field_handler.normalizer.normalize_field_name(
-                    item, preserve_hierarchy=True
-                )
+                item_id = self.field_handler.normalize_field_name(item)
             else:
                 item_id = ""
 
@@ -255,7 +256,7 @@ class Finance:
                 # Convert to numeric if possible
                 if value is not None:
                     try:
-                        value = float(value)
+                        value = float(value) * unit_multiplier
                     except (ValueError, TypeError):
                         pass
                 row[period_label] = value
@@ -360,7 +361,10 @@ class Finance:
             )
 
             df = self._parse_financial_response(
-                data, report_key, include_metadata=include_metadata
+                data,
+                report_key,
+                include_metadata=include_metadata,
+                unit_multiplier=1000.0,
             )
 
             if df.empty:
@@ -452,14 +456,17 @@ class Finance:
             return df
 
         mapping = self._get_column_mapping(report_type)
-        rename_dict = {old: new for old, new in mapping.items() if old in df.columns}
 
-        if rename_dict:
-            df = df.rename(columns=rename_dict)
-            if self.show_log:
-                logger.info(
-                    f"Applied schema standardization: {len(rename_dict)} columns renamed"
-                )
+        if "item_id" in df.columns and mapping:
+            # Replace mapped strings in item_id
+            mask = df["item_id"].isin(mapping.keys())
+            count = mask.sum()
+            if count > 0:
+                df["item_id"] = df["item_id"].replace(mapping)
+                if self.show_log:
+                    logger.info(
+                        f"Applied schema standardization: {count} items standardized"
+                    )
 
         return df
 
@@ -843,47 +850,115 @@ class Finance:
         )
         period_type = 1 if effective_period == "year" else 2
 
-        # Fetch one record to see available ratio groups for this company
-        probe_data = self._fetch_financial_data(
-            report_type="CSTC", period_type=period_type, page_size=1, show_log=False
-        )
-        if not probe_data:
-            raise ValueError(f"Không tìm thấy dữ liệu tài chính cho mã {self.symbol}.")
+        # Fetch data up to limit
+        effective_limit = getattr(self, "limit", 4)
+        dfs = []
+        collected_periods = set()
+        page = 1
+        request_page_size = max(effective_limit, 4)
 
-        content = probe_data.get("Content", {})
+        while len(collected_periods) < effective_limit:
+            financial_data = self._fetch_financial_data(
+                report_type="CSTC",
+                period_type=period_type,
+                page=page,
+                page_size=request_page_size,
+                show_log=show_log,
+            )
 
-        # Ratio groups are specific keys in the Content dict
-        # We need to collect all groups across multiple pages
-        ratio_groups = [k for k in content.keys() if "Nhóm chỉ số" in k]
+            if not financial_data:
+                break
 
-        if not ratio_groups:
+            content = financial_data.get("Content", {})
+            ratio_groups = [k for k in content.keys() if "Nhóm chỉ số" in k]
+
+            if not ratio_groups:
+                break
+
+            # Collect all ratio data from all groups
+            all_ratio_data = []
+            for group_key in ratio_groups:
+                group_data = content.get(group_key, [])
+                if group_data:
+                    all_ratio_data.extend(group_data)
+
+            if not all_ratio_data:
+                break
+
+            # Inject 'Financial Ratios Combined' into content and use _parse_financial_response
+            financial_data["Content"]["Financial Ratios Combined"] = all_ratio_data
+
+            df = self._parse_financial_response(
+                financial_data,
+                "Financial Ratios Combined",
+                include_metadata=include_metadata,
+            )
+
+            if df.empty:
+                break
+
+            new_periods = df.attrs.get("periods", [])
+            if not new_periods:
+                break
+
+            # Filter out periods we already have
+            actual_new_periods = [p for p in new_periods if p not in collected_periods]
+            if not actual_new_periods:
+                break
+
+            # If some periods are repeats, we only keep the new ones in this DF
+            if len(actual_new_periods) < len(new_periods):
+                cols_to_keep = [
+                    c
+                    for c in df.columns
+                    if c not in new_periods or c in actual_new_periods
+                ]
+                df = df[cols_to_keep]
+                df.attrs["periods"] = actual_new_periods
+
+            dfs.append(df)
+            collected_periods.update(actual_new_periods)
+
+            page += 1
+            if page > 20:
+                break
+
+        if not dfs:
             logger.warning(f"Không tìm thấy chỉ số tài chính cho {self.symbol}.")
             return pd.DataFrame()
 
-        # Since ratio() involves combining multiple keys, _fetch_series_data needs to handle it differently
-        # or we just fetch multiple series and merge them.
-        # However, for ratio, we typically merge all groups into one long list of rows.
+        # Merge DataFrames on item_id
+        final_df = dfs[0]
 
-        group_dfs = []
-        for group_key in ratio_groups:
-            group_df = self._fetch_series_data(
-                report_type="CSTC",
-                period_type=period_type,
-                report_key=group_key,
-                include_metadata=include_metadata,
-                show_log=show_log,
-            )
-            if not group_df.empty:
-                group_dfs.append(group_df)
+        for i in range(1, len(dfs)):
+            next_df = dfs[i]
+            next_periods = next_df.attrs.get("periods", [])
 
-        if not group_dfs:
-            return pd.DataFrame()
+            cols_to_merge = ["item_id"] + next_periods
 
-        # Concatenate all groups (this adds rows)
-        df = pd.concat(group_dfs, ignore_index=True)
+            if "item_id" in next_df.columns:
+                current_attrs = final_df.attrs
+                final_df = pd.merge(
+                    final_df, next_df[cols_to_merge], on="item_id", how="outer"
+                )
+                current_attrs["periods"].extend(next_periods)
+                if "audit_status" in next_df.attrs:
+                    current_attrs["audit_status"].update(next_df.attrs["audit_status"])
+                if "unit_type" in next_df.attrs:
+                    current_attrs["unit_type"].update(next_df.attrs["unit_type"])
+                final_df.attrs = current_attrs
+
+        df = final_df
+
+        # Truncate to limit
+        all_periods = df.attrs.get("periods", [])
+        if len(all_periods) > effective_limit:
+            kept_periods = all_periods[:effective_limit]
+            drop_periods = [p for p in all_periods if p not in kept_periods]
+            df = df.drop(columns=drop_periods, errors="ignore")
+            df.attrs["periods"] = kept_periods
 
         # Capture periods from first group
-        df.attrs = group_dfs[0].attrs
         df.attrs["report_key"] = "Financial Ratios"
 
         if df.empty:

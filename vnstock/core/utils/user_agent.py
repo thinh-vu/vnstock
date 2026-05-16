@@ -279,16 +279,7 @@ def get_headers(
         headers.update(override_headers)
 
     # Step 9: Source-specific dynamic transformations
-    if data_source.upper() == "VCI":
-        # Inject randomized device identifier for VCI
-        vci_device_id = _generate_vci_device_id()
-        headers["Device-Id"] = vci_device_id
-        # Ensure it is also in the Cookie
-        current_cookie = headers.get("Cookie", "")
-        if current_cookie:
-            headers["Cookie"] = f"device_id={vci_device_id}; {current_cookie}"
-        else:
-            headers["Cookie"] = f"device_id={vci_device_id}"
+    pass
 
     # Step 10: Validate and return
     return validate_headers(headers)

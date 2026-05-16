@@ -5,6 +5,7 @@ from vnai import optimize_execution
 from vnstock.ui._base import BaseUI
 
 if TYPE_CHECKING:
+    from vnstock.ui.domains.market.bond import BondMarket
     from vnstock.ui.domains.market.commodity_market import CommodityMarket
     from vnstock.ui.domains.market.crypto import CryptoMarket
     from vnstock.ui.domains.market.equity import EquityMarket
@@ -90,3 +91,10 @@ class Market(BaseUI):
         from vnstock.ui.domains.market.commodity_market import CommodityMarket
 
         return CommodityMarket(symbol=symbol, **kwargs)
+
+    @optimize_execution("UI")
+    def bond(self, symbol: str = None, **kwargs) -> "BondMarket":
+        """Access bond market data."""
+        from vnstock.ui.domains.market.bond import BondMarket
+
+        return BondMarket(symbol=symbol, **kwargs)

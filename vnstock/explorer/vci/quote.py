@@ -21,7 +21,6 @@ from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.validation import validate_symbol
 
 from .const import (
-    _INDEX_MAPPING,
     _INTERVAL_MAP,
     _INTRADAY_DTYPE,
     _INTRADAY_MAP,
@@ -30,6 +29,7 @@ from .const import (
     _OHLC_MAP,
     _RESAMPLE_MAP,
     _TRADING_URL,
+    _VCI_INDEX_MAPPING,
 )
 
 logger = get_logger(__name__)
@@ -103,15 +103,15 @@ class Quote:
 
     def _index_validation(self) -> str:
         """
-        Validate and map index symbol with _INDEX_MAPPING.
+        Validate and map index symbol with _VCI_INDEX_MAPPING.
         """
-        if self.symbol not in _INDEX_MAPPING.keys():
-            valid_indices = ", ".join(_INDEX_MAPPING.keys())
+        if self.symbol not in _VCI_INDEX_MAPPING.keys():
+            valid_indices = ", ".join(_VCI_INDEX_MAPPING.keys())
             raise ValueError(
                 f"Không tìm thấy mã chứng khoán {self.symbol}. "
                 f"Các giá trị hợp lệ: {valid_indices}"
             )
-        return _INDEX_MAPPING[self.symbol]
+        return _VCI_INDEX_MAPPING[self.symbol]
 
     def _input_validation(
         self, start: str, end: Optional[str], interval: Optional[str]
@@ -257,7 +257,7 @@ class Quote:
             auto_count_back = count_back
 
         # Prepare request
-        url = f"{self.base_url}/chart/OHLCChart/gap-chart"
+        url = f"{self.base_url}chart/OHLCChart/gap-chart"
         payload = {
             "timeFrame": interval_value,
             "symbols": [self.symbol],
@@ -342,7 +342,6 @@ class Quote:
         last_time: Optional[Union[str, int, float]] = None,
         last_time_format: Optional[str] = None,
         show_log: bool = False,
-        **kwargs,
     ) -> pd.DataFrame:
         """
         Truy xuất dữ liệu khớp lệnh của mã chứng khoán bất kỳ từ
@@ -391,7 +390,7 @@ class Quote:
         # Parse last_time to epoch timestamp
         parsed_last_time = convert_time_flexible(last_time, last_time_format)
 
-        url = f"{self.base_url}/{_INTRADAY_URL}/LEData/getAll"
+        url = f"{self.base_url}{_INTRADAY_URL}/LEData/getAll"
         payload = {
             "symbol": self.symbol,
             "limit": page_size,

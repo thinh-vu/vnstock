@@ -1,170 +1,31 @@
-# Changelog
+# Nhật ký Thay đổi (Changelog)
 
-All notable changes to this project will be documented in this file.
+Tất cả các thay đổi đáng chú ý của dự án `vnstock` sẽ được tài liệu hóa tại file này.
 
-## [4.0.1] - 2026-05-02
+## [4.0.3] 2026-04-29
 
-### Added
-- **Unified UI Test Suite**: Comprehensive tests for Market, Reference, Fundamental domains, and Provider Registry.
-- **Live API Testing**: Re-enabled and verified live API testing for VCI data sources.
+### Bổ sung (Added)
+- **Giao dịch Trái phiếu**: Bổ sung cấu trúc dữ liệu trái phiếu vào tầng giao diện Unified UI, đồng nhất kiến trúc với bản `vnstock_data` và bổ sung các hàm ohlcv, trades, quote.
+- **InstrumentType Enum**: Thêm phân loại định danh chứng khoán chuyên sâu để chuẩn hoá việc nhận diện các loại tài sản tài chính.
 
-### Fixed
-- **VCI API Access**: Fixed a critical WAF blocking issue caused by double-slashes in VCI endpoints.
-- **Pandas Compatibility**: Standardized frequency normalization (M vs ME) across all Pandas versions (2.x).
-- **Code Quality**: Fixed YAML syntax in workflows, linting errors, and trailing whitespace in tests.
+### Thay đổi & Cải thiện (Changed & Improved)
+- Bổ sung danh sách các chỉ số index từ HNX, UPCOM và cải thiện khả năng nhận diện symbol qua hàm get_asset_type chính xác hơn với hỗ trợ các mã index mới.
+- **Dữ liệu Báo cáo Tài chính**: Hỗ trợ hệ số nhân (`unit_multiplier`), ánh xạ nhất quán cấu trúc cột dữ liệu giữa các nguồn KBS và VCI.
+- **Xử lý Nguồn dữ liệu (MSN & VCI)**: Xây dựng cơ chế resolve mã `SecId` động cho nguồn MSN để sửa lỗi truy xuất dữ liệu lịch sử; làm sạch các header Device-ID của VCI và thêm cơ chế fallback/sanitize URL an toàn khi tải danh sách mã.
 
-## [4.0.0] - 2026-04-28
+## [2.5.0] - 2026-04-06
 
-### Added
-- **Unified UI**: Introduced a unified UI module for improved user experience and consistency across features.
+### Thay đổi (Changed)
+- **Module KBS**:
+  - Khôi phục hoàn toàn cấu trúc lõi (`trading.py`, `quote.py`, `financial.py`, `company.py`, `listing.py`) để tuân thủ triệt để với giới hạn của phiên bản miễn phí (free tier). Các tính năng như truyền số lượng kỳ (limit) để lùi sâu lịch sử báo cáo tài chính, lấy dữ liệu bảng giá phái sinh, giao dịch lô lẻ và khớp lệnh thỏa thuận đều đã được gỡ bỏ khỏi bản miễn phí để tối ưu hiệu năng.
+  - Làm sạch quy tắc mapping định danh tại `vnstock/explorer/kbs/const.py`, loại bỏ các dictionary không cần thiết (`_ODD_LOT_MAP`, `_DERIVATIVE_MAP`, `_PUT_THROUGH_MAP`).
+  - Sửa lỗi định danh cột dữ liệu bảng giá: đổi `total_trades` thành `volume_accumulated` (tổng khối lượng) và bổ sung ánh xạ mã `CV` thành cột mới `volume_last` (khối lượng khớp lệnh lần cuối). Bản vá này đảm bảo API trả về 100% khớp với dữ liệu thực tế đang hiển thị trên giao diện của KBS (Ví dụ: "Tổng KL" -> `volume_accumulated`, "Khớp lệnh > KL" -> `volume_last`). Người dùng có sử dụng pandas parsing cần cập nhật lại key cho các bản báo cáo của mình.
 
-### Changed
-- **VCI API Migration**: Updated VCI API endpoints to REST for enhanced stability and reliability.
-- **VCI Financial Reports**: Upgraded financial report data fetching to support period filtering, custom limits, and transposed output format.
-- **Sponsor Detection**: Improved sponsor library detection logic for a smoother user upgrade experience.
-
-### Fixed
-- **API Error Fixes (VCI)**: Resolved various API fetching errors across Listing, Company, and Finance modules for the VCI data source.
-- **API Error Fixes (KBS)**: Addressed API fetching errors in the Finance module for the KBS data source.
-
-## [3.5.1] - 2026-04-06
-
-### Breaking Changes
-- **KBS Price Board Column Updates**: Renamed the `total_trades` column to `volume_accumulated` and included the new `volume_last` (mapped from `CV`) column. This strictly aligns the API responses with the actual KBS user interface values. Users utilizing pandas parsing will need to update their target keys to reflect this consistency change.
-
-### Added
-- **Intelligent Environment Detection**: The library now performs a startup check in your virtual environment. If the sponsored package `vnstock_data` is detected, it gently guides you to update your imports to unlock extended features seamlessly.
-- **Smart AST Migration Utility**: Introduced `vnstock.core.utils.upgrade.migrate_to_sponsor()`, an advanced tool built for AI coding assistants. Utilizing an Abstract Syntax Tree (AST) engine and dynamic validation, AI agents can now safely migrate your codebase to `vnstock_data` with complete accuracy, bypassing the risks of standard regex text replacement.
-- **AI Agent Context Integration**: Embedded system guardrails directly in core initialization files. These passive clues guide AI assistants (like Copilot or Cursor) to understand library tier boundaries, directing them to seamlessly leverage `vnstock_data` rather than attempting heavy workarounds.
-
-## [3.5.0] - 2026-03-07
-
-### Added
-- **Expanded Market Events Catalog**: Introduced `vnstock/core/utils/market_events.py` documenting major market events since 2000 (including national holidays, suspensions, and outages). Designed as an open dictionary format, this highly flexible dataset is ideal for time-series analysis and warmly welcomes community contributions.
-- Added pandas compatibility utilities and enhance frequency handling in data processing
-- Enhance CI workflows with API key setup and verification, improve linting and testing configurations
-
-### Changed
-- **Upgrade suggestions now more helpful**: When upgrading vnstock, the system now properly detects your Python environment and shows you the exact command to use. If you have multiple Python versions installed, it will suggest the upgrade using the correct one.
-- Consolidated test documentation into `tests/docs/` directory
-- Updated `.gitignore` to include debug scripts
-- Standardized KBS Quote price data to use decimal values (thousands unit) instead of VND in `history` and `intraday` methods
-- Updated agent guide file copying instructions for macOS/Linux and Windows
-
-### Fixed
-- Added fallback to fetch symbols by exchange if the initial listing lacks an exchange column
-- Update Python script execution method in CI workflow for API key verification
-- Add `pytz` to project dependencies (#217)
-- Fixed `Listing` tests to correctly handle `pd.Series` return types from `all_future_indices` and related methods
-- Fixed `Quote` integration tests to handle missing data and expired derivatives gracefully without failing the entire suite
-- Fixed `KBS Quote` to correctly interpret bar-based lookback lengths (e.g., '500b') using `interpret_lookback_length` logic
-- Enabled full integration test suite for `vnstock.explorer` module
-
-### Removed
-- **Screener functionality removed**: The built-in stock screener from TCBS is no longer available. If you were using this feature, you can find similar functionality in the vnstock_data (sponsored version).
-- Removed TCBS data source and all its related dependencies and integrations across the library (`explorer/tcbs/`)
-- Removed `api/screener.py` entirely as it was exclusively dependent on TCBS
-- Removed TCBS references from core registry, constants, types, common data layer, and all API adapters (`Company`, `Finance`, `Quote`, `Trading`, `Listing`)
-- Removed `price_depth` method from `vnstock.explorer.vci.quote`
-
-
-## [3.4.2] - 2026-01-27
-
-### Added
-
-- **Derivatives Support**: Implemented `convert_derivative_symbol` and `get_derivative_maturity_date` to support the new KRX derivative symbol format (effective May 2025), automatically converting old symbols (e.g., VN30F2506) to the new standard.
-- **KBS Index Support**: Added `_INDEX_MAPPING` and validation logic to fully support market indices in KBS Quote module, ensuring correct API endpoint routing.
-- **VCI Listing**: Added `all_indices()` and `indices_by_group()` wrapper methods in `Listing` class to provide standardized access to market indices.
-
-### Changed
-
-- **KBS Financial**: Optimized `get_financial_report` to use `page_size=8` (fetching 2 years of quarterly data) and improved field normalization with `preserve_hierarchy=True`.
-- **Quote Validation**: Added strict validation to prevent `intraday` data requests for Index symbols in both KBS and VCI sources (`ValueError` raised).
-- **Refactoring**: Simplified `FieldHandler` initialization and removed file-based referencing in favor of built-in mappings for better performance.
-
-## [2026-01-22]
-
-### Added
-
-- Overhauled Vietnamese text normalization with new character map and advanced options for robust snake_case conversion
-- Advanced field handling system for financial reports with flexible standardization options
-- Field display modes: standardized_only, all_fields, and auto_convert for flexible field handling
-- Comprehensive field mapping and validation system for KBS financial data
-- Language filtering support for financial reports (Vietnamese/English/Both)
-- Field collision detection and handling with automatic ID generation
-- Professional pandas extension for chart visualization with vnstock_chart integration
-- Dual backend charting system: vnstock_chart (professional) and vnstock_ezchart (fallback)
-- Enhanced field utilities package with specialized financial data field handlers
-- Comprehensive GitHub Actions CI/CD pipeline for automated testing and quality assurance
-- Multi-platform test matrix: Ubuntu, macOS, Windows across Python 3.10-3.13
-- Automated coverage reporting with Codecov integration
-- Performance benchmarking and regression detection
-- Code quality checks: flake8, black, isort, mypy
-- Security scanning with Bandit and Safety
-- Enhanced pytest fixtures and utilities for comprehensive testing
-- Performance monitoring and quality metrics tracking
-- Direct API key registration support with non-interactive mode for programmatic setup
-- Masked API key display and tier information after successful registration
-- AI-powered vibe coding section in README
-
-### Changed
-
-- Updated API key registration URL from `/account` to `/login` endpoint
-- Enhanced KBS trading module with code optimizations
-- Improved README formatting and added user authentication section
-- Refactored KBS financial module with advanced field processing capabilities
-- Updated all financial report methods (income_statement, balance_sheet, cash_flow, ratio) with language filtering support
-- Enhanced field ID generation with collision detection and automatic resolution
-- Integrated professional charting capabilities with pandas DataFrame extension
-- Restructured test suite with comprehensive GitHub Actions CI/CD integration
-- Enhanced pytest configuration with advanced fixtures and performance monitoring
-- Implemented multi-platform and multi-version testing matrix for better compatibility assurance
-
-### Fixed
-
-- Optimized code performance in KBS trading module
-
-## [2026-01-16]
-
-### Added
-
-- New KBS data source support as default source, replacing VCI as primary source
-- Authentication utilities for public uses with the Vnstock API key
-- Lazy loading mechanism to prevent circular import deadlocks across multiple modules
-- Show tier and limits information for registered users before prompting for key change
-
-### Changed
-
-- Updated version from 3.3.2 to 3.4.0
-- Updated Listing class to use KBS as default data source instead of VCI
-- Modified StockComponents to initialize listing with KBS source
-- Updated error message to include KBS in valid source options
-
-### Removed
-
-- Removed outdated Vietnam stock notebook (1_vietnam_stock_vnstock3.ipynb) containing 6497 lines of legacy content
-- Cleaned up comprehensive examples covering Listing, Quote, Company, Finance, and Trading modules
-
-## [2026-01-06]
-
-### Fixed
-
-- Fixed issue where VN100 derivative symbols (e.g., `VN100F1M`) were incorrectly identified as Covered Warrants due to length conflict.
-- Refined `auto_count_back` logic in `Quote.history` to accurately reflect Vietnam market trading hours (5 hours/day, 255 mins/day).
-
-### Added
-
-- Feature "Smart Lookback" for `Quote.history` in `vnstock/explorer/vci/quote.py` and `vnstock/explorer/tcbs/quote.py`. Users can now use `length` parameter (e.g., `'3M'`, `'10W'`, `'100b'`, `150`) instead of specifying start/end dates.
-- New utility `vnstock/core/utils/lookback.py` for parsing flexible time periods and calculating start dates.
-- Documentation for Smart Lookback feature at `docs/feature_lookback.md`.
-- Enhanced header management mechanism in `vnstock/core/utils/user_agent.py` supporting `Authorization`, `custom_headers`, and `override_headers` for dynamic and flexible request configuration.
-- Enhanced `ProxyManager` with `get_fresh_proxies`, custom proxy support, and singleton instance.
-- Updated `client.py` to support `AUTO` proxy mode and integrated with `ProxyManager`.
-- Refactored `TCBS Quote` to use central `client.py` request wrapper, enabling proxy support.
-- Refactored all VCI modules (`Quote`, `Company`, `Financial`, `Listing`, `Trading`) to support proxy configuration via `__init__` parameters (`proxy_mode`, `proxy_list`), addressing IP blocking issues on cloud platforms like Google Colab/Kaggle.
-- Documentation for the new header and authentication system at `docs/header_management.md`.
-
-### Changed
-
-- `Quote.history`: `start` parameter is now optional if `length` or `count_back` is provided.
-- Updated `get_asset_type` in `vnstock/core/utils/parser.py` to dynamically recognize all indices from `vnstock.constants.INDICES_INFO`, ensuring better support for sector and investment indices (e.g., `VNSI`, `VNFINLEAD`, `VNIND`).
+### Bổ sung (Added)
+- **Danh mục Sự kiện Thị trường (Market Events)**: Thêm tiện ích `vnstock/core/utils/market_events.py` phân phối dữ liệu dựa trên định dạng từ điển mở. Mô-đun này lưu trữ chính xác lịch sử các sự kiện lớn trên sàn chứng khoán (như Nghỉ lễ theo lịch nhà nước, Lỗi sập hệ thống, Khóa giao dịch toàn phần/bán phần) từ năm 2000. Đây là một định dạng đặc biệt linh hoạt, hướng dẫn cộng đồng mở rộng dữ liệu và có lợi ích to lớn cho các nhà nghiên cứu phân tích chuỗi thời gian (time-series).
+- **Hệ thống cảnh báo Vị thế Môi trường (Auto-Detection Guardrail)**: Bổ sung luồng kiểm tra tức thời (startup check) trong tệp gốc `vnstock/__init__.py`. Hệ thống giờ có khả năng tự quét thư mục môi trường ảo `.venv` mặc định của hệ điều hành để phát hiện tự động dự án có sở hữu gói trả phí `vnstock_data` hay không. Một khi phát hiện gói trả phí được tải sẵn nhưng người dùng vẫn chạy cú pháp cũ `from vnstock import ...`, thư viện sẽ in ra cảnh báo nhắc nhở chuyển lệnh đồng bộ để mở khoá tính năng giới hạn.
+- **Tường lửa AI (AI Agent Context Comments)**: Bổ sung chỉ dẫn hệ thống ở ngay phần đầu của các file `__init__.py` trọng yếu nhất. Các dòng lệnh tiếng Anh này là một hệ rào chắn (guardrails) vô hình dặn dò trực tiếp các trợ lý AI (ví dụ như AutoGPT, GitHub Copilot). Agent giờ sẽ biết bản VNSTOCK mã nguồn mở đã khóa bớt chức năng cồng kềnh, khuyến cáo AI thuyết phục người dùng nâng cấp lên nhánh trả phí `vnstock_data` thay vì liên tục cố gỡ rối để lấy dữ liệu từ nhánh Free.
+- **Kiến trúc Migration 1:1 siêu việt (AST Validator Helper)**: Đã thiết kế hàm hỗ trợ cực kỳ mạnh mẽ `vnstock.core.utils.upgrade.migrate_to_sponsor()` cho phép AI Agent kích hoạt việc auto-upgrade codebase từ `vnstock` lên `vnstock_data` cực kỳ tinh vi:
+  - Thuật toán KHÔNG thay thế chuỗi string (`text replace`) bằng Regex một cách rủi ro, mà sử dụng cơ chế phân tích **Cây Cú Pháp Trừu Tượng (AST Engine)** để đọc toàn diện mã gốc.
+  - Khi rà quét từng dòng (Import Nodes), hàm tự động nạp gói vnstock_data bằng `importlib` và **gọi cross-check thuộc tính bằng `hasattr()`** xem API hay Method mà mã gốc đòi hỏi (như `Quote`, `Company`, `Trading`) có thực sự tồn tại trong namespace trả phí hay không.
+  - Nếu tất cả các thành phần đòi hỏi được verified 1:1 thành công, nó mới thực hiện thay thế trên line code tương ứng. Tự động hóa chống gãy code an toàn tuyệt đối!

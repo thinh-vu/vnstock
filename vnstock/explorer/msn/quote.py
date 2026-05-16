@@ -136,6 +136,24 @@ class Quote:
         else:
             url = f"{_BASE_URL}/Charts/TimeRange"
 
+        actual_id = self.symbol_id
+        # MSN now requires internal SecId (usually 6 chars like 'aqjzxm') instead of tickers
+        if len(actual_id) != 6:
+            from vnstock.explorer.msn.listing import Listing
+
+            try:
+                search_df = Listing(random_agent=False).search_symbol(actual_id)
+                if not search_df.empty:
+                    exact_match = search_df[search_df["symbol"] == actual_id.upper()]
+                    if not exact_match.empty:
+                        actual_id = exact_match["symbol_id"].iloc[0]
+                    else:
+                        actual_id = search_df["symbol_id"].iloc[0]
+            except Exception as e:
+                logger.warning(
+                    f"Failed to dynamically resolve MSN SecId for {actual_id}: {e}"
+                )
+
         params = {
             "apikey": self.apikey,
             "StartTime": f"{start}T17:00:00.000Z",
@@ -145,7 +163,7 @@ class Quote:
             "cm": "vi-vn",
             "it": "web",
             "scn": "ANON",
-            "ids": self.symbol_id,
+            "ids": actual_id,
             "type": "All",
             "wrapodata": "false",
             "disableSymbol": "false",

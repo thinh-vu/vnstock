@@ -376,8 +376,9 @@ class Finance:
                 get_all=get_all,
                 show_log=show_log,
                 period_type=effective_period,
+                report_type=report_type,
             )
-        else:
+        elif mode == "raw":
             return combined_df
 
     def _ratio_mapping(
@@ -388,11 +389,24 @@ class Finance:
         get_all: Optional[bool] = False,
         show_log: Optional[bool] = False,
         period_type: Optional[str] = None,
+        report_type: Optional[str] = None,
     ):
-        # Get metadata mapping for both languages
-        meta_df = self._get_ratio_dict(format="dataframe", show_log=show_log)
-        vi_dict = meta_df.set_index("field_name")["name"].to_dict()
-        en_dict = meta_df.set_index("field_name")["en_name"].to_dict()
+        if report_type and report_type.upper() == "RATIO":
+            from vnstock.explorer.vci.const import (
+                RATIO_COLUMN_MAP_EN,
+                RATIO_COLUMN_MAP_SNAKE,
+                RATIO_COLUMN_MAP_VI,
+            )
+
+            vi_dict = RATIO_COLUMN_MAP_VI
+            en_dict = RATIO_COLUMN_MAP_EN
+            snake_dict = RATIO_COLUMN_MAP_SNAKE
+        else:
+            # Get metadata mapping for both languages
+            meta_df = self._get_ratio_dict(format="dataframe", show_log=show_log)
+            vi_dict = meta_df.set_index("field_name")["name"].to_dict()
+            en_dict = meta_df.set_index("field_name")["en_name"].to_dict()
+            snake_dict = None
 
         # Identify which columns are items vs metadata
         item_cols = [col for col in report_df.columns if col in vi_dict]
@@ -446,6 +460,25 @@ class Finance:
 
             processed_df["item"] = processed_df["item_id"].map(vi_dict)
             processed_df["item_en"] = processed_df["item_id"].map(en_dict)
+
+            # Normalize item_id to match snake_case convention
+            if snake_dict:
+                processed_df["item_id"] = processed_df["item_id"].map(
+                    lambda x: snake_dict.get(x, x)
+                )
+            else:
+                try:
+                    from vnstock.core.utils.field.handler import FieldHandler
+
+                    field_handler = FieldHandler()
+                    # Fallback to normalized English name if available, otherwise original id
+                    processed_df["item_id"] = processed_df["item_en"].apply(
+                        lambda x: field_handler.normalize_field_name(x, language="en")
+                        if pd.notna(x)
+                        else x
+                    )
+                except ImportError:
+                    pass
 
             # Reorder columns: metadata first, then periods
             period_cols = [

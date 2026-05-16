@@ -256,6 +256,35 @@ MAP = {
             "Tick-by-tick trades for Warrants.",
         ),
     },
+    "bond_market": {
+        "ohlcv": (
+            "api",
+            "api.quote",
+            "Quote",
+            "ohlcv",
+            "KBS",
+            "DataFrame",
+            "Historical OHLCV bars for Bonds.",
+        ),
+        "quote": (
+            "api",
+            "api.trading",
+            "Trading",
+            "price_board",
+            "KBS",
+            "DataFrame",
+            "Real-time pricing for Bonds.",
+        ),
+        "trades": (
+            "api",
+            "api.quote",
+            "Quote",
+            "intraday",
+            "KBS",
+            "DataFrame",
+            "Tick-by-tick trades for Bonds.",
+        ),
+    },
     # New High-Fidelity Domain Structure (Layer 4)
     "Reference": {
         "company": {
@@ -724,6 +753,35 @@ MAP = {
                 "KBS",
                 "DataFrame",
                 "Tick-by-tick trades for Warrants.",
+            ),
+        },
+        "bond": {
+            "ohlcv": (
+                "api",
+                "api.quote",
+                "Quote",
+                "ohlcv",
+                "KBS",
+                "DataFrame",
+                "Historical OHLCV bars for Bonds.",
+            ),
+            "quote": (
+                "api",
+                "api.trading",
+                "Trading",
+                "price_board",
+                "KBS",
+                "DataFrame",
+                "Real-time pricing for Bonds.",
+            ),
+            "trades": (
+                "api",
+                "api.quote",
+                "Quote",
+                "intraday",
+                "KBS",
+                "DataFrame",
+                "Tick-by-tick trades for Bonds.",
             ),
         },
         "forex": {

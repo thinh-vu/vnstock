@@ -43,12 +43,13 @@ dependencies = [
     "importlib-metadata>=1.0",
     "tenacity",
     "vnai>=2.4.8",
-    "vnstock_ezchart>=0.0.3",
+    "vnstock_ezchart>=1.0.1",
     "pytz"
 ]
 
 [project.optional-dependencies]
 test = ["pytest>=7.0", "pytest-cov>=4.0", "pytest-timeout"]
+dev = ["pre-commit", "ruff", "pytest>=7.0", "pytest-cov>=4.0", "pytest-timeout"]
 
 [project.urls]
 Documentation = "https://vnstocks.com/docs"

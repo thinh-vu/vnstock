@@ -227,16 +227,6 @@ def normalize_frequency_string(freq_str: str) -> str:
                 # Handle cases like '1M', '2M', etc.
                 prefix = freq_str[:-1]  # Get everything except the last 'M'
                 return f"{prefix}ME"
-    else:
-        # For pandas < 2.2, 'ME' is not supported, use 'M' instead
-        if freq_str.endswith("ME") and not any(
-            freq_str.endswith(x) for x in ["min", "h"]
-        ):
-            if freq_str == "ME":
-                return "M"
-            elif freq_str.endswith("ME"):
-                prefix = freq_str[:-2]
-                return f"{prefix}M"
 
     return freq_str
 

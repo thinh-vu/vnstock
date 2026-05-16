@@ -8,7 +8,6 @@ import pandas as pd
 import pytz
 from bs4 import BeautifulSoup
 
-from vnstock.core.utils.compat import normalize_frequency_string
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.parser import localize_timestamp
 
@@ -868,9 +867,6 @@ def resample_ohlcv(
 
     # Get the actual frequency string
     freq = freq_map.get(interval, interval)
-
-    # Normalize frequency string for pandas version compatibility
-    freq = normalize_frequency_string(freq)
 
     # Set time column as index
     df_resample = df.set_index(time_col)

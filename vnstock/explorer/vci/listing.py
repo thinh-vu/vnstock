@@ -12,7 +12,7 @@ from vnstock.core.utils.parser import camel_to_snake
 from vnstock.core.utils.transform import drop_cols_by_pattern, reorder_cols
 from vnstock.core.utils.user_agent import get_headers
 
-from .const import _GROUP_CODE, _TRADING_URL
+from .const import _GROUP_CODE_MAPPING, _TRADING_URL, _VCI_INDEX_MAPPING
 
 logger = get_logger(__name__)
 
@@ -60,9 +60,20 @@ class Listing:
         Args:
             show_log: Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
         """
-        df = self.symbols_by_exchange(show_log=show_log)
-        df = df.query('type == "STOCK"').reset_index(drop=True)
-        df = df[["symbol", "organ_name"]]
+        try:
+            df = self.symbols_by_exchange(show_log=show_log)
+            df = df.query('type == "STOCK"').reset_index(drop=True)
+            df = df[["symbol", "organ_name"]]
+        except Exception as e:
+            if show_log:
+                logger.warning(
+                    f"symbols_by_exchange thất bại, đang thử fallback sang symbols_by_industries: {e}"
+                )
+            # Fallback to industries listing which is more stable
+            df = self.symbols_by_industries(show_log=show_log)
+            # Filter unique symbols and ensure columns match
+            df = df.drop_duplicates(subset=["symbol"]).reset_index(drop=True)
+            df = df[["symbol", "organ_name"]]
 
         return df
 
@@ -160,7 +171,7 @@ class Listing:
         if lang not in ["vi", "en"]:
             raise ValueError("Tham số lang phải là 'vi' hoặc 'en'.")
 
-        url = self.base_url + "/price/symbols/getAll"
+        url = self.base_url.rstrip("/") + "/price/symbols/getAll"
 
         # Use the send_request utility from api_client
         json_data = send_request(
@@ -267,10 +278,20 @@ class Listing:
             - group (tùy chọn): Tên nhóm cổ phiếu. Mặc định là 'VN30'.
             - show_log (tùy chọn): Hiển thị thông tin log. Mặc định là False.
         """
-        if group not in _GROUP_CODE:
-            raise ValueError(f"Invalid group. Group must be in {_GROUP_CODE}")
+        standardized_group = group.upper()
+        if standardized_group in _VCI_INDEX_MAPPING:
+            vci_group = _VCI_INDEX_MAPPING[standardized_group]
+        elif standardized_group in _GROUP_CODE_MAPPING:
+            vci_group = _GROUP_CODE_MAPPING[standardized_group]
+        else:
+            valid_keys = list(_GROUP_CODE_MAPPING.keys()) + list(
+                _VCI_INDEX_MAPPING.keys()
+            )
+            raise ValueError(
+                f"Invalid group '{group}'. Group must be one of {valid_keys}"
+            )
 
-        url = self.base_url + f"/price/symbols/getByGroup?group={group}"
+        url = self.base_url.rstrip("/") + f"/price/symbols/getByGroup?group={vci_group}"
 
         # Use the send_request utility from api_client
         json_data = send_request(

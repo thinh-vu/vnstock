@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
 import pandas as pd
-from vnai import optimize_execution  # Import the decorator from vnai package
+from vnai import optimize_execution
 
 from vnstock.core.utils.client import send_request
 from vnstock.core.utils.logger import get_logger

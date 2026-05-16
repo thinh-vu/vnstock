@@ -71,7 +71,7 @@ class Trading:
         Truy xuất thông tin bảng giá của các mã chứng khoán tuỳ chọn từ nguồn dữ liệu VCI.
         Retrieve price board information for optionally selected stock symbols from VCI data source.
         """
-        url = f"{self.base_url}/price/symbols/getList"
+        url = f"{self.base_url}price/symbols/getList"
         payload = json.dumps({"symbols": symbols_list})
 
         if show_log:
