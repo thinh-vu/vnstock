@@ -1,7 +1,7 @@
 # Vnstock Data Schema Snapshot
 
-**Version**: `4.0.3`  
-**Generated At**: `2026-05-02 09:07:11`  
+**Version**: `4.0.3`
+**Generated At**: `2026-05-02 09:07:11`
 
 This document provides a comprehensive reference for the data structures and sample data returned by the Unified UI functions.
 
@@ -1265,4 +1265,3 @@ Universe Tickers: FPT, VIC, HPG, NVL
 ```
 
 ---
-

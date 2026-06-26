@@ -6,7 +6,7 @@ This document serves as the absolute source of truth for Antigravity and any oth
 
 ## 🎯 Phase 1: Pre-Development (Understand & Plan)
 Before writing any code, the agent MUST follow these steps:
-1. **Understand the Facade**: Review `vnstock.ui` (Unified UI layer). Recognize that all user interactions happen exclusively through this facade. 
+1. **Understand the Facade**: Review `vnstock.ui` (Unified UI layer). Recognize that all user interactions happen exclusively through this facade.
 2. **Identify the Target Layer**: Determine exactly where the new logic belongs based on the **Strict Layered Architecture**:
     - `vnstock.ui`: Modifying public interfaces, auto-documentation (`show_api`), or routing. Contains NO data extraction logic.
     - `vnstock.explorer`: Building web scraping and unstructured data extraction for specific providers (e.g., VCI, KBS).
@@ -34,13 +34,13 @@ When building or refactoring, strictly adhere to these core patterns:
 ## 💻 Phase 3: Python Coding Conventions (Code Writing)
 Write clean, maintainable, and highly optimized Python code:
 
-- **Type Hinting & Circular Imports (`F821`)**: 
-  - If a type hint requires an import that causes a circular dependency, do NOT place the `import` statement inside the function body. 
+- **Type Hinting & Circular Imports (`F821`)**:
+  - If a type hint requires an import that causes a circular dependency, do NOT place the `import` statement inside the function body.
   - Instead, place it at the top of the file under a `from typing import TYPE_CHECKING` block.
-- **Exception Handling (`E722`, `B904`)**: 
+- **Exception Handling (`E722`, `B904`)**:
   - **No Bare Excepts**: NEVER use a bare `except:`. Always specify the exception type (e.g., `except Exception:` or `except ValueError:`).
   - **Exception Chaining**: When catching an exception to raise a new one, always use exception chaining (`raise CustomError(...) from e`) to preserve the traceback.
-- **Variable Usage (`F841`)**: 
+- **Variable Usage (`F841`)**:
   - Never leave unused local variables in the code. Clean up any variables that are assigned but not read to optimize memory.
 
 ---

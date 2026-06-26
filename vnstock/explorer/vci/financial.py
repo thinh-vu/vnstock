@@ -473,9 +473,11 @@ class Finance:
                     field_handler = FieldHandler()
                     # Fallback to normalized English name if available, otherwise original id
                     processed_df["item_id"] = processed_df["item_en"].apply(
-                        lambda x: field_handler.normalize_field_name(x, language="en")
-                        if pd.notna(x)
-                        else x
+                        lambda x: (
+                            field_handler.normalize_field_name(x, language="en")
+                            if pd.notna(x)
+                            else x
+                        )
                     )
                 except ImportError:
                     pass
