@@ -251,8 +251,6 @@ Vnstock phát triển nhờ sự chung tay của cộng đồng những người
    <img src="https://contributors-img.web.app/image?repo=thinh-vu/vnstock" width="800"/>
 </a>
 
-*(Cảm ơn những nhà tài trợ xuất sắc nhất của chúng tôi, danh sách cập nhật đầy đủ trên trang chủ vnstocks.com)*
-
 ---
 
 # Vnstock - The Open-Source Stock Analysis Toolkit for Investors
