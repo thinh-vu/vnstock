@@ -473,7 +473,7 @@ except Exception as e:
 
 ## Advanced Configuration
 
-### Setting API Key
+### Setting Provider Credentials
 
 For proxyscrape premium access:
 
@@ -551,7 +551,7 @@ working, _ = manager.test_proxies(proxies)
 **Solutions:**
 1. Check internet connection
 2. Verify proxyscrape API is accessible
-3. Check rate limits (free tier: limited requests)
+3. Check service rate limits
 4. Use fallback proxy list
 5. Retry after delay
 
@@ -920,7 +920,7 @@ if proxies:
 **Solutions:**
 - Check internet connection
 - Verify proxyscrape API accessibility
-- Check rate limits (free tier limitations)
+- Check provider rate limits
 - Retry after delay
 - Use custom proxy list as fallback
 

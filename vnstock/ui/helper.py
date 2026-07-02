@@ -2,52 +2,7 @@
 Helper utilities for vnstock Unified UI.
 """
 
-import importlib.util
-from typing import Any, Optional, Type
-
-
-def is_sponsor_installed() -> bool:
-    """Check if vnstock_data (sponsor package) is installed."""
-    return importlib.util.find_spec("vnstock_data") is not None
-
-
-def get_sponsor_ui_class(module_name: str, class_name: str) -> Optional[Type]:
-    """
-    Attempt to get the equivalent UI class from vnstock_data.
-
-    Args:
-        module_name: The submodule name (e.g., 'reference', 'market')
-        class_name: The class name (e.g., 'Reference', 'Market')
-
-    Returns:
-        The class from vnstock_data.ui if available, else None.
-    """
-    if not is_sponsor_installed():
-        return None
-
-    try:
-        # Construct the import path for vnstock_data.ui
-        sponsor_import_path = f"vnstock_data.ui.{module_name}"
-        module = importlib.import_module(sponsor_import_path)
-        return getattr(module, class_name, None)
-    except BaseException:
-        # Catch all including SystemExit to avoid crashing free package if sponsor is broken
-        return None
-
-
-def redirect_if_sponsor(module_name: str, class_name: str):
-    """
-    Decorator for UI class __new__ to redirect to vnstock_data if available.
-    """
-
-    def wrapper(cls, *args, **kwargs):
-        sponsor_cls = get_sponsor_ui_class(module_name, class_name)
-        if sponsor_cls:
-            return sponsor_cls(*args, **kwargs)
-        # Fallback to current class
-        return super(cls, cls).__new__(cls)
-
-    return wrapper
+from typing import Any
 
 
 def show_doc(obj: Any) -> None:
@@ -86,7 +41,6 @@ def show_doc(obj: Any) -> None:
 def show_api(node: Any = None, level: int = 0) -> None:
     """
     Display the API structure tree for vnstock.
-    Matches the presentation style of vnstock_data.
     """
     import inspect
 
@@ -299,10 +253,3 @@ def show_api(node: Any = None, level: int = 0) -> None:
                 clean_doc = doc.split(".")[0] if doc else ""
                 desc = f" # {clean_doc}." if clean_doc else ""
                 print(f"{indent}{prefix}{m_name}(){desc}")
-
-
-def check_sponsor_package() -> bool:
-    """Helper to check if sponsor package is available."""
-    import importlib.util
-
-    return importlib.util.find_spec("vnstock_data") is not None

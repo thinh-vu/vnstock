@@ -78,7 +78,7 @@ class Company(BaseAdapter):
 
     @optimize_execution("API")
     def info(self, *args: Any, **kwargs: Any) -> Any:
-        """Alias for overview() to match vnstock_data parity."""
+        """Alias for overview()."""
         return self.overview(*args, **kwargs)
 
     @optimize_execution("API")

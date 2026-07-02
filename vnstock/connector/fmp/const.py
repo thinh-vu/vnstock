@@ -22,7 +22,7 @@ _ENDPOINTS = {
     "quote_short": "/quote-short",  # ✅ Tested
     # Historical price endpoints (end-of-day)
     "historical_price_eod": "/historical-price-eod",  # ✅ Available
-    # Note: historical-chart endpoints require higher subscription tier
+    # Note: historical-chart endpoints may require a higher FMP access plan
     "historical_chart_1min": "/historical-chart/1min",  # ✅ Tested
     "historical_chart_5min": "/historical-chart/5min",  # ✅ Tested
     "historical_chart_15min": "/historical-chart/15min",  # ✅ Tested

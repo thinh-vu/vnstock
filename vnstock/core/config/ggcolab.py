@@ -292,7 +292,7 @@ def get_install_command() -> str:
 def migrate_vnstock_data_colab(new_dir: Optional[str] = None) -> bool:
     """
     Migrate ~/.vnstock data to Google Drive (Colab only).
-    Only copies config, license, and user data to .vnstock directory.
+    Only copies local cache/config data to .vnstock directory.
 
     Args:
         new_dir: Path to new directory (default: COLAB_VNSTOCK_DIR)

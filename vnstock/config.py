@@ -46,7 +46,6 @@ class Config:
 VERSION_REQUIREMENTS = {
     "3.4.0": {
         "vnai": ">=2.3.0",
-        "vnii": ">=0.1.5",
         # # Core dependencies - required for vnstock to work
         # "requests": ">=2.25.0,<3.0.0",
         # "pandas": ">=1.3.0,<3.0.0",

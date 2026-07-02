@@ -2,13 +2,9 @@
 Visualization and charting utilities for data exploration.
 
 This module provides a pandas DataFrame/Series extension for creating
-various types of charts. It supports two charting backends:
+various types of charts using the public vnstock_ezchart backend by default:
 
-1. vnstock_chart (Professional, recommended if available):
-   - LineChart, BarChart, CandleChart, ScatterChart, BoxplotChart, HeatmapChart
-   - Install: pip install --extra-index-url https://vnstocks.com/api/simple vnstock_chart
-
-2. vnstock_ezchart (Fallback, basic charts):
+1. vnstock_ezchart:
     - bar: Bar charts
     - hist: Histograms
     - pie: Pie charts
@@ -21,6 +17,9 @@ various types of charts. It supports two charting backends:
     - wordcloud: Word clouds
     - table: Table visualization
     - combo_chart: Combo charts with bars and lines
+
+An optional ``vnstock_chart`` backend is used only when explicitly requested
+and installed by the application.
 
 Example:
     >>> import pandas as pd
@@ -42,7 +41,21 @@ from vnstock.core.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-# Try to import vnstock_chart first (professional charting library)
+HAS_VNSTOCK_EZCHART = False
+try:
+    from vnstock_ezchart import Chart as EzChart
+
+    HAS_VNSTOCK_EZCHART = True
+except ImportError:
+    try:
+        # Fallback for older versions of vnstock_ezchart
+        from vnstock_ezchart.mplot import MPlot as EzChart
+
+        HAS_VNSTOCK_EZCHART = True
+    except ImportError:
+        pass
+
+# Optional backend for callers that explicitly request it.
 HAS_VNSTOCK_CHART = False
 try:
     import vnstock_chart  # noqa: F401
@@ -59,28 +72,11 @@ try:
 except ImportError:
     pass  # Silently skip if not available
 
-# Fallback to vnstock_ezchart if vnstock_chart not available
-HAS_VNSTOCK_EZCHART = False
-try:
-    from vnstock_ezchart import Chart as EzChart
-
-    HAS_VNSTOCK_EZCHART = True
-except ImportError:
-    try:
-        # Fallback for older versions of vnstock_ezchart
-        from vnstock_ezchart.mplot import MPlot as EzChart
-
-        HAS_VNSTOCK_EZCHART = True
-    except ImportError:
-        pass
-
 # Ensure at least one charting library is available
 if not HAS_VNSTOCK_CHART and not HAS_VNSTOCK_EZCHART:
     raise ImportError(
-        "No charting library available. Please install one of:\n"
-        "1. vnstock_chart (recommended): "
-        "pip install --extra-index-url https://vnstocks.com/api/simple vnstock_chart\n"
-        "2. vnstock_ezchart (fallback): pip install vnstock_ezchart"
+        "No charting library available. Install vnstock_ezchart with: "
+        "pip install vnstock_ezchart"
     )
 
 
@@ -88,13 +84,12 @@ class Chart:
     """
     Chart wrapper for creating various types of data visualizations.
 
-    Supports two charting backends:
-    1. vnstock_chart (Professional, recommended) - if available
-    2. vnstock_ezchart (Fallback) - basic charts
+    Supports the public vnstock_ezchart backend by default. The optional
+    vnstock_chart backend is used only when explicitly requested.
 
     Available chart methods depend on the backend:
 
-    vnstock_chart methods:
+    vnstock_chart methods, when explicitly selected and installed:
         - line(): Line charts
         - bar(): Bar charts
         - candle(): Candlestick charts
@@ -125,7 +120,7 @@ class Chart:
 
         Args:
             data: pandas DataFrame or Series to visualize
-            backend: Charting backend to use ('vnstock_chart', 'vnstock_ezchart', or None for auto)
+            backend: Charting backend to use ('vnstock_ezchart', 'vnstock_chart', or None for default)
 
         Raises:
             ValueError: If data is not DataFrame or Series
@@ -139,20 +134,18 @@ class Chart:
         self.backend = None
         self.chart = None
 
-        # Determine which backend to use
+        # Determine which backend to use. Default to the public backend.
         if backend == "vnstock_chart":
             if HAS_VNSTOCK_CHART:
                 self.backend = "vnstock_chart"
             else:
-                # Provide helpful error with installation instructions
                 raise ImportError(
-                    "vnstock_chart is not installed. To install:\n"
-                    "pip install --extra-index-url https://vnstocks.com/api/simple vnstock_chart\n"
-                    "\nOr use the fallback backend:\n"
-                    "Chart(data, backend='vnstock_ezchart') or Chart(data) # auto-select"
+                    "vnstock_chart backend is not installed. Use "
+                    "Chart(data, backend='vnstock_ezchart') or install the "
+                    "explicit backend separately."
                 )
 
-        if backend == "vnstock_ezchart":
+        elif backend == "vnstock_ezchart":
             if HAS_VNSTOCK_EZCHART:
                 self.backend = "vnstock_ezchart"
                 self.chart = EzChart()
@@ -162,15 +155,21 @@ class Chart:
                     "pip install vnstock_ezchart"
                 )
 
+        elif backend is not None:
+            raise ValueError(
+                "backend must be one of None, 'vnstock_ezchart', or 'vnstock_chart'"
+            )
+
         # Auto-select backend if not specified
         if self.backend is None:
-            if HAS_VNSTOCK_CHART:
-                self.backend = "vnstock_chart"
-            elif HAS_VNSTOCK_EZCHART:
+            if HAS_VNSTOCK_EZCHART:
                 self.backend = "vnstock_ezchart"
                 self.chart = EzChart()
             else:
-                raise RuntimeError("No charting backend available")
+                raise ImportError(
+                    "vnstock_ezchart is required for default charting. Install with: "
+                    "pip install vnstock_ezchart"
+                )
 
         # Only log errors, not debug info
         if self.backend == "vnstock_chart" and not HAS_VNSTOCK_CHART:

@@ -183,7 +183,7 @@ def make_fmp_request(
                 return None
 
         elif response.status_code == 403:
-            error_msg = "API access denied. Check subscription plan."
+            error_msg = "API access denied. Check the FMP access plan."
             if show_log:
                 logger.error(error_msg)
             return None

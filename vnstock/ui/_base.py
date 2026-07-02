@@ -2,15 +2,13 @@ from typing import Any
 
 import pandas as pd
 
-from vnstock.ui.helper import get_sponsor_ui_class
-
 
 class BaseUI:
     """Base class for all UI modules."""
 
     def _dispatch(self, domain_name: str, method_name: str, *args, **kwargs) -> Any:
         """
-        Dispatch the message to either the sponsor package or the native core.
+        Dispatch the message to the native providers/connectors registered here.
         """
         from vnstock.ui._registry import MAP
 
@@ -68,36 +66,7 @@ class BaseUI:
                     return pd.concat(all_results).reset_index(drop=True)
                 return all_results
 
-            # 5. Redirection check (Sponsor Package)
-            layer_map = {
-                "company": "reference",
-                "listing": "reference",
-                "fund": "reference",
-                "equity_market": "market",
-                "equity_fundamental": "fundamental",
-                "misc": "misc",
-                "dnse": "broker",
-            }
-            layer = layer_map.get(domain_name)
-            node_cls_name = type(self).__name__
-
-            if layer:
-                sponsor_cls = get_sponsor_ui_class(layer, node_cls_name)
-                if sponsor_cls and hasattr(sponsor_cls, method_name):
-                    # Call sponsor method
-                    if symbol:
-                        inst = sponsor_cls(symbol=symbol)
-                    else:
-                        inst = sponsor_cls()
-
-                    # Filter parameters NOT supported by sponsor UI methods
-                    sponsor_kwargs = kwargs.copy()
-                    for p in ["source", "random_agent", "show_log"]:
-                        sponsor_kwargs.pop(p, None)
-
-                    return getattr(inst, method_name)(*args, **sponsor_kwargs)
-
-            # 6. Native Fallback
+            # 5. Native dispatch
             import importlib
             # symbol is already retrieved above
 
