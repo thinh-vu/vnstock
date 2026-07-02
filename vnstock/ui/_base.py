@@ -66,7 +66,11 @@ class BaseUI:
         if len(meta) > 4 and not _caller_set_source:
             kwargs["source"] = meta[4]
 
-        # 3b. Load-balancer: override source via router when caller did not specify.
+        # 3b. Pop cache control kwargs before they leak into provider calls.
+        _use_cache = kwargs.pop("use_cache", None)
+        _cache_ttl = kwargs.pop("cache_ttl", None)
+
+        # 3c. Load-balancer: override source via router when caller did not specify.
         _using_router = False
         _pool_key: tuple | None = None
         _pool_providers: list[str] = []
@@ -80,6 +84,36 @@ class BaseUI:
                 _pool_providers = POOLS[_pool_key]
                 kwargs["source"] = router.pick(_pool_key, _pool_providers)
                 _using_router = True
+
+        # 3d. Cache lookup (skip when use_cache=False).
+        _cache_manager = None
+        _cache_key: str | None = None
+        if _use_cache is not False:
+            try:
+                from vnstock.core.cache import get_cache_manager, make_cache_key
+
+                _cache_manager = get_cache_manager()
+                if _cache_manager.config.enabled:
+                    _cache_key = make_cache_key(
+                        kwargs.get("source", ""),
+                        function_name,
+                        {
+                            "symbol": getattr(self, "symbol", None),
+                            "args": list(args),
+                            **{
+                                k: v
+                                for k, v in kwargs.items()
+                                if k not in ("source", "random_agent", "show_log")
+                            },
+                        },
+                    )
+                    _cached = _cache_manager.get(_cache_key)
+                    if _cached is not None:
+                        return _cached
+            except Exception:
+                # Cache errors must never break normal operation
+                _cache_manager = None
+                _cache_key = None
 
         # 4. Multi-symbol Handling (Universal)
         symbol = getattr(self, "symbol", None)
@@ -110,6 +144,23 @@ class BaseUI:
                 )
                 if _using_router and isinstance(result, pd.DataFrame):
                     result.attrs["source_used"] = kwargs.get("source", "")
+
+                # Write to cache on success (skip when use_cache=False).
+                if (
+                    _use_cache is not False
+                    and _cache_manager is not None
+                    and _cache_key is not None
+                ):
+                    try:
+                        ttl = (
+                            _cache_ttl
+                            if isinstance(_cache_ttl, int)
+                            else _cache_manager.config.ttl
+                        )
+                        _cache_manager.set(_cache_key, result, ttl)
+                    except Exception:
+                        pass  # cache write errors must never break the response
+
                 return result
 
             except Exception as exc:

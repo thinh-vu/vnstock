@@ -61,11 +61,21 @@ class NetworkConfig:
 
 @dataclass
 class CacheConfig:
-    """Caching configuration."""
+    """Caching configuration.
+
+    Environment variables:
+        VNSTOCK_CACHE_ENABLED  : "true"/"false" — enable/disable cache (default: false)
+        VNSTOCK_CACHE_TTL      : integer seconds — entry lifetime (default: 300)
+        VNSTOCK_CACHE_MAX_SIZE : integer — max entries before eviction (default: 100)
+        VNSTOCK_CACHE_BACKEND  : "memory" | "sqlite" — storage backend (default: memory)
+        VNSTOCK_CACHE_PATH     : file path for sqlite backend (default: ~/.vnstock/cache.db)
+    """
 
     enabled: bool = False
     ttl: int = 300  # seconds
     max_size: int = 100
+    backend: str = "memory"  # "memory" | "sqlite"
+    path: str = ""  # file path for sqlite; "" → ~/.vnstock/cache.db
 
     def __post_init__(self):
         """Validate configuration after initialization."""
@@ -73,6 +83,8 @@ class CacheConfig:
             raise ValueError("ttl must be non-negative")
         if self.max_size <= 0:
             raise ValueError("max_size must be positive")
+        if self.backend not in ("memory", "sqlite"):
+            raise ValueError("backend must be 'memory' or 'sqlite'")
 
 
 @dataclass
@@ -154,6 +166,33 @@ class VnstockConfig:
         if default_source_env:
             self.default_source = default_source_env
 
+        # Cache config
+        cache_enabled_env = os.getenv("VNSTOCK_CACHE_ENABLED")
+        if cache_enabled_env:
+            self.cache.enabled = cache_enabled_env.lower() in ("true", "1", "yes")
+
+        cache_ttl_env = os.getenv("VNSTOCK_CACHE_TTL")
+        if cache_ttl_env:
+            try:
+                self.cache.ttl = int(cache_ttl_env)
+            except (ValueError, TypeError):
+                pass
+
+        cache_max_size_env = os.getenv("VNSTOCK_CACHE_MAX_SIZE")
+        if cache_max_size_env:
+            try:
+                self.cache.max_size = int(cache_max_size_env)
+            except (ValueError, TypeError):
+                pass
+
+        cache_backend_env = os.getenv("VNSTOCK_CACHE_BACKEND")
+        if cache_backend_env and cache_backend_env.lower() in ("memory", "sqlite"):
+            self.cache.backend = cache_backend_env.lower()
+
+        cache_path_env = os.getenv("VNSTOCK_CACHE_PATH")
+        if cache_path_env:
+            self.cache.path = cache_path_env
+
     def get_api_key(self, provider: str) -> Optional[str]:
         """
         Get API key for a provider.
@@ -198,6 +237,8 @@ class VnstockConfig:
                 "enabled": self.cache.enabled,
                 "ttl": self.cache.ttl,
                 "max_size": self.cache.max_size,
+                "backend": self.cache.backend,
+                "path": self.cache.path,
             },
             "log_level": self.log_level,
             "debug_mode": self.debug_mode,
