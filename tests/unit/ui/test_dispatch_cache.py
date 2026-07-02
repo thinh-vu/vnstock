@@ -9,9 +9,9 @@ class TestDispatchCacheHit:
     def test_cache_hit_skips_provider(self, monkeypatch):
         """When cache has a result, _execute_dispatch must not be called."""
         import pandas as pd
-        from vnstock.core.settings import CacheConfig
+
         from vnstock.core.cache import CacheManager, make_cache_key
-        from vnstock.ui._base import BaseUI
+        from vnstock.core.settings import CacheConfig
 
         # Build a cache manager with a pre-populated entry
         cfg = CacheConfig(enabled=True, ttl=300, max_size=100, backend="memory")
@@ -25,17 +25,9 @@ class TestDispatchCacheHit:
 
         calls = []
 
-        class FakeUI(BaseUI):
-            symbol = "VCB"
-
-            def _execute_dispatch(self, *a, **kw):
-                calls.append(1)
-                return pd.DataFrame({"close": [0]})
-
-        ui = FakeUI()
-
         # Patch MAP so _dispatch resolves to something with source=KBS/ohlcv
         from vnstock.ui import _registry
+
         original_map = _registry.MAP.get("_test_cache_domain")
         _registry.MAP["_test_cache_domain"] = {
             "ohlcv": ("api", "api.quote", "Quote", "ohlcv", "KBS", "DataFrame", "test")
@@ -56,8 +48,9 @@ class TestDispatchCacheHit:
     def test_use_cache_false_bypasses(self):
         """use_cache=False kwarg must not write to cache."""
         import pandas as pd
-        from vnstock.core.settings import CacheConfig
+
         from vnstock.core.cache import CacheManager
+        from vnstock.core.settings import CacheConfig
 
         cfg = CacheConfig(enabled=True, ttl=300, max_size=100, backend="memory")
         cm = CacheManager(cfg)
@@ -69,14 +62,16 @@ class TestDispatchCacheHit:
         # CacheManager.set() with ttl=0 makes entry expire immediately
         cm.set("k1", df, ttl=0)
         import time
+
         time.sleep(0.01)
         assert cm.get("k1") is None  # ttl=0 means expired immediately
 
     def test_cache_ttl_override(self):
         """cache_ttl per-call overrides global TTL."""
         import pandas as pd
-        from vnstock.core.settings import CacheConfig
+
         from vnstock.core.cache import CacheManager
+        from vnstock.core.settings import CacheConfig
 
         cfg = CacheConfig(enabled=True, ttl=1, max_size=100, backend="memory")
         cm = CacheManager(cfg)
@@ -85,6 +80,7 @@ class TestDispatchCacheHit:
         # Store with long TTL override
         cm.set("k1", df, ttl=3600)
         import time
+
         time.sleep(1.1)
         # Should still be there (overridden to 3600, not global 1)
         result = cm.get("k1")
@@ -93,8 +89,9 @@ class TestDispatchCacheHit:
     def test_disabled_globally_no_caching(self):
         """When cache.enabled=False, get always returns None."""
         import pandas as pd
-        from vnstock.core.settings import CacheConfig
+
         from vnstock.core.cache import CacheManager
+        from vnstock.core.settings import CacheConfig
 
         cfg = CacheConfig(enabled=False, ttl=300, max_size=100, backend="memory")
         cm = CacheManager(cfg)
@@ -108,26 +105,20 @@ class TestDispatchCacheHit:
 class TestDispatchCacheKwargPopping:
     def test_use_cache_and_cache_ttl_not_leaked_to_provider(self):
         """use_cache and cache_ttl must be popped before reaching provider init."""
-        from vnstock.ui._base import BaseUI
-
-        # We verify that _execute_dispatch never receives use_cache or cache_ttl
-        received_kwargs = {}
-
-        class PeekUI(BaseUI):
-            symbol = "VCB"
-
-            def _execute_dispatch(self, module_type, sub_module, class_name,
-                                  function_name, symbol, args, kwargs):
-                received_kwargs.update(kwargs)
-                import pandas as pd
-                return pd.DataFrame({"close": [1]})
-
-        ui = PeekUI()
 
         # Inject a simple MAP entry and call dispatch
         from vnstock.ui import _registry
+
         _registry.MAP["_test_kwarg_domain"] = {
-            "test_method": ("api", "api.quote", "Quote", "ohlcv", "KBS", "DataFrame", "test")
+            "test_method": (
+                "api",
+                "api.quote",
+                "Quote",
+                "ohlcv",
+                "KBS",
+                "DataFrame",
+                "test",
+            )
         }
 
         try:

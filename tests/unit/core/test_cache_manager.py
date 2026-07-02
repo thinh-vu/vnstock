@@ -11,8 +11,12 @@ class TestMakeCacheKey:
     def test_same_args_same_key(self):
         from vnstock.core.cache import make_cache_key
 
-        k1 = make_cache_key("KBS", "history", {"start": "2024-01-01", "end": "2024-12-31"})
-        k2 = make_cache_key("KBS", "history", {"start": "2024-01-01", "end": "2024-12-31"})
+        k1 = make_cache_key(
+            "KBS", "history", {"start": "2024-01-01", "end": "2024-12-31"}
+        )
+        k2 = make_cache_key(
+            "KBS", "history", {"start": "2024-01-01", "end": "2024-12-31"}
+        )
         assert k1 == k2
 
     def test_different_args_different_key(self):
@@ -32,8 +36,12 @@ class TestMakeCacheKey:
     def test_kwargs_order_independent(self):
         from vnstock.core.cache import make_cache_key
 
-        k1 = make_cache_key("KBS", "history", {"start": "2024-01-01", "end": "2024-12-31"})
-        k2 = make_cache_key("KBS", "history", {"end": "2024-12-31", "start": "2024-01-01"})
+        k1 = make_cache_key(
+            "KBS", "history", {"start": "2024-01-01", "end": "2024-12-31"}
+        )
+        k2 = make_cache_key(
+            "KBS", "history", {"end": "2024-12-31", "start": "2024-01-01"}
+        )
         assert k1 == k2
 
     def test_returns_hex_string(self):
@@ -47,16 +55,24 @@ class TestMakeCacheKey:
         """Same provider+method but different domains must produce different keys."""
         from vnstock.core.cache import make_cache_key
 
-        k1 = make_cache_key("KBS", "ohlcv", {"symbol": "VCB"}, domain="Market", subdomain="equity")
-        k2 = make_cache_key("KBS", "ohlcv", {"symbol": "VCB"}, domain="Fundamental", subdomain="equity")
+        k1 = make_cache_key(
+            "KBS", "ohlcv", {"symbol": "VCB"}, domain="Market", subdomain="equity"
+        )
+        k2 = make_cache_key(
+            "KBS", "ohlcv", {"symbol": "VCB"}, domain="Fundamental", subdomain="equity"
+        )
         assert k1 != k2
 
     def test_same_domain_subdomain_same_key(self):
         """Identical calls with same domain/subdomain must be equal."""
         from vnstock.core.cache import make_cache_key
 
-        k1 = make_cache_key("KBS", "ohlcv", {"symbol": "VCB"}, domain="Market", subdomain="equity")
-        k2 = make_cache_key("KBS", "ohlcv", {"symbol": "VCB"}, domain="Market", subdomain="equity")
+        k1 = make_cache_key(
+            "KBS", "ohlcv", {"symbol": "VCB"}, domain="Market", subdomain="equity"
+        )
+        k2 = make_cache_key(
+            "KBS", "ohlcv", {"symbol": "VCB"}, domain="Market", subdomain="equity"
+        )
         assert k1 == k2
 
 
@@ -155,8 +171,8 @@ class TestMemoryBackend:
 @pytest.mark.core
 class TestSQLiteBackend:
     def setup_method(self, tmp_path=None):
-        import tempfile
         import os
+        import tempfile
 
         self.tmpdir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.tmpdir, "test_cache.db")
@@ -205,11 +221,15 @@ class TestSQLiteBackend:
 @pytest.mark.core
 class TestCacheManager:
     def setup_method(self):
-        from vnstock.core.settings import CacheConfig
         from vnstock.core.cache import CacheManager
+        from vnstock.core.settings import CacheConfig
 
-        self.cfg_enabled = CacheConfig(enabled=True, ttl=300, max_size=100, backend="memory")
-        self.cfg_disabled = CacheConfig(enabled=False, ttl=300, max_size=100, backend="memory")
+        self.cfg_enabled = CacheConfig(
+            enabled=True, ttl=300, max_size=100, backend="memory"
+        )
+        self.cfg_disabled = CacheConfig(
+            enabled=False, ttl=300, max_size=100, backend="memory"
+        )
         self.enabled = CacheManager(self.cfg_enabled)
         self.disabled = CacheManager(self.cfg_disabled)
 

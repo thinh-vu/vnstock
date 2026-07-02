@@ -28,6 +28,14 @@
 
 Với Vnstock, việc tải dữ liệu chứng khoán việt nam trở nên dễ dàng hơn bao giờ hết. Dù bạn muốn kết nối **vnstock python** để xây dựng mô hình định lượng, tích hợp pipeline dữ liệu hay đơn giản là tìm hiểu về **lịch sử giá cổ phiếu**, dữ liệu đều sẵn sàng cho AI ngay hôm nay.
 
+## Trạng thái fork data-only
+
+Repository này duy trì `vnstock` như một fork thuần trích xuất dữ liệu. Package không còn tích hợp biểu đồ, bot thông báo, giao dịch qua broker, hoặc helper tài liệu runtime; các phần đó nên được triển khai trực tiếp trong ứng dụng của bạn khi cần.
+
+- API đã loại bỏ: [docs/REMOVED_APIS.md](docs/REMOVED_APIS.md)
+- Ma trận tương thích với upstream: [docs/COMPATIBILITY_MATRIX.md](docs/COMPATIBILITY_MATRIX.md)
+- Môi trường dev/test/build có lockfile tại [`requirements.lock`](requirements.lock)
+
 ### Tại sao chọn Vnstock?
 
 - **Miễn phí & mã nguồn mở**: Dễ dàng tiếp cận, phục vụ nhà đầu tư cá nhân và lập trình viên muốn truy xuất dữ liệu chứng khoán Việt Nam.
@@ -237,7 +245,7 @@ Vnstock phát triển nhờ sự chung tay của cộng đồng những người
 
 ---
 
-# Vnstock - The Open-Source Stock Analysis Toolkit for Investors
+# Vnstock - The Open-Source Financial Data Toolkit for Investors
 
 [![Vnstock Homepage](https://raw.githubusercontent.com/thinh-vu/vnstock/refs/heads/main/assets/images/vnstock-home-en.png)](https://vnstocks.com/)
 
@@ -249,9 +257,17 @@ Vnstock phát triển nhờ sự chung tay của cộng đồng những người
 
 ## Introduction to Vnstock
 
-Welcome to **Vnstock**, a comprehensive open-source solution for stock analysis and investment automation in Vietnam.
+Welcome to **Vnstock**, an open-source financial data extraction toolkit for Vietnam market workflows.
 
 Driven by the mission **"To make financial data extraction and investment tools accessible to everyone"**, Vnstock continuously evolves by integrating modern technologies—empowering you to build flexible, intelligent financial analysis solutions effortlessly.
+
+## Data-Only Fork Status
+
+This repository maintains `vnstock` as a data-only fork. The package no longer bundles charting, bot notifications, broker execution, or runtime documentation helper APIs; keep those concerns in your application layer when needed.
+
+- Removed APIs: [docs/REMOVED_APIS.md](docs/REMOVED_APIS.md)
+- Compatibility matrix vs upstream: [docs/COMPATIBILITY_MATRIX.md](docs/COMPATIBILITY_MATRIX.md)
+- Reproducible dev/test/build pins: [`requirements.lock`](requirements.lock)
 
 ### Why Vnstock?
 
