@@ -4,6 +4,9 @@ Tất cả các thay đổi đáng chú ý của dự án `vnstock` sẽ đượ
 
 ## [Unreleased] - Data-only package refactor
 
+### Added
+- **DNSE data provider** (`vnstock/explorer/dnse`): OHLCV history, intraday tick tape, and multi-symbol price board via the public Entrade API (`https://services.entrade.com.vn`). No authentication required. Register with `source="DNSE"` in `Quote`, `Trading`, and `Market.equity` calls. Prices are native VND (not divided by 1000 as with KBS raw values). Provider self-registers at import time via `ProviderRegistry.register("quote"/"trading", "dnse", ...)`.
+
 ### Breaking Changes
 - **Removed**: `Broker`, `show_api`, `show_doc`, `show_docs` removed from public exports.
 - **Removed**: `vnstock.common.viz` charting and pandas `.viz` extension removed; install `vnstock_ezchart` directly in your app if needed.

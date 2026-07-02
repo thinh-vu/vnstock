@@ -178,25 +178,25 @@ Unlocks: proper index-constituent backtesting, index inclusion/exclusion event s
 
 ## Provider Capability Matrix (current)
 
-| Capability | KBS | VCI | MSN | FMP |
-|---|:---:|:---:|:---:|:---:|
-| Intraday OHLCV 1m (native) | yes | yes | no | yes (global) |
-| Intraday OHLCV 5m/15m/30m (native) | yes | resample | no | yes (global) |
-| Intraday OHLCV 1h (native) | yes | yes | no | yes (global) |
-| Daily/Weekly/Monthly OHLCV | yes | yes | yes | yes |
-| Tick tape (today only) | yes | yes | no | no |
-| Historical tick data | no | no | no | no |
-| Price board multi-symbol | yes (3-level) | yes (N-level) | no | no |
-| Foreign flow (session) | yes | partial | no | no |
-| Foreign flow (time-series) | stub | no | no | no |
-| Volume-by-price | stub | no | no | no |
-| Level 2 order book | no | in price_board | no | no |
-| Open interest (today) | yes (futures) | no | no | no |
-| Open interest (history) | unknown | unknown | no | no |
-| Prop/dealer flow | no | no | no | no |
-| Forex/crypto OHLCV | no | no | yes | yes |
-| Vietnam sector indices | 6 indices | 30+ indices | no | no |
-| WebSocket / streaming | no | no | no | no |
+| Capability | KBS | VCI | MSN | FMP | DNSE |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Intraday OHLCV 1m (native) | yes | yes | no | yes (global) | yes |
+| Intraday OHLCV 5m/15m/30m (native) | yes | resample | no | yes (global) | yes |
+| Intraday OHLCV 1h (native) | yes | yes | no | yes (global) | yes |
+| Daily/Weekly/Monthly OHLCV | yes | yes | yes | yes | yes |
+| Tick tape (today only) | yes | yes | no | no | yes |
+| Historical tick data | no | no | no | no | no |
+| Price board multi-symbol | yes (3-level) | yes (N-level) | no | no | yes |
+| Foreign flow (session) | yes | partial | no | no | yes |
+| Foreign flow (time-series) | stub | no | no | no | no |
+| Volume-by-price | stub | no | no | no | no |
+| Level 2 order book | no | in price_board | no | no | no |
+| Open interest (today) | yes (futures) | no | no | no | no |
+| Open interest (history) | unknown | unknown | no | no | no |
+| Prop/dealer flow | no | no | no | no | no |
+| Forex/crypto OHLCV | no | no | yes | yes | no |
+| Vietnam sector indices | 6 indices | 30+ indices | no | no | no |
+| WebSocket / streaming | no | no | no | no | no |
 
 ---
 

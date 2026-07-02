@@ -130,6 +130,7 @@ MAP = {
         ),
     },
     "equity_market": {
+        # Default source is KBS. Pass source="DNSE" or source="VCI" to use an alternative.
         "ohlcv": (
             "api",
             "api.quote",
@@ -137,7 +138,7 @@ MAP = {
             "ohlcv",
             "KBS",
             "DataFrame",
-            "Historical OHLCV bars.",
+            "Historical OHLCV bars. Alternative sources: VCI, DNSE.",
         ),
         "quote": (
             "api",
@@ -146,7 +147,7 @@ MAP = {
             "price_board",
             "KBS",
             "DataFrame",
-            "Real-time pricing board data.",
+            "Real-time pricing board data. Alternative sources: VCI, DNSE.",
         ),
         "trades": (
             "api",
@@ -155,7 +156,7 @@ MAP = {
             "intraday",
             "KBS",
             "DataFrame",
-            "Tick-by-tick trade tape.",
+            "Tick-by-tick trade tape. Alternative sources: VCI, DNSE.",
         ),
     },
     "index_market": {
