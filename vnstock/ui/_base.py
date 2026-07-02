@@ -45,7 +45,7 @@ class BaseUI:
                 if len(meta) > 4 and (kwargs.get("source") is None):
                     kwargs["source"] = meta[4]
 
-                # return_type and description can be used for auto-documentation (show_api)
+                # return_type and description are informational registry metadata
             except (IndexError, TypeError) as e:
                 raise AttributeError(
                     f"Invalid registry entry for '{domain_name}.{method_name}'. Got: {meta}"

@@ -126,25 +126,19 @@ def test_fmp_credentials_are_provider_scoped(monkeypatch):
     assert config.api_key == "direct-fmp-key"
 
 
-def test_dnse_credentials_are_connector_scoped():
-    """Broker auth state remains on the DNSE connector, not package user state."""
-    trade_module = importlib.import_module("vnstock.connector.dnse.trade")
+def test_dnse_connector_removed():
+    """DNSE broker connector no longer provides a Trade class."""
 
-    trade = trade_module.Trade()
+    import pytest
 
-    assert hasattr(trade, "token")
-    assert hasattr(trade, "trading_token")
-    assert trade.token is None
-    assert trade.trading_token is None
+    with pytest.raises((ImportError, AttributeError)):
+        trade_module = importlib.import_module("vnstock.connector.dnse.trade")
+        trade_module.Trade  # noqa: B018
 
 
-def test_notification_credentials_are_integration_scoped(monkeypatch):
-    """Notification tokens remain integration-specific, not vnstock user keys."""
-    from vnstock.bot.notify import Messenger
+def test_notification_module_removed(monkeypatch):
+    """vnstock.bot.notify no longer provides a Messenger class."""
+    import pytest
 
-    monkeypatch.setenv("VNSTOCK_API_KEY", "vnstock-user-key")
-
-    messenger = Messenger("slack", channel="#alerts", token_key="xoxb-test-token")
-
-    assert messenger.token_key == "xoxb-test-token"
-    assert messenger.channel == "#alerts"
+    with pytest.raises(ImportError):
+        from vnstock.bot.notify import Messenger  # noqa: F401

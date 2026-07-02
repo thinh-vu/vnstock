@@ -1,10 +1,6 @@
-class Broker:
-    """
-    Brokerage Connectors.
-    """
+"""
+Broker UI module removed.
 
-    @property
-    def dnse(self):
-        from vnstock.ui.domains.broker.dnse import DNSEBroker
-
-        return DNSEBroker()
+Broker and DNSE execution surfaces were removed as part of the data-only
+package refactor.
+"""

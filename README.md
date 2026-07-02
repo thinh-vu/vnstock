@@ -67,7 +67,7 @@ pip install -U vnstock
 
 ### Mô hình truy cập mở
 
-`vnstock` không quản lý đăng ký người dùng, phân tầng truy cập hoặc hạn mức theo tài khoản ở cấp thư viện. Các kết nối bên thứ ba như FMP, DNSE hoặc webhook thông báo vẫn nhận thông tin xác thực trực tiếp tại provider/connector tương ứng khi chính dịch vụ đó yêu cầu.
+`vnstock` không quản lý đăng ký người dùng, phân tầng truy cập hoặc hạn mức theo tài khoản ở cấp thư viện. Kết nối dữ liệu bên thứ ba như FMP vẫn nhận thông tin xác thực trực tiếp tại connector tương ứng khi chính dịch vụ đó yêu cầu.
 
 ---
 
@@ -109,7 +109,7 @@ Các hàm lấy dữ liệu trong Vnstock được chia thành 6 mảng chính, 
 
 ## Cấu trúc API (API Structure Tree)
 
-Bạn có thể gọi hàm `show_api()` để in ra toàn bộ cấu trúc các hàm phục vụ cho việc lập chỉ mục AI hoặc tra cứu nhanh:
+Cấu trúc các API dữ liệu được tổ chức theo 4 miền chính:
 
 ```text
 API STRUCTURE TREE - VNSTOCK (Unified UI)
@@ -272,7 +272,7 @@ pip install -U vnstock
 
 ## Open Access Model
 
-`vnstock` does not manage package-level user registration, account tiers, or entitlement checks. Third-party integrations such as FMP, DNSE, and notification webhooks still accept their own credentials directly through the relevant provider or connector when required by that external service.
+`vnstock` does not manage package-level user registration, account tiers, or entitlement checks. Third-party data provider integrations such as FMP still accept their own credentials directly through the relevant connector when required by that external service.
 
 ## Quick Start: Unified UI (Vnstock v4+)
 

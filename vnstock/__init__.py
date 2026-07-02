@@ -26,28 +26,20 @@ class Vnstock:
 # Use standard vnstock classes
 # Load UI and helper classes
 from vnstock.ui import (  # noqa: E402
-    Broker,
     Fundamental,
     Market,
     Reference,
     Retail,
-    show_api,
-    show_doc,
 )
 
+# Market constants
+# Load connector modules to register providers
+from . import connector  # noqa: E402
 from .api.company import Company  # noqa: E402
 from .api.financial import Finance  # noqa: E402
 from .api.listing import Listing  # noqa: E402
 from .api.quote import Quote  # noqa: E402
 from .api.trading import Trading  # noqa: E402
-from .explorer.fmarket import Fund  # noqa: E402
-
-show_docs = show_doc  # Alias for better parity
-
-
-# Market constants
-# Load connector modules to register providers
-from . import connector  # noqa: E402
 from .constants import (  # noqa: E402
     EXCHANGES,
     INDEX_GROUPS,
@@ -62,6 +54,7 @@ from .core.utils.auth import (  # noqa: E402
     check_status,
     register_user,
 )
+from .explorer.fmarket import Fund  # noqa: E402
 
 # Load explorer modules to register providers (lazy to avoid deadlock)
 _explorer_modules_loaded = False
@@ -92,13 +85,10 @@ __all__ = [
     "Trading",
     "Fund",
     "ui",
-    "show_api",
-    "show_doc",
     "Reference",
     "Market",
     "Fundamental",
     "Retail",
-    "Broker",
     "connector",
     "INDICES_INFO",
     "INDICES_MAP",

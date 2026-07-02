@@ -9,10 +9,10 @@
 - Tests do not auto-register package-level user keys. Integration tests may call external services; configure provider-specific credentials directly when needed.
 
 ## Architecture
-- Public package entrypoint is `vnstock/__init__.py`; it exports legacy API classes (`Quote`, `Listing`, `Company`, `Finance`, `Trading`, `Vnstock`) plus v4 Unified UI (`Reference`, `Market`, `Fundamental`, `Retail`, `Broker`, `show_api`, `show_doc`).
+- Public package entrypoint is `vnstock/__init__.py`; it exports legacy API classes (`Quote`, `Listing`, `Company`, `Finance`, `Trading`, `Vnstock`) plus v4 Unified UI (`Reference`, `Market`, `Fundamental`, `Retail`). `Broker`, `show_api`, `show_doc`, visualization (`Chart`/`.viz`), and bot/notification (`Messenger`) have been removed.
 - New user-facing APIs should go through the Unified UI under `vnstock/ui`. Top-level domain objects create subdomain objects; leaf methods route through `BaseUI._dispatch()` using `vnstock/ui/_registry.py::MAP`.
-- Keep `vnstock.ui` as facade/routing/auto-docs only. Put data extraction in providers, not UI methods.
-- Provider split: `vnstock/explorer/{kbs,vci,msn,fmarket,misc}` for scraping/public web data; `vnstock/connector/{fmp,dnse}` for pure API or broker connectors; `vnstock/api/*` are legacy adapters built on `vnstock/base.py::BaseAdapter`.
+- Keep `vnstock.ui` as facade/routing only. Put data extraction in providers, not UI methods. No charting, no notifications, no broker execution in this package.
+- Provider split: `vnstock/explorer/{kbs,vci,msn,fmarket,misc}` for scraping/public web data; `vnstock/connector/fmp` for the FMP data API connector; `vnstock/api/*` are legacy adapters built on `vnstock/base.py::BaseAdapter`. The `vnstock/connector/dnse` connector has been removed.
 - Provider modules self-register at import time with `vnstock.core.registry.ProviderRegistry.register(provider_type, source, Class)`. Add providers by registration and MAP entries, not UI `if/else` source branching.
 - `vnstock/core/base/registry.py` is a separate decorator-style registry; do not confuse it with the active `vnstock.core.registry.ProviderRegistry` used by `vnstock/base.py`.
 

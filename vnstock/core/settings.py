@@ -16,7 +16,6 @@ class APIKeyConfig:
 
     fmp: Optional[str] = None
     binance: Optional[str] = None
-    dnse: Optional[str] = None
 
     def get(self, provider: str) -> Optional[str]:
         """
@@ -125,8 +124,6 @@ class VnstockConfig:
             self.api_keys.fmp = os.getenv("VNSTOCK_FMP_API_KEY")
         if os.getenv("VNSTOCK_BINANCE_API_KEY") and not self.api_keys.binance:
             self.api_keys.binance = os.getenv("VNSTOCK_BINANCE_API_KEY")
-        if os.getenv("VNSTOCK_DNSE_API_KEY") and not self.api_keys.dnse:
-            self.api_keys.dnse = os.getenv("VNSTOCK_DNSE_API_KEY")
 
         # Network config
         timeout_env = os.getenv("VNSTOCK_TIMEOUT")
@@ -190,7 +187,6 @@ class VnstockConfig:
             "api_keys": {
                 "fmp": self.api_keys.fmp,
                 "binance": self.api_keys.binance,
-                "dnse": self.api_keys.dnse,
             },
             "network": {
                 "timeout": self.network.timeout,

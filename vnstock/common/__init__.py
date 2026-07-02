@@ -1,6 +1,5 @@
 from vnstock.common import (
     indices,  # Standardized market constants  # noqa: F401
-    viz,  # noqa: F401
 )
 from vnstock.common.data import (
     Company,  # noqa: F401

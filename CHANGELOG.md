@@ -2,6 +2,17 @@
 
 Tất cả các thay đổi đáng chú ý của dự án `vnstock` sẽ được tài liệu hóa tại file này.
 
+## [Unreleased] - Data-only package refactor
+
+### Breaking Changes
+- **Removed**: `Broker`, `show_api`, `show_doc`, `show_docs` removed from public exports.
+- **Removed**: `vnstock.common.viz` charting and pandas `.viz` extension removed; install `vnstock_ezchart` directly in your app if needed.
+- **Removed**: `vnstock.bot.notify.Messenger` and all Slack/Telegram/Discord/Lark helpers removed.
+- **Removed**: DNSE broker connector (`vnstock.connector.dnse`) removed; login, account, and order execution are no longer available via this package.
+- **Removed**: `vnstock_ezchart` removed as a package dependency.
+
+All data extraction APIs (`Reference`, `Market`, `Fundamental`, `Retail`, legacy `Quote`/`Listing`/`Company`/`Finance`/`Trading`/`Fund`) and provider credentials (e.g. FMP `api_key`) are unaffected.
+
 ## [4.0.3] 2026-04-29
 
 ### Bổ sung (Added)
