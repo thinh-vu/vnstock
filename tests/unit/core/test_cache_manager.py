@@ -69,11 +69,11 @@ class TestGetDefaultTtl:
         assert get_default_ttl("Market", "equity", "ohlcv") == 3600
         assert get_default_ttl("Market", "index", "ohlcv") == 3600
 
-    def test_intraday_method_returns_300(self):
+    def test_intraday_method_returns_3600(self):
         from vnstock.core.cache import get_default_ttl
 
-        assert get_default_ttl("Market", "equity", "intraday") == 300
-        assert get_default_ttl("Market", "equity", "trades") == 300
+        assert get_default_ttl("Market", "equity", "intraday") == 3600
+        assert get_default_ttl("Market", "equity", "trades") == 3600
 
     def test_market_quote_returns_3600(self):
         from vnstock.core.cache import get_default_ttl

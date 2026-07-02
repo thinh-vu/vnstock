@@ -111,9 +111,8 @@ _TTL_FUND = 14400  # 4 hours
 # Retail (gold spot, exchange rates): hourly updates.
 _TTL_RETAIL = 3600  # 1 hour
 
-# Intraday tick trades: very short-lived during trading hours; 5 minutes
-# is enough to avoid hammering the provider for repeated calls.
-_TTL_INTRADAY = 300  # 5 minutes
+# Intraday tick trades: cache for 1 hour (same as market data).
+_TTL_INTRADAY = 3600  # 1 hour
 
 # Methods considered "market / real-time price" data
 _MARKET_METHODS = frozenset(
