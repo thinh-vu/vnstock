@@ -5,7 +5,7 @@ Provides a configurable cache that stores provider responses to avoid
 redundant HTTP requests. Backends: memory (in-process) and SQLite (persistent).
 
 Configuration via CacheConfig (vnstock/core/settings.py) or environment variables:
-    VNSTOCK_CACHE_ENABLED   : "true"/"false" (default: false)
+    VNSTOCK_CACHE_ENABLED   : "true"/"false" (default: true)
     VNSTOCK_CACHE_BACKEND   : "memory" | "sqlite" (default: memory)
     VNSTOCK_CACHE_TTL       : integer seconds (default: 300)
     VNSTOCK_CACHE_MAX_SIZE  : max entries before eviction (default: 100)

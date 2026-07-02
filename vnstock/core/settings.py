@@ -64,14 +64,14 @@ class CacheConfig:
     """Caching configuration.
 
     Environment variables:
-        VNSTOCK_CACHE_ENABLED  : "true"/"false" — enable/disable cache (default: false)
+        VNSTOCK_CACHE_ENABLED  : "true"/"false" — enable/disable cache (default: true)
         VNSTOCK_CACHE_TTL      : integer seconds — entry lifetime (default: 300)
         VNSTOCK_CACHE_MAX_SIZE : integer — max entries before eviction (default: 100)
         VNSTOCK_CACHE_BACKEND  : "memory" | "sqlite" — storage backend (default: memory)
         VNSTOCK_CACHE_PATH     : file path for sqlite backend (default: ~/.vnstock/cache.db)
     """
 
-    enabled: bool = False
+    enabled: bool = True
     ttl: int = 300  # seconds
     max_size: int = 100
     backend: str = "memory"  # "memory" | "sqlite"
