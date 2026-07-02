@@ -1,6 +1,14 @@
+from __future__ import annotations
+
 from typing import Any
 
 import pandas as pd
+
+
+def _is_rate_limit(exc: Exception) -> bool:
+    """Return True if *exc* looks like an HTTP 429 / rate-limit error."""
+    msg = " ".join(str(a) for a in exc.args).lower()
+    return "429" in msg or "rate limit" in msg or "too many requests" in msg
 
 
 class BaseUI:
@@ -8,185 +16,159 @@ class BaseUI:
 
     def _dispatch(self, domain_name: str, method_name: str, *args, **kwargs) -> Any:
         """
-        Dispatch the message to the native providers/connectors registered here.
+        Dispatch the message to native providers/connectors.
+        Automatically rotates providers via the load-balancer router when a
+        POOLS entry exists and the caller did not explicitly pass source=.
         """
         from vnstock.ui._registry import MAP
 
-        if domain_name in MAP and method_name in MAP[domain_name]:
-            meta = MAP[domain_name][method_name]
+        if domain_name not in MAP or method_name not in MAP[domain_name]:
+            raise AttributeError(
+                f"Method '{method_name}' not implemented for domain '{domain_name}'"
+            )
 
-            # 1. Handle nested sub-domains (e.g., Reference -> equity -> list)
-            if isinstance(meta, dict) and args:
-                actual_method = args[0]
-                if actual_method in meta:
-                    meta = meta[actual_method]
-                    # Update args to remove the consumed method name
-                    args = args[1:]
-                else:
-                    raise AttributeError(
-                        f"Method '{actual_method}' not found in sub-domain '{method_name}' of '{domain_name}'"
-                    )
+        meta = MAP[domain_name][method_name]
 
-            # 2. Handle redirection tuples (length 2)
-            if isinstance(meta, tuple) and len(meta) == 2:
-                redirect_domain, redirect_method = meta
-                return self._dispatch(redirect_domain, redirect_method, *args, **kwargs)
-
-            # 3. Standard Metadata Unpack
-            try:
-                # meta can have 4 to 7 items:
-                # (module_type, sub_module, class_name, function_name, [source, return_type, description])
-                module_type = meta[0]
-                sub_module = meta[1]
-                class_name = meta[2]
-                function_name = meta[3]
-
-                # Apply default source from registry if not provided (or None) in kwargs
-                if len(meta) > 4 and (kwargs.get("source") is None):
-                    kwargs["source"] = meta[4]
-
-                # return_type and description are informational registry metadata
-            except (IndexError, TypeError) as e:
+        # 1. Handle nested sub-domains (e.g., Market -> equity -> ohlcv)
+        consumed_subdomain: str | None = None
+        if isinstance(meta, dict) and args:
+            actual_method = args[0]
+            if actual_method in meta:
+                consumed_subdomain = actual_method
+                meta = meta[actual_method]
+                args = args[1:]
+            else:
                 raise AttributeError(
-                    f"Invalid registry entry for '{domain_name}.{method_name}'. Got: {meta}"
-                ) from e
+                    f"Method '{actual_method}' not found in sub-domain "
+                    f"'{method_name}' of '{domain_name}'"
+                )
 
-            # 4. Multi-symbol Handling (Universal)
-            symbol = getattr(self, "symbol", None)
-            if isinstance(symbol, list) and module_type == "api":
-                all_results = []
-                for s in symbol:
-                    # Create a temporary instance for the single symbol to avoid state pollution
-                    temp_inst = type(self)(symbol=s)
-                    # Call _dispatch on the temporary instance
-                    res = temp_inst._dispatch(domain_name, method_name, *args, **kwargs)
-                    all_results.append(res)
+        # 2. Handle redirection tuples (length 2)
+        if isinstance(meta, tuple) and len(meta) == 2:
+            redirect_domain, redirect_method = meta
+            return self._dispatch(redirect_domain, redirect_method, *args, **kwargs)
 
-                if all_results and isinstance(all_results[0], pd.DataFrame):
-                    return pd.concat(all_results).reset_index(drop=True)
-                return all_results
+        # 3. Standard Metadata Unpack
+        try:
+            module_type = meta[0]
+            sub_module = meta[1]
+            class_name = meta[2]
+            function_name = meta[3]
+        except (IndexError, TypeError) as e:
+            raise AttributeError(
+                f"Invalid registry entry for '{domain_name}.{method_name}'. Got: {meta}"
+            ) from e
 
-            # 5. Native dispatch
-            import importlib
-            # symbol is already retrieved above
+        # Record whether the caller explicitly passed source= BEFORE we apply the MAP default.
+        _caller_set_source: bool = "source" in kwargs and kwargs["source"] is not None
 
-            if module_type == "api":
-                module = importlib.import_module(f"vnstock.{sub_module}")
-                if class_name:
-                    cls = getattr(module, class_name)
-                    # Inspect constructor
-                    import inspect
+        # Apply MAP default source when caller did not provide one.
+        if len(meta) > 4 and not _caller_set_source:
+            kwargs["source"] = meta[4]
 
-                    sig = inspect.signature(cls.__init__)
+        # 3b. Load-balancer: override source via router when caller did not specify.
+        _using_router = False
+        _pool_key: tuple | None = None
+        _pool_providers: list[str] = []
 
-                    # Extract constructor-level params
-                    init_kwargs = {}
-                    for param in [
-                        "symbol",
-                        "symbol_id",
-                        "source",
-                        "random_agent",
-                        "show_log",
-                    ]:
-                        if param in sig.parameters:
-                            if param in ["symbol", "symbol_id"]:
-                                init_kwargs[param] = symbol
-                            elif param in kwargs:
-                                init_kwargs[param] = kwargs.pop(param)
+        if not _caller_set_source:
+            from vnstock.core.router import router
+            from vnstock.ui._pools import POOLS, _build_pool_key
 
-                    # Pass remaining kwargs to function, avoiding double-passing symbol
+            _pool_key = _build_pool_key(domain_name, method_name, consumed_subdomain)
+            if _pool_key in POOLS:
+                _pool_providers = POOLS[_pool_key]
+                kwargs["source"] = router.pick(_pool_key, _pool_providers)
+                _using_router = True
 
-                    obj = cls(**init_kwargs)
-                    func = getattr(obj, function_name)
+        # 4. Multi-symbol Handling (Universal)
+        symbol = getattr(self, "symbol", None)
+        if isinstance(symbol, list) and module_type == "api":
+            all_results = []
+            for s in symbol:
+                temp_inst = type(self)(symbol=s)
+                res = temp_inst._dispatch(domain_name, method_name, *args, **kwargs)
+                all_results.append(res)
+            if all_results and isinstance(all_results[0], pd.DataFrame):
+                return pd.concat(all_results).reset_index(drop=True)
+            return all_results
 
-                    # Filter clean_kwargs to only include parameters accepted by the function
-                    import inspect
+        # 5. Native dispatch (with retry loop when router is active)
+        max_attempts = len(_pool_providers) if _using_router and _pool_providers else 1
+        last_exc: Exception | None = None
 
-                    func_sig = inspect.signature(func)
-                    has_kwargs = any(
-                        p.kind == p.VAR_KEYWORD for p in func_sig.parameters.values()
-                    )
-                    clean_kwargs = {
-                        k: v
-                        for k, v in kwargs.items()
-                        if k not in ["source", "random_agent", "show_log"]
-                    }
-                    if not has_kwargs:
-                        clean_kwargs = {
-                            k: v
-                            for k, v in clean_kwargs.items()
-                            if k in func_sig.parameters
-                        }
+        for attempt in range(max_attempts):
+            try:
+                result = self._execute_dispatch(
+                    module_type,
+                    sub_module,
+                    class_name,
+                    function_name,
+                    symbol,
+                    args,
+                    kwargs,
+                )
+                if _using_router and isinstance(result, pd.DataFrame):
+                    result.attrs["source_used"] = kwargs.get("source", "")
+                return result
 
-                    # Pass remaining kwargs to function, avoiding double-passing symbol
-                    if symbol:
-                        # Check if symbol was consumed by __init__
-                        consumed_by_init = "symbol" in sig.parameters
-                        # Check if symbol-like arg is in kwargs/args
-                        in_kwargs = any(
-                            k in clean_kwargs
-                            for k in ["symbol", "group", "code", "ticker", "query"]
-                        )
+            except Exception as exc:
+                retriable = _is_retriable(exc)
+                if _using_router and retriable and _pool_key and _pool_providers:
+                    from vnstock.core.router import router
+                    from vnstock.ui._pools import POOLS
 
-                        if not consumed_by_init and not in_kwargs and not args:
-                            if "symbol" in func_sig.parameters or has_kwargs:
-                                return func(symbol, *args, **clean_kwargs)
+                    router.mark_failed(_pool_key, kwargs["source"], _is_rate_limit(exc))
+                    if attempt < max_attempts - 1:
+                        kwargs["source"] = router.pick(_pool_key, _pool_providers)
+                        last_exc = exc
+                        continue
+                raise
 
-                    return func(*args, **clean_kwargs)
+        if last_exc is not None:
+            raise last_exc  # type: ignore[misc]
 
-                else:
-                    func = getattr(module, function_name)
-                    # Filter UI internal parameters if they aren't part of the direct API function signature
-                    import inspect
+        # Should never reach here
+        raise AttributeError(
+            f"Method '{method_name}' not implemented for domain '{domain_name}'"
+        )
 
-                    func_sig = inspect.signature(func)
-                    has_kwargs = any(
-                        p.kind == p.VAR_KEYWORD for p in func_sig.parameters.values()
-                    )
-                    clean_kwargs = {
-                        k: v
-                        for k, v in kwargs.items()
-                        if k not in ["source", "random_agent", "show_log"]
-                    }
-                    if not has_kwargs:
-                        clean_kwargs = {
-                            k: v
-                            for k, v in clean_kwargs.items()
-                            if k in func_sig.parameters
-                        }
-                    return func(*args, **clean_kwargs)
+    def _execute_dispatch(
+        self,
+        module_type: str,
+        sub_module: str,
+        class_name: str | None,
+        function_name: str,
+        symbol: Any,
+        args: tuple,
+        kwargs: dict,
+    ) -> Any:
+        """Instantiate the provider class and invoke the target function."""
+        import importlib
+        import inspect
 
-            elif module_type == "explorer":
-                module = importlib.import_module(f"vnstock.explorer.{sub_module}")
-                if class_name:
-                    cls = getattr(module, class_name)
-                    # Inspect constructor
-                    import inspect
+        if module_type == "api":
+            module = importlib.import_module(f"vnstock.{sub_module}")
+            if class_name:
+                cls = getattr(module, class_name)
+                sig = inspect.signature(cls.__init__)
 
-                    try:
-                        sig = inspect.signature(cls.__init__)
-                        init_kwargs = {}
-                        for param in [
-                            "symbol",
-                            "symbol_id",
-                            "random_agent",
-                            "show_log",
-                        ]:
-                            if param in sig.parameters:
-                                if param in ["symbol", "symbol_id"]:
-                                    init_kwargs[param] = symbol
-                                elif param in kwargs:
-                                    init_kwargs[param] = kwargs.pop(param)
-                        obj = cls(**init_kwargs)
-                    except (ValueError, TypeError):
-                        # Fallback for classes without __init__ or complex ones
-                        obj = cls()
-                    func = getattr(obj, function_name)
-                else:
-                    func = getattr(module, function_name)
+                init_kwargs: dict = {}
+                for param in [
+                    "symbol",
+                    "symbol_id",
+                    "source",
+                    "random_agent",
+                    "show_log",
+                ]:
+                    if param in sig.parameters:
+                        if param in ["symbol", "symbol_id"]:
+                            init_kwargs[param] = symbol
+                        elif param in kwargs:
+                            init_kwargs[param] = kwargs.pop(param)
 
-                # Filter UI internal parameters and ensure only valid arguments are passed
-                import inspect
+                obj = cls(**init_kwargs)
+                func = getattr(obj, function_name)
 
                 func_sig = inspect.signature(func)
                 has_kwargs = any(
@@ -204,17 +186,101 @@ class BaseUI:
                         if k in func_sig.parameters
                     }
 
+                if symbol:
+                    consumed_by_init = "symbol" in sig.parameters
+                    in_kwargs = any(
+                        k in clean_kwargs
+                        for k in ["symbol", "group", "code", "ticker", "query"]
+                    )
+                    if not consumed_by_init and not in_kwargs and not args:
+                        if "symbol" in func_sig.parameters or has_kwargs:
+                            return func(symbol, *args, **clean_kwargs)
+
                 return func(*args, **clean_kwargs)
 
-            elif module_type == "connector":
-                module = importlib.import_module(f"vnstock.connector.{sub_module}")
-                cls = getattr(module, class_name)
-                obj = cls()
-                return getattr(obj, function_name)(*args, **kwargs)
+            else:
+                func = getattr(module, function_name)
+                func_sig = inspect.signature(func)
+                has_kwargs = any(
+                    p.kind == p.VAR_KEYWORD for p in func_sig.parameters.values()
+                )
+                clean_kwargs = {
+                    k: v
+                    for k, v in kwargs.items()
+                    if k not in ["source", "random_agent", "show_log"]
+                }
+                if not has_kwargs:
+                    clean_kwargs = {
+                        k: v
+                        for k, v in clean_kwargs.items()
+                        if k in func_sig.parameters
+                    }
+                return func(*args, **clean_kwargs)
 
-        raise AttributeError(
-            f"Method '{method_name}' not implemented for domain '{domain_name}'"
+        elif module_type == "explorer":
+            module = importlib.import_module(f"vnstock.explorer.{sub_module}")
+            if class_name:
+                cls = getattr(module, class_name)
+                try:
+                    sig = inspect.signature(cls.__init__)
+                    init_kwargs = {}
+                    for param in ["symbol", "symbol_id", "random_agent", "show_log"]:
+                        if param in sig.parameters:
+                            if param in ["symbol", "symbol_id"]:
+                                init_kwargs[param] = symbol
+                            elif param in kwargs:
+                                init_kwargs[param] = kwargs.pop(param)
+                    obj = cls(**init_kwargs)
+                except (ValueError, TypeError):
+                    obj = cls()
+                func = getattr(obj, function_name)
+            else:
+                func = getattr(module, function_name)
+
+            func_sig = inspect.signature(func)
+            has_kwargs = any(
+                p.kind == p.VAR_KEYWORD for p in func_sig.parameters.values()
+            )
+            clean_kwargs = {
+                k: v
+                for k, v in kwargs.items()
+                if k not in ["source", "random_agent", "show_log"]
+            }
+            if not has_kwargs:
+                clean_kwargs = {
+                    k: v for k, v in clean_kwargs.items() if k in func_sig.parameters
+                }
+            return func(*args, **clean_kwargs)
+
+        elif module_type == "connector":
+            module = importlib.import_module(f"vnstock.connector.{sub_module}")
+            cls = getattr(module, class_name)
+            obj = cls()
+            return getattr(obj, function_name)(*args, **kwargs)
+
+        raise AttributeError(f"Unknown module_type '{module_type}'")
+
+
+def _is_retriable(exc: Exception) -> bool:
+    """Return True if *exc* is a transient error worth retrying."""
+    try:
+        import requests
+
+        if isinstance(
+            exc,
+            (requests.exceptions.Timeout, requests.exceptions.ConnectionError),
+        ):
+            return True
+    except ImportError:
+        pass
+
+    if isinstance(exc, (ValueError, RuntimeError)):
+        msg = str(exc).lower()
+        return any(
+            m in msg
+            for m in ("429", "rate limit", "too many requests", "503", "502", "500")
         )
+    return False
 
 
 class BaseDetailUI(BaseUI):

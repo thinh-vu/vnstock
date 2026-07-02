@@ -15,6 +15,7 @@
 - Provider split: `vnstock/explorer/{kbs,vci,msn,fmarket,misc,dnse}` for scraping/public web data; `vnstock/connector/fmp` for the FMP data API connector; `vnstock/api/*` are legacy adapters built on `vnstock/base.py::BaseAdapter`. The `vnstock/connector/dnse` broker connector has been removed; DNSE market data lives in `vnstock/explorer/dnse`.
 - Provider modules self-register at import time with `vnstock.core.registry.ProviderRegistry.register(provider_type, source, Class)`. Add providers by registration and MAP entries, not UI `if/else` source branching.
 - `vnstock/core/base/registry.py` is a separate decorator-style registry; do not confuse it with the active `vnstock.core.registry.ProviderRegistry` used by `vnstock/base.py`.
+- `BaseUI._dispatch()` auto-selects providers via `vnstock/core/router.py::ProviderRouter` (round-robin + cooldown). Multi-provider pools are declared in `vnstock/ui/_pools.py::POOLS`. Callers that pass `source=` explicitly bypass the router. Add a new pool entry to `_pools.py` when a new provider supports an existing method.
 
 ## Repo-Specific Gotchas
 - Flat access model: do not add package-level user registration, tier gates, entitlement checks, or private-package fallback routing. Keep external provider credentials scoped to their connector/provider.
