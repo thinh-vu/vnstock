@@ -43,6 +43,70 @@ class TestMakeCacheKey:
         assert isinstance(key, str)
         assert len(key) == 64  # sha256 hex
 
+    def test_domain_subdomain_scopes_key(self):
+        """Same provider+method but different domains must produce different keys."""
+        from vnstock.core.cache import make_cache_key
+
+        k1 = make_cache_key("KBS", "ohlcv", {"symbol": "VCB"}, domain="Market", subdomain="equity")
+        k2 = make_cache_key("KBS", "ohlcv", {"symbol": "VCB"}, domain="Fundamental", subdomain="equity")
+        assert k1 != k2
+
+    def test_same_domain_subdomain_same_key(self):
+        """Identical calls with same domain/subdomain must be equal."""
+        from vnstock.core.cache import make_cache_key
+
+        k1 = make_cache_key("KBS", "ohlcv", {"symbol": "VCB"}, domain="Market", subdomain="equity")
+        k2 = make_cache_key("KBS", "ohlcv", {"symbol": "VCB"}, domain="Market", subdomain="equity")
+        assert k1 == k2
+
+
+@pytest.mark.unit
+@pytest.mark.core
+class TestGetDefaultTtl:
+    def test_market_domain_returns_3600(self):
+        from vnstock.core.cache import get_default_ttl
+
+        assert get_default_ttl("Market", "equity", "ohlcv") == 3600
+        assert get_default_ttl("Market", "index", "ohlcv") == 3600
+
+    def test_intraday_method_returns_300(self):
+        from vnstock.core.cache import get_default_ttl
+
+        assert get_default_ttl("Market", "equity", "intraday") == 300
+        assert get_default_ttl("Market", "equity", "trades") == 300
+
+    def test_market_quote_returns_3600(self):
+        from vnstock.core.cache import get_default_ttl
+
+        assert get_default_ttl("Market", "equity", "quote") == 3600
+
+    def test_reference_domain_returns_86400(self):
+        from vnstock.core.cache import get_default_ttl
+
+        assert get_default_ttl("Reference", "company", "info") == 86400
+        assert get_default_ttl("Reference", "equity", "list") == 86400
+
+    def test_fundamental_domain_returns_86400(self):
+        from vnstock.core.cache import get_default_ttl
+
+        assert get_default_ttl("Fundamental", "equity", "balance_sheet") == 86400
+        assert get_default_ttl("Fundamental", "equity", "ratio") == 86400
+
+    def test_fund_subdomain_returns_14400(self):
+        from vnstock.core.cache import get_default_ttl
+
+        assert get_default_ttl("Reference", "fund", "list") == 14400
+
+    def test_retail_domain_returns_3600(self):
+        from vnstock.core.cache import get_default_ttl
+
+        assert get_default_ttl("Retail", "gold", "price") == 3600
+
+    def test_unknown_domain_returns_minus_one(self):
+        from vnstock.core.cache import get_default_ttl
+
+        assert get_default_ttl("SomethingNew", "widget", "fetch") == -1
+
 
 @pytest.mark.unit
 @pytest.mark.core

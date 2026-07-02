@@ -11,16 +11,25 @@ Configuration via CacheConfig (vnstock/core/settings.py) or environment variable
     VNSTOCK_CACHE_MAX_SIZE  : max entries before eviction (default: 100)
     VNSTOCK_CACHE_PATH      : file path for sqlite backend (default: ~/.vnstock/cache.db)
 
+Default TTL by data category (applied automatically by BaseUI._dispatch):
+    Market data (price, ohlcv, intraday, trades)  : 3600 s  (1 hour)
+    Reference / listing / company snapshot         : 86400 s (24 hours)
+    Fundamental (financials, ratios)               : 86400 s (24 hours)
+    Fund data                                      : 14400 s (4 hours)
+    Retail / gold / forex                          : 3600 s  (1 hour)
+    Anything else                                  : global config TTL
+
 Usage::
 
-    from vnstock.core.cache import get_cache_manager, make_cache_key
+    from vnstock.core.cache import get_cache_manager, make_cache_key, get_default_ttl
 
     cm = get_cache_manager()
-    key = make_cache_key("KBS", "history", {"start": "2024-01-01", "end": "2024-12-31"})
+    key = make_cache_key("KBS", "history", {"start": "2024-01-01"}, domain="Market")
+    ttl = get_default_ttl("Market", "equity", "ohlcv")
     result = cm.get(key)
     if result is None:
         result = fetch_from_provider(...)
-        cm.set(key, result, ttl=300)
+        cm.set(key, result, ttl=ttl)
 """
 
 from __future__ import annotations
@@ -43,23 +52,126 @@ if TYPE_CHECKING:
 # ---------------------------------------------------------------------------
 
 
-def make_cache_key(provider: str, method: str, kwargs: dict) -> str:
-    """Return a deterministic SHA-256 hex digest for the given call parameters.
+def make_cache_key(
+    provider: str,
+    method: str,
+    kwargs: dict,
+    *,
+    domain: str = "",
+    subdomain: str = "",
+) -> str:
+    """Return a deterministic SHA-256 hex digest scoped by domain + provider.
+
+    Including ``domain`` and ``subdomain`` prevents key collisions between
+    different data categories that happen to use the same method name
+    (e.g. ``Market.equity.ohlcv`` vs ``Fundamental.equity.balance_sheet``
+    both route through ``Quote.ohlcv``).
 
     Args:
-        provider: Provider/source name (e.g. ``"KBS"``).
-        method:   Function name (e.g. ``"history"``).
-        kwargs:   Call keyword arguments; sorted by key before hashing.
+        provider:  Provider/source name (e.g. ``"KBS"``).
+        method:    Function name (e.g. ``"ohlcv"``).
+        kwargs:    Call keyword arguments; sorted by key before hashing.
+        domain:    Top-level UI domain (e.g. ``"Market"``).  Optional.
+        subdomain: Sub-domain within the domain (e.g. ``"equity"``).  Optional.
 
     Returns:
         64-character lowercase hex string.
     """
     payload = json.dumps(
-        {"provider": provider, "method": method, "kwargs": kwargs},
+        {
+            "domain": domain,
+            "subdomain": subdomain,
+            "provider": provider,
+            "method": method,
+            "kwargs": kwargs,
+        },
         sort_keys=True,
         default=str,
     ).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+# ---------------------------------------------------------------------------
+# Smart TTL table
+# ---------------------------------------------------------------------------
+
+# Market data: live prices change every few seconds; 1-hour cache balances
+# freshness vs HTTP load for backtesting / batch workflows.
+_TTL_MARKET = 3600  # 1 hour
+
+# Reference / listing / company: changes daily at most (new listings, filings).
+_TTL_REFERENCE = 86400  # 24 hours
+
+# Fundamental data: quarterly/annual; safe to cache for a full day.
+_TTL_FUNDAMENTAL = 86400  # 24 hours
+
+# Fund NAV / holdings: published daily, typically after market close.
+_TTL_FUND = 14400  # 4 hours
+
+# Retail (gold spot, exchange rates): hourly updates.
+_TTL_RETAIL = 3600  # 1 hour
+
+# Intraday tick trades: very short-lived during trading hours; 5 minutes
+# is enough to avoid hammering the provider for repeated calls.
+_TTL_INTRADAY = 300  # 5 minutes
+
+# Methods considered "market / real-time price" data
+_MARKET_METHODS = frozenset(
+    {"ohlcv", "history", "quote", "price_board", "price", "short", "full"}
+)
+# Methods considered "intraday tick" data
+_INTRADAY_METHODS = frozenset({"intraday", "trades"})
+
+
+def get_default_ttl(domain: str, subdomain: str = "", method: str = "") -> int:
+    """Return the recommended cache TTL in seconds for the given data category.
+
+    TTL hierarchy (highest specificity wins):
+    1. Intraday tick methods → 5 min
+    2. Market / price methods → 1 hour
+    3. ``Market`` top-level domain → 1 hour
+    4. ``Fundamental`` domain → 24 hours
+    5. ``Reference`` domain → 24 hours
+    6. ``fund`` subdomain → 4 hours
+    7. ``Retail`` domain → 1 hour
+    8. Default (unknown) → -1 (caller should fall back to global config)
+
+    Args:
+        domain:    Top-level UI domain name (e.g. ``"Market"``, ``"Reference"``).
+        subdomain: Sub-domain within the domain (e.g. ``"equity"``).
+        method:    Leaf method name (e.g. ``"ohlcv"``, ``"intraday"``).
+
+    Returns:
+        TTL in seconds, or ``-1`` if no specific rule matches (use global config).
+    """
+    m = method.lower()
+
+    if m in _INTRADAY_METHODS:
+        return _TTL_INTRADAY
+
+    if m in _MARKET_METHODS:
+        return _TTL_MARKET
+
+    d = domain.lower()
+    s = subdomain.lower()
+
+    # Subdomain checks first (more specific than domain)
+    if s == "fund" or d == "fund":
+        return _TTL_FUND
+
+    if d == "market":
+        return _TTL_MARKET
+
+    if d in ("reference", "listing"):
+        return _TTL_REFERENCE
+
+    if d == "fundamental":
+        return _TTL_FUNDAMENTAL
+
+    if d == "retail":
+        return _TTL_RETAIL
+
+    return -1  # no rule matched — caller falls back to global config
 
 
 # ---------------------------------------------------------------------------

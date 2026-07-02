@@ -88,12 +88,22 @@ class BaseUI:
         # 3d. Cache lookup (skip when use_cache=False).
         _cache_manager = None
         _cache_key: str | None = None
+        _smart_ttl: int = -1
         if _use_cache is not False:
             try:
-                from vnstock.core.cache import get_cache_manager, make_cache_key
+                from vnstock.core.cache import (
+                    get_cache_manager,
+                    get_default_ttl,
+                    make_cache_key,
+                )
 
                 _cache_manager = get_cache_manager()
                 if _cache_manager.config.enabled:
+                    _smart_ttl = get_default_ttl(
+                        domain_name,
+                        consumed_subdomain or "",
+                        function_name,
+                    )
                     _cache_key = make_cache_key(
                         kwargs.get("source", ""),
                         function_name,
@@ -106,6 +116,8 @@ class BaseUI:
                                 if k not in ("source", "random_agent", "show_log")
                             },
                         },
+                        domain=domain_name,
+                        subdomain=consumed_subdomain or "",
                     )
                     _cached = _cache_manager.get(_cache_key)
                     if _cached is not None:
@@ -152,11 +164,12 @@ class BaseUI:
                     and _cache_key is not None
                 ):
                     try:
-                        ttl = (
-                            _cache_ttl
-                            if isinstance(_cache_ttl, int)
-                            else _cache_manager.config.ttl
-                        )
+                        if isinstance(_cache_ttl, int):
+                            ttl = _cache_ttl  # explicit per-call override
+                        elif _smart_ttl > 0:
+                            ttl = _smart_ttl  # smart TTL from data category
+                        else:
+                            ttl = _cache_manager.config.ttl  # global fallback
                         _cache_manager.set(_cache_key, result, ttl)
                     except Exception:
                         pass  # cache write errors must never break the response
