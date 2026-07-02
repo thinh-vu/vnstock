@@ -26,13 +26,14 @@
 
 > Chào mừng bạn đến với **Vnstock**, thư viện cung cấp công cụ tự động hoá trích xuất dữ liệu (**api chứng khoán việt nam**) mã nguồn mở. Vnstock giúp bạn truy xuất thông tin phân tích đầu tư một cách dễ dàng, nhanh chóng thông qua các hàm Python đơn giản.
 
-Với Vnstock, việc tải dữ liệu chứng khoán việt nam trở nên dễ dàng hơn bao giờ hết. Dù bạn muốn kết nối **vnstock python** để xây dựng mô hình định lượng, tích hợp các nền tảng phân tích hay đơn giản là tìm hiểu về **lịch sử giá cổ phiếu**, dữ liệu đều sẵn sàng cho AI ngay hôm nay.
+Với Vnstock, việc tải dữ liệu chứng khoán việt nam trở nên dễ dàng hơn bao giờ hết. Dù bạn muốn kết nối **vnstock python** để xây dựng mô hình định lượng, tích hợp pipeline dữ liệu hay đơn giản là tìm hiểu về **lịch sử giá cổ phiếu**, dữ liệu đều sẵn sàng cho AI ngay hôm nay.
 
 ### Tại sao chọn Vnstock?
 
-- **Miễn phí & mã nguồn mở để bắt đầu**: Dễ dàng tiếp cận, phục vụ nhà đầu tư cá nhân và lập trình viên muốn truy xuất dữ liệu chứng khoán Việt Nam qua **vnstock**.
-- **Giải quyết dữ liệu phân mảnh**: Không cần tự viết code "cào" dữ liệu từ số 0. Bạn chỉ cần gọi hàm, Vnstock sẽ truy xuất dữ liệu và trả về dạng DataFrame chuẩn chỉnh để bạn kết nối luồng phân tích hoặc lưu trữ dễ dàng.
+- **Miễn phí & mã nguồn mở**: Dễ dàng tiếp cận, phục vụ nhà đầu tư cá nhân và lập trình viên muốn truy xuất dữ liệu chứng khoán Việt Nam.
+- **Giải quyết dữ liệu phân mảnh**: Không cần tự viết code "cào" dữ liệu từ số 0. Bạn chỉ cần gọi hàm, Vnstock sẽ truy xuất dữ liệu và trả về dạng DataFrame chuẩn chỉnh để tích hợp vào pipeline phân tích hoặc lưu trữ.
 - **Tương thích AI Agent mạnh mẽ**: Được thiết kế để "Vibe Coding" cùng AI.
+- **Mô hình mở, không ràng buộc tài khoản**: Không đăng ký user, không tier, không khoá tính năng — tích hợp thẳng vào hệ thống của bạn.
 
 ---
 
@@ -67,7 +68,7 @@ pip install -U vnstock
 
 ### Mô hình truy cập mở
 
-`vnstock` không quản lý đăng ký người dùng, phân tầng truy cập hoặc hạn mức theo tài khoản ở cấp thư viện. Kết nối dữ liệu bên thứ ba như FMP vẫn nhận thông tin xác thực trực tiếp tại connector tương ứng khi chính dịch vụ đó yêu cầu.
+`vnstock` là thư viện trích xuất dữ liệu thuần tuý — không quản lý đăng ký người dùng, không phân tầng truy cập, không hạn mức theo tài khoản ở cấp thư viện. Tích hợp trực tiếp vào hệ thống của bạn mà không cần lo quản lý user. Kết nối dữ liệu bên thứ ba như FMP vẫn nhận thông tin xác thực trực tiếp tại connector tương ứng khi chính dịch vụ đó yêu cầu.
 
 ---
 
@@ -96,7 +97,7 @@ df_balance = fa.equity.balance_sheet(symbol='TCB', period='year')
 
 ## Hệ sinh thái truy xuất dữ liệu toàn diện
 
-Các hàm lấy dữ liệu trong Vnstock được chia thành 6 mảng chính, bao phủ từ thông tin doanh nghiệp cơ bản đến dữ liệu vĩ mô chuyên sâu:
+Vnstock tập trung hoàn toàn vào trích xuất dữ liệu tài chính. Các hàm được chia thành 6 mảng chính:
 
 1. **Dữ liệu Cổ phiếu (Equity):** Giá cổ phiếu thời gian thực, **lịch sử giá cổ phiếu**, báo cáo tài chính, hồ sơ doanh nghiệp.
 2. **Chỉ số thị trường (Index):** Biến động **lịch sử giá VNINDEX**, HNX, UPCOM và các chỉ số ngành.
@@ -104,6 +105,8 @@ Các hàm lấy dữ liệu trong Vnstock được chia thành 6 mảng chính, 
 4. **Phái sinh (Futures):** Hợp đồng tương lai phái sinh VN30 và các kỳ hạn tương ứng.
 5. **Quỹ đầu tư (Fund & ETF):** Thông tin danh mục, hiệu suất quỹ mở (FMarket) và các quỹ hoán đổi danh mục.
 6. **Vĩ mô & Hàng hóa (Macro & Commodities):** Tỷ giá ngoại tệ (Forex), Giá vàng (SJC), Tiền điện tử (Crypto).
+
+> **Lưu ý:** Biểu đồ, thông báo (Slack/Telegram/...) và giao dịch qua broker không còn được tích hợp trong package này. Bạn có thể sử dụng các thư viện phù hợp trực tiếp trong ứng dụng của mình.
 
 ---
 
@@ -253,8 +256,9 @@ Driven by the mission **"To make financial data extraction and investment tools 
 ### Why Vnstock?
 
 - **Free & Open-Source Toolkit**: An accessible data extraction tool for investors, analysts, researchers, and educators.
-- **Full-Stack Python Support**: Easy-to-use functions for building analysis tools or automated trading bots.
+- **Full-Stack Python Support**: Easy-to-use functions for building analysis tools or automated data pipelines.
 - **Comprehensive Data Extraction**: Seamlessly automate the extraction of public data for stocks, warrants, indices, futures, bonds, forex, crypto, and more. (Note: Vnstock is an extraction tool, not a data provider).
+- **Flat Open Model**: No user registration, no tiers, no account-based feature gates — integrate directly into your system.
 
 ### Join the Community
 
@@ -272,7 +276,9 @@ pip install -U vnstock
 
 ## Open Access Model
 
-`vnstock` does not manage package-level user registration, account tiers, or entitlement checks. Third-party data provider integrations such as FMP still accept their own credentials directly through the relevant connector when required by that external service.
+`vnstock` is a pure data extraction library — no package-level user registration, no access tiers, no account-based quotas. Integrate directly into your system without managing vnstock user state. Third-party data provider integrations such as FMP still accept their own credentials directly through the relevant connector when required by that external service.
+
+> **Note:** Charting, bot notifications (Slack/Telegram/etc.), and broker execution are not included in this package. Use appropriate libraries directly in your application for those needs.
 
 ## Quick Start: Unified UI (Vnstock v4+)
 
