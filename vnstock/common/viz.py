@@ -75,13 +75,7 @@ except ImportError:
         pass
 
 # Ensure at least one charting library is available
-if not HAS_VNSTOCK_CHART and not HAS_VNSTOCK_EZCHART:
-    raise ImportError(
-        "No charting library available. Please install one of:\n"
-        "1. vnstock_chart (recommended): "
-        "pip install --extra-index-url https://vnstocks.com/api/simple vnstock_chart\n"
-        "2. vnstock_ezchart (fallback): pip install vnstock_ezchart"
-    )
+# (Removed module-level check to make charting optional; checked in Chart.__init__ instead)
 
 
 class Chart:
@@ -170,7 +164,12 @@ class Chart:
                 self.backend = "vnstock_ezchart"
                 self.chart = EzChart()
             else:
-                raise RuntimeError("No charting backend available")
+                raise ImportError(
+                    "No charting library available. Please install one of:\n"
+                    "1. vnstock_chart (recommended): "
+                    "pip install --extra-index-url https://vnstocks.com/api/simple vnstock_chart\n"
+                    "2. vnstock_ezchart (fallback): pip install vnstock_ezchart"
+                )
 
         # Only log errors, not debug info
         if self.backend == "vnstock_chart" and not HAS_VNSTOCK_CHART:

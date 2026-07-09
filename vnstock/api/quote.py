@@ -59,10 +59,11 @@ class Quote(BaseAdapter):
             random_agent (bool): Use random user agent for requests. Sử dụng user agent ngẫu nhiên cho các yêu cầu.
             show_log (bool): Show log messages. Hiển thị thông báo nhật ký.
         """
-        # Ensure explorer modules are loaded (lazy load to avoid deadlock)
-        from vnstock import _ensure_explorer_modules_loaded
+        # Ensure explorer modules and vnai patches are loaded
+        from vnstock import _ensure_explorer_modules_loaded, _ensure_vnai_initialized
 
         _ensure_explorer_modules_loaded()
+        _ensure_vnai_initialized()
 
         # Store parameters for later use
         self.source = source
@@ -240,7 +241,22 @@ class Quote(BaseAdapter):
 
             # Get the method from the provider
             method = getattr(self.provider, method_name)
-            return method(**kwargs)
+
+            import inspect
+
+            sig = inspect.signature(method)
+            # Only pass arguments that the provider method accepts, or pass everything if it has **kwargs
+            has_varkw = any(
+                p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values()
+            )
+
+            if has_varkw:
+                return method(**kwargs)
+            else:
+                filtered_kwargs = {
+                    k: v for k, v in kwargs.items() if k in sig.parameters
+                }
+                return method(**filtered_kwargs)
         finally:
             if original_symbol:
                 self.symbol = original_symbol

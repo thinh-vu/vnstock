@@ -15,7 +15,11 @@ from vnstock.core.utils.lookback import (
     interpret_lookback_length,
 )
 from vnstock.core.utils.market import trading_hours
-from vnstock.core.utils.parser import convert_time_flexible, get_asset_type
+from vnstock.core.utils.parser import (
+    convert_derivative_symbol,
+    convert_time_flexible,
+    get_asset_type,
+)
 from vnstock.core.utils.transform import intraday_to_df, ohlc_to_df
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.core.utils.validation import validate_symbol
@@ -73,6 +77,18 @@ class Quote:
         self.data_source = "VCI"
         self._history = None  # Cache for historical data
         self.asset_type = get_asset_type(self.symbol)
+
+        # Auto-convert derivative symbols to new KRX format
+        if self.asset_type == "derivative":
+            try:
+                new_symbol = convert_derivative_symbol(self.symbol)
+                logger.info(
+                    f"Converted derivative symbol {self.symbol} to {new_symbol} (KRX format)"
+                )
+                self.symbol = new_symbol
+            except Exception as e:
+                logger.debug(f"Symbol conversion skipped for {self.symbol}: {e}")
+
         self.base_url = _TRADING_URL
         self.headers = get_headers(
             data_source=self.data_source, random_agent=random_agent

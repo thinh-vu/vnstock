@@ -18,7 +18,7 @@ class CommodityMarket(BaseDetailUI):
         source: str = "msn",
         **kwargs,
     ) -> Any:
-        """Historical OHLCV for commodities."""
+        """Historical OHLCV bars for Commodities."""
         # Handle parameter aliases
         interval = kwargs.pop("resolution", interval)
         count_back = kwargs.pop("length", count)

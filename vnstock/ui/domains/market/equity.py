@@ -36,7 +36,7 @@ class EquityMarket(BaseDetailUI):
     @optimize_execution("UI")
     def trades(self, source: str = "kbs", **kwargs) -> Any:
         """Get intraday trades."""
-        # Handle interval clash if any (intraday might use resolution/interval too)
+        # Handle interval clash if any (intraday might use interval/resolution too)
         kwargs.pop("interval", None)
         return self._dispatch("equity_market", "trades", source=source, **kwargs)
 

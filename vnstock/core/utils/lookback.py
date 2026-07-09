@@ -63,8 +63,8 @@ def parse_flexible_lookback(length_str: str) -> int:
         return TIME_MILESTONES[length_str]
 
     # Dynamic parsing using regex
-    # Match number followed by unit (D, W, M, Q, Y)
-    match = re.match(r"^(\d+)([DWMQY])$", length_str)
+    # Match number followed by unit (D, W, M, Q, Y, B)
+    match = re.match(r"^(\d+)([DWMQYB])$", length_str)
 
     if match:
         value = int(match.group(1))
@@ -81,6 +81,9 @@ def parse_flexible_lookback(length_str: str) -> int:
             return value * 90
         elif unit == "Y":
             return value * 365
+        elif unit == "B":
+            # For bars, estimate 1.5 calendar days per bar (1D resolution)
+            return int(value * 1.5)
 
     return 0
 
@@ -159,6 +162,7 @@ def get_start_date_from_lookback(
 
     # 3. Convert bars to days
     elif bars is not None:
+        bars = int(bars)
         ratio = 1.5  # Default 1D
 
         # Simple interval normalization

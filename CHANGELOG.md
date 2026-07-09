@@ -1,31 +1,46 @@
-# Nhật ký Thay đổi (Changelog)
+# Changelog
 
-Tất cả các thay đổi đáng chú ý của dự án `vnstock` sẽ được tài liệu hóa tại file này.
+All notable changes to the `vnstock` project will be documented in this file.
+
+## [4.0.4] 2026-05-19
+
+### Added
+- **KRX format support for Derivatives**: Automatically convert derivative symbols to the new KRX standard format (applied in the VCI explorer).
+- **Bars period criteria**: Added support for the `"B"` (Bars) notation in the lookback period decoder, automatically estimating about 1.5 calendar days per bar for greater flexibility in data extraction.
+
+### Changed & Improved
+- **Flexible Parameter Passing (Kwargs Filtering)**: Upgraded the `Quote` class (API) with a mechanism to automatically read `inspect.signature` from the provider. This helps automatically filter and remove unsupported `**kwargs` parameters, preventing crashes caused by passing invalid parameters.
+- **Optional Charting Dependency**: Removed the charting library installation check (`vnstock_chart`, `vnstock_ezchart`) at the module level (import-level) and moved it into the initialization process of the `Chart` object. The application can now run smoothly without requiring charting packages to be installed if they are not used.
+- **Unified UI Market Interface**:
+  - Standardized the parameter name `interval` to replace `resolution` in the Bond domain (backward compatibility is still maintained).
+  - Added clearer `Optional[str]` type hints for time parameters in the Index domain.
+  - Prevented the duplicate parameter passing error for interval/resolution in equity trades.
+- **Structure Formatting (Pre-commit)**: Automatically standardized the end-of-file (EOF) newline character for all 60+ JSON schema files in the assets directory.
 
 ## [4.0.3] 2026-04-29
 
-### Bổ sung (Added)
-- **Giao dịch Trái phiếu**: Bổ sung cấu trúc dữ liệu trái phiếu vào tầng giao diện Unified UI, đồng nhất kiến trúc với bản `vnstock_data` và bổ sung các hàm ohlcv, trades, quote.
-- **InstrumentType Enum**: Thêm phân loại định danh chứng khoán chuyên sâu để chuẩn hoá việc nhận diện các loại tài sản tài chính.
+### Added
+- **Bond Trading**: Added the bond data structure to the Unified UI layer, unifying the architecture with the `vnstock_data` version, and added `ohlcv`, `trades`, and `quote` functions.
+- **InstrumentType Enum**: Added specialized security identification classification to standardize the recognition of financial asset types.
 
-### Thay đổi & Cải thiện (Changed & Improved)
-- Bổ sung danh sách các chỉ số index từ HNX, UPCOM và cải thiện khả năng nhận diện symbol qua hàm get_asset_type chính xác hơn với hỗ trợ các mã index mới.
-- **Dữ liệu Báo cáo Tài chính**: Hỗ trợ hệ số nhân (`unit_multiplier`), ánh xạ nhất quán cấu trúc cột dữ liệu giữa các nguồn KBS và VCI.
-- **Xử lý Nguồn dữ liệu (MSN & VCI)**: Xây dựng cơ chế resolve mã `SecId` động cho nguồn MSN để sửa lỗi truy xuất dữ liệu lịch sử; làm sạch các header Device-ID của VCI và thêm cơ chế fallback/sanitize URL an toàn khi tải danh sách mã.
+### Changed & Improved
+- Added lists of indices from HNX and UPCOM, and improved the ability to accurately identify symbols via the `get_asset_type` function with support for new index codes.
+- **Financial Report Data**: Supported the multiplier (`unit_multiplier`) and consistently mapped the data column structure between KBS and VCI sources.
+- **Data Source Handling (MSN & VCI)**: Built a dynamic `SecId` resolution mechanism for the MSN source to fix errors in fetching historical data; cleaned up VCI's Device-ID headers and added a safe URL fallback/sanitize mechanism when loading symbol lists.
 
 ## [2.5.0] - 2026-04-06
 
-### Thay đổi (Changed)
-- **Module KBS**:
-  - Khôi phục hoàn toàn cấu trúc lõi (`trading.py`, `quote.py`, `financial.py`, `company.py`, `listing.py`) để tuân thủ triệt để với giới hạn của phiên bản miễn phí (free tier). Các tính năng như truyền số lượng kỳ (limit) để lùi sâu lịch sử báo cáo tài chính, lấy dữ liệu bảng giá phái sinh, giao dịch lô lẻ và khớp lệnh thỏa thuận đều đã được gỡ bỏ khỏi bản miễn phí để tối ưu hiệu năng.
-  - Làm sạch quy tắc mapping định danh tại `vnstock/explorer/kbs/const.py`, loại bỏ các dictionary không cần thiết (`_ODD_LOT_MAP`, `_DERIVATIVE_MAP`, `_PUT_THROUGH_MAP`).
-  - Sửa lỗi định danh cột dữ liệu bảng giá: đổi `total_trades` thành `volume_accumulated` (tổng khối lượng) và bổ sung ánh xạ mã `CV` thành cột mới `volume_last` (khối lượng khớp lệnh lần cuối). Bản vá này đảm bảo API trả về 100% khớp với dữ liệu thực tế đang hiển thị trên giao diện của KBS (Ví dụ: "Tổng KL" -> `volume_accumulated`, "Khớp lệnh > KL" -> `volume_last`). Người dùng có sử dụng pandas parsing cần cập nhật lại key cho các bản báo cáo của mình.
+### Changed
+- **KBS Module**:
+  - Fully restored the core structure (`trading.py`, `quote.py`, `financial.py`, `company.py`, `listing.py`) to strictly comply with the limitations of the free tier. Features such as passing the number of periods (`limit`) for deep historical financial reports, retrieving derivative price board data, odd-lot trading, and put-through matching have been removed from the free version to optimize performance.
+  - Cleaned up identity mapping rules in `vnstock/explorer/kbs/const.py`, removing unnecessary dictionaries (`_ODD_LOT_MAP`, `_DERIVATIVE_MAP`, `_PUT_THROUGH_MAP`).
+  - Fixed price board data column identifiers: renamed `total_trades` to `volume_accumulated` and added mapping for code `CV` to a new column `volume_last`. This patch ensures the API returns a 100% match with the actual data displayed on the KBS interface (e.g., "Tổng KL" -> `volume_accumulated`, "Khớp lệnh > KL" -> `volume_last`). Users utilizing pandas parsing need to update the keys for their reports.
 
-### Bổ sung (Added)
-- **Danh mục Sự kiện Thị trường (Market Events)**: Thêm tiện ích `vnstock/core/utils/market_events.py` phân phối dữ liệu dựa trên định dạng từ điển mở. Mô-đun này lưu trữ chính xác lịch sử các sự kiện lớn trên sàn chứng khoán (như Nghỉ lễ theo lịch nhà nước, Lỗi sập hệ thống, Khóa giao dịch toàn phần/bán phần) từ năm 2000. Đây là một định dạng đặc biệt linh hoạt, hướng dẫn cộng đồng mở rộng dữ liệu và có lợi ích to lớn cho các nhà nghiên cứu phân tích chuỗi thời gian (time-series).
-- **Hệ thống cảnh báo Vị thế Môi trường (Auto-Detection Guardrail)**: Bổ sung luồng kiểm tra tức thời (startup check) trong tệp gốc `vnstock/__init__.py`. Hệ thống giờ có khả năng tự quét thư mục môi trường ảo `.venv` mặc định của hệ điều hành để phát hiện tự động dự án có sở hữu gói trả phí `vnstock_data` hay không. Một khi phát hiện gói trả phí được tải sẵn nhưng người dùng vẫn chạy cú pháp cũ `from vnstock import ...`, thư viện sẽ in ra cảnh báo nhắc nhở chuyển lệnh đồng bộ để mở khoá tính năng giới hạn.
-- **Tường lửa AI (AI Agent Context Comments)**: Bổ sung chỉ dẫn hệ thống ở ngay phần đầu của các file `__init__.py` trọng yếu nhất. Các dòng lệnh tiếng Anh này là một hệ rào chắn (guardrails) vô hình dặn dò trực tiếp các trợ lý AI (ví dụ như AutoGPT, GitHub Copilot). Agent giờ sẽ biết bản VNSTOCK mã nguồn mở đã khóa bớt chức năng cồng kềnh, khuyến cáo AI thuyết phục người dùng nâng cấp lên nhánh trả phí `vnstock_data` thay vì liên tục cố gỡ rối để lấy dữ liệu từ nhánh Free.
-- **Kiến trúc Migration 1:1 siêu việt (AST Validator Helper)**: Đã thiết kế hàm hỗ trợ cực kỳ mạnh mẽ `vnstock.core.utils.upgrade.migrate_to_sponsor()` cho phép AI Agent kích hoạt việc auto-upgrade codebase từ `vnstock` lên `vnstock_data` cực kỳ tinh vi:
-  - Thuật toán KHÔNG thay thế chuỗi string (`text replace`) bằng Regex một cách rủi ro, mà sử dụng cơ chế phân tích **Cây Cú Pháp Trừu Tượng (AST Engine)** để đọc toàn diện mã gốc.
-  - Khi rà quét từng dòng (Import Nodes), hàm tự động nạp gói vnstock_data bằng `importlib` và **gọi cross-check thuộc tính bằng `hasattr()`** xem API hay Method mà mã gốc đòi hỏi (như `Quote`, `Company`, `Trading`) có thực sự tồn tại trong namespace trả phí hay không.
-  - Nếu tất cả các thành phần đòi hỏi được verified 1:1 thành công, nó mới thực hiện thay thế trên line code tương ứng. Tự động hóa chống gãy code an toàn tuyệt đối!
+### Added
+- **Market Events Directory**: Added the `vnstock/core/utils/market_events.py` utility to distribute data based on an open dictionary format. This module accurately stores the history of major events on the stock exchange (such as State holidays, System crashes, Full/Partial trading halts) since 2000. This is a highly flexible format, guiding the community to expand data, with tremendous benefits for time-series analysis researchers.
+- **Environment State Auto-Detection Guardrail**: Added a startup check flow in the root file `vnstock/__init__.py`. The system now has the ability to automatically scan the operating system's default `.venv` virtual environment directory to detect if the project possesses the paid `vnstock_data` package. Once the paid package is detected as pre-loaded but the user still runs the old syntax `from vnstock import ...`, the library will print a warning reminding them to switch to the synchronous command to unlock unlimited features.
+- **AI Firewall (AI Agent Context Comments)**: Added system instructions right at the top of the most critical `__init__.py` files. These English command lines act as an invisible guardrail directly instructing AI assistants (e.g., AutoGPT, GitHub Copilot). The Agent will now know that the open-source VNSTOCK version has locked bloated functions, advising the AI to persuade the user to upgrade to the paid `vnstock_data` branch instead of continuously attempting to debug to retrieve data from the Free branch.
+- **Superior 1:1 Migration Architecture (AST Validator Helper)**: Designed an extremely powerful helper function `vnstock.core.utils.upgrade.migrate_to_sponsor()` allowing AI Agents to trigger sophisticated auto-upgrades of the codebase from `vnstock` to `vnstock_data`:
+  - The algorithm DOES NOT replace strings (`text replace`) using risky Regex, but instead uses the **Abstract Syntax Tree (AST Engine)** analysis mechanism to comprehensively read the source code.
+  - While scanning line by line (Import Nodes), the function automatically loads the `vnstock_data` package using `importlib` and **calls a cross-check attribute using `hasattr()`** to see if the API or Method required by the source code (like `Quote`, `Company`, `Trading`) actually exists in the paid namespace.
+  - Only if all required components are successfully verified 1:1 will it perform the replacement on the corresponding line of code. Automated absolute safety against code breakage!

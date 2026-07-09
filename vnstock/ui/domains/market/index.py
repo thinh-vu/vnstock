@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from vnai import optimize_execution
 
@@ -11,8 +11,8 @@ class IndexMarket(BaseDetailUI):
     @optimize_execution("UI")
     def ohlcv(
         self,
-        start: str = None,
-        end: str = None,
+        start: Optional[str] = None,
+        end: Optional[str] = None,
         interval: str = "1D",
         count: int = 100,
         source: str = "kbs",
