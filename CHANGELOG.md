@@ -15,7 +15,6 @@ All notable changes to the `vnstock` project will be documented in this file.
   - Standardized the parameter name `interval` to replace `resolution` in the Bond domain (backward compatibility is still maintained).
   - Added clearer `Optional[str]` type hints for time parameters in the Index domain.
   - Prevented the duplicate parameter passing error for interval/resolution in equity trades.
-- **Structure Formatting (Pre-commit)**: Automatically standardized the end-of-file (EOF) newline character for all 60+ JSON schema files in the assets directory.
 
 ## [4.0.3] 2026-04-29
 
