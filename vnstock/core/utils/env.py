@@ -125,13 +125,11 @@ def get_hosting_service():
             hosting_service = "Google Colab"
         elif "CODESPACE_NAME" in os.environ:
             hosting_service = "Github Codespace"
-        elif "GITPOD_WORKSPACE_CLUSTER_HOST" in os.environ:
-            hosting_service = "Gitpod"
         elif "REPLIT_USER" in os.environ:
             hosting_service = "Replit"
         elif "KAGGLE_CONTAINER_NAME" in os.environ:
             hosting_service = "Kaggle"
-        elif ".hf.space" in os.environ["SPACE_HOST"]:
+        elif "SPACE_HOST" in os.environ and ".hf.space" in os.environ["SPACE_HOST"]:
             hosting_service = "Hugging Face Spaces"
     except Exception:
         hosting_service = "Local or Unknown"
@@ -353,7 +351,7 @@ def check_sponsor_package():
         msg = (
             "\n"
             "  ╭────────────────────────────────────────────────────────────────────╮\n"
-            "  │          🚀 PHÁT HIỆN NGƯỜI DÙNG ĐÃ CÀI THƯ VIỆN SPONSOR           │\n"
+            "  │       🚀 MÔI TRƯỜNG NÀY ĐÃ CÀI THƯ VIỆN VNSTOCK SPONSOR            │\n"
             "  │                                                                    │\n"
             "  │  Để mở khóa các quyền lợi trong gói tài trợ (rate limit, APIs, vv) │\n"
             "  │  hãy thay đổi cách gọi thư viện trong code của bạn:                │\n"
