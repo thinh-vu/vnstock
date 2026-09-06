@@ -11,7 +11,6 @@
 
 ### High Coverage (>70%) ✅
 ```
-vnstock/core/utils/proxy_manager.py        117     22    81%  ✅ EXCELLENT
 vnstock/core/types.py                      141     11    92%  ✅ EXCELLENT
 vnstock/config.py                           12      1    92%  ✅ EXCELLENT
 vnstock/core/utils/logger.py                23      2    91%  ✅ EXCELLENT
@@ -75,7 +74,6 @@ Explorer modules (VCI, TCBS, MSN) have low coverage because:
 
 ### ✅ Phase 1: Current State (Complete)
 - [x] Set baseline at 29% for unit tests
-- [x] ProxyManager at 81% ✅
 - [x] API adapters at 50-76% ✅
 - [x] Passed all 36 unit tests
 
@@ -171,7 +169,6 @@ pytest tests/unit/ -m "not integration" --cov=vnstock \
 
 | Module           | Current | Target | Priority |
 | ---------------- | ------- | ------ | -------- |
-| proxy_manager.py | 81%     | 90%    | ⭐⭐       |
 | api/quote.py     | 54%     | 70%    | ⭐⭐⭐      |
 | api/listing.py   | 76%     | 85%    | ⭐⭐       |
 | vci/quote.py     | 30%     | 50%    | ⭐⭐       |
@@ -187,7 +184,6 @@ pytest tests/unit/ -m "not integration" --cov=vnstock \
 2. ✅ Mocking external dependencies
 3. ✅ Configurable coverage thresholds
 4. ✅ Detailed coverage reports (HTML + XML)
-5. ✅ ProxyManager with 81% coverage
 
 ### 🎯 Recommended Next Steps
 1. Add mock responses for Quote tests
@@ -239,8 +235,6 @@ pytest tests/ --cov=vnstock --cov-report=html
 # Quick smoke tests
 pytest tests/ -m smoke -q
 
-# ProxyManager tests only
-pytest tests/unit/core/test_proxy_manager.py -v
 ```
 
 ---
@@ -250,7 +244,6 @@ pytest tests/unit/core/test_proxy_manager.py -v
 **Status**: ✅ **Coverage optimized and sustainable**
 
 - Unit tests: 29% baseline ✅ (appropriate for mocked tests)
-- ProxyManager: 81% ✅ (high-quality coverage)
 - Infrastructure: Ready for CI/CD ✅
 - Next phase: Add mock responses for +10-20% coverage improvement
 

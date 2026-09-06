@@ -40,5 +40,5 @@ class BondMarket(BaseDetailUI):
 
     @optimize_execution("UI")
     def quote(self, source: str = "kbs", **kwargs) -> Any:
-        """Get real-time quote snapshot."""
+        """Get in-session quote snapshot (source-delayed)."""
         return self._dispatch("bond_market", "quote", source=source, **kwargs)

@@ -1,11 +1,11 @@
 """Company module for KB Securities (KBS) data source."""
 
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 import pandas as pd
 from vnai import optimize_execution
 
-from vnstock.core.utils.client import ProxyConfig, send_request
+from vnstock.core.utils.client import send_request
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.parser import camel_to_snake, get_asset_type
 from vnstock.core.utils.transform import clean_html_dict
@@ -41,21 +41,15 @@ class Company:
         self,
         symbol: str = None,
         random_agent: Optional[bool] = False,
-        proxy_config: Optional[ProxyConfig] = None,
         show_log: Optional[bool] = False,
-        proxy_mode: Optional[str] = None,
-        proxy_list: Optional[List[str]] = None,
     ):
         """
         Khởi tạo Company client cho KBS.
 
         Args:
             symbol: Mã chứng khoán (VD: 'ACB', 'VNM').
-            random_agent: Sử dụng user agent ngẫu nhiên. Mặc định False.
-            proxy_config: Cấu hình proxy. Mặc định None.
+            random_agent: Đã lỗi thời, không còn tác dụng. Mặc định False.
             show_log: Hiển thị log debug. Mặc định False.
-            proxy_mode: Chế độ proxy (try, rotate, random, single). Mặc định None.
-            proxy_list: Danh sách proxy URLs. Mặc định None.
 
         Raises:
             ValueError: Nếu mã không phải là cổ phiếu.
@@ -72,21 +66,6 @@ class Company:
             data_source=self.data_source, random_agent=random_agent
         )
         self.show_log = show_log
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else "try"
-            # If user provides list, set request_mode to PROXY
-            req_mode = "direct"
-            if proxy_list and len(proxy_list) > 0:
-                req_mode = "proxy"
-
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel("CRITICAL")
@@ -114,9 +93,6 @@ class Company:
             method="GET",
             params=params,
             show_log=show_log or self.show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         self._raw_data = json_data
@@ -626,9 +602,6 @@ class Company:
             method="GET",
             params=params,
             show_log=show_log or self.show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         if not json_data:
@@ -691,9 +664,6 @@ class Company:
             method="GET",
             params=params,
             show_log=show_log or self.show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         if not json_data:
@@ -754,9 +724,6 @@ class Company:
             method="GET",
             params=params,
             show_log=show_log or self.show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         if not json_data:

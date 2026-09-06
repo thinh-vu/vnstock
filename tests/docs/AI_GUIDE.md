@@ -67,12 +67,8 @@ tests/unit/explorer/
   ├── test_vci_quote_comprehensive.py
   ├── test_vci_listing_comprehensive.py
   ├── test_vci_company_finance_comprehensive.py
-  ├── test_vci_quote_with_proxy.py      # Proxy integration
   ├── test_tcbs_quote_comprehensive.py
   └── test_tcbs_screener_trading_comprehensive.py
-
-tests/unit/core/
-  └── test_proxy_manager.py  # ProxyManager utility
 
 tests/fixtures/
   └── symbols.py            # Symbol generators

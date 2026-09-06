@@ -36,7 +36,7 @@ class ETFMarket(BaseDetailUI):
 
     @optimize_execution("UI")
     def quote(self, source: str = "kbs", **kwargs) -> Any:
-        """Real-time pricing for ETFs."""
+        """In-session pricing for ETFs (source-delayed)."""
         return self._dispatch("Market", "etf", "quote", source=source, **kwargs)
 
     @optimize_execution("UI")

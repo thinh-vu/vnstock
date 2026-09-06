@@ -1,108 +1,131 @@
 # vnstock/core/utils/browser_profiles.py
 
-# Note: User agent strings are constantly evolving. These are set based on the latest available
-# information as of early May 2025. They may need periodic updates to remain current.
+# User-Agent strings used when a caller explicitly selects a browser/platform via
+# `get_headers(browser=..., platform=...)`. The library does NOT rotate between
+# these; a given selection yields the same header on every request.
+#
+# Verified against vendor release channels on 2026-09-06:
+#   Chrome 152.0.7977.77 (2026-09-03) · Edge 152.0.4191.62 (2026-09-04)
+#   Firefox 155.0 (2026-09-01)        · Safari 26.5 · Opera 133 (Chromium 148)
+#   Samsung Internet 30
+#
+# Maintenance notes:
+#   - Chrome and Edge moved to a two-week stable cadence in September 2026, so the
+#     major version here will drift quickly. Only the major version is significant;
+#     Chromium reports the rest as ".0.0.0" (User-Agent Reduction).
+#   - Chromium freezes the mobile token to "Android 10; K" and omits the device
+#     model. Apple freezes the desktop token at "Mac OS X 10_15_7". Both are
+#     upstream anti-fingerprinting measures, not placeholders to be "corrected".
+#   - Brave and Vivaldi send a Chrome-identical User-Agent by default and add no
+#     token of their own; they are mapped to the Chrome string deliberately.
+#   - Coc Coc is Chromium-based and is mapped to its Chromium base string.
+
+_CHROME_VERSION = "152.0.0.0"
+_CHROMIUM_OPERA_BASE = "148.0.0.0"
+
+_CHROME_WINDOWS = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    f"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{_CHROME_VERSION} Safari/537.36"
+)
+_CHROME_MACOS = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    f"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{_CHROME_VERSION} Safari/537.36"
+)
+_CHROME_LINUX = (
+    "Mozilla/5.0 (X11; Linux x86_64) "
+    f"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{_CHROME_VERSION} Safari/537.36"
+)
 
 DESKTOP_BROWSERS = {
     "chrome": {
-        "windows": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
-        ),
-        "macos": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "  # Using a common recent macOS version
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
-        ),
+        "windows": _CHROME_WINDOWS,
+        "macos": _CHROME_MACOS,
+        "linux": _CHROME_LINUX,
     },
     "firefox": {
         "windows": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) "
-            "Gecko/20100101 Firefox/137.0"
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) "
+            "Gecko/20100101 Firefox/155.0"
         ),
         "macos": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:138.0) "  # Using a common recent macOS version and latest Firefox
-            "Gecko/20100101 Firefox/138.0"
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:155.0) "
+            "Gecko/20100101 Firefox/155.0"
+        ),
+        "linux": (
+            "Mozilla/5.0 (X11; Linux x86_64; rv:155.0) Gecko/20100101 Firefox/155.0"
         ),
     },
     "edge": {
         "windows": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.3240.50"
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            f"Chrome/{_CHROME_VERSION} Safari/537.36 Edg/{_CHROME_VERSION}"
+        ),
+        "macos": (
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            f"Chrome/{_CHROME_VERSION} Safari/537.36 Edg/{_CHROME_VERSION}"
         ),
     },
     "opera": {
         "windows": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 OPR/117.0.0.0"  # Based on Chromium 132 and Opera 117
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            f"Chrome/{_CHROMIUM_OPERA_BASE} Safari/537.36 OPR/133.0.0.0"
         ),
         "macos": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "  # Using a common recent macOS version
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 OPR/118.0.0.0"  # Based on Chromium 136 and Opera 118
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            f"Chrome/{_CHROMIUM_OPERA_BASE} Safari/537.36 OPR/133.0.0.0"
         ),
     },
-    "brave": {
-        "windows": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Brave/1.77.101"  # Using Chromium 136 and Brave 1.77
-        ),
-        "macos": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "  # Using a common recent macOS version
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Brave/1.77.101"  # Using Chromium 136 and Brave 1.77
-        ),
-    },
-    "vivaldi": {
-        "windows": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Vivaldi/7.2"  # Using Chromium 136 and Vivaldi 7.2
-        ),
-    },
-    "coccoc": {
-        "windows": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 CocCoc/136.0.0.0"  # Assuming Chromium 136 base for latest Coc Coc Windows
-        ),
-    },
+    # Brave and Vivaldi ship a Chrome-identical User-Agent by default.
+    "brave": {"windows": _CHROME_WINDOWS, "macos": _CHROME_MACOS},
+    "vivaldi": {"windows": _CHROME_WINDOWS, "macos": _CHROME_MACOS},
+    # Coc Coc is Chromium-based; mapped to its Chromium base string.
+    "coccoc": {"windows": _CHROME_WINDOWS, "macos": _CHROME_MACOS},
     "safari": {
         "macos": (
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "  # Using a common recent macOS version
-            "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"  # Using Safari 17.6
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15"
         ),
     },
 }
 
+# Chromium-based mobile strings use the reduced form: the platform token is frozen
+# to "Android 10; K" and the device model is omitted.
+_CHROME_ANDROID = (
+    "Mozilla/5.0 (Linux; Android 10; K) "
+    f"AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{_CHROME_VERSION} "
+    "Mobile Safari/537.36"
+)
+
 MOBILE_BROWSERS = {
-    "chrome": {
-        "android": (
-            "Mozilla/5.0 (Linux; Android 13; Pixel 7) "  # Keeping a common recent Android device
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.7103.60 Mobile Safari/537.36"  # Using Chrome 136.0.7103.60
-        ),
-    },
+    "chrome": {"android": _CHROME_ANDROID},
     "safari": {
         "ios": (
-            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) "  # Using a recent iOS version
-            "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1"  # Assuming Safari version aligns with iOS or latest found
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 26_5 like Mac OS X) "
+            "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 "
+            "Mobile/15E148 Safari/604.1"
         ),
     },
     "samsung": {
         "android": (
-            "Mozilla/5.0 (Linux; Android 13; SAMSUNG SM-G991B) "  # Keeping a common recent Samsung device
-            "AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/21.0 Chrome/110.0.5481.154 Mobile Safari/537.36"  # Using Samsung Browser 21 and Chrome 110 (based on search result)
+            "Mozilla/5.0 (Linux; Android 10; K) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/30.0 "
+            f"Chrome/{_CHROME_VERSION} Mobile Safari/537.36"
         ),
     },
     "opera": {
         "android": (
-            "Mozilla/5.0 (Linux; Android 13; M2102J20SG) "  # Keeping a common recent Android device
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36 OPR/76.2.4027.73374"  # Using Chromium 136 and Opera 76
+            "Mozilla/5.0 (Linux; Android 10; K) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            f"Chrome/{_CHROMIUM_OPERA_BASE} Mobile Safari/537.36 OPR/100.0.0.0"
         ),
     },
-    "coccoc": {
-        "android": (
-            "Mozilla/5.0 (Linux; Android 13; Redmi Note 12) "  # Keeping a common recent Android device
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36 CocCocBrowser/137.0.258"  # Using Chrome 137 and CocCocBrowser 137.0.258
-        ),
-    },
+    "coccoc": {"android": _CHROME_ANDROID},
     "firefox": {
-        "android": "Mozilla/5.0 (Android 13; Mobile; rv:137.0) Gecko/137.0 Firefox/137.0",  # Using Firefox 137
+        "android": "Mozilla/5.0 (Android 15; Mobile; rv:155.0) Gecko/155.0 Firefox/155.0",
     },
 }
 

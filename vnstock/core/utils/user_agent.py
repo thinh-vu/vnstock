@@ -1,7 +1,6 @@
 # vnstock/vnstock/core/utils/user_agent.py
 
-import random
-import secrets
+import warnings
 from typing import Dict, Optional
 
 from vnstock.core.utils.browser_profiles import USER_AGENTS
@@ -17,38 +16,6 @@ DEFAULT_HEADERS = {
     "Sec-Fetch-Site": "same-site",
     "DNT": "1",
     "Pragma": "no-cache",
-    "sec-ch-ua-platform": '"Windows"',
-    "sec-ch-ua-mobile": "?0",
-}
-
-
-def _generate_vci_device_id() -> str:
-    """
-    Generate a random 16-character hex string to use as a VCI Device-Id.
-    This mimics a fresh browser session.
-    """
-    return secrets.token_hex(8)
-
-
-BROWSER_PROFILES = {
-    "chrome": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
-    },
-    "safari": {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_2_1) AppleWebKit/605.1.15 Version/16.3 Safari/605.1.15",
-    },
-    "coccoc": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0 CocCocBrowser/123.0",
-    },
-    "firefox": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
-    },
-    "brave": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Brave/120.0.0.0 Safari/537.36",
-    },
-    "vivaldi": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Vivaldi/6.2.3105.58 Safari/537.36",
-    },
 }
 
 
@@ -166,7 +133,7 @@ def validate_headers(headers: Dict[str, str]) -> Dict[str, str]:
 
 def get_headers(
     data_source: str = "SSI",
-    random_agent: bool = True,
+    random_agent: bool = False,
     browser: str = "chrome",
     platform: str = "windows",
     authorization: Optional[str] = None,
@@ -176,12 +143,14 @@ def get_headers(
     include_defaults: bool = True,
 ) -> Dict[str, str]:
     """
-    Generate browser-like headers with optional referer/origin, realistic User-Agent,
+    Generate request headers with optional referer/origin, a stable User-Agent,
     and support for Authorization and custom headers.
 
     Args:
         data_source (str): Predefined data source (e.g., 'SSI', 'VND', 'TCBS', 'XNO').
-        random_agent (bool): Whether to use a random browser/platform User-Agent.
+        random_agent (bool): Deprecated and ignored. User-Agent rotation was
+            removed; headers are now stable across requests. Đã lỗi thời và bị bỏ
+            qua. Cơ chế xoay vòng User-Agent đã được gỡ; header nay cố định.
         browser (str): Browser name to simulate if not random.
         platform (str): Platform name to simulate if not random.
         authorization (Optional[str]): Authorization token/key to include in headers.
@@ -237,9 +206,20 @@ def get_headers(
         headers.update(source_headers)
 
     # Step 4: Determine and set User-Agent
+    # `random_agent` no longer rotates the User-Agent. Rotating it across requests
+    # served only to prevent a data source from recognising repeated calls as
+    # coming from one client, which is not behaviour this library provides.
     if random_agent:
-        browser = random.choice(list(USER_AGENTS.keys()))
-        platform = random.choice(list(USER_AGENTS[browser].keys()))
+        warnings.warn(
+            "Tham số 'random_agent' đã lỗi thời và không còn tác dụng. "
+            "Cơ chế xoay vòng User-Agent đã được gỡ khỏi thư viện; "
+            "hãy chỉ định 'browser' và 'platform' nếu cần một User-Agent cụ thể. "
+            "The 'random_agent' parameter is deprecated and has no effect. "
+            "User-Agent rotation has been removed; use 'browser' and 'platform' "
+            "to select a specific User-Agent.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     ua = USER_AGENTS.get(browser.lower(), {}).get(platform.lower())
 

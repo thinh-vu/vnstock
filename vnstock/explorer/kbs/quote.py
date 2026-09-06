@@ -2,14 +2,14 @@
 
 import json
 from datetime import datetime
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import pandas as pd
 from vnai import optimize_execution
 
 from vnstock.core.models import TickerModel
 from vnstock.core.registry import ProviderRegistry  # noqa: E402, F401
-from vnstock.core.utils.client import ProxyConfig, send_request
+from vnstock.core.utils.client import send_request
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.lookback import (
     get_start_date_from_lookback,
@@ -40,21 +40,15 @@ class Quote:
         self,
         symbol: str,
         random_agent: Optional[bool] = False,
-        proxy_config: Optional[ProxyConfig] = None,
         show_log: Optional[bool] = False,
-        proxy_mode: Optional[str] = None,
-        proxy_list: Optional[List[str]] = None,
     ):
         """
         Khởi tạo Quote client cho KBS.
 
         Args:
             symbol: Mã chứng khoán (VD: 'ACB', 'VNM').
-            random_agent: Sử dụng user agent ngẫu nhiên. Mặc định False.
-            proxy_config: Cấu hình proxy. Mặc định None.
+            random_agent: Đã lỗi thời, không còn tác dụng. Mặc định False.
             show_log: Hiển thị log debug. Mặc định False.
-            proxy_mode: Chế độ proxy (try, rotate, random, single). Mặc định None.
-            proxy_list: Danh sách proxy URLs. Mặc định None.
         """
         self.symbol = symbol.upper()
         self.data_source = "KBS"
@@ -80,21 +74,6 @@ class Quote:
         )
         self.show_log = show_log
         self.interval_map = _INTERVAL_MAP
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else "try"
-            # If user provides list, set request_mode to PROXY
-            req_mode = "direct"
-            if proxy_list and len(proxy_list) > 0:
-                req_mode = "proxy"
-
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel("CRITICAL")
@@ -272,9 +251,6 @@ class Quote:
             method="GET",
             params=params,
             show_log=show_log or self.show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         if not json_data:
@@ -381,7 +357,7 @@ class Quote:
         floating: Optional[int] = 2,
     ) -> Union[pd.DataFrame, str]:
         """
-        Truy xuất dữ liệu khớp lệnh intraday (real-time matching data) của mã chứng khoán từ KBS.
+        Truy xuất dữ liệu khớp lệnh trong phiên của mã chứng khoán từ KBS.
 
         Mặc định trả về các cột chuẩn hóa (time, price, volume, match_type, id).
         Sử dụng get_all=True để lấy tất cả các cột từ API response.
@@ -446,9 +422,6 @@ class Quote:
             method="GET",
             params=params,
             show_log=show_log or self.show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         if not json_data or "data" not in json_data:
@@ -528,7 +501,9 @@ class Quote:
                 standardized_df, asset_type=self.asset_type, source="KBS"
             )
             # Convert to lowercase for final output
-            standardized_df["match_type"] = standardized_df["match_type"].str.lower()
+            standardized_df["match_type"] = (
+                standardized_df["match_type"].astype(str).str.lower()
+            )
 
         # id: Generate ID from timestamp, price, and volume (KBS doesn't have transaction ID)
         if "timestamp" in df.columns:

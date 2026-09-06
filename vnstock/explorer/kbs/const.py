@@ -268,7 +268,7 @@ _PRICE_BOARD_MAP = {
     "OI": "open_interest",  # Open Interest for derivatives
 }
 
-# Column mapping for intraday trade history (real-time matching data)
+# Column mapping for intraday trade history (in-session matching data)
 # Maps KBS API fields to standardized column names
 _INTRADAY_MAP = {
     "t": "timestamp",  # Full timestamp (YYYY-MM-DD HH:MM:SS:MS)

@@ -21,8 +21,8 @@ class ProviderRegistry:
     Registry for vnstock data providers.
 
     Cho phép registration của các provider class từ các nguồn khác nhau:
-    - vnstock.explorer.* (VCI, TCBS, MSN, ...) - Web scraping
-    - vnstock.connector.* (FMP, XNO, Binance, ...) - REST API
+    - vnstock.explorer.* (VCI, MSN, KBS, ...) - Public web endpoints
+    - vnstock.connector.* (FMP, XNO, Binance, ...) - REST API partners
     """
 
     # Registry structure: {(provider_type, source_name_lower): provider_class}

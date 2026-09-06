@@ -87,7 +87,9 @@ def get_metadata(df, notation, module_path, ticker_used=None):
             "ticker_used": ticker_used,
             "columns": list(df.keys()),
             "dtypes": {k: type(v).__name__ for k, v in df.items()},
-            "sample": [df],
+            "sample": _placeholder_sample(
+                list(df.keys()), {k: type(v).__name__ for k, v in df.items()}, rows=1
+            ),
         }
 
     if not isinstance(df, pd.DataFrame):
@@ -103,15 +105,8 @@ def get_metadata(df, notation, module_path, ticker_used=None):
             "sample": [],
         }
 
-    sample = df.head(3).to_dict(orient="records")
-    for record in sample:
-        for key, value in record.items():
-            if isinstance(value, (pd.Timestamp, pd.Timedelta)):
-                record[key] = (
-                    value.isoformat() if hasattr(value, "isoformat") else str(value)
-                )
-            elif pd.isna(value):
-                record[key] = None
+    dtypes = {col: str(dtype) for col, dtype in df.dtypes.items()}
+    sample = _placeholder_sample(df.columns.tolist(), dtypes)
 
     return {
         "notation": notation,
@@ -121,6 +116,49 @@ def get_metadata(df, notation, module_path, ticker_used=None):
         "dtypes": {col: str(dtype) for col, dtype in df.dtypes.items()},
         "sample": sample,
     }
+
+
+# ── Dữ liệu mẫu giả lập ─────────────────────────────────────────────────────
+# Snapshot này được công bố trong repo. Trước đây phần "sample" chứa nguyên văn
+# dữ liệu thật lấy từ nguồn (giá, chỉ số tài chính, hồ sơ doanh nghiệp), tức là
+# repo đang lưu và phát hành lại dữ liệu của bên thứ ba — đi ngược tuyên bố
+# "Vnstock không sở hữu, lưu trữ hay phân phối dữ liệu".
+#
+# Giá trị mẫu nay được dựng từ kiểu dữ liệu của từng cột. Tài liệu vẫn cho thấy
+# đúng tên trường, kiểu và hình dạng payload — thứ người dùng cần — mà không kèm
+# theo bất kỳ giá trị thật nào.
+
+_PLACEHOLDER_ROWS = 3
+
+
+def _placeholder_value(column: str, dtype: str, row: int):
+    """Một giá trị mẫu, suy ra từ kiểu dữ liệu. Cố ý nhìn là biết ngay giả lập."""
+    name = str(column).lower()
+    kind = str(dtype).lower()
+
+    if "datetime" in kind or "timestamp" in kind:
+        return f"2026-01-{row + 2:02d}T00:00:00"
+    if "bool" in kind:
+        return row % 2 == 0
+    if "int" in kind:
+        return 1000 * (row + 1)
+    if "float" in kind:
+        return round(10.0 * (row + 1) + 0.5, 2)
+
+    # object / str và các kiểu còn lại
+    if any(k in name for k in ("symbol", "ticker", "code", "exchange")):
+        return "AAA"
+    if any(k in name for k in ("date", "time", "period")):
+        return f"2026-01-{row + 2:02d}"
+    return "string"
+
+
+def _placeholder_sample(columns, dtypes, rows=_PLACEHOLDER_ROWS):
+    """Danh sách bản ghi mẫu giả lập, giữ nguyên tên cột và thứ tự."""
+    return [
+        {col: _placeholder_value(col, dtypes.get(col, "object"), i) for col in columns}
+        for i in range(rows)
+    ]
 
 
 def try_fetch_with_universe(func_factory):

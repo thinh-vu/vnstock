@@ -32,7 +32,7 @@ class FuturesMarket(BaseDetailUI):
         )
 
     def quote(self, source: str = "kbs", **kwargs) -> Any:
-        """Real-time pricing for Futures."""
+        """In-session pricing for Futures (source-delayed)."""
         return self._dispatch("Market", "futures", "quote", source=source, **kwargs)
 
     def trades(self, source: str = "kbs", **kwargs) -> Any:

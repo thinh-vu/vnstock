@@ -1,12 +1,12 @@
 """Financial module for KB Securities (KBS) data source."""
 
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Dict, Optional, Union
 
 import pandas as pd
 from vnai import optimize_execution
 
-from vnstock.core.utils.client import ProxyConfig, send_request
+from vnstock.core.utils.client import send_request
 from vnstock.core.utils.field import FieldHandler
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.parser import get_asset_type
@@ -40,11 +40,8 @@ class Finance:
         symbol: str,
         period: Optional[str] = None,
         random_agent: Optional[bool] = False,
-        proxy_config: Optional[ProxyConfig] = None,
         show_log: Optional[bool] = False,
         standardize_columns: Optional[bool] = True,
-        proxy_mode: Optional[str] = None,
-        proxy_list: Optional[List[str]] = None,
     ):
         """
         Khởi tạo Finance client cho KBS.
@@ -52,12 +49,9 @@ class Finance:
         Args:
             symbol: Mã chứng khoán (VD: 'ACB', 'VNM').
             period: Kỳ báo cáo mặc định ('year', 'quarter' hoặc None).
-            random_agent: Sử dụng user agent ngẫu nhiên. Mặc định False.
-            proxy_config: Cấu hình proxy. Mặc định None.
+            random_agent: Đã lỗi thời, không còn tác dụng. Mặc định False.
             show_log: Hiển thị log debug. Mặc định False.
             standardize_columns: Chuẩn hoá tên cột theo schema. Mặc định True.
-            proxy_mode: Chế độ proxy (try, rotate, random, single). Mặc định None.
-            proxy_list: Danh sách proxy URLs. Mặc định None.
 
         Raises:
             ValueError: Nếu mã không phải là cổ phiếu.
@@ -85,21 +79,6 @@ class Finance:
 
         # Initialize field handler for advanced field processing
         self.field_handler = FieldHandler(data_source="KBS")
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else "try"
-            # If user provides list, set request_mode to PROXY
-            req_mode = "direct"
-            if proxy_list and len(proxy_list) > 0:
-                req_mode = "proxy"
-
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
 
         # Set logger level based on show_log parameter
         if show_log:
@@ -349,7 +328,9 @@ class Finance:
         collected_periods = set()
         page = 1
 
-        request_page_size = 4
+        # NOTE: KBS API has a bug where page_size > 1 returns duplicated IDs and mixed up data values.
+        # We MUST use page_size = 1 to guarantee data integrity, even if it requires more API calls.
+        request_page_size = 1
 
         while len(collected_periods) < effective_limit:
             data = self._fetch_financial_data(
@@ -377,8 +358,12 @@ class Finance:
             # Filter out periods we already have
             actual_new_periods = [p for p in new_periods if p not in collected_periods]
             if not actual_new_periods:
-                # If we got data but no new periods, it's likely we've looped or reached end
-                break
+                # If we got data but no new periods (e.g. duplicate period on a new page),
+                # just skip this page and continue fetching.
+                page += 1
+                if page > 100:
+                    break
+                continue
 
             # If some periods are repeats, we only keep the new ones in this DF
             if len(actual_new_periods) < len(new_periods):
@@ -394,7 +379,7 @@ class Finance:
             collected_periods.update(actual_new_periods)
 
             page += 1
-            if page > 20:
+            if page > 100:
                 break
 
         if not dfs:
@@ -588,9 +573,6 @@ class Finance:
                 method="GET",
                 params=params,
                 show_log=show_log or self.show_log,
-                proxy_list=self.proxy_config.proxy_list,
-                proxy_mode=self.proxy_config.proxy_mode,
-                request_mode=self.proxy_config.request_mode,
             )
 
             if show_log or self.show_log:

@@ -39,7 +39,7 @@ def _get_ua():
     return _UA
 
 
-def get_asset_type(symbol: str) -> str:  # noqa: F811
+def get_asset_type(symbol: str) -> str:
     """
     Determine asset type based on provided security code.
     Supports both legacy code format and new KRX format.
@@ -208,74 +208,6 @@ def localize_timestamp(
     return vietnam_series
 
 
-def get_asset_type(symbol: str) -> str:  # noqa: F811
-    """
-    Determine asset type based on provided security code.
-    Supports both legacy code format and new KRX format.
-
-    Parameters:
-        - symbol (str): Security code or index symbol.
-
-    Returns:
-        - 'index' if security code is an index symbol.
-        - 'stock' if security code is a stock symbol.
-        - 'derivative' if security code is a futures or options contract.
-        - 'bond' if security code is a government or corporate bond.
-        - 'coveredWarr' if security code is a covered warrant.
-    """
-    symbol = symbol.upper()
-
-    # Use standardized index check from indices.py
-    from vnstock.common.indices import is_valid_index
-
-    if is_valid_index(symbol):
-        return "index"
-
-    # Stock symbols (assumed to have 3 characters)
-    elif len(symbol) == 3:
-        return "stock"
-
-    # New KRX derivative format (e.g., 41I1F4000)
-    krx_derivative_pattern = re.compile(
-        r"^4[12][A-Z0-9]{2}[0-9A-HJ-NP-TV-W][1-9A-C]\d{3}$"
-    )
-    if krx_derivative_pattern.match(symbol):
-        return "derivative"
-
-    # VN100 derivative patterns (e.g., VN100F1M, VN100F2M, VN100F1Q, VN100F2Q)
-    vn100_derivative_pattern = re.compile(r"^VN100F\d{1,2}[MQ]$")
-    if vn100_derivative_pattern.match(symbol):
-        return "derivative"
-
-    # For symbols that could be derivative or bond (length 7 or 9)
-    elif len(symbol) in [7, 9]:
-        # VN30 derivative patterns:
-        fm_pattern = re.compile(r"^VN30F\d{1,2}[MQ]$")
-        ym_pattern = re.compile(r"^VN30F\d{4}$")
-
-        # Bond patterns:
-        # Government bond: e.g., GB05F2506 or GB10F2024
-        gov_bond_pattern = re.compile(r"^GB\d{2}F\d{4}$")
-        # Company bond: e.g., BAB122032; exclude those starting with VN30F.
-        comp_bond_pattern = re.compile(r"^(?!VN30F)[A-Z]{3}\d{6}$")
-
-        if gov_bond_pattern.match(symbol) or comp_bond_pattern.match(symbol):
-            return "bond"
-        elif fm_pattern.match(symbol) or ym_pattern.match(symbol):
-            return "derivative"
-        else:
-            raise ValueError(
-                "Invalid derivative or bond symbol. Symbol must be in format of VN30F1M, VN30F2024, GB10F2024, or for company bonds, e.g., BAB122032"
-            )
-
-    # Covered warrant symbols (assumed to have 8 characters)
-    elif len(symbol) == 8:
-        return "coveredWarr"
-
-    else:
-        raise ValueError("Invalid symbol. Your symbol format is not recognized!")
-
-
 def camel_to_snake(name):
     """
     Convert variable name from CamelCase to snake_case.
@@ -405,142 +337,6 @@ def remove_vietnamese_accents(text: str, use_map: bool = True) -> str:
         # Fallback: Unicode normalization (may miss some Vietnamese chars)
         nfd = unicodedata.normalize("NFD", text)
         return "".join(c for c in nfd if unicodedata.category(c) != "Mn")
-
-
-def normalize_vietnamese_text_to_snake_case(  # noqa: F811
-    text: str,
-    keep_numbers: bool = True,
-    max_length: Optional[int] = None,
-    remove_common_words: bool = False,
-    preserve_acronyms: bool = False,
-) -> str:
-    """
-    Convert Vietnamese text to ASCII-compatible snake_case identifier.
-    Robust normalization for Vietnamese financial line items and field names.
-
-    Args:
-        text: Vietnamese or English text to normalize
-        keep_numbers: Whether to keep numeric digits (default: True)
-        max_length: Maximum length of output (default: None/unlimited)
-        remove_common_words: Remove Vietnamese stop words like 'của', 'và', 'các' (default: False)
-        preserve_acronyms: Try to preserve acronyms in uppercase before conversion
-
-    Returns:
-        Snake_case identifier suitable for database column names
-
-    Examples:
-        >>> normalize_vietnamese_text_to_snake_case("1. Doanh thu")
-        'doanh_thu'
-        >>> normalize_vietnamese_text_to_snake_case("Doanh thu bán hàng và cung cấp dịch vụ")
-        'doanh_thu_ban_hang_va_cung_cap_dich_vu'
-        >>> normalize_vietnamese_text_to_snake_case("Chi phí (2023-2024)")
-        'chi_phi_2023_2024'
-        >>> normalize_vietnamese_text_to_snake_case("Lợi nhuận sau thuế", remove_common_words=True)
-        'loi_nhuan_sau_thue'
-        >>> normalize_vietnamese_text_to_snake_case("EBITDA (Lãi trước thuế)")
-        'ebitda_lai_truoc_thue'
-    """
-    if not text or not text.strip():
-        return ""
-
-    original_text = text
-
-    # Step 1: Remove leading numbering patterns
-    # Handle: "1.", "I.", "A.", "1.1.2.", "1)", "(1)", etc.
-    text = re.sub(r"^[\dIVXivx]+(\.\d+)*[\.)]\s*", "", text)
-    text = re.sub(r"^\([0-9]+\)\s*", "", text)
-    text = re.sub(r"^[A-Za-z][\.)]\s*", "", text)
-
-    # Step 2: Handle parenthetical content intelligently
-    # Option 1: Remove content in parentheses entirely (uncomment if preferred)
-    # text = re.sub(r'\([^)]*\)', '', text)
-    # Option 2: Keep parenthetical content (current behavior)
-    text = re.sub(r"[()]", " ", text)
-
-    # Step 3: Remove quotes, apostrophes, and other punctuation
-    text = re.sub(r"['\"`''" "*&%$#@!?;:,.]", "", text)
-
-    # Step 4: Remove Vietnamese accents/diacritics
-    text = remove_vietnamese_accents(text, use_map=True)
-
-    # Step 5: Handle camelCase/PascalCase before lowercasing
-    if preserve_acronyms:
-        text = re.sub(r"([a-z])([A-Z])", r"\1_\2", text)
-    else:
-        text = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", text)
-
-    # Step 6: Convert to lowercase
-    text = text.lower()
-
-    # Step 7: Remove common Vietnamese stop words (optional)
-    if remove_common_words:
-        # Common Vietnamese words that don't add meaning to field names
-        stop_words = [
-            "cua",
-            "va",
-            "cac",
-            "cho",
-            "tren",
-            "duoi",
-            "trong",
-            "ngoai",
-            "tai",
-            "den",
-            "tu",
-            "voi",
-            "ma",
-            "la",
-            "thi",
-            "hay",
-            "hoac",
-            "nhung",
-            "moi",
-            "nam",
-            "thang",
-            "ngay",
-            "ky",
-            "dot",
-            "lan",
-        ]
-        # Create pattern to match whole words only
-        pattern = r"\b(" + "|".join(stop_words) + r")\b"
-        text = re.sub(pattern, " ", text)
-
-    # Step 8: Replace special characters and spaces with underscores
-    if keep_numbers:
-        # Keep alphanumeric + spaces/hyphens/underscores
-        text = re.sub(r"[^a-z0-9\s_-]", " ", text)
-    else:
-        # Keep only alphabetic + spaces/hyphens/underscores
-        text = re.sub(r"[^a-z\s_-]", " ", text)
-
-    # Step 9: Normalize whitespace and separators to underscores
-    text = re.sub(r"[\s\-/\\]+", "_", text)
-
-    # Step 10: Remove consecutive underscores
-    text = re.sub(r"_+", "_", text)
-
-    # Step 11: Remove leading/trailing underscores
-    text = text.strip("_")
-
-    # Step 12: Ensure it doesn't start with a number (invalid Python/SQL identifier)
-    if text and text[0].isdigit():
-        text = f"n_{text}"  # 'n' for 'number' prefix
-
-    # Step 13: Apply max length constraint if specified
-    if max_length and len(text) > max_length:
-        text = text[:max_length].rstrip("_")
-
-    # Step 14: Fallback for empty result
-    if not text:
-        # Try to extract at least something from original text
-        fallback = re.sub(r"[^a-zA-Z0-9]", "", original_text)
-        if fallback:
-            text = fallback.lower()[:20]
-        else:
-            return ""  # Return empty string instead of 'unnamed_field'
-
-    return text
 
 
 # ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -725,7 +521,7 @@ def normalize_english_text_to_snake_case(
     return text
 
 
-def normalize_vietnamese_text_to_snake_case(  # noqa: F811
+def normalize_vietnamese_text_to_snake_case(
     text: str,
     keep_numbers: bool = True,
     max_length: Optional[int] = None,

@@ -146,7 +146,7 @@ MAP = {
             "price_board",
             "KBS",
             "DataFrame",
-            "Real-time pricing board data.",
+            "In-session pricing board data (source-delayed).",
         ),
         "trades": (
             "api",
@@ -186,7 +186,7 @@ MAP = {
             "price_board",
             "KBS",
             "DataFrame",
-            "Real-time pricing for ETFs.",
+            "In-session pricing for ETFs (source-delayed).",
         ),
         "trades": (
             "api",
@@ -215,7 +215,7 @@ MAP = {
             "price_board",
             "KBS",
             "DataFrame",
-            "Real-time pricing for Futures.",
+            "In-session pricing for Futures (source-delayed).",
         ),
         "trades": (
             "api",
@@ -244,7 +244,7 @@ MAP = {
             "price_board",
             "KBS",
             "DataFrame",
-            "Real-time pricing for Warrants.",
+            "In-session pricing for Warrants (source-delayed).",
         ),
         "trades": (
             "api",
@@ -273,7 +273,7 @@ MAP = {
             "price_board",
             "KBS",
             "DataFrame",
-            "Real-time pricing for Bonds.",
+            "In-session pricing for Bonds (source-delayed).",
         ),
         "trades": (
             "api",
@@ -626,7 +626,7 @@ MAP = {
             "price_board",
             "KBS",
             "DataFrame",
-            "Global real-time quote.",
+            "Global in-session quote (source-delayed).",
         ),
         "equity": {
             "ohlcv": (
@@ -645,7 +645,7 @@ MAP = {
                 "price_board",
                 "KBS",
                 "DataFrame",
-                "Real-time pricing board data.",
+                "In-session pricing board data (source-delayed).",
             ),
             "trades": (
                 "api",
@@ -685,7 +685,7 @@ MAP = {
                 "price_board",
                 "KBS",
                 "DataFrame",
-                "Real-time pricing for ETFs.",
+                "In-session pricing for ETFs (source-delayed).",
             ),
             "trades": (
                 "api",
@@ -714,7 +714,7 @@ MAP = {
                 "price_board",
                 "KBS",
                 "DataFrame",
-                "Real-time pricing for Futures.",
+                "In-session pricing for Futures (source-delayed).",
             ),
             "trades": (
                 "api",
@@ -743,7 +743,7 @@ MAP = {
                 "price_board",
                 "KBS",
                 "DataFrame",
-                "Real-time pricing for Warrants.",
+                "In-session pricing for Warrants (source-delayed).",
             ),
             "trades": (
                 "api",
@@ -772,7 +772,7 @@ MAP = {
                 "price_board",
                 "KBS",
                 "DataFrame",
-                "Real-time pricing for Bonds.",
+                "In-session pricing for Bonds (source-delayed).",
             ),
             "trades": (
                 "api",

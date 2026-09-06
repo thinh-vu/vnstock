@@ -6,7 +6,6 @@ from typing import List, Optional
 import pandas as pd
 from vnai import optimize_execution
 
-from vnstock.core.utils.client import ProxyConfig
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.parser import get_asset_type
 from vnstock.core.utils.user_agent import get_headers
@@ -31,21 +30,15 @@ class Trading:
         self,
         symbol: Optional[str] = None,
         random_agent: Optional[bool] = False,
-        proxy_config: Optional[ProxyConfig] = None,
         show_log: Optional[bool] = False,
-        proxy_mode: Optional[str] = None,
-        proxy_list: Optional[List[str]] = None,
     ):
         """
         Khởi tạo Trading client cho KBS.
 
         Args:
             symbol: Mã chứng khoán (VD: 'ACB', 'VNM'). Optional cho market-wide queries.
-            random_agent: Sử dụng user agent ngẫu nhiên. Mặc định False.
-            proxy_config: Cấu hình proxy. Mặc định None.
+            random_agent: Đã lỗi thời, không còn tác dụng. Mặc định False.
             show_log: Hiển thị log debug. Mặc định False.
-            proxy_mode: Chế độ proxy (try, rotate, random, single). Mặc định None.
-            proxy_list: Danh sách proxy URLs. Mặc định None.
         """
         self.symbol = symbol.upper() if symbol else None
         self.data_source = "KBS"
@@ -54,21 +47,6 @@ class Trading:
             data_source=self.data_source, random_agent=random_agent
         )
         self.show_log = show_log
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else "try"
-            # If user provides list, set request_mode to PROXY
-            req_mode = "direct"
-            if proxy_list and len(proxy_list) > 0:
-                req_mode = "proxy"
-
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
 
         if self.symbol:
             from vnstock.core.utils.parser import (
@@ -187,7 +165,7 @@ class Trading:
         get_all: bool = False,
     ) -> pd.DataFrame:
         """
-        Truy xuất bảng giá realtime cho danh sách mã chứng khoán.
+        Truy xuất bảng giá trong phiên (có độ trễ theo nguồn cấp) cho danh sách mã chứng khoán.
         """
         if not symbols_list:
             raise ValueError("symbols_list không được để trống.")

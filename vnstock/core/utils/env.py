@@ -120,6 +120,7 @@ def get_platform():
 
 def get_hosting_service():
     """Identify cloud service or development environment currently running"""
+    hosting_service = "Local or Unknown"
     try:
         if "google.colab" in sys.modules:
             hosting_service = "Google Colab"
@@ -132,7 +133,7 @@ def get_hosting_service():
         elif "SPACE_HOST" in os.environ and ".hf.space" in os.environ["SPACE_HOST"]:
             hosting_service = "Hugging Face Spaces"
     except Exception:
-        hosting_service = "Local or Unknown"
+        pass
     return hosting_service
 
 
@@ -308,7 +309,6 @@ def check_sponsor_package():
     import importlib.util
     import inspect
     import sys
-    import warnings
 
     # Skip if vnstock is being imported directly by vnstock_data
     # This prevents the warning from showing when vnstock_data uses vnstock internally
@@ -363,4 +363,4 @@ def check_sponsor_package():
             "  │  các giới hạn của hệ thống (bản free và sponsor là 2 gói riêng).   │\n"
             "  ╰────────────────────────────────────────────────────────────────────╯\n"
         )
-        warnings.warn(msg, UserWarning, stacklevel=2)
+        print(msg, file=sys.stderr)

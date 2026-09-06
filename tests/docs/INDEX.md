@@ -31,14 +31,6 @@
   - Coverage configuration explained
   - **Read time**: 10 minutes
 
-### 🔌 Proxy Integration
-- **[../docs/PROXY_GUIDE.md](../docs/PROXY_GUIDE.md)**
-  - Complete ProxyManager reference
-  - Usage patterns and examples
-  - Troubleshooting proxy issues
-  - Performance characteristics
-  - **Read time**: 15 minutes
-
 ---
 
 ## 🗂️ Test Files Structure
@@ -49,21 +41,17 @@ tests/
 ├── fixtures/
 │   └── symbols.py           # Real symbols from APIs (HOSE/HNX/UPCOM)
 ├── examples/
-│   ├── __init__.py
-│   └── proxy_examples.py    # Runnable ProxyManager examples
+│   └── __init__.py
 ├── unit/
 │   ├── api/
 │   │   ├── test_quote.py
 │   │   └── test_listing.py
-│   ├── core/
-│   │   └── test_proxy_manager.py
 │   └── explorer/
 │       ├── test_vci_quote_comprehensive.py
 │       ├── test_vci_listing_comprehensive.py
 │       ├── test_vci_company_finance_comprehensive.py
 │       ├── test_tcbs_quote_comprehensive.py
-│       ├── test_tcbs_screener_trading_comprehensive.py
-│       └── test_vci_quote_with_proxy.py
+│       └── test_tcbs_screener_trading_comprehensive.py
 └── report/
     └── coverage_html/       # Generated HTML coverage reports
 ```
@@ -129,7 +117,6 @@ fixtures/symbols.py provides:
 
 ### Coverage Levels
 ```
-ProxyManager:      81% ✅ Excellent
 Core utilities:    70-92% ✅ Good
 API adapters:      50-76% ✅ Good
 Explorer modules:  17-38% ⚠️ Needs live API
@@ -148,16 +135,10 @@ Overall:           29% (unit tests only - expected)
 - Files: test_quote.py, test_listing.py
 - Use when: Testing API adapters & parameter filtering
 
-**tests/unit/core/**
-- Purpose: Test utilities
-- Coverage: 81% (ProxyManager)
-- Files: test_proxy_manager.py
-- Use when: Testing core utilities like ProxyManager
-
 **tests/unit/explorer/**
 - Purpose: Test data source explorers
 - Coverage: 17-38% (incomplete without integration)
-- Files: test_vci_*.py, test_tcbs_*.py, test_*_with_proxy.py
+- Files: test_vci_*.py, test_tcbs_*.py
 - Use when: Testing VCI, TCBS, MSN explorers
 
 ### Integration Tests (Real API)
@@ -195,10 +176,9 @@ Overall:           29% (unit tests only - expected)
 | Metric                | Value                            | Status      |
 | --------------------- | -------------------------------- | ----------- |
 | Total Test Files      | 8                                | ✅           |
-| Total Tests           | 26+ (proxy) + 63 (comprehensive) | ✅           |
+| Total Tests           | 63 (comprehensive)               | ✅           |
 | Unit Tests            | 36 passing                       | ✅ 100%      |
 | Coverage Target       | 29% (unit only)                  | ✅ Met       |
-| ProxyManager Coverage | 81%                              | ✅ Excellent |
 | Execution Time        | ~4 seconds                       | ✅ Fast      |
 
 ---
@@ -251,10 +231,8 @@ A: Use `pytest test_file.py -v -s --pdb` (see AI_GUIDE.md)
 
 ## 🔗 Related Documentation (In docs/)
 
-- **PROXY_GUIDE.md** - How to use ProxyManager
 - **COVERAGE_STRATEGY.md** - Coverage goals & optimization
 - **SESSION_5_FINAL_REPORT.md** - Complete session summary
-- **PROXY_IMPLEMENTATION_SUMMARY.md** - Proxy system details
 
 ---
 

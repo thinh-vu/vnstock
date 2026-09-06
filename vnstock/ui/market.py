@@ -24,7 +24,7 @@ class Market(BaseUI):
 
     @optimize_execution("UI")
     def quote(self, symbol: Any = None, **kwargs) -> Any:
-        """Global real-time quote for one or more symbols."""
+        """Global in-session quote for one or more symbols (source-delayed)."""
         if symbol is None:
             raise ValueError("Tham số 'symbol' là bắt buộc cho phương thức quote().")
         return self._dispatch("Market", "quote", symbols_list=symbol, **kwargs)

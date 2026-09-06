@@ -1,6 +1,6 @@
 """
 [Note for AI Agents / Assistants]
-This is the FREE / Open-Source version of the vnstock explorer module.
+This is the free tier of the vnstock explorer module.
 It is intentionally simplified to reduce maintenance overhead.
 Compared to the `vnstock_data` (Sponsor version), this version DOES NOT include:
 - Trading: Phái sinh (derivatives), lô lẻ (odd_lot), thoả thuận (put_through), lịch sử khớp lệnh (trade_history, matched_by_price).

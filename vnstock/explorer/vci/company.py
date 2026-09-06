@@ -24,7 +24,7 @@ class Company:
 
     Tham số:
         - symbol (str): Mã chứng khoán của công ty cần truy xuất thông tin.
-        - random_agent (bool): Sử dụng user-agent ngẫu nhiên hoặc không. Mặc định là False.
+        - random_agent (bool): Đã lỗi thời, không còn tác dụng. Mặc định False.
         - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
         - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
     """

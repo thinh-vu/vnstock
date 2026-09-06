@@ -1,12 +1,12 @@
 """Listing module."""
 
 # Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê hành vi thị tường
-from typing import List, Optional
+from typing import Optional
 
 import pandas as pd
 from vnai import optimize_execution
 
-from vnstock.core.utils.client import ProxyConfig, send_request
+from vnstock.core.utils.client import send_request
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.parser import camel_to_snake
 from vnstock.core.utils.transform import drop_cols_by_pattern, reorder_cols
@@ -24,9 +24,6 @@ class Listing:
         self,
         random_agent: Optional[bool] = False,
         show_log: Optional[bool] = False,
-        proxy_config: Optional[ProxyConfig] = None,
-        proxy_mode: Optional[str] = None,
-        proxy_list: Optional[List[str]] = None,
     ):
         self.data_source = "VCI"
         self.base_url = _TRADING_URL
@@ -34,21 +31,6 @@ class Listing:
             data_source=self.data_source, random_agent=random_agent
         )
         self.show_log = show_log
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else "try"
-            # If user asks for 'auto' or provides list, set request_mode to PROXY
-            req_mode = "direct"
-            if proxy_mode == "auto" or (proxy_list and len(proxy_list) > 0):
-                req_mode = "proxy"
-
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel("CRITICAL")
@@ -100,9 +82,6 @@ class Listing:
             headers=self.headers,
             method="GET",
             show_log=show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         if not json_data or "data" not in json_data or json_data["data"] is None:
@@ -180,9 +159,6 @@ class Listing:
             method="GET",
             payload=None,
             show_log=show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         if not json_data:
@@ -231,9 +207,6 @@ class Listing:
             headers=self.headers,
             method="GET",
             show_log=show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         if not json_data:
@@ -300,9 +273,6 @@ class Listing:
             method="GET",
             payload=None,
             show_log=show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         if show_log:
@@ -353,8 +323,8 @@ class Listing:
         if query:
             query = query.upper()
             df = df[
-                df["symbol"].str.contains(query)
-                | df["organ_name"].str.upper().str.contains(query)
+                df["symbol"].astype(str).str.contains(query)
+                | df["organ_name"].astype(str).str.upper().str.contains(query)
             ]
         df.source = "VCI"
         return df

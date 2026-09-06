@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 import pandas as pd
 from vnai import optimize_execution
 
-from vnstock.core.utils.client import ProxyConfig, send_request
+from vnstock.core.utils.client import send_request
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.user_agent import get_headers
 from vnstock.explorer.kbs.const import (
@@ -28,20 +28,14 @@ class Listing:
     def __init__(
         self,
         random_agent: Optional[bool] = False,
-        proxy_config: Optional[ProxyConfig] = None,
         show_log: Optional[bool] = False,
-        proxy_mode: Optional[str] = None,
-        proxy_list: Optional[List[str]] = None,
     ):
         """
         Khởi tạo Listing client cho KBS.
 
         Args:
-            random_agent: Sử dụng user agent ngẫu nhiên. Mặc định False.
-            proxy_config: Cấu hình proxy. Mặc định None (không sử dụng proxy).
+            random_agent: Đã lỗi thời, không còn tác dụng. Mặc định False.
             show_log: Hiển thị log debug. Mặc định False.
-            proxy_mode: Chế độ proxy (try, rotate, random, single). Mặc định None.
-            proxy_list: Danh sách proxy URLs. Mặc định None.
         """
         self.data_source = "KBS"
         self.base_url = _IIS_BASE_URL
@@ -49,21 +43,6 @@ class Listing:
             data_source=self.data_source, random_agent=random_agent
         )
         self.show_log = show_log
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else "try"
-            # If user provides list, set request_mode to PROXY
-            req_mode = "direct"
-            if proxy_list and len(proxy_list) > 0:
-                req_mode = "proxy"
-
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel("CRITICAL")
@@ -553,9 +532,6 @@ class Listing:
                 method="GET",
                 payload=None,
                 show_log=show_log,
-                proxy_list=self.proxy_config.proxy_list,
-                proxy_mode=self.proxy_config.proxy_mode,
-                request_mode=self.proxy_config.request_mode,
             )
 
             if not json_data:
@@ -604,9 +580,6 @@ class Listing:
                 method="GET",
                 payload=None,
                 show_log=show_log,
-                proxy_list=self.proxy_config.proxy_list,
-                proxy_mode=self.proxy_config.proxy_mode,
-                request_mode=self.proxy_config.request_mode,
             )
 
             if not json_data:
@@ -652,9 +625,6 @@ class Listing:
                 method="GET",
                 payload=None,
                 show_log=show_log,
-                proxy_list=self.proxy_config.proxy_list,
-                proxy_mode=self.proxy_config.proxy_mode,
-                request_mode=self.proxy_config.request_mode,
             )
 
             if not json_data:
@@ -703,9 +673,6 @@ class Listing:
                 method="GET",
                 payload=None,
                 show_log=show_log,
-                proxy_list=self.proxy_config.proxy_list,
-                proxy_mode=self.proxy_config.proxy_mode,
-                request_mode=self.proxy_config.request_mode,
             )
 
             if not json_data:

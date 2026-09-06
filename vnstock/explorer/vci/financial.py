@@ -18,13 +18,12 @@ def _safe_infer_objects(df):
         return df.infer_objects()
 
 
-from typing import Dict, List, Optional, Union  # noqa: E402
+from typing import Dict, Optional, Union  # noqa: E402
 
 import requests  # noqa: E402
 from vnai import optimize_execution  # noqa: E402
 
 from vnstock.core.utils import client  # noqa: E402
-from vnstock.core.utils.client import ProxyConfig  # noqa: E402
 from vnstock.core.utils.logger import get_logger  # noqa: E402
 from vnstock.core.utils.parser import get_asset_type  # noqa: E402
 from vnstock.core.utils.user_agent import get_headers  # noqa: E402
@@ -57,9 +56,6 @@ class Finance:
         period: Optional[str] = "quarter",
         get_all: Optional[bool] = True,
         show_log: Optional[bool] = True,
-        proxy_config: Optional[ProxyConfig] = None,
-        proxy_mode: Optional[str] = None,
-        proxy_list: Optional[List[str]] = None,
     ):
         """
         Khởi tạo đối tượng Finance với các tham số cho việc truy xuất dữ liệu báo cáo tài chính.
@@ -70,21 +66,6 @@ class Finance:
         self.show_log = show_log
         self.base_url = _VCIQ_URL
         self._handshake()
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else "try"
-            # If user asks for 'auto' or provides list, set request_mode to PROXY
-            req_mode = "direct"
-            if proxy_mode == "auto" or (proxy_list and len(proxy_list) > 0):
-                req_mode = "proxy"
-
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel("CRITICAL")
@@ -245,9 +226,6 @@ class Finance:
             method="GET",
             payload=None,
             show_log=show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         data = response_data.get("data")
@@ -335,9 +313,6 @@ class Finance:
             params=params,
             payload=None,
             show_log=show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         data = response_data.get("data")
@@ -408,90 +383,102 @@ class Finance:
             en_dict = meta_df.set_index("field_name")["en_name"].to_dict()
             snake_dict = None
 
-        # Identify which columns are items vs metadata
-        item_cols = [col for col in report_df.columns if col in vi_dict]
+        try:
+            # Identify which columns are items vs metadata
+            item_cols = [col for col in report_df.columns if col in vi_dict]
 
-        # Create period labels if not already present
-        if "period" not in report_df.columns:
-            # VCI logic for year/quarter
-            y_col = (
-                "year"
-                if "year" in report_df.columns
-                else ("yearReport" if "yearReport" in report_df.columns else None)
-            )
-            q_col = (
-                "quarter"
-                if "quarter" in report_df.columns
-                else ("lengthReport" if "lengthReport" in report_df.columns else None)
-            )
-
-            if y_col and q_col:
-
-                def fmt_period(row):
-                    try:
-                        y = int(row[y_col])
-                        q = int(row[q_col])
-                        return (
-                            f"{y}-Q{q}"
-                            if q < 5 and period_type in ["quarter", "Q"]
-                            else f"{y}"
-                        )
-                    except:  # noqa: E722
-                        return "N/A"
-
-                report_df["period"] = report_df.apply(fmt_period, axis=1)
-            elif y_col:
-                report_df["period"] = report_df[y_col].astype(str)
-            elif "report_period" in report_df.columns:
-                report_df["period"] = report_df["report_period"]
-
-        # We want to return Items as rows and Periods as columns (match KBS)
-        if "period" in report_df.columns:
-            # Drop metadata columns that are NOT the items or period
-            cols_to_keep = ["period"] + item_cols
-            processed_df = report_df[cols_to_keep].copy()
-
-            # Set period as index then transpose
-            processed_df = processed_df.set_index("period").T
-
-            # Now Rows are our items (codes). Let's add readable labels.
-            processed_df.index.name = "item_id"
-            processed_df = processed_df.reset_index()
-
-            processed_df["item"] = processed_df["item_id"].map(vi_dict)
-            processed_df["item_en"] = processed_df["item_id"].map(en_dict)
-
-            # Normalize item_id to match snake_case convention
-            if snake_dict:
-                processed_df["item_id"] = processed_df["item_id"].map(
-                    lambda x: snake_dict.get(x, x)
+            # Create period labels if not already present
+            if "period" not in report_df.columns:
+                # VCI logic for year/quarter
+                y_col = (
+                    "year"
+                    if "year" in report_df.columns
+                    else ("yearReport" if "yearReport" in report_df.columns else None)
                 )
-            else:
-                try:
-                    from vnstock.core.utils.field.handler import FieldHandler
-
-                    field_handler = FieldHandler()
-                    # Fallback to normalized English name if available, otherwise original id
-                    processed_df["item_id"] = processed_df["item_en"].apply(
-                        lambda x: (
-                            field_handler.normalize_field_name(x, language="en")
-                            if pd.notna(x)
-                            else x
-                        )
+                q_col = (
+                    "quarter"
+                    if "quarter" in report_df.columns
+                    else (
+                        "lengthReport" if "lengthReport" in report_df.columns else None
                     )
-                except ImportError:
-                    pass
+                )
 
-            # Reorder columns: metadata first, then periods
-            period_cols = [
-                c
-                for c in processed_df.columns
-                if c not in ["item", "item_en", "item_id"]
-            ]
-            # Use original order for columns
-            processed_df = processed_df[["item", "item_en", "item_id"] + period_cols]
+                if y_col and q_col:
 
-            return processed_df
+                    def fmt_period(row):
+                        try:
+                            y = int(row[y_col])
+                            q = int(row[q_col])
+                            return (
+                                f"{y}-Q{q}"
+                                if q < 5 and period_type in ["quarter", "Q"]
+                                else f"{y}"
+                            )
+                        except:  # noqa: E722
+                            return "N/A"
+
+                    report_df["period"] = report_df.apply(fmt_period, axis=1)
+                elif y_col:
+                    report_df["period"] = report_df[y_col].astype(str)
+                elif "report_period" in report_df.columns:
+                    report_df["period"] = report_df["report_period"]
+
+            # We want to return Items as rows and Periods as columns (match KBS)
+            if "period" in report_df.columns:
+                # Drop metadata columns that are NOT the items or period
+                cols_to_keep = ["period"] + item_cols
+                processed_df = report_df[cols_to_keep].copy()
+
+                # Set period as index then transpose
+                processed_df = processed_df.set_index("period").T
+
+                # Now Rows are our items (codes). Let's add readable labels.
+                processed_df.index.name = "item_id"
+                processed_df = processed_df.reset_index()
+
+                processed_df["item"] = processed_df["item_id"].map(vi_dict)
+                processed_df["item_en"] = processed_df["item_id"].map(en_dict)
+
+                # Normalize item_id to match snake_case convention
+                if snake_dict:
+                    processed_df["item_id"] = processed_df["item_id"].map(
+                        lambda x: snake_dict.get(x, x)
+                    )
+                else:
+                    try:
+                        from vnstock.core.utils.field.handler import FieldHandler
+
+                        field_handler = FieldHandler()
+                        # Fallback to normalized English name if available, otherwise original id
+                        processed_df["item_id"] = processed_df["item_en"].apply(
+                            lambda x: (
+                                field_handler.normalize_field_name(x, language="en")
+                                if pd.notna(x)
+                                else x
+                            )
+                        )
+                    except ImportError:
+                        pass
+
+                # Reorder columns: metadata first, then periods
+                period_cols = [
+                    c
+                    for c in processed_df.columns
+                    if c not in ["item", "item_en", "item_id"]
+                ]
+                # Use original order for columns
+                processed_df = processed_df[
+                    ["item", "item_en", "item_id"] + period_cols
+                ]
+
+                return processed_df
+        except Exception as e:
+            if show_log:
+                import logging
+
+                logging.getLogger(__name__).warning(
+                    f"Lỗi khi mapping dữ liệu (có thể do phiên bản Pandas cũ): {e}. Trả về dữ liệu gốc."
+                )
 
         return report_df
 

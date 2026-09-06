@@ -42,5 +42,5 @@ class EquityMarket(BaseDetailUI):
 
     @optimize_execution("UI")
     def quote(self, source: str = "kbs", **kwargs) -> Any:
-        """Get real-time quote snapshot."""
+        """Get in-session quote snapshot (source-delayed)."""
         return self._dispatch("equity_market", "quote", source=source, **kwargs)

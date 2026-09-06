@@ -7,7 +7,7 @@ import pandas as pd
 from vnai import optimize_execution
 
 from vnstock.core.models import TickerModel
-from vnstock.core.utils.client import ProxyConfig, send_request
+from vnstock.core.utils.client import send_request
 from vnstock.core.utils.interval import normalize_interval
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.lookback import (
@@ -58,9 +58,8 @@ class Quote:
 
     Parameters:
         - symbol (required): the stock symbol to fetch data for.
-        - random_agent (optional): whether to use random user agent.
-            Default is False.
-        - proxy_config (optional): proxy configuration. Default is None.
+        - random_agent (optional): deprecated and ignored. Đã lỗi thời,
+            không còn tác dụng. Default is False.
         - show_log (optional): whether to show log. Default is True.
     """
 
@@ -68,10 +67,7 @@ class Quote:
         self,
         symbol,
         random_agent=False,
-        proxy_config: Optional[ProxyConfig] = None,
         show_log=True,
-        proxy_mode: Optional[str] = None,
-        proxy_list: Optional[list] = None,
     ):
         self.symbol = validate_symbol(symbol)
         self.data_source = "VCI"
@@ -95,21 +91,6 @@ class Quote:
         )
         self.interval_map = _INTERVAL_MAP
         self.show_log = show_log
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else "try"
-            # If user asks for 'auto' or provides list, set request_mode to PROXY
-            req_mode = "direct"
-            if proxy_mode == "auto" or (proxy_list and len(proxy_list) > 0):
-                req_mode = "proxy"
-
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel("CRITICAL")
@@ -288,9 +269,6 @@ class Quote:
             method="POST",
             payload=payload,
             show_log=show_log if show_log is not None else False,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         # Debug: log response structure
@@ -420,9 +398,6 @@ class Quote:
             method="POST",
             payload=payload,
             show_log=show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         # Ensure data is a list

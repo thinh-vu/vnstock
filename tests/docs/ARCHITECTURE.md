@@ -18,16 +18,12 @@ tests/
 │   │   ├── test_quote.py            # Quote adapter (VCI, TCBS, MSN)
 │   │   └── test_listing.py          # Listing adapter (VCI, MSN)
 │   │
-│   ├── core/
-│   │   └── test_proxy_manager.py    # ProxyManager utility (18 tests)
-│   │
 │   └── explorer/
 │       ├── test_vci_quote_comprehensive.py    # VCI Quote variants
 │       ├── test_vci_listing_comprehensive.py  # VCI Listing methods
 │       ├── test_vci_company_finance_comprehensive.py
 │       ├── test_tcbs_quote_comprehensive.py   # TCBS Quote
 │       ├── test_tcbs_screener_trading_comprehensive.py
-│       └── test_vci_quote_with_proxy.py       # Proxy integration
 │
 ├── integration/                     # Real API calls (skip by default)
 │   └── test_vnstock_client.py       # End-to-end workflows
@@ -111,29 +107,12 @@ def test_quote(random_hose_symbols):
 **What it contains**:
 ```
 examples/
-├── __init__.py
-└── proxy_examples.py        # 8 working ProxyManager examples
-```
-
-**proxy_examples.py includes**:
-- Example 1: Fetch free proxies from proxyscrape
-- Example 2: Test proxies for connectivity
-- Example 3: Get fastest proxy
-- Example 4: Create custom proxy objects
-- Example 5: Integrate proxy with VCI Quote
-- Example 6: Proxy rotation for batch processing
-- Example 7: Complete workflow (fetch → test → select)
-- Example 8: Error handling & fallback
-
-**How to run**:
-```bash
-python -m tests.examples.proxy_examples
+└── __init__.py
 ```
 
 **Why here and not in core utils**:
 ✅ These are demo/tutorial code, not core utilities
 ✅ Located in tests for easy discovery by developers
-✅ Referenced by PROXY_GUIDE.md in docs/
 
 ---
 
@@ -149,11 +128,6 @@ python -m tests.examples.proxy_examples
 - Scope: All intervals, periods, languages, filters
 - Markers: `@pytest.mark.integration` (real API calls)
 
-#### **Proxy Integration** (`test_vci_quote_with_proxy.py`)
-- Purpose: ProxyManager + VCI Quote integration
-- Scope: 8 tests covering proxy patterns
-- Status: ✅ 8/8 passing
-
 ---
 
 ## 🚀 Quick Command Reference
@@ -166,9 +140,6 @@ pytest tests/unit/ -m "not integration" -q
 
 # With verbose output
 pytest tests/unit/ -m "not integration" -v
-
-# ProxyManager tests only
-pytest tests/unit/core/test_proxy_manager.py -v
 
 # VCI Quote tests
 pytest tests/unit/explorer/test_vci_quote_comprehensive.py -v
@@ -282,7 +253,6 @@ pytest -m slow -v           # Slow tests verbose
 
 | Module           | Coverage | Status                         |
 | ---------------- | -------- | ------------------------------ |
-| proxy_manager.py | 81%      | ✅ Excellent                    |
 | core/utils       | 70-92%   | ✅ Good                         |
 | api/             | 50-76%   | ✅ Good                         |
 | explorer/        | 17-38%   | ⚠️ Integration-dependent        |
@@ -351,7 +321,6 @@ pytest tests/unit/ --cov=vnstock --cov-report=html
 
 ## 📚 Related Documentation
 
-- **PROXY_GUIDE.md** - How to use ProxyManager
 - **COVERAGE_STRATEGY.md** - Coverage goals & optimization
 - **SESSION_5_FINAL_REPORT.md** - Complete session summary
 
@@ -368,8 +337,7 @@ pytest runs
 ├── Apply markers (@pytest.mark.*)
 ├── Execute tests
 │   ├── Unit tests (all mocked) → Fast ✅
-│   ├── Integration tests (real API) → Slow ⏱️
-│   └── Proxy tests (mixed) → Medium ⏳
+│   └── Integration tests (real API) → Slow ⏱️
 └── Generate reports
     ├── coverage.xml (CI/CD)
     ├── coverage_html/ (view in browser)
@@ -403,5 +371,5 @@ pytest runs
 
 **Last Updated**: November 12, 2025
 **Test Status**: ✅ All 36 unit tests passing
-**Coverage**: 29% (unit tests), 81% ProxyManager
+**Coverage**: 29% (unit tests)
 **Ready for AI**: Yes - use this guide for context ✨

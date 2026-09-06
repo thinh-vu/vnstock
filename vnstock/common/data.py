@@ -200,7 +200,7 @@ class StockComponents(BaseComponent):
 
 
 class Quote(BaseComponent):
-    """Historical and real-time price data."""
+    """Historical and in-session price data (source-delayed)."""
 
     SUPPORTED_SOURCES = ["KBS", "VCI", "MSN", "FMP"]
 
@@ -316,7 +316,7 @@ class Listing(BaseComponent):
 
 
 class Trading(BaseComponent):
-    """Real-time trading data and market board information."""
+    """In-session trading data and market board information (source-delayed)."""
 
     SUPPORTED_SOURCES = ["KBS", "VCI"]
 
@@ -531,7 +531,7 @@ class Fund(BaseComponent):
 
         Args:
             source: Data source (FMARKET)
-            random_agent: Use random user agent for requests
+            random_agent: Deprecated and ignored. Đã lỗi thời, không còn tác dụng.
         """
         self.random_agent = random_agent
         super().__init__(symbol=None, source=source)

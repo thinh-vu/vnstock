@@ -76,12 +76,23 @@ def msn_apikey(headers, version="20240430", show_log=False):
 
 
 def get_asset_type(symbol_id):
-    symbol_id = symbol_id.upper()
-    if symbol_id in _CURRENCY_ID_MAP.values() or symbol_id in _CURRENCY_ID_MAP.keys():
+    symbol_id_upper = symbol_id.upper()
+    symbol_id_lower = symbol_id.lower()
+
+    if (
+        symbol_id_upper in _CURRENCY_ID_MAP.keys()
+        or symbol_id_lower in _CURRENCY_ID_MAP.values()
+    ):
         return "currency"
-    elif symbol_id in _CRYPTO_ID_MAP.values() or symbol_id in _CRYPTO_ID_MAP.keys():
+    elif (
+        symbol_id_upper in _CRYPTO_ID_MAP.keys()
+        or symbol_id_lower in _CRYPTO_ID_MAP.values()
+    ):
         return "crypto"
-    elif symbol_id in _GLOBAL_INDICES.values() or symbol_id in _GLOBAL_INDICES.keys():
+    elif (
+        symbol_id_upper in _GLOBAL_INDICES.keys()
+        or symbol_id_lower in _GLOBAL_INDICES.values()
+    ):
         return "index"
     else:
         return "Unknown"

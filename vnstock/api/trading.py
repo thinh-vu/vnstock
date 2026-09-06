@@ -16,12 +16,10 @@ from vnstock.config import Config
 class Trading(BaseAdapter):
     _module_name = "trading"
     """
-    Adapter for trading data: trading_stats, side_stats, price_board.
+    Adapter for trading data: price_board.
 
     Usage:
         t = Trading(source="vci", symbol="VCI", random_agent=False, show_log=True)
-        df = t.trading_stats(start="2024-01-01", end="2024-12-31", limit=1000)
-        bids, asks = t.side_stats(dropna=True)
         board = t.price_board(symbols_list=["VCI", "VCB"], **kwargs)
     """
 
@@ -63,38 +61,6 @@ class Trading(BaseAdapter):
         ),
     )
     @dynamic_method
-    def trading_stats(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve trading statistics for the given symbol.
-        """
-        pass
-
-    @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
-    @dynamic_method
-    def side_stats(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve bid/ask side statistics for the given symbol.
-        """
-        pass
-
-    @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
-    @dynamic_method
     def price_board(self, symbols_list: Any = None, **kwargs: Any) -> Any:
         """
         Retrieve the price board (order book) for a list of symbols.
@@ -112,86 +78,6 @@ class Trading(BaseAdapter):
         return self._delegate_to_provider(
             "price_board", symbols_list=symbols_list, **kwargs
         )
-
-    @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
-    @dynamic_method
-    def price_history(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve the price history for a list of symbols.
-        """
-        pass
-
-    @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
-    @dynamic_method
-    def foreign_trade(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve foreign trade data for the given symbol.
-        """
-        pass
-
-    @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
-    @dynamic_method
-    def prop_trade(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve property trade data for the given symbol.
-        """
-        pass
-
-    @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
-    @dynamic_method
-    def insider_deal(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve insider deal data for the given symbol.
-        """
-        pass
-
-    @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
-    @dynamic_method
-    def order_stats(self, *args: Any, **kwargs: Any) -> Any:
-        """
-        Retrieve order statistics for the given symbol.
-        """
-        pass
 
     def _delegate_to_provider(
         self, method_name: str, symbol: str = None, **kwargs: Any

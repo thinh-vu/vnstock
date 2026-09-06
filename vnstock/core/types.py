@@ -40,8 +40,13 @@ class DataCategory(str, Enum):
 class ProviderType(str, Enum):
     """Type of data provider."""
 
-    SCRAPING = "scraping"  # Web scraping sources (VCI, MSN, KBS)
-    API = "api"  # REST API partners (FMP, Binance, DNSE)
+    WEB_API = (
+        "web_api"  # Public JSON endpoints of a source's own web app (VCI, MSN, KBS)
+    )
+    API = "api"  # REST API partners with a published contract (FMP, Binance, DNSE)
+
+    # Deprecated alias kept for backward compatibility; resolves to WEB_API.
+    SCRAPING = "web_api"
 
 
 class MarketType(str, Enum):
@@ -339,7 +344,7 @@ class TradingProvider(Protocol):
         self, symbols: Optional[List[str]] = None, **kwargs
     ) -> pd.DataFrame:
         """
-        Fetch real-time price board data.
+        Fetch price board data.
 
         Args:
             symbols: List of symbols (None = all)

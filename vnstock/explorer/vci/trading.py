@@ -7,7 +7,6 @@ import pandas as pd
 from vnai import optimize_execution
 
 from vnstock.core.utils import client
-from vnstock.core.utils.client import ProxyConfig
 from vnstock.core.utils.logger import get_logger
 from vnstock.core.utils.parser import camel_to_snake, flatten_data, get_asset_type
 from vnstock.core.utils.transform import flatten_hierarchical_index
@@ -30,30 +29,12 @@ class Trading:
         symbol: Optional[str] = "VCI",
         random_agent=False,
         show_log: Optional[bool] = True,
-        proxy_config: Optional[ProxyConfig] = None,
-        proxy_mode: Optional[str] = None,
-        proxy_list: Optional[List[str]] = None,
     ):
         self.symbol = validate_symbol(symbol)
         self.asset_type = get_asset_type(self.symbol)
         self.base_url = _TRADING_URL
         self.headers = get_headers(data_source="VCI", random_agent=random_agent)
         self.show_log = show_log
-
-        # Handle proxy configuration
-        if proxy_config is None:
-            # Create ProxyConfig from individual arguments
-            p_mode = proxy_mode if proxy_mode else "try"
-            # If user asks for 'auto' or provides list, set request_mode to PROXY
-            req_mode = "direct"
-            if proxy_mode == "auto" or (proxy_list and len(proxy_list) > 0):
-                req_mode = "proxy"
-
-            self.proxy_config = ProxyConfig(
-                proxy_mode=p_mode, proxy_list=proxy_list, request_mode=req_mode
-            )
-        else:
-            self.proxy_config = proxy_config
 
         if not show_log:
             logger.setLevel("CRITICAL")
@@ -84,9 +65,6 @@ class Trading:
             method="POST",
             payload=json.loads(payload),
             show_log=show_log,
-            proxy_list=self.proxy_config.proxy_list,
-            proxy_mode=self.proxy_config.proxy_mode,
-            request_mode=self.proxy_config.request_mode,
         )
 
         # Initialize an empty list to hold all row dictionaries

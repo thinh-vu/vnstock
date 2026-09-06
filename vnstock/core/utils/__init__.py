@@ -14,11 +14,6 @@ from .auth import (
 
 # Client utilities
 from .client import (
-    ProxyConfig,
-    ProxyMode,
-    RequestMode,
-    send_direct_request,
-    send_proxy_request,
     send_request,
 )
 
@@ -125,11 +120,6 @@ __all__ = [
     "advanced_logger",
     # Client
     "send_request",
-    "send_direct_request",
-    "send_proxy_request",
-    "ProxyMode",
-    "RequestMode",
-    "ProxyConfig",
     # Environment
     "get_platform",
     "get_hosting_service",

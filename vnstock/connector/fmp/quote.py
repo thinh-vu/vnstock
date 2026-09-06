@@ -25,7 +25,7 @@ class Quote:
     """
     FMP Quote data provider for vnstock.
 
-    Provides methods to fetch stock price data including real-time quotes,
+    Provides methods to fetch stock price data including quote snapshots,
     historical EOD (End-Of-Day) prices, and intraday price movements.
     """
 
@@ -50,14 +50,14 @@ class Quote:
 
     def short(self) -> Optional[pd.DataFrame]:
         """
-        Get real-time stock quote snapshot (short format).
+        Get stock quote snapshot (short format).
 
-        Fetches quick snapshots of real-time stock quotes with current price,
+        Fetches quick snapshots of stock quotes with current price,
         volume, and price changes for instant market insights. Uses the FMP
         quote-short endpoint for minimal data.
 
         Returns:
-            Optional[pd.DataFrame]: DataFrame with real-time quote data
+            Optional[pd.DataFrame]: DataFrame with quote snapshot data
         """
         url = self.config.get_endpoint_url("quote_short", self.symbol)
         df = make_fmp_request(
@@ -74,7 +74,7 @@ class Quote:
 
     def full(self) -> Optional[pd.DataFrame]:
         """
-        Get comprehensive real-time stock quote (full format).
+        Get stock quote snapshot (full format).
 
         Fetches up-to-the-minute prices, changes, and volume data for
         individual stocks with complete quote information. Uses the FMP
@@ -189,7 +189,7 @@ class Quote:
         Fetch intraday (minute/hour level) price data.
 
         Retrieves precise intraday stock price and volume data with intervals
-        from 1-minute to 4-hour. Returns real-time or historical stock data
+        from 1-minute to 4-hour. Returns intraday or historical stock data
         including open, high, low, close prices and trading volume.
 
         For End-Of-Day (daily/weekly/monthly) data, use history() method.

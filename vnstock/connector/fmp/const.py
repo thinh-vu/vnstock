@@ -17,7 +17,7 @@ _DEFAULT_API_KEY = "demo"
 # FMP API endpoint mappings for current FMP structure
 # Status codes: ✅ = Tested and working | ❌ = Not available with current plan
 _ENDPOINTS = {
-    # Quote & Real-Time Price Data
+    # Quote & Price Data
     "quote": "/quote",  # ✅ Tested
     "quote_short": "/quote-short",  # ✅ Tested
     # Historical price endpoints (end-of-day)

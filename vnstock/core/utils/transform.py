@@ -376,7 +376,7 @@ def replace_in_column_names(df, old_text, new_text, regex=False):
     Returns:
         pd.DataFrame: DataFrame with modified column names
     """
-    df.columns = df.columns.str.replace(old_text, new_text, regex=regex)
+    df.columns = df.columns.astype(str).str.replace(old_text, new_text, regex=regex)
     return df
 
 

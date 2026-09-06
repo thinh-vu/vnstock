@@ -32,7 +32,7 @@ class WarrantMarket(BaseDetailUI):
         )
 
     def quote(self, source: str = "kbs", **kwargs) -> Any:
-        """Real-time pricing for Warrants."""
+        """In-session pricing for Warrants (source-delayed)."""
         return self._dispatch("Market", "warrant", "quote", source=source, **kwargs)
 
     def trades(self, source: str = "kbs", **kwargs) -> Any:
