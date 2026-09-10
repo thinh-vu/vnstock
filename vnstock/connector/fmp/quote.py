@@ -23,7 +23,7 @@ logger = get_logger(__name__)
 
 class Quote:
     """
-    FMP Quote data provider for vnstock.
+    Connector to the FMP source for quote data.
 
     Provides methods to fetch stock price data including quote snapshots,
     historical EOD (End-Of-Day) prices, and intraday price movements.
@@ -276,7 +276,7 @@ class Quote:
         Normalize OHLCV column names to vnstock standard format.
 
         Converts FMP column names to the standard vnstock naming convention
-        for consistency across all data providers. Also converts camelCase
+        for consistency across all source connectors. Also converts camelCase
         column names to snake_case.
 
         Args:

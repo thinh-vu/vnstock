@@ -136,7 +136,7 @@ def _register_interactive() -> bool:
   • Cộng đồng (Community): 60 requests/phút - đăng ký miễn phí (60 requests/min - free registration)
   • Tài trợ (Sponsor): 180-600 requests/phút (180-600 requests/min)
 
-📌 Đăng nhập Google để tạo tài khoản và lấy API key miễn phí tại: https://vnstocks.com/login (Login with Google to create an account and get a free API key at: https://vnstocks.com/login)
+📌 Đăng nhập bằng tài khoản Google để tạo tài khoản và lấy API key tại: https://vnstocks.com/login (Login with Google to create an account and get an API key at: https://vnstocks.com/login)
 """)
 
     # Get API key from user directly (no Enter step)

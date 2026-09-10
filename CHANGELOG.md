@@ -2,6 +2,19 @@
 
 All notable changes to the `vnstock` project will be documented in this file.
 
+## [4.0.9] 2026-09-07
+
+### Added
+- **AI Agent Environment Setup**: Implemented dynamic AI agent environment setup with automated background initialization.
+- **Internal Skill Loader**: Introduced an internal skill loader for improved modularity.
+- **Integration Test Control**: Enabled integration test skips for smoother development workflows.
+
+### Changed & Improved
+- **Core Explorer Modules**: Updated core explorer modules and removed legacy assets, schemas, and proxy management infrastructure.
+- **Parameter Handling**: Unified parameter handling for OHLCV methods to ensure consistency across the API.
+- **Data Fetching Robustness**: Improved data fetching robustness and standardized documentation snapshots.
+- **Documentation**: Updated developer guidelines, installation instructions, and repository documentation in README.md.
+
 ## [4.0.4] 2026-05-19
 
 ### Added
@@ -31,15 +44,15 @@ All notable changes to the `vnstock` project will be documented in this file.
 
 ### Changed
 - **KBS Module**:
-  - Fully restored the core structure (`trading.py`, `quote.py`, `financial.py`, `company.py`, `listing.py`) to strictly comply with the limitations of the free tier. Features such as passing the number of periods (`limit`) for deep historical financial reports, retrieving derivative price board data, odd-lot trading, and put-through matching have been removed from the free version to optimize performance.
+  - Fully restored the core structure (`trading.py`, `quote.py`, `financial.py`, `company.py`, `listing.py`) to match the scope of the Community edition. Features such as passing the number of periods (`limit`) for deep historical financial reports, derivative price board data, odd-lot trading, and put-through matching are part of the extended edition.
   - Cleaned up identity mapping rules in `vnstock/explorer/kbs/const.py`, removing unnecessary dictionaries (`_ODD_LOT_MAP`, `_DERIVATIVE_MAP`, `_PUT_THROUGH_MAP`).
-  - Fixed price board data column identifiers: renamed `total_trades` to `volume_accumulated` and added mapping for code `CV` to a new column `volume_last`. This patch ensures the API returns a 100% match with the actual data displayed on the KBS interface (e.g., "Tổng KL" -> `volume_accumulated`, "Khớp lệnh > KL" -> `volume_last`). Users utilizing pandas parsing need to update the keys for their reports.
+  - Fixed price board data column identifiers: renamed `total_trades` to `volume_accumulated` and added mapping for code `CV` to a new column `volume_last`. This patch aligns the API output with the data displayed on the KBS interface (e.g., "Tổng KL" -> `volume_accumulated`, "Khớp lệnh > KL" -> `volume_last`). Users utilizing pandas parsing need to update the keys for their reports.
 
 ### Added
-- **Market Events Directory**: Added the `vnstock/core/utils/market_events.py` utility to distribute data based on an open dictionary format. This module accurately stores the history of major events on the stock exchange (such as State holidays, System crashes, Full/Partial trading halts) since 2000. This is a highly flexible format, guiding the community to expand data, with tremendous benefits for time-series analysis researchers.
-- **Environment State Auto-Detection Guardrail**: Added a startup check flow in the root file `vnstock/__init__.py`. The system now has the ability to automatically scan the operating system's default `.venv` virtual environment directory to detect if the project possesses the paid `vnstock_data` package. Once the paid package is detected as pre-loaded but the user still runs the old syntax `from vnstock import ...`, the library will print a warning reminding them to switch to the synchronous command to unlock unlimited features.
+- **Market Events Directory**: Added the `vnstock/core/utils/market_events.py` utility to distribute data based on an open dictionary format. This module accurately stores the history of major events on the stock exchange (such as State holidays, System crashes, Full/Partial trading halts) since 2000. The format is open so the community can extend it, which helps time-series analysis.
+- **Environment State Auto-Detection Guardrail**: Added a startup check flow in the root file `vnstock/__init__.py`. The system now has the ability to automatically scan the operating system's default `.venv` virtual environment directory to detect whether the extended edition `vnstock_data` is present. If it is installed but the user still runs the old syntax `from vnstock import ...`, the library prints a reminder to switch imports so the extended-edition features and quota apply.
 - **AI Agent Context Comments**: Added notes to the docstring at the top of the main `__init__.py` files. These English notes state which features the free `vnstock` edition does not include, so an AI assistant (e.g. GitHub Copilot) has enough context to point the user to the `vnstock_data` edition when their needs call for those features, rather than building workarounds around the free edition.
-- **Superior 1:1 Migration Architecture (AST Validator Helper)**: Designed an extremely powerful helper function `vnstock.core.utils.upgrade.migrate_to_sponsor()` allowing AI Agents to trigger sophisticated auto-upgrades of the codebase from `vnstock` to `vnstock_data`:
+- **1:1 Migration Helper (AST Validator)**: Added `vnstock.core.utils.upgrade.migrate_to_sponsor()` so AI agents can migrate a codebase from `vnstock` to `vnstock_data`:
   - The algorithm DOES NOT replace strings (`text replace`) using risky Regex, but instead uses the **Abstract Syntax Tree (AST Engine)** analysis mechanism to comprehensively read the source code.
-  - While scanning line by line (Import Nodes), the function automatically loads the `vnstock_data` package using `importlib` and **calls a cross-check attribute using `hasattr()`** to see if the API or Method required by the source code (like `Quote`, `Company`, `Trading`) actually exists in the paid namespace.
-  - Only if all required components are successfully verified 1:1 will it perform the replacement on the corresponding line of code. Automated absolute safety against code breakage!
+  - While scanning line by line (Import Nodes), the function automatically loads the `vnstock_data` package using `importlib` and **calls a cross-check attribute using `hasattr()`** to see if the API or Method required by the source code (like `Quote`, `Company`, `Trading`) actually exists in the extended-edition namespace.
+  - The replacement is applied to a line only when all required components verify 1:1, which reduces the risk of breaking the code.

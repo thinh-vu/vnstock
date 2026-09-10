@@ -29,7 +29,7 @@
 
 ## Một thư viện Python để bạn tự truy xuất và chuẩn hoá dữ liệu chứng khoán Việt Nam
 
-> Chào mừng bạn đến với **Vnstock**, thư viện Python có mã nguồn công khai giúp bạn tự truy xuất và chuẩn hoá **dữ liệu chứng khoán Việt Nam** từ các nguồn công khai mà bạn đã có quyền truy cập. Vnstock không sở hữu, không lưu trữ và không phân phối dữ liệu.
+> Chào mừng bạn đến với **Vnstock**, hệ sinh thái công cụ Python giúp bạn tự kết nối, chuẩn hoá và phân tích **dữ liệu thị trường tài chính Việt Nam** từ nguồn bên thứ ba, chạy trên hạ tầng do bạn kiểm soát. Vnstock cấp quyền sử dụng phần mềm, không cấp quyền sử dụng dữ liệu của nguồn và không vận hành kho dữ liệu thị trường để bán lại.
 
 Dù bạn muốn dùng **vnstock python** để xây dựng mô hình định lượng, tích hợp vào nền tảng phân tích của mình hay chỉ để tìm hiểu **lịch sử giá cổ phiếu**, bạn đều có thể bắt đầu ngay hôm nay.
 
@@ -129,7 +129,7 @@ Các hàm truy xuất được chia thành 6 nhóm. Phạm vi dữ liệu phụ 
 Bạn có thể gọi hàm `show_api()` để in ra toàn bộ cấu trúc các hàm phục vụ cho việc lập chỉ mục AI hoặc tra cứu nhanh:
 
 ```text
-API STRUCTURE TREE - VNSTOCK (Unified UI)
+API STRUCTURE TREE - Vnstock (Unified UI)
 vnstock
 ├── Reference
 │   ├── company # Access company-specific reference data.
@@ -229,19 +229,21 @@ Cách gọi hàm truyền thống riêng lẻ theo từng nguồn dữ liệu hi
 
 ## Tuyên bố miễn trừ trách nhiệm
 
-Dự án **Vnstock** là một công cụ có mã nguồn công khai giúp tự động hoá việc trích xuất dữ liệu từ các nguồn công khai, phục vụ **mục đích nghiên cứu và sử dụng cá nhân**. Vnstock **không phải là nhà cung cấp, không sở hữu hay kinh doanh dữ liệu**. Dữ liệu được trích xuất qua công cụ có thể không đầy đủ, không liên tục hoặc sai lệch so với nguồn gốc, do đó không khuyến nghị **sử dụng cho mục đích giao dịch thực tế, thuật toán đầu tư, hoặc ra quyết định tài chính** khi bạn không hiểu rõ.
+Dự án **Vnstock** là hệ sinh thái công cụ Python có mã nguồn công khai, giúp bạn tự kết nối và chuẩn hoá dữ liệu từ nguồn bên thứ ba, phục vụ **mục đích nghiên cứu và tham khảo**. Vnstock **không phải nhà cung cấp dữ liệu** và không vận hành kho dữ liệu thị trường để bán lại. Dữ liệu từ nguồn có thể không đầy đủ, không liên tục, bị trùng, sai lệch hoặc làm tròn; bạn phải đối soát với nguồn chính thức trước khi giao dịch hoặc công bố.
 
-Các tác giả **không chịu trách nhiệm đối với bất kỳ tổn thất hay thiệt hại nào**. Vnstock không cung cấp tư vấn đầu tư hay tín hiệu giao dịch.
+Phần mềm được cung cấp theo hiện trạng và theo khả năng sẵn có. Trong phạm vi pháp luật cho phép, Vnstock và người đóng góp không chịu trách nhiệm đối với tổn thất gián tiếp, ngẫu nhiên, đặc biệt hoặc hệ quả, bao gồm mất lợi nhuận hoặc thiệt hại uy tín. Vnstock không cung cấp tư vấn đầu tư hay tín hiệu giao dịch. Xem đầy đủ tại [Tuyên bố miễn trừ trách nhiệm](https://vnstocks.com/onboard/mien-tru-trach-nhiem).
 
-**Không liên kết với các nguồn dữ liệu**: Vnstock **không có quan hệ liên kết, tài trợ hay chứng thực** với bất kỳ tổ chức nào được nhắc đến trong tài liệu hoặc mã nguồn. Mọi tên gọi, thương hiệu và nhãn hiệu được nêu chỉ nhằm mục đích chỉ dẫn nguồn gốc dữ liệu và thuộc về chủ sở hữu tương ứng. Người dùng chịu trách nhiệm tuân thủ điều khoản sử dụng của từng nguồn dữ liệu mà mình truy cập, cũng như sử dụng thư viện trong giới hạn hợp lý — truy xuất quá mức gây ảnh hưởng đến nguồn cấp công khai và tới chính cộng đồng người dùng.
+**Không liên kết với các nguồn dữ liệu**: Vnstock **không có quan hệ liên kết, tài trợ hay chứng thực** với bất kỳ tổ chức nào được nhắc đến trong tài liệu hoặc mã nguồn. Mọi tên gọi, thương hiệu và nhãn hiệu được nêu chỉ nhằm chỉ dẫn nguồn gốc dữ liệu và thuộc về chủ sở hữu tương ứng. Nguồn bên thứ ba gồm cả nguồn truy cập công khai và nguồn yêu cầu tài khoản hoặc quyền truy cập riêng; tình trạng có thể truy cập không đồng nghĩa quyền sử dụng không giới hạn. Bạn tuân thủ điều kiện của từng nguồn và sử dụng thư viện trong giới hạn hợp lý — truy xuất quá mức gây ảnh hưởng tới nguồn và tới chính cộng đồng người dùng.
 
-**Dữ liệu ẩn danh**: Vnstock có thể ghi nhận dữ liệu ẩn danh về môi trường chạy nhằm cải thiện hiệu năng và độ ổn định của phần mềm. Chi tiết xem trong [giấy phép sử dụng](https://vnstocks.com/onboard/giay-phep-su-dung).
+**Dữ liệu và quyền riêng tư**: Truy vấn, xử lý và lưu trữ nghiệp vụ diễn ra trên hạ tầng do bạn lựa chọn. Các dịch vụ do Vnstock vận hành xử lý dữ liệu tài khoản, thanh toán, giấy phép, thiết bị, hạn mức, bảo mật và đo lường kỹ thuật theo [Chính sách quyền riêng tư](https://vnstocks.com/onboard/chinh-sach-quyen-rieng-tu).
 
 ***
 
 ## Giấy phép sử dụng (License)
 
-`Vnstock` được phát hành theo giấy phép tuỳ chỉnh, dành cho **mục đích cá nhân và phi thương mại**. Mã nguồn được công khai để bạn đọc, nghiên cứu và kiểm chứng, nhưng **đây không phải giấy phép nguồn mở theo chuẩn OSI**: việc phân phối lại và sử dụng cho mục đích thương mại cần có sự đồng ý bằng văn bản của tác giả. Xem [giấy phép](https://vnstocks.com/onboard/giay-phep-su-dung). Nếu bạn cần dùng cho dự án phát sinh doanh thu, vui lòng liên hệ tác giả để được cấp phép chính thức.
+`Vnstock` công khai mã nguồn theo giấy phép riêng: miễn phí cho cá nhân, học tập và nghiên cứu. Mã nguồn được công khai để bạn đọc, nghiên cứu và kiểm chứng, nhưng **đây không phải giấy phép nguồn mở theo chuẩn OSI**. Phạm vi tính theo số người dùng, số thiết bị đã đăng ký và hạn mức của cấp, không theo mục đích — trong phạm vi đó bạn được dùng cho cả công việc có doanh thu. Chỉ hai việc cần thoả thuận riêng bằng văn bản: phân phối lại phần mềm, và làm sản phẩm mà giá trị chính là cấp cho bên thứ ba khả năng truy xuất dữ liệu. Bản có hiệu lực: [giấy phép sử dụng](https://vnstocks.com/onboard/giay-phep-su-dung) (license-2026.09).
+
+**Pháp lý**: [Giấy phép sử dụng](https://vnstocks.com/onboard/giay-phep-su-dung) · [Chính sách quyền riêng tư](https://vnstocks.com/onboard/chinh-sach-quyen-rieng-tu) · [Tuyên bố miễn trừ trách nhiệm](https://vnstocks.com/onboard/mien-tru-trach-nhiem)
 
 ***
 
@@ -273,15 +275,13 @@ Vnstock phát triển nhờ sự chung tay của cộng đồng những người
 
 ## Introduction to Vnstock
 
-Welcome to **Vnstock**, a source-available Python toolkit for retrieving and analysing Vietnamese stock market data.
-
-Driven by the mission **"To make financial data extraction and investment tools accessible to everyone"**, Vnstock is maintained so you can build your own analysis tools in Python. Vnstock does not own, store or distribute any data.
+Welcome to **Vnstock**, an ecosystem of Python tools for financial-market data and research workflows in Vietnam: connectors and normalization for third-party sources, technical indicators, news processing, data pipelines and guides for AI agents. The software runs on infrastructure you control; market queries go straight from there to the source. Vnstock licenses software, does not license source data, and does not operate a centralized market-data store for resale.
 
 ### Why Vnstock?
 
 * **Free for Personal Use, Source-Available**: An accessible data extraction tool for investors, analysts, researchers, and educators. The source is published so you can read and verify it; usage terms are set by the [licence](https://vnstocks.com/onboard/giay-phep-su-dung).
 * **Full-Stack Python Support**: Easy-to-use functions for building research and analysis tools.
-* **Unified Data Access**: Automate the retrieval of public data across stocks, warrants, indices, futures, bonds, forex and crypto through one interface. Coverage varies by source and may change. (Note: Vnstock is a retrieval tool, not a data provider).
+* **Unified Data Access**: Connect to stocks, warrants, indices, futures, bonds, forex and crypto through one interface. Coverage varies by source and may change. (Note: Vnstock is a client-side connector, not a data provider).
 
 ### Join the Community
 
@@ -346,16 +346,18 @@ For more documentation and Vibe Coding guides, please refer to:
 
 ## Disclaimer
 
-**Vnstock** is a source-available tool that automates the retrieval of publicly available data, intended for **research and personal use**. Vnstock **is not a data provider and does not own or resell any data**. Data retrieved through this tool may be incomplete, discontinuous, or inconsistent with its origin, and is therefore **not recommended for live trading, algorithmic investing, or financial decision-making** unless you fully understand its limitations.
+**Vnstock** is a source-available Python toolkit that helps you connect to and normalize data from third-party sources, intended for **research and reference**. Vnstock **is not a data provider** and does not operate a centralized market-data store for resale. Source data may be incomplete, discontinuous, duplicated, inaccurate or rounded; verify against official sources before trading or publishing.
 
-The authors **accept no liability for any loss or damage**. Vnstock does not provide investment advice or trading signals.
+The software is provided as-is and as-available. To the extent permitted by law, Vnstock and its contributors are not liable for indirect, incidental, special or consequential loss, including lost profit or reputational harm. Vnstock does not provide investment advice or trading signals. See the full [Disclaimer](https://vnstocks.com/onboard/mien-tru-trach-nhiem).
 
-**No affiliation with data sources**: Vnstock is **not affiliated with, sponsored by, or endorsed by** any organisation referenced in this documentation or in the source code. All names, brands and trademarks mentioned are used solely to indicate the origin of data and remain the property of their respective owners. Users are responsible for complying with the terms of service of any data source they access, and for using this library within reasonable limits — excessive retrieval harms public data sources and the user community alike.
+**No affiliation with data sources**: Vnstock is **not affiliated with, sponsored by, or endorsed by** any organisation referenced in this documentation or in the source code. All names, brands and trademarks mentioned are used solely to indicate the origin of data and remain the property of their respective owners. Third-party sources include both publicly accessible ones and ones requiring an account or private access; being reachable does not imply unlimited rights of use. You comply with each source's terms and use the library within reasonable limits — excessive retrieval harms the sources and the user community alike.
 
-**Anonymous data**: Vnstock may record anonymous information about the runtime environment in order to improve software performance and stability. See the [licence](https://vnstocks.com/onboard/giay-phep-su-dung) for details.
+**Data and privacy**: Business queries, processing and storage happen on infrastructure you choose. Vnstock-operated services process account, payment, licence, device, quota, security and telemetry data per the [Privacy Policy](https://vnstocks.com/onboard/chinh-sach-quyen-rieng-tu).
 
 ***
 
 ## Licence
 
-`Vnstock` is released under a custom licence for **personal, non-commercial use**. It is **not an OSI-approved open-source licence**: redistribution and commercial use are not permitted without prior written consent. See the [licence](https://vnstocks.com/onboard/giay-phep-su-dung). If you need it for a revenue-generating project, please contact the author for formal licensing.
+`Vnstock` is source-available under Vnstock's own licence: free for personal, study and research use. It is **not an OSI-approved open-source licence**. Scope is measured by number of users, registered devices and the tier's quota — not by purpose; within that scope you may use Vnstock for revenue-generating work. Only two things need a separate written agreement: redistributing the software, and operating a product whose primary value is giving third parties access to market data. Effective version: [licence](https://vnstocks.com/onboard/giay-phep-su-dung) (license-2026.09).
+
+**Legal**: [Licence](https://vnstocks.com/onboard/giay-phep-su-dung) · [Privacy Policy](https://vnstocks.com/onboard/chinh-sach-quyen-rieng-tu) · [Disclaimer](https://vnstocks.com/onboard/mien-tru-trach-nhiem)

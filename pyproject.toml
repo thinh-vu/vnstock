@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vnstock"
-version = "4.0.5"
-description = "A beginner-friendly yet powerful Python toolkit for financial analysis and automation — built to make modern investing accessible to everyone"
+version = "4.0.8"
+description = "Client-side Python toolkit for Vietnamese market data: connect, standardize, analyze."
 readme = "README.md"
 authors = [
   { name = "Thinh Vu", email = "support@vnstocks.com" },
 ]
-license = { text = "Custom: Personal, research, non-commercial; contact support@vnstocks.com for other use" }
+license = { text = "Custom (Personal Use) - see https://vnstocks.com/onboard/giay-phep-su-dung" }
 requires-python = ">=3.10"
 keywords = ["vnstock", "finance", "vietnam", "stock market", "analysis", "API"]
 classifiers = [
@@ -42,8 +42,8 @@ dependencies = [
     "packaging>=20.0",
     "importlib-metadata>=1.0",
     "tenacity",
-    "vnai>=2.5.2",
-    "vnstock_ezchart>=1.0.1",
+    "vnai>=2.5.9",
+    "vnstock_ezchart>=1.0.2",
     "pytz"
 ]
 
@@ -52,9 +52,13 @@ test = ["pytest>=7.0", "pytest-cov>=4.0", "pytest-timeout"]
 dev = ["pre-commit", "ruff", "pytest>=7.0", "pytest-cov>=4.0", "pytest-timeout"]
 
 [project.urls]
+Homepage = "https://vnstocks.com"
 Documentation = "https://vnstocks.com/docs"
 Source = "https://github.com/thinh-vu/vnstock"
 IssueTracker = "https://github.com/thinh-vu/vnstock/issues"
+Licence = "https://vnstocks.com/onboard/giay-phep-su-dung"
+Privacy = "https://vnstocks.com/onboard/chinh-sach-quyen-rieng-tu"
+Disclaimer = "https://vnstocks.com/onboard/mien-tru-trach-nhiem"
 
 [tool.setuptools]
 include-package-data = true

@@ -303,7 +303,7 @@ def get_venv_type() -> str:
 def check_sponsor_package():
     """
     Check if the user is using the free vnstock package while having vnstock_data installed.
-    Issues a warning to suggest switching to vnstock_data for premium features.
+    Issues a warning to suggest switching to vnstock_data for extended-edition features.
     Suppresses warning if called from installer or within vnstock_data.
     """
     import importlib.util

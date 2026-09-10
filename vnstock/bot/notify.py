@@ -1,5 +1,5 @@
 """
-Multi-platform notification and messaging service for bot integration.
+Multi-platform notification and messaging service for workflow integration.
 
 Supports sending messages and files to:
 - Slack (bot and user tokens)
@@ -10,7 +10,7 @@ Supports sending messages and files to:
 Examples:
     Slack example:
         >>> slack = Messenger('slack', '#general', 'xoxb-...')
-        >>> slack.send_message('Alert: Stock price updated!')
+        >>> slack.send_message('Alert: price updated')
 
     Telegram example:
         >>> telegram = Messenger('telegram', '-1001234567890',
@@ -20,7 +20,7 @@ Examples:
     Discord example:
         >>> webhook = 'https://discord.com/api/webhooks/...'
         >>> discord = Messenger('discord', webhook_url=webhook)
-        >>> discord.send_message('Trading bot notification',
+        >>> discord.send_message('Research alert',
         ...                       file_path='report.pdf')
 
     Lark example:
