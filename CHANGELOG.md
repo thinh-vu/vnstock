@@ -2,7 +2,7 @@
 
 All notable changes to the `vnstock` project will be documented in this file.
 
-## [4.0.9] 2026-09-07
+## [4.0.8] 2026-09-11
 
 ### Added
 - **AI Agent Environment Setup**: Implemented dynamic AI agent environment setup with automated background initialization.
@@ -14,6 +14,7 @@ All notable changes to the `vnstock` project will be documented in this file.
 - **Parameter Handling**: Unified parameter handling for OHLCV methods to ensure consistency across the API.
 - **Data Fetching Robustness**: Improved data fetching robustness and standardized documentation snapshots.
 - **Documentation**: Updated developer guidelines, installation instructions, and repository documentation in README.md.
+- **Licence and legal wording**: `LICENSE.md` now tracks the effective web version (license-2026.09) at <https://vnstocks.com/onboard/giay-phep-su-dung>, which governs in case of any difference. Scope is measured by number of users, registered devices and the tier's quota rather than by purpose; within that scope, revenue-generating work is permitted. A separate written agreement remains required for redistributing the software and for products whose primary value is giving third parties access to market data. README and package metadata were aligned with the licence, privacy policy and disclaimer published on the website.
 
 ## [4.0.4] 2026-05-19
 
