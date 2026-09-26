@@ -61,14 +61,45 @@ Cách này phù hợp với cả người mới bắt đầu lẫn người đã
 * [![Agent Guide](https://img.shields.io/badge/Agent_Guide-Tài_liệu_chi_tiết-24292e?style=for-the-badge\&logo=gitbook\&logoColor=white)](https://vnstocks.com/onboard/agent-guide)
 * [![Đăng ký API Key](https://img.shields.io/badge/vnstocks.com-Đăng_ký_API_Key-0066FF?style=for-the-badge\&logo=keycdn\&logoColor=white)](https://vnstocks.com/login)
 
+#### Hướng dẫn cho trợ lý AI: tuỳ chọn, mặc định tắt
+
+Từ `vnstock` 4.0.9 / `vnai` 2.6.2, thư viện **không ghi gì khi `import`**. Nếu muốn trợ lý AI (Claude Code, Codex, Antigravity...) có sẵn tài liệu tham khảo cách dùng vnstock, bạn tự bật:
+
+```python
+import vnstock
+vnstock.agent_status()     # xem sẽ ghi gì, vào đâu
+vnstock.enable_agent()     # bật, chỉ AGENTS.md trong thư mục dự án
+vnstock.setup_agent()      # ghi ngay
+```
+
+Nội dung được ghi nằm sẵn trong gói `vnai` (tệp `vnai/beam/agent_bootstrap.py`), không tải từ mạng, và chỉ đổi khi bạn nâng cấp `vnai`. Nó là tài liệu tham khảo: không bảo trợ lý tự chạy lệnh, không xin khoá API.
+
+| Đích          | Đường dẫn                       | Phạm vi      | Bật bằng                      |
+| ------------- | ------------------------------- | ------------ | ----------------------------- |
+| `project`     | `AGENTS.md` trong thư mục dự án | Chỉ dự án đó | `enable_agent()`              |
+| `antigravity` | `~/.gemini/GEMINI.md`           | **Toàn máy** | `enable_agent("antigravity")` |
+| `claude`      | `~/.claude/CLAUDE.md`           | **Toàn máy** | `enable_agent("claude")`      |
+| `codex`       | `~/.codex/AGENTS.md`            | **Toàn máy** | `enable_agent("codex")`       |
+
+Ba tệp toàn máy được nạp vào **mọi phiên làm việc trên máy**, nên chỉ ghi khi bạn nêu đích danh. Tắt và gỡ:
+
+```python
+vnstock.disable_agent()             # tắt
+vnstock.remove_agent_files("all")   # gỡ khối đã ghi; phần bạn tự viết trong tệp được giữ lại
+```
+
+Biến môi trường (CI, Docker): `VNSTOCK_AGENT_TARGETS=project,codex` bật đúng các đích liệt kê, `VNSTOCK_AGENT_TARGETS=none` hoặc `VNSTOCK_DISABLE_AGENT_SETUP=1` tắt hẳn. Biến môi trường ưu tiên hơn tệp cấu hình `~/.vnstock/config/agent.json`.
+
+> **Máy từng cài bản cũ.** Các bản trước 4.0.9 / 2.6.2 tự ghi vào cả bốn chỗ trên (và các bản trước 2.6.0 ghi thêm vào `~/.cursorrules`, `~/.windsurfrules`, `~/.clinerules`, `~/.github/copilot-instructions.md`, `~/.clauderc`, `~/.gemini/config/AGENTS.md`) mỗi lần `import`, bằng nội dung tải từ website. Bản mới báo một lần nếu còn sót khối như vậy. Gỡ sạch: `python -c "import vnstock; vnstock.disable_agent(); print(vnstock.remove_agent_files('all'))"`.
+
 ***
 
 ## Cài đặt thư viện
 
-Nếu bạn viết code thủ công, hãy cài đặt qua `pip`:
+Nếu bạn viết code thủ công, hãy cài đặt qua `pip`. `vnstock` và `vnai` được phát hành qua kho gói của Vnstock, các gói phụ thuộc khác vẫn lấy từ PyPI:
 
 ```bash
-pip install -U vnstock
+python -m pip install -U --extra-index-url https://vnstocks.com/api/simple vnstock vnai
 ```
 
 ### Xác thực người dùng (API Key)
@@ -81,10 +112,14 @@ Thư viện tự giới hạn nhịp gọi để việc truy xuất không gây 
 
 Tài trợ là khoản đóng góp cho dự án, đổi lại là giấy phép sử dụng bản mở rộng — không phải phí mua dữ liệu hay dung lượng truy vấn. Dữ liệu thuộc về nguồn công bố; điều kiện sử dụng của từng nguồn do bạn tự kiểm tra và tuân thủ.
 
+Hạn mức và lượt quy đổi là đơn vị kỹ thuật để giữ tải ở mức hợp lý với nguồn, không phải dữ liệu bán theo đơn vị và không phải số dư trả trước: không nạp thêm, không chuyển nhượng, không quy đổi thành tiền, tự làm mới theo kỳ.
+
 ```python
 from vnstock import register_user
-register_user() # Làm theo hướng dẫn trên terminal
+register_user()  # khoá được nhập ẩn, không hiện trên màn hình
 ```
+
+Hoặc đặt khoá vào biến môi trường `VNSTOCK_API_KEY`; thư viện đọc biến này trước tệp đã lưu. Đừng dán khoá vào mã, notebook hay khung chat với trợ lý AI.
 
 ***
 
@@ -229,7 +264,7 @@ Cách gọi hàm truyền thống riêng lẻ theo từng nguồn dữ liệu hi
 
 ## Tuyên bố miễn trừ trách nhiệm
 
-Dự án **Vnstock** là hệ sinh thái công cụ Python có mã nguồn công khai, giúp bạn tự kết nối và chuẩn hoá dữ liệu từ nguồn bên thứ ba, phục vụ **mục đích nghiên cứu và tham khảo**. Vnstock **không phải nhà cung cấp dữ liệu** và không vận hành kho dữ liệu thị trường để bán lại. Dữ liệu từ nguồn có thể không đầy đủ, không liên tục, bị trùng, sai lệch hoặc làm tròn; bạn phải đối soát với nguồn chính thức trước khi giao dịch hoặc công bố.
+Dự án **Vnstock** là hệ sinh thái công cụ Python có mã nguồn công khai, giúp bạn tự kết nối và chuẩn hoá dữ liệu từ nguồn bên thứ ba, phục vụ **mục đích nghiên cứu và tham khảo**. Vnstock **không phải nhà cung cấp dữ liệu** và không vận hành kho dữ liệu thị trường để bán lại. Dữ liệu từ nguồn có thể không đầy đủ, không liên tục, bị trùng, sai lệch hoặc làm tròn; bạn phải đối soát với nguồn chính thức trước khi phân tích, giao dịch hoặc công bố.
 
 Phần mềm được cung cấp theo hiện trạng và theo khả năng sẵn có. Trong phạm vi pháp luật cho phép, Vnstock và người đóng góp không chịu trách nhiệm đối với tổn thất gián tiếp, ngẫu nhiên, đặc biệt hoặc hệ quả, bao gồm mất lợi nhuận hoặc thiệt hại uy tín. Vnstock không cung cấp tư vấn đầu tư hay tín hiệu giao dịch. Xem đầy đủ tại [Tuyên bố miễn trừ trách nhiệm](https://vnstocks.com/onboard/mien-tru-trach-nhiem).
 
@@ -293,8 +328,10 @@ Welcome to **Vnstock**, an ecosystem of Python tools for financial-market data a
 
 ## Installation
 
+`vnstock` and `vnai` are published on the Vnstock package index; every other dependency still comes from PyPI:
+
 ```bash
-pip install -U vnstock
+python -m pip install -U --extra-index-url https://vnstocks.com/api/simple vnstock vnai
 ```
 
 ## Rate limits and account
@@ -309,10 +346,43 @@ Sponsorship is a contribution to the project, returned as a licence to use the e
 
 ```python
 from vnstock import register_user
-register_user()  # follow the instructions in your terminal
+register_user()  # the key is typed at a hidden prompt
 ```
 
+Or set the `VNSTOCK_API_KEY` environment variable, which takes precedence over the saved key. Do not paste the key into code, notebooks or a chat with an AI assistant.
+
 ***
+
+### Guide for AI coding assistants: optional, off by default
+
+From `vnstock` 4.0.9 / `vnai` 2.6.2 the library **writes nothing on `import`**. If you want your AI assistant (Claude Code, Codex, Antigravity...) to have a reference on how to use vnstock, opt in:
+
+```python
+import vnstock
+vnstock.agent_status()     # what would be written, and where
+vnstock.enable_agent()     # opt in, project AGENTS.md only
+vnstock.setup_agent()      # write it now
+```
+
+The text ships inside `vnai` (`vnai/beam/agent_bootstrap.py`); it is not downloaded and only changes when you upgrade `vnai`. It is reference material: it does not tell the assistant to run commands on its own or to ask for your API key.
+
+| Target        | Path                                 | Scope             | Enable with                   |
+| ------------- | ------------------------------------ | ----------------- | ----------------------------- |
+| `project`     | `AGENTS.md` in the project directory | that project      | `enable_agent()`              |
+| `antigravity` | `~/.gemini/GEMINI.md`                | **whole machine** | `enable_agent("antigravity")` |
+| `claude`      | `~/.claude/CLAUDE.md`                | **whole machine** | `enable_agent("claude")`      |
+| `codex`       | `~/.codex/AGENTS.md`                 | **whole machine** | `enable_agent("codex")`       |
+
+The three machine-wide files are loaded into **every session on the machine**, so each is written only when named. To turn it off and remove what was written:
+
+```python
+vnstock.disable_agent()
+vnstock.remove_agent_files("all")   # anything you wrote yourself in those files is kept
+```
+
+Environment variables (CI, Docker): `VNSTOCK_AGENT_TARGETS=project,codex` enables exactly those targets; `VNSTOCK_AGENT_TARGETS=none` or `VNSTOCK_DISABLE_AGENT_SETUP=1` turns it off. They take precedence over `~/.vnstock/config/agent.json`.
+
+> **Machines that ran older versions.** Before 4.0.9 / 2.6.2, every `import` wrote a block downloaded from the website into all four places above (and versions before 2.6.0 also into `~/.cursorrules`, `~/.windsurfrules`, `~/.clinerules`, `~/.github/copilot-instructions.md`, `~/.clauderc`, `~/.gemini/config/AGENTS.md`). The new version tells you once if any such block is left. Remove them all: `python -c "import vnstock; vnstock.disable_agent(); print(vnstock.remove_agent_files('all'))"`.
 
 ## Quick Start: Unified UI (Vnstock v4+)
 

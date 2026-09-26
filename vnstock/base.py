@@ -3,10 +3,8 @@ from abc import ABC
 from functools import wraps
 from typing import Optional
 
-from tenacity import retry, stop_after_attempt, wait_exponential
-
-from vnstock.config import Config
 from vnstock.core.registry import ProviderRegistry
+from vnstock.core.utils.retry import api_retry
 
 
 def dynamic_method(func):
@@ -90,14 +88,7 @@ class BaseAdapter(ABC):
         # Delegate attribute access to the provider
         return getattr(self._provider, name)
 
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     def history(self, *args, **kwargs):
         # Generic retry wrapper for any .history() calls
         return self._provider.history(*args, **kwargs)

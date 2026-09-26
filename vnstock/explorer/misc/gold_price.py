@@ -10,15 +10,15 @@ from vnstock.core.utils.user_agent import get_headers
 @optimize_execution("MISC")
 def sjc_gold_price(date=None):
     """
-    Truy xuất giá vàng từ trang chủ SJC.
+    Retrieve gold prices from the SJC website.
 
     Args:
-        - date: Ngày tra cứu, mặc định là None để lấy ngày hiện tại.
-                Nhập giá trị tùy chọn, định dạng YYYY-mm-dd, ví dụ 2025-01-15.
-                Dữ liệu có sẵn từ ngày 2/1/2016.
+        - date: Date to look up. Defaults to None, meaning today.
+                Optional, formatted YYYY-mm-dd, for example 2025-01-15.
+                Data is available from 2 January 2016 onwards.
 
     Returns:
-        - Pandas DataFrame chứa thông tin giá vàng nếu thành công, ngược lại trả về None.
+        - A pandas DataFrame of gold prices on success, or None on failure.
     """  # noqa: W291
     # Set URL
     url = "https://sjc.com.vn/GoldPrice/Services/PriceService.ashx"
@@ -83,13 +83,13 @@ def sjc_gold_price(date=None):
 def btmc_goldprice(
     url="http://api.btmc.vn/api/BTMCAPI/getpricebtmc?key=3kd8ub1llcg9t45hnoh8hmn7t5kc2v",
 ):
-    """Parse dữ liệu giá vàng từ API JSON Bảo Tín Minh Châu.
+    """Parse gold prices from the Bao Tin Minh Chau JSON API.
 
     Args:
-        url: Đường dẫn đến API JSON.
+        url: Address of the JSON API.
 
     Returns:
-        DataFrame chứa dữ liệu giá vàng.
+        DataFrame holding the gold prices.
     """
     response = requests.get(url)
     json_data = response.json()

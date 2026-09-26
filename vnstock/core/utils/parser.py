@@ -1107,7 +1107,7 @@ def convert_derivative_symbol(symbol: str, reference_date: date = None) -> str:
         month_code = month_codes[mat_month]
 
     # 4. Construct
-    # Mẫu: 41 + Underlying + Year + Month + 000
+    # Pattern: 41 + Underlying + Year + Month + 000
     krx_symbol = f"41{underlying_code}{year_code}{month_code}000"
 
     return krx_symbol

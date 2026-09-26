@@ -2,11 +2,10 @@
 
 from typing import Any
 
-from tenacity import retry, stop_after_attempt, wait_exponential
 from vnai import optimize_execution
 
 from vnstock.base import BaseAdapter, dynamic_method
-from vnstock.config import Config
+from vnstock.core.utils.retry import api_retry
 
 
 class Listing(BaseAdapter):
@@ -56,84 +55,42 @@ class Listing(BaseAdapter):
         super().__init__(source=source, random_agent=random_agent, show_log=show_log)
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def all_symbols(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve all symbols (filtered to STOCK)."""
         pass
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def symbols_by_industries(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve symbols grouped by ICB industries."""
         pass
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def symbols_by_exchange(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve symbols by exchange/board."""
         pass
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def industries_icb(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve ICB code hierarchy and mapping."""
         pass
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def symbols_by_group(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve symbols by predefined group (VN30, HNX30, CW, etc.)."""
         pass
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def get_supported_groups(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve all supported index groups."""
@@ -180,53 +137,32 @@ class Listing(BaseAdapter):
 
     # shortcuts that delegate to symbols_by_group
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     def all_future_indices(self, **kwargs: Any) -> Any:
         """Retrieve all futures indices (group='FU_INDEX')."""
         return self.symbols_by_group(group="FU_INDEX", **kwargs)
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     def all_government_bonds(self, **kwargs: Any) -> Any:
-        """Retrieve all government bonds (group='FU_BOND')."""
-        return self.symbols_by_group(group="FU_BOND", **kwargs)
+        """
+        Retrieve all government bonds.
+
+        Delegated to the provider rather than mapped onto a symbol group: there
+        is no group code for government bonds, and a source that does not carry
+        them (KBS) raises its own NotImplementedError telling the user to call
+        all_bonds() for corporate bonds instead.
+        """
+        return self._delegate_to_provider("all_government_bonds", **kwargs)
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     def all_covered_warrant(self, **kwargs: Any) -> Any:
         """Retrieve all covered warrants (group='CW')."""
         return self.symbols_by_group(group="CW", **kwargs)
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     def all_bonds(self, **kwargs: Any) -> Any:
         """Retrieve all bonds (group='BOND')."""
         return self.symbols_by_group(group="BOND", **kwargs)

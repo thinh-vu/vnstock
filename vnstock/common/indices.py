@@ -44,7 +44,7 @@ def get_all_indices() -> pd.DataFrame:
             "group": info["group"],
             "index_id": info["index_id"],
         }
-        # sector_id chỉ có với sector indices
+        # sector_id is present only for sector indices
         if "sector_id" in info:
             row["sector_id"] = info["sector_id"]
         data.append(row)
@@ -138,7 +138,7 @@ def get_indices_by_group(group: str) -> Optional[pd.DataFrame]:
                 "group": info["group"],
                 "index_id": info["index_id"],
             }
-            # sector_id chỉ có với sector indices
+            # sector_id is present only for sector indices
             if "sector_id" in info:
                 row["sector_id"] = info["sector_id"]
             data.append(row)

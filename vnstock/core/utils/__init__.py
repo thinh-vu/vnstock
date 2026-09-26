@@ -12,6 +12,18 @@ from .auth import (
     register_user,
 )
 
+# Block detection and the per-host circuit breaker. Public on purpose:
+# vnstock_data builds on these, and an underscore-private name would put that
+# dependency one rename away from breaking.
+from .block_detect import BlockSignal, detect_block, parse_retry_after
+from .circuit import (
+    circuit_check,
+    circuit_key,
+    circuit_status,
+    circuit_trip,
+    reset_circuit,
+)
+
 # Client utilities
 from .client import (
     send_request,
@@ -62,6 +74,9 @@ from .parser import (
     vn30_abbrev_contract,
     vn30_expand_contract,
 )
+
+# Retry policy
+from .retry import NEVER_RETRY, TRANSIENT, api_retry, network_retry, should_retry
 
 # Transform utilities
 from .transform import (
@@ -120,6 +135,21 @@ __all__ = [
     "advanced_logger",
     # Client
     "send_request",
+    # Block detection / circuit breaker
+    "BlockSignal",
+    "detect_block",
+    "parse_retry_after",
+    "circuit_check",
+    "circuit_key",
+    "circuit_trip",
+    "circuit_status",
+    "reset_circuit",
+    # Retry policy
+    "api_retry",
+    "network_retry",
+    "should_retry",
+    "NEVER_RETRY",
+    "TRANSIENT",
     # Environment
     "get_platform",
     "get_hosting_service",

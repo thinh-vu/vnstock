@@ -20,7 +20,7 @@ logger = get_logger(__name__)
 
 class Trading:
     """
-    Truy xuất dữ liệu giao dịch của mã chứng khoán từ nguồn dữ liệu VCI.
+    Access trading data for a symbol from the VCI data source.
     Retrieve stock trading data from VCI data source.
     """
 
@@ -49,7 +49,7 @@ class Trading:
         drop_levels: Optional[Union[int, List[int]]] = None,
     ) -> pd.DataFrame:
         """
-        Truy xuất thông tin bảng giá của các mã chứng khoán tuỳ chọn từ nguồn dữ liệu VCI.
+        Retrieve the price board for any set of symbols from the VCI data source.
         Retrieve price board information for optionally selected stock symbols from VCI data source.
         """
         url = f"{self.base_url}price/symbols/getList"

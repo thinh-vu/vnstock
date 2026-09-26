@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 
 class Listing:
     """
-    Cấu hình truy cập dữ liệu lịch sử giá chứng khoán từ MSN.
+    Access historical price data from MSN.
     Configure access to historical stock price data from MSN.
     """
 

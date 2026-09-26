@@ -33,7 +33,7 @@ logger = get_logger(__name__)
 
 class Quote:
     """
-    Lớp truy cập dữ liệu giá lịch sử từ KB Securities (KBS).
+    Access historical price data published by KB Securities (KBS).
     """
 
     def __init__(
@@ -43,12 +43,12 @@ class Quote:
         show_log: Optional[bool] = False,
     ):
         """
-        Khởi tạo Quote client cho KBS.
+        Initialise the KBS Quote client.
 
         Args:
-            symbol: Mã chứng khoán (VD: 'ACB', 'VNM').
-            random_agent: Đã lỗi thời, không còn tác dụng. Mặc định False.
-            show_log: Hiển thị log debug. Mặc định False.
+            symbol: Ticker symbol, e.g. 'ACB' or 'VNM'.
+            random_agent: Deprecated and ignored. Defaults to False.
+            show_log: Show debug logs. Defaults to False.
         """
         self.symbol = symbol.upper()
         self.data_source = "KBS"
@@ -94,15 +94,15 @@ class Quote:
         Validate input parameters.
 
         Args:
-            start: Ngày bắt đầu (YYYY-MM-DD hoặc DD-MM-YYYY).
-            end: Ngày kết thúc (YYYY-MM-DD hoặc DD-MM-YYYY).
-            interval: Khung thời gian (1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M).
+            start: Start date, YYYY-MM-DD or DD-MM-YYYY.
+            end: End date, YYYY-MM-DD or DD-MM-YYYY.
+            interval: Timeframe: 1m, 5m, 15m, 30m, 1H, 1D, 1W or 1M.
 
         Returns:
-            TickerModel instance với dữ liệu đã validate.
+            A validated TickerModel instance.
 
         Raises:
-            ValueError: Nếu interval không hợp lệ.
+            ValueError: If the interval is not supported.
         """
         ticker = TickerModel(
             symbol=self.symbol, start=start, end=end, interval=interval
@@ -119,19 +119,19 @@ class Quote:
 
     def _format_date_for_api(self, date_str: str) -> str:
         """
-        Chuyển đổi ngày từ YYYY-MM-DD sang DD-MM-YYYY cho API KBS.
+        Convert a date from YYYY-MM-DD to the DD-MM-YYYY the KBS API expects.
 
         Args:
-            date_str: Ngày dạng YYYY-MM-DD.
+            date_str: Date as YYYY-MM-DD.
 
         Returns:
-            Ngày dạng DD-MM-YYYY.
+            The same date as DD-MM-YYYY.
         """
         try:
             dt = datetime.strptime(date_str, "%Y-%m-%d")
             return dt.strftime("%d-%m-%Y")
         except ValueError:
-            # Nếu đã đúng format DD-MM-YYYY thì trả về như cũ
+            # Already in DD-MM-YYYY, hand it back untouched
             return date_str
 
     @optimize_execution("KBS")
@@ -148,21 +148,21 @@ class Quote:
         get_all: Optional[bool] = False,
     ) -> Union[pd.DataFrame, str]:
         """
-        Tải lịch sử giá của mã chứng khoán từ KBS.
+        Load the price history of a symbol from KBS.
 
         Args:
-            start: Ngày bắt đầu (YYYY-MM-DD hoặc DD-MM-YYYY). Bắt buộc nếu không có length hoặc count_back.
-            end: Ngày kết thúc (YYYY-MM-DD hoặc DD-MM-YYYY). Mặc định None (lấy đến hiện tại).
-            interval: Khung thời gian trích xuất dữ liệu. Giá trị nhận: 1m, 5m, 15m, 30m, 1H, 1D, 1W, 1M. Mặc định "1D".
-            to_df: Trả về DataFrame. Mặc định True. False để trả về JSON.
-            show_log: Hiển thị log debug.
-            count_back: Số lượng nến (bars) cần lấy.
-            floating: Số chữ số thập phân cho giá. Mặc định 2.
-            length: Khoảng thời gian phân tích (vd: '3M', 150, '150'). Nhận giá trị chuỗi (vd 3M), số ngày (int/str), hoặc số bars (vd '100b').
-            get_all: Lấy tất cả các cột từ API response. Mặc định False (chỉ lấy cột chuẩn hóa).
+            start: Start date, YYYY-MM-DD or DD-MM-YYYY. Required unless length or count_back is given.
+            end: End date, YYYY-MM-DD or DD-MM-YYYY. Defaults to None, meaning up to now.
+            interval: Timeframe: 1m, 5m, 15m, 30m, 1H, 1D, 1W or 1M. Defaults to "1D".
+            to_df: Return a DataFrame. Defaults to True; False returns JSON.
+            show_log: Show debug logs.
+            count_back: Number of bars to return.
+            floating: Decimal places for prices. Defaults to 2.
+            length: Lookback window. Accepts a period string ('3M'), a day count (150 or '150') or a bar count ('100b').
+            get_all: Return every column the API provides. Defaults to False, the standardised subset.
 
         Returns:
-            DataFrame hoặc JSON string chứa dữ liệu OHLCV.
+            DataFrame, or a JSON string, holding the OHLCV data.
 
         Examples:
             >>> quote = Quote('ACB')
@@ -170,19 +170,19 @@ class Quote:
             >>> print(df.columns.tolist())
             ['time', 'open', 'high', 'low', 'close', 'volume']
 
-            >>> # Sử dụng length để lấy dữ liệu 1 tháng gần nhất
+            >>> # Use length for the most recent month
             >>> df_1m = quote.history(length='1M', interval='1D')
 
-            >>> # Lấy 100 nến dữ liệu
+            >>> # Fetch 100 bars
             >>> df_100 = quote.history(count_back=100, interval='1D')
 
-            >>> # Lấy dữ liệu 150 ngày
+            >>> # Fetch 150 days
             >>> df_150d = quote.history(length=150, interval='1D')
 
-            >>> # Lấy dữ liệu 3 tháng với kết thúc vào ngày cụ thể
+            >>> # Three months ending on a given date
             >>> df_3m = quote.history(end='2024-12-31', length='3M', interval='1D')
 
-            >>> # Lấy tất cả các cột (bao gồm cả cột value)
+            >>> # Every column, including value
             >>> df_all = quote.history(length='1M', interval='1D', get_all=True)
         """  # noqa: W293
         # Set end date to today if not provided
@@ -357,47 +357,47 @@ class Quote:
         floating: Optional[int] = 2,
     ) -> Union[pd.DataFrame, str]:
         """
-        Truy xuất dữ liệu khớp lệnh trong phiên của mã chứng khoán từ KBS.
+        Retrieve in-session matched trades for a symbol from KBS.
 
-        Mặc định trả về các cột chuẩn hóa (time, price, volume, match_type, id).
-        Sử dụng get_all=True để lấy tất cả các cột từ API response.
+        Returns the standardised columns (time, price, volume, match_type, id) by default.
+        Pass get_all=True for every column the API provides.
 
         Args:
-            page_size: Số lượng bản ghi trên mỗi trang (mặc định 100).
-                       Thường 1 ngày có thể lên đến 100K dòng (VN30 derivatives) hoặc 50-70K (cổ phiếu cơ sở).
-            page: Trang dữ liệu (mặc định 1).
-            to_df: Trả về DataFrame. Mặc định True. False để trả về JSON.
-            get_all: Lấy tất cả các cột từ API response. Mặc định False (chỉ lấy cột chuẩn hóa).
-            show_log: Hiển thị log debug.
-            floating: Số chữ số thập phân cho giá. Mặc định 2. Nếu None sẽ không làm tròn.
+            page_size: Records per page. Defaults to 100.
+                       A single session can run to 100K rows for VN30 derivatives, or 50-70K for a stock.
+            page: Page number. Defaults to 1.
+            to_df: Return a DataFrame. Defaults to True; False returns JSON.
+            get_all: Return every column the API provides. Defaults to False, the standardised subset.
+            show_log: Show debug logs.
+            floating: Decimal places for prices. Defaults to 2; None leaves them unrounded.
 
         Returns:
-            DataFrame hoặc JSON string chứa dữ liệu khớp lệnh intraday.
+            DataFrame, or a JSON string, holding the matched trades.
 
-            **Cột chuẩn hóa (Core columns):**
-            - time: Thời gian giao dịch (YYYY-MM-DD HH:MM:SS)
-            - price: Giá khớp
-            - volume: Khối lượng khớp
-            - match_type: Loại khớp lệnh (buy, sell, atc, ato)
-            - id: ID giao dịch (từ KBS: timestamp + price + volume)
+            **Core columns:**
+            - time: Trade time (YYYY-MM-DD HH:MM:SS)
+            - price: Matched price
+            - volume: Matched volume
+            - match_type: Match type (buy, sell, atc, ato)
+            - id: Trade id, built by KBS from timestamp, price and volume
 
-            **Cột bổ sung (nếu get_all=True):**
-            - trading_date: Ngày giao dịch (DD/MM/YYYY)
-            - symbol: Mã chứng khoán
-            - price_change: Thay đổi giá so với lần trước
-            - accumulated_volume: Khối lượng tích lũy
-            - accumulated_value: Giá trị tích lũy
+            **Additional columns when get_all=True:**
+            - trading_date: Trading date (DD/MM/YYYY)
+            - symbol: Ticker symbol
+            - price_change: Change against the previous trade
+            - accumulated_volume: Cumulative volume
+            - accumulated_value: Cumulative value
 
         Examples:
             >>> quote = Quote('ACB')
 
-            >>> # Lấy 100 bản ghi (cột chuẩn hóa)
+            >>> # 100 records, standardised columns
             >>> df = quote.intraday(page_size=100)
 
-            >>> # Lấy trang thứ 2
+            >>> # Second page
             >>> df_page2 = quote.intraday(page=2, page_size=100)
 
-            >>> # Lấy tất cả các cột
+            >>> # Every column
             >>> df_all = quote.intraday(get_all=True)
         """  # noqa: W293
         # Validator: Intraday data is not supported for indices

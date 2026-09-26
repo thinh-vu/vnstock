@@ -22,7 +22,7 @@ logger = get_logger(__name__)
 
 class Listing:
     """
-    Lớp truy cập dữ liệu danh sách mã chứng khoán từ KB Securities (KBS).
+    Access the securities listing data published by KB Securities (KBS).
     """
 
     def __init__(
@@ -31,11 +31,11 @@ class Listing:
         show_log: Optional[bool] = False,
     ):
         """
-        Khởi tạo Listing client cho KBS.
+        Initialise the KBS Listing client.
 
         Args:
-            random_agent: Đã lỗi thời, không còn tác dụng. Mặc định False.
-            show_log: Hiển thị log debug. Mặc định False.
+            random_agent: Deprecated and ignored. Defaults to False.
+            show_log: Show debug logs. Defaults to False.
         """
         self.data_source = "KBS"
         self.base_url = _IIS_BASE_URL
@@ -53,16 +53,16 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
-        Truy xuất danh sách toàn bộ mã chứng khoán trên thị trường Việt Nam từ KBS.
+        Retrieve every ticker listed on the Vietnamese market, as published by KBS.
 
-        Trả về DataFrame đơn giản với mapping symbol → organ_name (tên công ty tiếng Việt).
+        Returns a flat DataFrame mapping symbol to organ_name (the company name in Vietnamese).
 
         Args:
-            show_log: Hiển thị log debug. Mặc định False.
+            show_log: Show debug logs. Defaults to False.
 
         Returns:
-            DataFrame với 2 cột: symbol, organ_name.
-            Metadata 'source' được lưu trong df.attrs['source'].
+            DataFrame with two columns: symbol and organ_name.
+            The source name is kept in df.attrs['source'].
 
         Examples:
             >>> kbs = Listing()
@@ -108,19 +108,19 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
-        Truy xuất danh sách mã chứng khoán theo sàn giao dịch.
+        Retrieve tickers grouped by exchange.
 
-        Sử dụng endpoint /stock/search/data để lấy dữ liệu đầy đủ.
+        Uses the /stock/search/data endpoint, which returns the full record.
 
         Args:
-            get_all: Lấy tất cả các cột mà API cung cấp thay vì chỉ các cột chuẩn hoá. Mặc định False.
-            show_log: Hiển thị log debug. Mặc định False.
+            get_all: Return every column the API provides instead of the standardised subset. Defaults to False.
+            show_log: Show debug logs. Defaults to False.
 
         Returns:
-            DataFrame chứa các cột từ API KBS: symbol, organ_name, en_organ_name,
+            DataFrame with the columns KBS provides: symbol, organ_name, en_organ_name,
             exchange, type, id, re, ceiling, floor.
-            Metadata 'source' được lưu trong df.attrs['source'].
-            Các cột không có sẽ bỏ qua.
+            The source name is kept in df.attrs['source'].
+            Columns the API omits are skipped.
         """
         # Get full stock data from API
         try:
@@ -182,17 +182,17 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
-        Truy xuất danh sách mã chứng khoán theo nhóm ngành. Thông tin mã ngành là quy định riêng của KBS không theo chuẩn ICB thường gặp.
+        Retrieve tickers grouped by industry. The industry codes are KBS's own scheme, not the more common ICB standard.
 
         Args:
-            lang: Ngôn ngữ ('vi' hoặc 'en'). Mặc định 'vi'.
-            show_log: Hiển thị log debug. Mặc định False.
+            lang: Language, 'vi' or 'en'. Defaults to 'vi'.
+            show_log: Show debug logs. Defaults to False.
 
         Returns:
-            DataFrame chứa thông tin mã chứng khoán theo ngành.
+            DataFrame of tickers with their industry.
 
         Raises:
-            ValueError: Nếu ngôn ngữ không hợp lệ.
+            ValueError: If the language is not supported.
         """
         if lang not in ["vi", "en"]:
             raise ValueError("Ngôn ngữ phải là 'vi' hoặc 'en'.")
@@ -247,33 +247,33 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.Series:
         """
-        Truy xuất danh sách mã chứng khoán theo nhóm chỉ số.
+        Retrieve the tickers that make up an index or trade on an exchange.
 
-        Hỗ trợ lọc theo các nhóm/sàn: chỉ số VN (VN30, VN100, VNMidCap, VNSmallCap, VNSI, VNX50, VNXALL),
-        sàn giao dịch (HOSE, HNX, UPCOM), chỉ số HNX30, ETF, chứng quyền (CW), trái phiếu (BOND),
-        và phái sinh (DER).
+        Supported groups: the VN indices (VN30, VN100, VNMidCap, VNSmallCap, VNSI, VNX50,
+        VNXALL), the exchanges (HOSE, HNX, UPCOM), HNX30, ETFs, covered warrants (CW),
+        bonds (BOND) and derivatives (DER).
 
-        Để xem danh sách tất cả các nhóm được hỗ trợ, gọi `get_supported_groups()`.
+        Call `get_supported_groups()` for the full list.
 
         Args:
-            group: Tên nhóm được hỗ trợ. Mặc định 'VN30'.
-                   Ví dụ: 'VN30', 'VN100', 'HOSE', 'HNX', 'UPCOM', 'ETF', 'BOND', 'CW', 'FU_INDEX'.
-            show_log: Hiển thị log debug. Mặc định False.
+            group: A supported group name. Defaults to 'VN30'.
+                   For example 'VN30', 'VN100', 'HOSE', 'HNX', 'UPCOM', 'ETF', 'BOND', 'CW', 'FU_INDEX'.
+            show_log: Show debug logs. Defaults to False.
 
         Returns:
-            Series chứa mã chứng khoán theo nhóm.
+            Series of tickers belonging to the group.
 
         Raises:
-            ValueError: Nếu tên nhóm không hợp lệ.
+            ValueError: If the group name is not supported.
 
         Example:
             >>> from quant_master.explorer.kbs import Listing
             >>> kbs = Listing()
-            >>> # Lấy danh sách VN30
+            >>> # Members of VN30
             >>> vn30 = kbs.symbols_by_group('VN30')
-            >>> # Lấy tất cả ETF
+            >>> # Every ETF
             >>> etf_symbols = kbs.symbols_by_group('ETF')
-            >>> # Xem tất cả nhóm được hỗ trợ
+            >>> # See every supported group
             >>> groups = kbs.get_supported_groups()
         """
         if group not in _GROUP_CODE:
@@ -294,14 +294,14 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
-        Truy xuất thông tin danh sách các ngành công nghiệp.
+        Retrieve the ICB industry classification.
 
-        Note: **KBS không cung cấp ICB classification.**
+        Note: **KBS does not publish an ICB classification.**
 
-        Để lấy danh sách mã theo ngành, hãy sử dụng `symbols_by_industries()`.
+        Use `symbols_by_industries()` to get tickers grouped by KBS's own industry codes.
 
         Raises:
-            NotImplementedError: KBS không hỗ trợ ICB classification.
+            NotImplementedError: KBS does not support the ICB classification.
         """  # noqa: W293
         raise NotImplementedError(
             "KBS không cung cấp ICB classification. "
@@ -313,27 +313,27 @@ class Listing:
         self,
     ) -> pd.DataFrame:
         """
-        Liệt kê tất cả các nhóm/sàn được hỗ trợ bởi phương thức symbols_by_group().
+        List every group and exchange accepted by symbols_by_group().
 
-        Các mô tả chỉ số tuân theo chuẩn của vnstock library.
+        The index descriptions follow the vnstock naming convention.
 
         Returns:
-            DataFrame với các cột:
-            - group_name: Tên nhóm có thể truyền vào symbols_by_group()
-            - group_code: Mã nội bộ của KBS
-            - category: Danh mục (Chỉ số VN, Sàn giao dịch, ETF/Quỹ, Chứng quyền, Trái phiếu, Phái sinh)
-            - description: Mô tả chi tiết theo chuẩn vnstock
+            DataFrame with the columns:
+            - group_name: the name to pass to symbols_by_group()
+            - group_code: the code KBS uses internally
+            - category: one of the categories listed in Vietnamese by the source
+            - description: a fuller description, following the vnstock convention
 
         Example:
             >>> from quant_master.explorer.kbs import Listing
             >>> kbs = Listing()
             >>> groups = kbs.get_supported_groups()
             >>> print(groups)
-            >>> # Lọc chỉ các chỉ số VN
+            >>> # Keep the VN indices only
             >>> vn_indices = groups[groups['category'] == 'Chỉ số VN']
         """
         group_info = {
-            # Chỉ số VN - Mô tả theo chuẩn vnstock
+            # VN indices - descriptions follow the vnstock convention
             (
                 "VN30",
                 "30",
@@ -368,7 +368,7 @@ class Listing:
             ),
             ("VNALL", "ALL", "Chỉ số VN", "Tất cả cổ phiếu trên HOSE và HNX"),
             ("HNX30", "HNX30", "Chỉ số VN", "Chỉ số 30 cổ phiếu hàng đầu HNX"),
-            # Sàn giao dịch
+            # Exchanges
             (
                 "HOSE",
                 "HOSE",
@@ -382,28 +382,28 @@ class Listing:
                 "Sàn giao dịch",
                 "Sàn Giao dịch OTC (UPCoM - Unlisted Public Company Market)",
             ),
-            # Quỹ và chứng chỉ
+            # Funds and fund certificates
             (
                 "ETF",
                 "FUND",
                 "ETF/Quỹ",
                 "Exchange-Traded Fund - Quỹ chỉ số và quỹ trao đổi",
             ),
-            # Chứng quyền
+            # Covered warrants
             (
                 "CW",
                 "CW",
                 "Chứng quyền",
                 "Covered Warrant - Chứng quyền phát hành bởi các tổ chức tài chính",
             ),
-            # Trái phiếu
+            # Bonds
             (
                 "BOND",
                 "BOND",
                 "Trái phiếu",
                 "Corporate Bond - Trái phiếu doanh nghiệp niêm yết",
             ),
-            # Phái sinh
+            # Derivatives
             ("FU_INDEX", "DER", "Phái sinh", "Futures - Hợp đồng tương lai chỉ số"),
         }
 
@@ -427,13 +427,13 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.Series:
         """
-        Truy xuất danh sách mã phái sinh hợp đồng tương lai.
+        Retrieve the list of futures contract symbols.
 
         Args:
-            show_log: Hiển thị log debug. Mặc định False.
+            show_log: Show debug logs. Defaults to False.
 
         Returns:
-            Series chứa mã phái sinh.
+            Series of futures symbols.
         """
         return self.symbols_by_group(group="FU_INDEX", show_log=show_log)
 
@@ -443,13 +443,13 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.Series:
         """
-        Truy xuất danh sách mã chứng quyền.
+        Retrieve the list of covered warrant symbols.
 
         Args:
-            show_log: Hiển thị log debug. Mặc định False.
+            show_log: Show debug logs. Defaults to False.
 
         Returns:
-            Series chứa mã chứng quyền.
+            Series of covered warrant symbols.
         """
         return self.symbols_by_group(group="CW", show_log=show_log)
 
@@ -459,13 +459,13 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.Series:
         """
-        Truy xuất danh sách mã trái phiếu.
+        Retrieve the list of bond symbols.
 
         Args:
-            show_log: Hiển thị log debug. Mặc định False.
+            show_log: Show debug logs. Defaults to False.
 
         Returns:
-            Series chứa mã trái phiếu.
+            Series of bond symbols.
         """
         return self.symbols_by_group(group="BOND", show_log=show_log)
 
@@ -475,13 +475,13 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.Series:
         """
-        Truy xuất danh sách mã quỹ ETF.
+        Retrieve the list of ETF symbols.
 
         Args:
-            show_log: Hiển thị log debug. Mặc định False.
+            show_log: Show debug logs. Defaults to False.
 
         Returns:
-            Series chứa mã ETF.
+            Series of ETF symbols.
         """
         return self.symbols_by_group(group="ETF", show_log=show_log)
 
@@ -491,14 +491,14 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> pd.Series:
         """
-        Truy xuất danh sách mã trái phiếu chính phủ.
+        Retrieve the list of government bond symbols.
 
-        Note: **KBS không cung cấp dữ liệu trái phiếu chính phủ.**
+        Note: **KBS does not publish government bond data.**
 
-        Để lấy danh sách trái phiếu doanh nghiệp, hãy sử dụng `all_bonds()`.
+        Use `all_bonds()` for corporate bonds.
 
         Raises:
-            NotImplementedError: KBS không hỗ trợ trái phiếu chính phủ.
+            NotImplementedError: KBS does not support government bonds.
         """
         raise NotImplementedError(
             "KBS không cung cấp dữ liệu trái phiếu chính phủ. "
@@ -512,16 +512,16 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> List[Dict]:
         """
-        Internal method để lấy dữ liệu đầy đủ về tất cả chứng khoán từ /stock/search/data endpoint.
+        Fetch the full record for every security from the /stock/search/data endpoint.
 
-        Trả về danh sách chứng khoán với tất cả thông tin: symbol, name, nameEn, exchange,
+        Returns every field the source provides: symbol, name, nameEn, exchange,
         type, index, re, ceiling, floor.
 
         Args:
-            show_log: Hiển thị log debug. Mặc định False.
+            show_log: Show debug logs. Defaults to False.
 
         Returns:
-            List[Dict] chứa thông tin đầy đủ của tất cả chứng khoán, hoặc [] nếu lỗi.
+            List[Dict] with the full record for every security, or [] on failure.
         """  # noqa: W291
         url = _SEARCH_URL
 
@@ -561,14 +561,14 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> List[str]:
         """
-        Internal method để lấy danh sách mã theo nhóm/sàn.
+        Fetch the tickers belonging to a group or exchange.
 
         Args:
-            group: Tên nhóm hoặc sàn.
-            show_log: Hiển thị log debug.
+            group: Group or exchange name.
+            show_log: Show debug logs.
 
         Returns:
-            List[str] chứa danh sách mã.
+            List[str] of tickers.
         """
         group_code = _GROUP_CODE.get(group, group)
         url = f"{_INDEX_URL}/{group_code}/stocks"
@@ -608,13 +608,13 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> List[Dict]:
         """
-        Internal method để lấy danh sách các ngành.
+        Fetch the list of industries.
 
         Args:
-            show_log: Hiển thị log debug.
+            show_log: Show debug logs.
 
         Returns:
-            List[Dict] chứa thông tin ngành.
+            List[Dict] describing each industry.
         """
         url = f"{_SECTOR_ALL_URL}"
 
@@ -655,14 +655,14 @@ class Listing:
         show_log: Optional[bool] = False,
     ) -> List[str]:
         """
-        Internal method để lấy danh sách mã theo mã ngành.
+        Fetch the tickers belonging to one industry code.
 
         Args:
-            industry_code: Mã ngành.
-            show_log: Hiển thị log debug.
+            industry_code: Industry code.
+            show_log: Show debug logs.
 
         Returns:
-            List[str] chứa danh sách mã.
+            List[str] of tickers.
         """
         url = f"{_SECTOR_STOCK_URL}?code={industry_code}&l=1"
 

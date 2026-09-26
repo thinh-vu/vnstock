@@ -1,5 +1,5 @@
 """
-Module quản lý thông tin công ty từ nguồn dữ liệu VCI.
+Company information from the VCI data source.
 """
 
 from datetime import datetime, timedelta
@@ -20,13 +20,13 @@ logger = get_logger(__name__)
 
 class Company:
     """
-    Class (lớp) quản lý các thông tin liên quan đến công ty từ nguồn dữ liệu VCI.
+    Access company information from the VCI data source.
 
-    Tham số:
-        - symbol (str): Mã chứng khoán của công ty cần truy xuất thông tin.
-        - random_agent (bool): Đã lỗi thời, không còn tác dụng. Mặc định False.
-        - to_df (bool): Chuyển đổi dữ liệu thành DataFrame hoặc không. Mặc định là True.
-        - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
+    Args:
+        - symbol (str): Ticker symbol of the company to look up.
+        - random_agent (bool): Deprecated and ignored. Defaults to False.
+        - to_df (bool): Return a DataFrame instead of raw JSON. Defaults to True.
+        - show_log (bool): Show debug logs. Defaults to False.
     """
 
     def __init__(
@@ -37,7 +37,7 @@ class Company:
         show_log: Optional[bool] = False,
     ):
         """
-        Khởi tạo đối tượng Company với các tham số cho việc truy xuất dữ liệu.
+        Initialise the Company client.
         """
         self.symbol = symbol.upper() if symbol else ""
         self.asset_type = get_asset_type(self.symbol) if symbol else "stock"
@@ -209,10 +209,10 @@ class Company:
     @optimize_execution("VCI")
     def _info(self) -> pd.DataFrame:
         """
-        Truy xuất thông tin công ty theo chuẩn schema mapping.
+        Retrieve company information mapped onto the standard schema.
 
         Returns:
-            pd.DataFrame: DataFrame chứa thông tin công ty với columns chuẩn hóa.
+            pd.DataFrame: Company information with standardised columns.
         """
         data = self._fetch_company_details()
 
@@ -278,10 +278,10 @@ class Company:
     @optimize_execution("VCI")
     def overview(self) -> pd.DataFrame:
         """
-        Truy xuất thông tin tổng quan của công ty (raw data từ API).
+        Retrieve the company overview, as the API returns it.
 
         Returns:
-            pd.DataFrame: DataFrame chứa thông tin tổng quan của công ty.
+            pd.DataFrame: The company overview.
         """  # noqa: W293
         data = self._fetch_company_details()
 
@@ -339,15 +339,15 @@ class Company:
     @optimize_execution("VCI")
     def shareholders(self, mode: str = "detailed") -> pd.DataFrame:
         """
-        Truy xuất thông tin cổ đông của công ty.
+        Retrieve the company shareholders.
 
-        Tham số:
-            - mode (str): Chế độ hiển thị
-                - 'summary': Tóm tắt cơ cấu cổ đông (mặc định)
-                - 'detailed': Danh sách chi tiết tất cả cổ đông
+        Args:
+            - mode (str): Level of detail
+                - 'summary': the ownership breakdown (default)
+                - 'detailed': every shareholder, listed individually
 
         Returns:
-            pd.DataFrame: DataFrame chứa thông tin cổ đông của công ty.
+            pd.DataFrame: Shareholder information.
         """  # noqa: W293
         if mode == "summary":
             # Return summary structure
@@ -438,16 +438,16 @@ class Company:
     @optimize_execution("VCI")
     def officers(self, filter_by: str = "working") -> pd.DataFrame:
         """
-        Truy xuất thông tin lãnh đạo công ty (cá nhân có vị trí).
+        Retrieve the company officers, meaning individuals holding a named position.
 
-        Tham số:
-            - filter_by (str): Lọc lãnh đạo đang làm việc hoặc đã từ nhiệm hoặc tất cả.
-                - 'working': Lọc lãnh đạo đang làm việc (mặc định).
-                - 'resigned': Lọc lãnh đạo đã từ nhiệm.
-                - 'all': Lọc tất cả lãnh đạo.
+        Args:
+            - filter_by (str): Which officers to return.
+                - 'working': those currently in post (default).
+                - 'resigned': those who have stepped down.
+                - 'all': everyone.
 
         Returns:
-            pd.DataFrame: DataFrame chứa thông tin lãnh đạo của công ty.
+            pd.DataFrame: Officer information.
         """
         if filter_by not in ["working", "resigned", "all"]:
             raise ValueError(
@@ -464,7 +464,7 @@ class Company:
         # Convert to snake_case
         df.columns = [camel_to_snake(col) for col in df.columns]
 
-        # Filter: only INDIVIDUAL with positionName (lãnh đạo)
+        # Filter: only INDIVIDUAL entries that carry a positionName, i.e. company officers
         if "owner_type" in df.columns:
             df = df[df["owner_type"] == "INDIVIDUAL"]
 
@@ -514,16 +514,16 @@ class Company:
     @optimize_execution("VCI")
     def subsidiaries(self, filter_by: str = "all") -> pd.DataFrame:
         """
-        Truy xuất thông tin công ty con của công ty.
+        Retrieve the company's subsidiaries.
 
-        Tham số:
-            - filter_by (str): Lọc công ty con hoặc công ty liên kết.
-                - 'all': Lọc tất cả.
-                - 'subsidiary': Lọc công ty con.
-                - 'affiliate': Lọc công ty liên kết.
+        Args:
+            - filter_by (str): Which holdings to return.
+                - 'all': everything.
+                - 'subsidiary': subsidiaries only.
+                - 'affiliate': affiliates only.
 
         Returns:
-            pd.DataFrame: DataFrame chứa thông tin công ty con.
+            pd.DataFrame: Subsidiary information.
         """
         if filter_by not in ["all", "subsidiary", "affiliate"]:
             raise ValueError(
@@ -612,10 +612,10 @@ class Company:
     @optimize_execution("VCI")
     def affiliate(self) -> pd.DataFrame:
         """
-        Truy xuất thông tin công ty liên kết của công ty.
+        Retrieve the company's affiliates.
 
         Returns:
-            pd.DataFrame: DataFrame chứa thông tin công ty liên kết.
+            pd.DataFrame: Affiliate information.
         """  # noqa: W293
         data = self._fetch_relationships()
 
@@ -650,10 +650,10 @@ class Company:
     @optimize_execution("VCI")
     def news(self) -> pd.DataFrame:
         """
-        Truy xuất tin tức liên quan đến công ty.
+        Retrieve news about the company.
 
         Returns:
-            pd.DataFrame: DataFrame chứa tin tức liên quan đến công ty.
+            pd.DataFrame: News items.
         """  # noqa: W293
         # Try to fetch from the main news endpoint first (has more data)
         data = self._fetch_news()
@@ -704,10 +704,10 @@ class Company:
 
         Args:
             event_codes (str): Event codes to fetch (comma-separated)
-                - 'DIV,ISS': Trả cổ tức & phát hành thêm
-                - 'DDIND,DDINS,DDRP': Giao dịch cổ đông lớn & cổ đông nội bộ
-                - 'AGME,AGMR,EGME': Đại hội cổ đông
-                - 'AIS,MA,MOVE,NLIS,OTHE,RETU,SUSP': Sự kiện khác
+                - 'DIV,ISS': dividends and share issuance
+                - 'DDIND,DDINS,DDRP': major-shareholder and insider trades
+                - 'AGME,AGMR,EGME': shareholder meetings
+                - 'AIS,MA,MOVE,NLIS,OTHE,RETU,SUSP': other events
             from_date (str): Start date in YYYYMMDD format
             to_date (str): End date in YYYYMMDD format
             page (int): Page number (0-indexed)
@@ -743,10 +743,10 @@ class Company:
     @optimize_execution("VCI")
     def events(self) -> pd.DataFrame:
         """
-        Truy xuất các sự kiện của công ty.
+        Retrieve the company's events.
 
         Returns:
-            pd.DataFrame: DataFrame chứa các sự kiện của công ty.
+            pd.DataFrame: Company events.
         """  # noqa: W293
         data = self._fetch_events()
 
@@ -799,10 +799,10 @@ class Company:
     @optimize_execution("VCI")
     def trading_stats(self) -> pd.DataFrame:
         """
-        Truy xuất thống kê giao dịch của công ty.
+        Retrieve trading statistics for the company.
 
         Returns:
-            pd.DataFrame: DataFrame chứa thống kê giao dịch của công ty.
+            pd.DataFrame: Trading statistics.
         """  # noqa: W293
         data = self._fetch_company_details()
 
@@ -828,10 +828,10 @@ class Company:
     @optimize_execution("VCI")
     def ratio_summary(self) -> pd.DataFrame:
         """
-        Truy xuất tóm tắt các tỷ lệ tài chính của công ty.
+        Retrieve a summary of the company's financial ratios.
 
         Returns:
-            pd.DataFrame: DataFrame chứa tóm tắt các tỷ lệ tài chính của công ty.
+            pd.DataFrame: Financial ratio summary.
         """  # noqa: W293
         data = self._fetch_financial_statistics()
 

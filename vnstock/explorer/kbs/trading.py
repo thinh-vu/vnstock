@@ -23,7 +23,7 @@ logger = get_logger(__name__)
 
 class Trading:
     """
-    Lớp truy cập dữ liệu giao dịch từ KB Securities (KBS).
+    Access trading data published by KB Securities (KBS).
     """
 
     def __init__(
@@ -33,12 +33,12 @@ class Trading:
         show_log: Optional[bool] = False,
     ):
         """
-        Khởi tạo Trading client cho KBS.
+        Initialise the KBS Trading client.
 
         Args:
-            symbol: Mã chứng khoán (VD: 'ACB', 'VNM'). Optional cho market-wide queries.
-            random_agent: Đã lỗi thời, không còn tác dụng. Mặc định False.
-            show_log: Hiển thị log debug. Mặc định False.
+            symbol: Ticker symbol, e.g. 'ACB' or 'VNM'. Optional for market-wide queries.
+            random_agent: Deprecated and ignored. Defaults to False.
+            show_log: Show debug logs. Defaults to False.
         """
         self.symbol = symbol.upper() if symbol else None
         self.data_source = "KBS"
@@ -165,7 +165,7 @@ class Trading:
         get_all: bool = False,
     ) -> pd.DataFrame:
         """
-        Truy xuất bảng giá trong phiên (có độ trễ theo nguồn cấp) cho danh sách mã chứng khoán.
+        Retrieve the in-session price board, delayed as the source delivers it, for a list of symbols.
         """
         if not symbols_list:
             raise ValueError("symbols_list không được để trống.")

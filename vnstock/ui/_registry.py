@@ -4,7 +4,16 @@ Maps UI methods to native vnstock API/Explorer functions.
 """
 
 # Structure: {domain: {method: (layer, sub_module, class_name, function_name, source, return_type, summary)}}
-# layer: 'api', 'explorer', 'connector'
+# layer: 'api', 'explorer', 'connector' are dispatched by BaseUI._dispatch;
+#        'ui' marks a method implemented on the UI class itself (it never
+#        reaches _dispatch) and is present so show_api() can document it.
+#
+# A 2-tuple (domain, method) instead means "redirect to that entry".
+#
+# `source` is not documentation only: BaseUI._dispatch uses it as the default
+# data source when the caller does not pass one. `return_type` and `summary`
+# feed show_api(). Keep all three truthful - tests/unified_ui/test_registry.py
+# checks them against the provider that actually serves the call.
 
 MAP = {
     # Legacy flat domains (kept for backward compatibility where it makes sense)
@@ -386,7 +395,7 @@ MAP = {
                 "Listing",
                 "symbols_by_group",
                 "KBS",
-                "DataFrame",
+                "Series",
                 "List equities by group.",
             ),
             "list_by_industry": (
@@ -424,7 +433,7 @@ MAP = {
                 "Listing",
                 "symbols_by_group",
                 "KBS",
-                "DataFrame",
+                "Series",
                 "List constituents of an index.",
             ),
             "groups": (
@@ -444,7 +453,7 @@ MAP = {
                 "Listing",
                 "all_etf",
                 "KBS",
-                "DataFrame",
+                "Series",
                 "List all trackers/ETFs.",
             ),
         },
@@ -455,7 +464,7 @@ MAP = {
                 "Listing",
                 "all_future_indices",
                 "KBS",
-                "DataFrame",
+                "Series",
                 "List all futures instruments.",
             ),
         },
@@ -466,7 +475,7 @@ MAP = {
                 "Listing",
                 "all_covered_warrant",
                 "KBS",
-                "DataFrame",
+                "Series",
                 "List all covered warrants.",
             ),
         },
@@ -486,7 +495,7 @@ MAP = {
                 "Listing",
                 "all_bonds",
                 "KBS",
-                "DataFrame",
+                "Series",
                 "List all corporate bonds.",
             ),
             "government": (
@@ -495,7 +504,7 @@ MAP = {
                 "Listing",
                 "all_government_bonds",
                 "VCI",
-                "DataFrame",
+                "Series",
                 "List all government bonds.",
             ),
         },
@@ -592,8 +601,8 @@ MAP = {
                 "api.listing",
                 "Listing",
                 "market_status",
-                "KBS",
-                "Dict",
+                "VCI",
+                "DataFrame",
                 "Get live market status.",
             ),
         },
@@ -917,7 +926,7 @@ MAP = {
                 "Trade",
                 "login",
                 "DNSE",
-                "None",
+                "str",
                 "Login to account.",
             ),
             "account": (

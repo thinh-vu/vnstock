@@ -4,7 +4,7 @@ from typing import Dict
 
 def save_json(data: Dict, path: str = "data.json"):
     """
-    Lưu dữ liệu dưới dạng JSON.
+    Save the data as JSON.
     """
     try:
         with open(path, "w") as f:

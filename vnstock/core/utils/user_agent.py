@@ -58,7 +58,7 @@ AUTH_SCHEMES = {
 
 def get_authorization_header(token: str, scheme: str = "Bearer") -> Dict[str, str]:
     """
-    Tạo Authorization header theo scheme cụ thể.
+    Build an Authorization header for a given scheme.
     Create Authorization header according to specific scheme.
 
     Args:

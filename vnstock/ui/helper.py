@@ -83,7 +83,7 @@ def show_doc(obj: Any) -> None:
         print("No documentation available.")
 
 
-def show_api(node: Any = None, level: int = 0) -> None:
+def show_api(node: Any = None, level: int = 0, _indent: str = "") -> None:
     """
     Display the API structure tree for vnstock.
     Matches the presentation style of vnstock_data.
@@ -97,18 +97,23 @@ def show_api(node: Any = None, level: int = 0) -> None:
 
         print("\nAPI STRUCTURE TREE - VNSTOCK (Unified UI)")
         print("vnstock")
-        for attr in ["Reference", "Market", "Fundamental", "Retail", "Broker"]:
+        roots = ["Reference", "Market", "Fundamental", "Retail", "Broker"]
+        for i, attr in enumerate(roots):
+            root_prefix = "└── " if i == len(roots) - 1 else "├── "
+            child_indent = "    " if i == len(roots) - 1 else "│   "
             try:
                 cls_obj = getattr(ui, attr)()
                 # Colorize top level domains (Bold Cyan)
-                print(f"├── \033[1;36m{attr}\033[0m")
-                show_api(cls_obj, level + 1)
+                print(f"{root_prefix}\033[1;36m{attr}\033[0m")
+                show_api(cls_obj, level + 1, child_indent)
             except Exception:
-                print(f"├── {attr}")
+                print(f"{root_prefix}{attr}")
         return
 
-    # Recursive display for sub-nodes
-    indent = "│   " * level
+    # Recursive display for sub-nodes. The indent is handed down by the caller:
+    # a child of the last node in a group must be indented with blanks, not with
+    # a "│" that belongs to a branch which has already ended.
+    indent = _indent
 
     # Identify domain from class name
     cls_name = type(node).__name__
@@ -213,8 +218,24 @@ def show_api(node: Any = None, level: int = 0) -> None:
         except ValueError:
             return 999
 
+    def lookup_meta(name):
+        if parent_domain in MAP:
+            if domain in MAP[parent_domain] and name in MAP[parent_domain][domain]:
+                return MAP[parent_domain][domain][name]
+        elif domain in MAP and name in MAP[domain]:
+            return MAP[domain][name]
+        return None
+
+    def will_display(name):
+        """Only members that actually render may claim the last-item connector."""
+        if member_types[name] == "sub" or name in instrument_names:
+            return True
+        return lookup_meta(name) is not None
+
     members_to_show = [
-        m for m in all_members_raw if m in member_types and member_types[m] != "other"
+        m
+        for m in all_members_raw
+        if m in member_types and member_types[m] != "other" and will_display(m)
     ]
     members_to_show.sort(key=lambda x: (get_order_key(x), x))
 
@@ -264,7 +285,7 @@ def show_api(node: Any = None, level: int = 0) -> None:
                         "Retail",
                         "Broker",
                     ]:
-                        show_api(sub_obj, level + 1)
+                        show_api(sub_obj, level + 1, indent)
                         continue
 
                     # Success: Print node name (with docstring) and recurse
@@ -273,19 +294,30 @@ def show_api(node: Any = None, level: int = 0) -> None:
                     # Capture real parent domain
                     new_parent_domain = parent_domain if parent_domain else domain
                     sub_obj._parent_domain = new_parent_domain
-                    show_api(sub_obj, level + 1)
+                    show_api(
+                        sub_obj,
+                        level + 1,
+                        indent + ("    " if is_last else "│   "),
+                    )
                     continue
             except Exception:
                 pass
 
         # LEAF METHOD DISPLAY
-        meta = None
-        # Precise matching for multi-layer domains
-        if parent_domain in MAP:
-            if domain in MAP[parent_domain] and m_name in MAP[parent_domain][domain]:
-                meta = MAP[parent_domain][domain][m_name]
-        elif domain in MAP and m_name in MAP[domain]:
-            meta = MAP[domain][m_name]
+        meta = lookup_meta(m_name)
+
+        # A 2-tuple is a redirect to another domain (see BaseUI._dispatch); resolve
+        # it so the leaf prints the same [source] -> type # summary as the target.
+        seen_redirects = 0
+        while (
+            isinstance(meta, tuple)
+            and len(meta) == 2
+            and meta[0] in MAP
+            and meta[1] in MAP[meta[0]]
+            and seen_redirects < 5
+        ):
+            meta = MAP[meta[0]][meta[1]]
+            seen_redirects += 1
 
         if meta and len(meta) >= 7:
             layer, sub_mod, cls, func, source, r_type, summary = meta

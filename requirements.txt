@@ -1,9 +1,9 @@
 pandas>=2.2.1
 requests>=2.31.0
 bs4==0.0.2
-vnai>=2.4.8
+vnai>=2.6.2
 openpyxl==3.1.2
-vnstock_ezchart>=0.0.3
+vnstock_ezchart>=1.0.2
 fake_useragent==1.5.1
 cryptography==42.0.5
 psutil==6.0.0

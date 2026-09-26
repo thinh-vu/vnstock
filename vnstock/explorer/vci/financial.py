@@ -1,5 +1,5 @@
 """
-Module quản lý thông tin báo cáo tài chính từ nguồn dữ liệu VCI.
+Financial statement data from the VCI data source.
 """
 
 import pandas as pd
@@ -8,9 +8,8 @@ from packaging import version
 
 def _safe_infer_objects(df):
     """
-    Tự động gọi infer_objects phù hợp với version pandas.
-    pandas >= 2.1.0: dùng copy=False
-    pandas < 2.1.0: không truyền copy
+    Call infer_objects the way the installed pandas expects.
+    pandas >= 2.1.0 takes copy=False; older versions do not accept the argument.
     """
     if version.parse(pd.__version__) >= version.parse("2.1.0"):
         return df.infer_objects(copy=False)
@@ -41,13 +40,13 @@ logger = get_logger(__name__)
 
 class Finance:
     """
-    Truy xuất thông tin báo cáo tài chính của một công ty theo mã chứng khoán từ nguồn dữ liệu VCI.
+    Access a company's financial statements from the VCI data source.
 
-    Tham số:
-        - symbol (str): Mã chứng khoán của công ty cần truy xuất thông tin.
-        - period (str): Chu kỳ báo cáo tài chính cần truy xuất. Mặc định là 'quarter'.
-        - get_all (bool): Trả về tất cả các trường dữ liệu hoặc chỉ các trường chọn lọc. Mặc định là True.
-        - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là True.
+    Args:
+        - symbol (str): Ticker symbol of the company to look up.
+        - period (str): Reporting period. Defaults to 'quarter'.
+        - get_all (bool): Return every field instead of the curated subset. Defaults to True.
+        - show_log (bool): Show debug logs. Defaults to True.
     """
 
     def __init__(
@@ -58,7 +57,7 @@ class Finance:
         show_log: Optional[bool] = True,
     ):
         """
-        Khởi tạo đối tượng Finance với các tham số cho việc truy xuất dữ liệu báo cáo tài chính.
+        Initialise the Finance client.
         """
         self.symbol = validate_symbol(symbol)
         self.asset_type = get_asset_type(self.symbol)
@@ -88,14 +87,15 @@ class Finance:
 
     def _get_company_type(self) -> str:
         """
-        Lấy mã loại công ty từ ICB4_COMTYPE_CODE_MAP dựa trên phân loại ngành ICB4 của công ty để ánh xạ báo cáo.
+        Look up the company type in ICB4_COMTYPE_CODE_MAP from the company's ICB4
+        industry classification, which decides how the statements are mapped.
 
         Returns:
-            str: Mã loại công ty. Các giá trị có thể là:
-                'CT': Công ty (Company)
-                'CK': Chứng khoán (Securities)
-                'NH': Ngân hàng (Bank)
-                'BH': Bảo hiểm (Insurance)
+            str: One of
+                'CT': ordinary company
+                'CK': securities firm
+                'NH': bank
+                'BH': insurer
         """
         # Call the Listing module instead of Company._fetch_data (which relies on a deprecated API structure)
         from vnstock.explorer.vci.listing import Listing
@@ -175,15 +175,14 @@ class Finance:
 
     def _handshake(self):
         """
-        Khởi tạo kết nối cho phiên làm việc.
-        Initiate handshake to establish a session.
+        Initiate the handshake that establishes a session.
         """
         url = "https://trading.vietcap.com.vn/priceboard"
         try:
             session = requests.Session()
             session.headers.update(self.headers)
             session.get(url, timeout=10)
-            # Cập nhật headers với cookies từ priceboard
+            # Refresh the headers with the cookies handed out by the price board
             self.headers.update(session.cookies.get_dict())
         except Exception as e:
             if self.show_log:
@@ -197,16 +196,16 @@ class Finance:
         show_log: Optional[bool] = False,
     ) -> Union[pd.DataFrame, Dict]:
         """
-        Lấy từ điển ánh xạ cho tất cả các chỉ số tài chính từ nguồn VCI microservices.
+        Fetch the mapping dictionary for every financial ratio from the VCI microservices.
 
-        Tham số:
-            - lang (str): Ngôn ngữ của báo cáo ('vi' hoặc 'en'). Mặc định là 'vi'.
-            - format (str): Định dạng trả về ('dict' hoặc 'dataframe'). Mặc định là 'dict'.
-            - style (str): Phong cách tên cột ('readable' cho tên đầy đủ, 'code' cho mã kỹ thuật). Mặc định là 'readable'.
-            - show_log (bool): Hiển thị thông tin log hoặc không. Mặc định là False.
+        Args:
+            - lang (str): Report language, 'vi' or 'en'. Defaults to 'vi'.
+            - format (str): Return shape, 'dict' or 'dataframe'. Defaults to 'dict'.
+            - style (str): Column naming, 'readable' for full names or 'code' for technical codes. Defaults to 'readable'.
+            - show_log (bool): Show debug logs. Defaults to False.
 
         Returns:
-            Union[pd.DataFrame, Dict]: Dữ liệu ánh xạ tùy theo tham số format.
+            Union[pd.DataFrame, Dict]: The mapping, shaped according to format.
         """  # noqa: W293
         # Validate lang
         if lang not in SUPPORTED_LANGUAGES:
@@ -282,7 +281,7 @@ class Finance:
         limit: Optional[int] = None,
     ) -> pd.DataFrame:
         """
-        Lấy dữ liệu báo cáo tài chính thô hoặc đã ánh xạ từ VCI REST API.
+        Fetch a financial statement from the VCI REST API, raw or already mapped.
         """
         # Baseline limit
         effective_limit = limit if limit is not None else 4
@@ -495,7 +494,7 @@ class Finance:
         limit: Optional[int] = None,
     ) -> pd.DataFrame:
         """
-        Cổng truy xuất báo cáo tài chính nội bộ.
+        Internal entry point for fetching a financial statement.
         """
         df = self._get_report(
             report_type=report_type,
@@ -532,16 +531,16 @@ class Finance:
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
-        Trích xuất dữ liệu bảng cân đối kế toán từ nguồn VCI REST API.
+        Retrieve the balance sheet from the VCI REST API.
 
-        Tham số:
-            - period (str): Kỳ báo cáo ('year' hoặc 'quarter'). Mặc định lấy theo cấu hình khởi tạo.
-            - lang (str): Ngôn ngữ ('vi' hoặc 'en'). Mặc định là 'en'.
-            - dropna (bool): Loại bỏ các cột có tất cả giá trị bằng 0. Mặc định là True.
-            - show_log (bool): Hiển thị thông tin log. Mặc định là False.
+        Args:
+            - period (str): Report period, 'year' or 'quarter'. Defaults to whatever was set on the client.
+            - lang (str): Language, 'vi' or 'en'. Defaults to 'en'.
+            - dropna (bool): Drop columns whose values are all zero. Defaults to True.
+            - show_log (bool): Show debug logs. Defaults to False.
 
         Returns:
-            pd.DataFrame: Bảng cân đối kế toán với chỉ mục là kỳ báo cáo.
+            pd.DataFrame: The balance sheet, indexed by reporting period.
         """
         return self._get_financial_report(
             "balance_sheet", period=period, lang=lang, dropna=dropna, show_log=show_log
@@ -556,16 +555,16 @@ class Finance:
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
-        Trích xuất báo cáo kết quả kinh doanh từ nguồn VCI REST API.
+        Retrieve the income statement from the VCI REST API.
 
-        Tham số:
-            - period (str): Kỳ báo cáo ('year' hoặc 'quarter').
-            - lang (str): Ngôn ngữ ('vi' hoặc 'en').
-            - dropna (bool): Loại bỏ các cột 0.
-            - show_log (bool): Hiển thị log.
+        Args:
+            - period (str): Report period, 'year' or 'quarter'.
+            - lang (str): Language, 'vi' or 'en'.
+            - dropna (bool): Drop all-zero columns.
+            - show_log (bool): Show logs.
 
         Returns:
-            pd.DataFrame: Báo cáo kết quả kinh doanh.
+            pd.DataFrame: The income statement.
         """
         return self._get_financial_report(
             "income_statement",
@@ -584,16 +583,16 @@ class Finance:
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
-        Trích xuất báo cáo lưu chuyển tiền tệ từ nguồn VCI REST API.
+        Retrieve the cash flow statement from the VCI REST API.
 
-        Tham số:
-            - period (str): Kỳ báo cáo ('year' hoặc 'quarter').
-            - lang (str): Ngôn ngữ ('vi' hoặc 'en').
-            - dropna (bool): Loại bỏ các cột 0.
-            - show_log (bool): Hiển thị log.
+        Args:
+            - period (str): Report period, 'year' or 'quarter'.
+            - lang (str): Language, 'vi' or 'en'.
+            - dropna (bool): Drop all-zero columns.
+            - show_log (bool): Show logs.
 
         Returns:
-            pd.DataFrame: Báo cáo lưu chuyển tiền tệ.
+            pd.DataFrame: The cash flow statement.
         """
         return self._get_financial_report(
             "cash_flow", period=period, lang=lang, dropna=dropna, show_log=show_log
@@ -608,16 +607,16 @@ class Finance:
         show_log: Optional[bool] = False,
     ) -> pd.DataFrame:
         """
-        Trích xuất các chỉ số tài chính (Financial Ratios) từ nguồn VCI REST API.
+        Retrieve the financial ratios from the VCI REST API.
 
-        Tham số:
-            - period (str): Kỳ báo cáo ('year' hoặc 'quarter').
-            - lang (str): Ngôn ngữ ('vi' hoặc 'en').
-            - dropna (bool): Loại bỏ các cột 0.
-            - show_log (bool): Hiển thị log.
+        Args:
+            - period (str): Report period, 'year' or 'quarter'.
+            - lang (str): Language, 'vi' or 'en'.
+            - dropna (bool): Drop all-zero columns.
+            - show_log (bool): Show logs.
 
         Returns:
-            pd.DataFrame: Bảng các chỉ số tài chính.
+            pd.DataFrame: The financial ratios.
         """
         return self._get_financial_report(
             "ratio", period=period, lang=lang, dropna=dropna, show_log=show_log

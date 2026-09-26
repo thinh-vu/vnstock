@@ -329,36 +329,36 @@ _MATCHED_BY_PRICE_MAP = {
 # Includes bid/ask prices and volumes as CORE fields (standard for price boards)
 # Note: KBS API provides close_price as current match price, total_trades as volume
 _PRICE_BOARD_STANDARD_COLUMNS = [
-    "symbol",  # Mã CK
-    "time",  # Thời điểm
-    "exchange",  # Sàn
-    "ceiling_price",  # Giá trần
-    "floor_price",  # Giá sàn
-    "reference_price",  # Giá tham chiếu
-    "open_price",  # Mở cửa
-    "high_price",  # Cao nhất
-    "low_price",  # Thấp nhất
-    "close_price",  # Đóng cửa / Giá khớp hiện tại
-    "volume_last",  # KHỐI LƯỢNG NGAY TẠI LẦN KHỚP LỆNH CUỐI (Khớp lệnh -> KL)
-    "average_price",  # Giá trung bình
+    "symbol",  # Ticker symbol
+    "time",  # Timestamp
+    "exchange",  # Exchange
+    "ceiling_price",  # Ceiling price
+    "floor_price",  # Floor price
+    "reference_price",  # Reference price
+    "open_price",  # Open
+    "high_price",  # High
+    "low_price",  # Low
+    "close_price",  # Close, i.e. the current matched price
+    "volume_last",  # Volume of the last matched trade (raw field "Khớp lệnh -> KL")
+    "average_price",  # Average price
     "volume_accumulated",  # ⭐ Accumulated volume (from raw TT field)
-    "total_value",  # Tổng GT giao dịch
-    "price_change",  # Thay đổi giá
-    "percent_change",  # % Thay đổi
-    "bid_price_1",  # Giá mua 1 (CORE)
-    "bid_vol_1",  # KL mua 1 (CORE)
-    "bid_price_2",  # Giá mua 2 (CORE)
-    "bid_vol_2",  # KL mua 2 (CORE)
-    "bid_price_3",  # Giá mua 3 (CORE)
-    "bid_vol_3",  # KL mua 3 (CORE)
-    "ask_price_1",  # Giá bán 1 (CORE)
-    "ask_vol_1",  # KL bán 1 (CORE)
-    "ask_price_2",  # Giá bán 2 (CORE)
-    "ask_vol_2",  # KL bán 2 (CORE)
-    "ask_price_3",  # Giá bán 3 (CORE)
-    "ask_vol_3",  # KL bán 3 (CORE)
-    "foreign_buy_volume",  # KL NN mua
-    "foreign_sell_volume",  # KL NN bán
+    "total_value",  # Total traded value
+    "price_change",  # Price change
+    "percent_change",  # Percent change
+    "bid_price_1",  # Bid price, level 1 (CORE)
+    "bid_vol_1",  # Bid volume, level 1 (CORE)
+    "bid_price_2",  # Bid price, level 2 (CORE)
+    "bid_vol_2",  # Bid volume, level 2 (CORE)
+    "bid_price_3",  # Bid price, level 3 (CORE)
+    "bid_vol_3",  # Bid volume, level 3 (CORE)
+    "ask_price_1",  # Ask price, level 1 (CORE)
+    "ask_vol_1",  # Ask volume, level 1 (CORE)
+    "ask_price_2",  # Ask price, level 2 (CORE)
+    "ask_vol_2",  # Ask volume, level 2 (CORE)
+    "ask_price_3",  # Ask price, level 3 (CORE)
+    "ask_vol_3",  # Ask volume, level 3 (CORE)
+    "foreign_buy_volume",  # Foreign buy volume
+    "foreign_sell_volume",  # Foreign sell volume
     "foreign_room",  # ⭐ Foreign investor room (from raw FR field)
 ]
 
@@ -581,6 +581,16 @@ _FINANCIAL_REPORT_TYPE_MAP = {
     "CSTC": "financial_ratios",
     "CTKH": "planned_indicators",
     "BCTT": "summary_financial_report",
+}
+
+# Known Content keys returned by the KBS financial API, per report type.
+# KBS renames these labels from time to time (e.g. "Cân đối kế toán" became
+# "Báo cáo tình hình tài chính" in 2026), so each report type lists every key
+# we have observed, newest first. The parser tries them in order.
+_FINANCIAL_REPORT_KEY_ALIASES = {
+    "CDKT": ("Báo cáo tình hình tài chính", "Cân đối kế toán"),
+    "KQKD": ("Kết quả kinh doanh",),
+    "LCTT": ("Lưu chuyển tiền tệ gián tiếp", "Lưu chuyển tiền tệ trực tiếp"),
 }
 
 # Financial period type mapping

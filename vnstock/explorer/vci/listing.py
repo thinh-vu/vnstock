@@ -1,6 +1,6 @@
 """Listing module."""
 
-# Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê hành vi thị tường
+# Price chart, order-book depth chart, price-versus-volume chart and market behaviour statistics
 from typing import Optional
 
 import pandas as pd
@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 
 
 class Listing:
-    """Cấu hình truy cập dữ liệu lịch sử giá chứng khoán từ VCI."""
+    """Access historical price data from VCI."""
 
     def __init__(
         self,
@@ -37,10 +37,10 @@ class Listing:
 
     @optimize_execution("VCI")
     def all_symbols(self, show_log: Optional[bool] = False) -> pd.DataFrame:
-        """Truy xuất danh sách toàn bộ mã và tên các cổ phiếu trên thị trường Việt Nam.
+        """Retrieve every ticker and company name on the Vietnamese market.
 
         Args:
-            show_log: Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
+            show_log: Show debug logs. Defaults to False.
         """
         try:
             df = self.symbols_by_exchange(show_log=show_log)
@@ -64,11 +64,11 @@ class Listing:
         self, lang: str = "vi", show_log: Optional[bool] = False
     ) -> pd.DataFrame:
         """
-        Truy xuất thông tin phân ngành icb của các mã cổ phiếu trên thị trường Việt Nam.
+        Retrieve the ICB industry classification for tickers on the Vietnamese market.
 
-        Tham số:
-            - lang (tùy chọn): Ngôn ngữ hiển thị. Mặc định là 'vi'.
-            - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
+        Args:
+            - lang (optional): Display language. Defaults to 'vi'.
+            - show_log (optional): Show debug logs. Defaults to False.
         """
         if lang not in ["vi", "en"]:
             raise ValueError("Tham số lang phải là 'vi' hoặc 'en'.")
@@ -141,11 +141,11 @@ class Listing:
         self, lang: str = "vi", show_log: Optional[bool] = False
     ) -> pd.DataFrame:
         """
-        Truy xuất thông tin niêm yết theo sàn của các mã cổ phiếu trên thị trường Việt Nam.
+        Retrieve listing information by exchange for tickers on the Vietnamese market.
 
-        Tham số:
-            - lang (tùy chọn): Ngôn ngữ hiển thị. Mặc định là 'vi'.
-            - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
+        Args:
+            - lang (optional): Display language. Defaults to 'vi'.
+            - show_log (optional): Show debug logs. Defaults to False.
         """
         if lang not in ["vi", "en"]:
             raise ValueError("Tham số lang phải là 'vi' hoặc 'en'.")
@@ -194,10 +194,10 @@ class Listing:
     @optimize_execution("VCI")
     def industries_icb(self, show_log: Optional[bool] = False) -> pd.DataFrame:
         """
-        Truy xuất thông tin phân ngành icb của các mã cổ phiếu trên thị trường Việt Nam.
+        Retrieve the ICB industry classification for tickers on the Vietnamese market.
 
-        Tham số:
-            - show_log (tùy chọn): Hiển thị thông tin log giúp debug dễ dàng. Mặc định là False.
+        Args:
+            - show_log (optional): Show debug logs. Defaults to False.
         """
         url = "https://iq.vietcap.com.vn/api/iq-insight-service/v1/sectors/icb-codes"
 
@@ -245,11 +245,11 @@ class Listing:
         self, group: str = "VN30", show_log: Optional[bool] = False
     ) -> pd.Series:
         """
-        Truy xuất danh sách các mã cổ phiếu theo tên nhóm trên thị trường Việt Nam.
+        Retrieve the tickers that belong to a named group.
 
-        Tham số:
-            - group (tùy chọn): Tên nhóm cổ phiếu. Mặc định là 'VN30'.
-            - show_log (tùy chọn): Hiển thị thông tin log. Mặc định là False.
+        Args:
+            - group (optional): Group name. Defaults to 'VN30'.
+            - show_log (optional): Show debug logs. Defaults to False.
         """
         standardized_group = group.upper()
         if standardized_group in _VCI_INDEX_MAPPING:

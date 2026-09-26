@@ -386,38 +386,6 @@ class NetworkError(VnstockError):
         )
 
 
-class RateLimitError(NetworkError):
-    """Raised when API rate limit is exceeded."""
-
-    def __init__(
-        self,
-        provider: str,
-        retry_after: Optional[int] = None,
-        details: Optional[Dict[str, Any]] = None,
-    ):
-        """
-        Initialize RateLimitError.
-
-        Args:
-            provider: Provider name
-            retry_after: Seconds to wait before retry
-            details: Additional error details
-        """
-        msg = f"Rate limit exceeded for provider '{provider}'"
-        if retry_after:
-            msg += f". Retry after {retry_after} seconds"
-
-        details = details or {}
-        details["provider"] = provider
-        if retry_after:
-            details["retry_after"] = retry_after
-
-        super().__init__(
-            message=msg,
-            details=details,
-        )
-
-
 class TimeoutError(NetworkError):
     """Raised when request times out."""
 
@@ -445,6 +413,130 @@ class TimeoutError(NetworkError):
             message=msg,
             details=details,
         )
+
+
+# ============================================================================
+# DATA SOURCE BLOCKING
+# ============================================================================
+#
+# These inherit the builtin ``ConnectionError`` so that code written before the
+# category existed - ``except ConnectionError`` - keeps catching them unchanged.
+#
+# Keeping "the source blocked us" separate from "the network hiccuped" is what
+# lets the retry policy know when to back off and when to stop: retrying a
+# request that was already blocked only deepens the block.
+
+
+class DataSourceBlockedError(VnstockError, ConnectionError):
+    """The data source, or the CDN/WAF in front of it, refused the request.
+
+    Unlike a transient network failure, retrying straight away does not help and
+    actively makes things worse.
+
+    Inherits both bases on purpose. ``ConnectionError`` keeps every existing
+    ``except ConnectionError`` working, and ``VnstockError`` honours the promise
+    that it is the base of all vnstock errors - without it, code catching
+    ``VnstockError`` to handle everything the library raises would silently miss
+    exactly the failures that most need handling.
+
+    Attributes:
+        url: The address that was called.
+        host: Hostname of that address.
+        status_code: HTTP status received.
+        reason: Internal code naming the marker that matched, e.g. "cf_1015".
+        retry_after: Seconds the server asked us to wait, when it said so.
+        vendor: Protection layer identified: "cloudflare", "akamai", "unknown"...
+        cooldown: Seconds the library will stop calling this host for.
+        details: Extra information for logging.
+    """
+
+    error_code = "BLOCK_000"
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        url: Optional[str] = None,
+        host: Optional[str] = None,
+        status_code: Optional[int] = None,
+        reason: Optional[str] = None,
+        retry_after: Optional[float] = None,
+        vendor: Optional[str] = None,
+        cooldown: Optional[float] = None,
+        details: Optional[Dict[str, Any]] = None,
+    ):
+        # Call the parent first so error_code and details are set exactly once; calling
+        # it later lets VnstockError.__init__ overwrite details with its default.
+        super().__init__(message, error_code=self.error_code, details=details)
+        self.url = url
+        self.host = host
+        self.status_code = status_code
+        self.reason = reason
+        self.retry_after = retry_after
+        self.vendor = vendor
+        self.cooldown = cooldown
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Return a dict form for structured logging or telemetry."""
+        return {
+            "type": self.__class__.__name__,
+            "error_code": self.error_code,
+            "message": self.message,
+            "url": self.url,
+            "host": self.host,
+            "status_code": self.status_code,
+            "reason": self.reason,
+            "retry_after": self.retry_after,
+            "vendor": self.vendor,
+            "cooldown": self.cooldown,
+            "details": self.details,
+        }
+
+
+class RateLimitedError(DataSourceBlockedError):
+    """Rate limited: HTTP 429, or Cloudflare code 1015."""
+
+    error_code = "BLOCK_429"
+
+
+class ChallengeRequiredError(DataSourceBlockedError):
+    """The protection layer wants a browser to clear an automated check."""
+
+    error_code = "BLOCK_CHALLENGE"
+
+
+class AccessDeniedError(DataSourceBlockedError):
+    """Refused at the protection layer itself, usually 403 or 451."""
+
+    error_code = "BLOCK_DENIED"
+
+
+class CircuitOpenError(DataSourceBlockedError):
+    """Inside a cooldown window: stop here without opening a connection.
+
+    Inherits DataSourceBlockedError so one ``except DataSourceBlockedError``
+    catches both the real block and every short-circuited call after it.
+
+    Attributes:
+        remaining: Seconds left before this host may be called again.
+    """
+
+    error_code = "BLOCK_COOLDOWN"
+
+    def __init__(self, message: str, *, remaining: float, **kwargs: Any):
+        self.remaining = remaining
+        super().__init__(message, **kwargs)
+
+    def to_dict(self) -> Dict[str, Any]:
+        data = super().to_dict()
+        data["remaining"] = self.remaining
+        return data
+
+
+# Deprecated alias. ``RateLimitError`` was declared in an earlier layout but
+# never raised anywhere; it now names the class that is actually raised, so that
+# ``except RateLimitError`` and ``except RateLimitedError`` cannot disagree.
+RateLimitError = RateLimitedError
 
 
 # ============================================================================

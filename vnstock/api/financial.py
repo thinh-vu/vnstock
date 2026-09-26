@@ -2,11 +2,10 @@
 
 from typing import Any
 
-from tenacity import retry, stop_after_attempt, wait_exponential
 from vnai import optimize_execution
 
 from vnstock.base import BaseAdapter, dynamic_method
-from vnstock.config import Config
+from vnstock.core.utils.retry import api_retry
 
 
 class Finance(BaseAdapter):
@@ -64,56 +63,28 @@ class Finance(BaseAdapter):
         )
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def balance_sheet(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve balance sheet data."""
         pass
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def income_statement(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve income statement data."""
         pass
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def cash_flow(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve cash flow data."""
         pass
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def ratio(self, *args: Any, **kwargs: Any) -> Any:
         """Retrieve financial ratio data."""

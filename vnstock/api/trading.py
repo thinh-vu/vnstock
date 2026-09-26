@@ -6,11 +6,10 @@ Unified Trading adapter with dynamic method detection and parameter filtering.
 
 from typing import Any
 
-from tenacity import retry, stop_after_attempt, wait_exponential
 from vnai import optimize_execution
 
 from vnstock.base import BaseAdapter, dynamic_method
-from vnstock.config import Config
+from vnstock.core.utils.retry import api_retry
 
 
 class Trading(BaseAdapter):
@@ -52,14 +51,7 @@ class Trading(BaseAdapter):
         )
 
     @optimize_execution("API")
-    @retry(
-        stop=stop_after_attempt(Config.RETRIES),
-        wait=wait_exponential(
-            multiplier=Config.BACKOFF_MULTIPLIER,
-            min=Config.BACKOFF_MIN,
-            max=Config.BACKOFF_MAX,
-        ),
-    )
+    @api_retry
     @dynamic_method
     def price_board(self, symbols_list: Any = None, **kwargs: Any) -> Any:
         """

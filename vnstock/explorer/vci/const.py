@@ -273,7 +273,7 @@ _ICB4_COMTYPE_CODE_MAP = {
 }
 
 # Mapping for ratio output columns: Vietnamese and English
-# Dùng cho chuẩn hóa tên cột đầu ra hàm ratio
+# Used to standardise the output column names of ratio()
 
 RATIO_COLUMN_MAP_EN = {
     "report_period": "report_period",

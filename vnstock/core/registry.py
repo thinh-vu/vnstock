@@ -1,13 +1,13 @@
 """
 Provider Registry System for vnstock.
 
-Hệ thống đăng ký cho phép các provider (VCI, TCBS, MSN, FMP, XNO, ...)
-tự đăng ký để trở thành available data source.
+Providers (VCI, TCBS, MSN, FMP, XNO and so on) register themselves here to become
+available data sources.
 
-Module này cho phép:
-- Đăng ký provider từ bất kỳ thư mục (explorer/, connector/, ...)
-- Tìm kiếm provider theo provider_type và source name
-- Liệt kê tất cả available providers
+The registry lets you:
+- register a provider from any package (explorer/, connector/, ...)
+- look one up by provider type and source name
+- list everything currently available
 """
 
 from logging import getLogger
@@ -20,8 +20,8 @@ class ProviderRegistry:
     """
     Registry for vnstock data providers.
 
-    Cho phép registration của các provider class từ các nguồn khác nhau:
-    - vnstock.explorer.* (VCI, MSN, KBS, ...) - Public web endpoints
+    Accepts provider classes from either package:
+    - vnstock.explorer.* (VCI, MSN, KBS, ...) - public web endpoints
     - vnstock.connector.* (FMP, XNO, Binance, ...) - REST API partners
     """
 
@@ -35,14 +35,14 @@ class ProviderRegistry:
         """
         Register a provider class.
 
-        Tham số:
-            provider_type (str): Type của provider
+        Args:
+            provider_type (str): Provider type
                                  (quote, company, financial, etc.)
-            source_name (str): Tên nguồn dữ liệu
+            source_name (str): Data source name
                               (vci, fmp, tcbs, msn, kbs, etc.)
-            provider_class (Type): Class của provider
+            provider_class (Type): The provider class
 
-        Ví dụ:
+        Examples:
             ProviderRegistry.register('quote', 'fmp', FMPQuote)
             ProviderRegistry.register('quote', 'vci', VCIQuote)
             ProviderRegistry.register('quote', 'kbs', KBSQuote)
@@ -59,15 +59,15 @@ class ProviderRegistry:
         """
         Get a provider class by type and source name.
 
-        Tham số:
-            provider_type (str): Type của provider (quote, company, etc.)
-            source_name (str): Tên nguồn dữ liệu
+        Args:
+            provider_type (str): Provider type (quote, company, etc.)
+            source_name (str): Data source name
 
         Returns:
-            Type: Provider class nếu được tìm thấy
+            Type: The provider class
 
         Raises:
-            ValueError: Nếu provider không được tìm thấy
+            ValueError: If no provider is registered under that type and source
         """
         key = (provider_type, source_name.lower())
 
@@ -83,13 +83,13 @@ class ProviderRegistry:
     @classmethod
     def list_available(cls, provider_type: str) -> List[str]:
         """
-        List all available source names cho một provider type.
+        List every source name available for one provider type.
 
-        Tham số:
-            provider_type (str): Type của provider
+        Args:
+            provider_type (str): Provider type
 
         Returns:
-            List[str]: Danh sách source names (sắp xếp)
+            List[str]: Source names, sorted
         """
         names = sorted(
             {source for ptype, source in cls._registry if ptype == provider_type}
@@ -99,7 +99,7 @@ class ProviderRegistry:
     @classmethod
     def list_all(cls) -> Dict[str, List[str]]:
         """
-        List tất cả registered providers, grouped by type.
+        List every registered provider, grouped by type.
 
         Returns:
             Dict[str, List[str]]: {provider_type: [source_names]}
@@ -110,7 +110,7 @@ class ProviderRegistry:
                 result[ptype] = []
             result[ptype].append(source)
 
-        # Sort sources trong mỗi type
+        # Sort the sources within each type
         for ptype in result:
             result[ptype].sort()
 
@@ -119,14 +119,14 @@ class ProviderRegistry:
     @classmethod
     def is_registered(cls, provider_type: str, source_name: str) -> bool:
         """
-        Check xem provider có được register không.
+        Check whether a provider is registered.
 
-        Tham số:
-            provider_type (str): Type của provider
-            source_name (str): Tên nguồn dữ liệu
+        Args:
+            provider_type (str): Provider type
+            source_name (str): Data source name
 
         Returns:
-            bool: True nếu provider được register
+            bool: True when the provider is registered
         """
         key = (provider_type, source_name.lower())
         return key in cls._registry
@@ -134,7 +134,7 @@ class ProviderRegistry:
     @classmethod
     def clear(cls) -> None:
         """
-        Clear tất cả registered providers. Chủ yếu dùng cho testing.
+        Clear every registered provider. Mainly for tests.
         """
         cls._registry.clear()
         logger.debug("Registry cleared")
@@ -142,7 +142,7 @@ class ProviderRegistry:
     @classmethod
     def debug_info(cls) -> str:
         """
-        Get debug info về registry state.
+        Return a readable dump of the registry state.
 
         Returns:
             str: Debug info

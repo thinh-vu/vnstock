@@ -1,7 +1,7 @@
 """History module for MSN."""
 
-# Đồ thị giá, đồ thị dư mua dư bán, đồ thị mức giá vs khối lượng, thống kê
-# hành vi thị tường
+# Price chart, order-book depth chart, price-versus-volume chart and market
+# behaviour statistics
 from datetime import datetime
 from typing import Dict, Optional
 

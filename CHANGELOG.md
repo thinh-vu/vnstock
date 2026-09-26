@@ -2,6 +2,23 @@
 
 All notable changes to the `vnstock` project will be documented in this file.
 
+## [4.0.9] 2026-09-26
+
+### Security
+
+- **Nothing is written on `import` any more.** Earlier versions wrote an instruction block into AI assistants' rules files on every `import vnstock`: the project's `AGENTS.md` and, by default, the global files of Claude Code, Codex and Antigravity that are loaded into every session on the machine. The text was downloaded from vnstocks.com at write time, so the server could change what users' assistants were told without the user seeing anything change, and nobody had asked for it. A developer in the community called it prompt injection, and they were right. The block is now opt-in (`enable_agent()`, then `setup_agent()`), covers only the project's `AGENTS.md` unless a global file is named, and its text ships inside `vnai` (`vnai/beam/agent_bootstrap.py`) instead of being downloaded. Requires `vnai >= 2.6.2`; on import the library only prints a one-time, read-only notice when an older version left such a block behind.
+- **Topic guides are labelled as downloaded reference material.** `load_skill()` output (vnai 2.6.2) starts with a line saying where the text came from, skill names are restricted to plain slugs so an assistant cannot steer the request carrying your key to another endpoint, and the XOR "encoding" of sponsor guides is gone: it protected nothing (the key holder can decode it and the transport is already HTTPS) and only made what reaches the assistant harder to audit.
+- **Ads can no longer run code.** vnai 2.6.2 strips scripts, frames, event handlers and `javascript:` links from promotional HTML before showing it in Jupyter, strips terminal control sequences from text, and shows the bundled fallback text instead of server text when output is captured (for example by an AI assistant running commands).
+- **`register_user()` reads the key at a hidden prompt** (`getpass`) instead of `input()`, which echoed it and left it in saved notebook output. It offers to save `VNSTOCK_API_KEY` when that variable is set. Passing the key as an argument still works but is discouraged in the docstring and README.
+
+### Changed
+
+- Docstrings addressed to AI assistants were rewritten as ordinary developer documentation: the module docstrings of `vnstock`, `vnstock.explorer.vci` and `vnstock.explorer.kbs`, and `migrate_to_sponsor()`, which also stopped printing a line addressed to "AI Agent".
+- `migrate_to_sponsor()` gains `dry_run=True` to list the changes without writing, and returns the number of files changed.
+- `setup_agent()` runs in the caller (the `async_mode` argument is accepted and ignored): two concurrent writers once left duplicate blocks.
+- `register_user()` no longer prints "you are using the Community edition" after saving a key; that was wrong for sponsors.
+- README: install command uses the Vnstock package index (`--extra-index-url https://vnstocks.com/api/simple`); the AI assistant section describes the opt-in behaviour.
+
 ## [4.0.8] 2026-09-11
 
 ### Added
