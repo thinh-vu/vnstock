@@ -48,7 +48,7 @@ class NetworkConfig:
     timeout: float = 30.0
     max_retries: int = 3
     retry_delay: float = 1.0
-    user_agent: str = "vnstock/3.0"
+    user_agent: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
 
     def __post_init__(self):
         """Validate configuration after initialization."""
