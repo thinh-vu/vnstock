@@ -533,6 +533,66 @@ class CircuitOpenError(DataSourceBlockedError):
         return data
 
 
+class HTTPStatusError(VnstockError, ConnectionError):
+    """The source answered with a non-200 status that is not a block.
+
+    Inherits ``ConnectionError`` for the same reason as DataSourceBlockedError:
+    ``send_request`` used to raise a bare ``ConnectionError`` here, and existing
+    ``except ConnectionError`` code must keep catching it.
+
+    Carrying the status code is what lets the retry policy tell a 5xx (worth
+    another attempt) from a 4xx such as 400 or 404 (the same request will fail
+    the same way every time).
+
+    Attributes:
+        url: The address that was called.
+        status_code: HTTP status received.
+    """
+
+    error_code = "HTTP_000"
+
+    # 408 Request Timeout and 5xx are the only statuses where an identical
+    # request can reasonably succeed a moment later. 429 never gets here: it is
+    # handled as a block by detect_block().
+    _TRANSIENT_4XX = frozenset({408})
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        status_code: int,
+        url: Optional[str] = None,
+        details: Optional[Dict[str, Any]] = None,
+    ):
+        details = dict(details or {})
+        details.setdefault("status_code", status_code)
+        if url:
+            details.setdefault("url", url)
+        super().__init__(message, error_code=self.error_code, details=details)
+        self.status_code = status_code
+        self.url = url
+
+    @property
+    def is_transient(self) -> bool:
+        """True when retrying the identical request may succeed."""
+        return self.status_code >= 500 or self.status_code in self._TRANSIENT_4XX
+
+
+class UnsupportedEnvironmentError(VnstockError, OSError):
+    """The data source cannot be reached from the current runtime at all.
+
+    Raised, for example, when calling VCI from Google Colab, whose Google Cloud
+    IP ranges VCI refuses. Inherits ``OSError`` so code catching the
+    ``EnvironmentError`` previously raised here keeps working, and is listed in
+    the retry policy's NEVER_RETRY: no amount of waiting changes the runtime.
+    """
+
+    error_code = "ENV_001"
+
+    def __init__(self, message: str, details: Optional[Dict[str, Any]] = None):
+        super().__init__(message, error_code=self.error_code, details=details)
+
+
 # Deprecated alias. ``RateLimitError`` was declared in an earlier layout but
 # never raised anywhere; it now names the class that is actually raised, so that
 # ``except RateLimitError`` and ``except RateLimitedError`` cannot disagree.

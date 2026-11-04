@@ -16,7 +16,11 @@ from typing import Any, Dict, Optional, Union
 import requests
 
 from vnstock.config import Config
-from vnstock.core.exceptions import CircuitOpenError
+from vnstock.core.exceptions import (
+    CircuitOpenError,
+    HTTPStatusError,
+    UnsupportedEnvironmentError,
+)
 from vnstock.core.utils.block_detect import (
     build_block_error,
     describe_cooldown,
@@ -55,7 +59,11 @@ def send_request(
         Dict[str, Any]: Returned JSON data
 
     Raises:
-        ConnectionError: If the request fails or returns an error code
+        UnsupportedEnvironmentError: The source cannot be reached from this runtime
+        CircuitOpenError: The host is inside a block cooldown window
+        DataSourceBlockedError: The source or its WAF refused the request
+        HTTPStatusError: Any other non-200 status (a ConnectionError subclass)
+        ConnectionError: The request failed at the network level
     """
     # --- Google Colab Restriction Check ---
     if url and isinstance(url, str) and "vietcap.com.vn" in url:
@@ -63,7 +71,7 @@ def send_request(
             from vnstock.core.utils.env import is_colab
 
             if is_colab():
-                raise EnvironmentError(
+                raise UnsupportedEnvironmentError(
                     "Lỗi môi trường: Nguồn dữ liệu VCI chặn các địa chỉ IP từ Google Cloud. "
                     "Do đó, bạn không thể truy xuất dữ liệu từ nguồn này trên Google Colab. "
                     "Vui lòng cài đặt thư viện trên máy cục bộ (local) để tiếp tục sử dụng.\n"
@@ -132,7 +140,7 @@ def send_request(
     # Check response status
     if response.status_code != 200:
         msg = f"Failed to fetch data: {response.status_code} - {response.reason}"
-        raise ConnectionError(msg)
+        raise HTTPStatusError(msg, status_code=response.status_code, url=url)
     return response.json()
 
 

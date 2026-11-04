@@ -24,7 +24,12 @@ from typing import Callable
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 from vnstock.config import Config
-from vnstock.core.exceptions import DataSourceBlockedError, NetworkError
+from vnstock.core.exceptions import (
+    DataSourceBlockedError,
+    HTTPStatusError,
+    NetworkError,
+    UnsupportedEnvironmentError,
+)
 
 __all__ = [
     "NEVER_RETRY",
@@ -39,6 +44,8 @@ __all__ = [
 # and must be tested FIRST - see the module docstring.
 NEVER_RETRY: tuple[type[BaseException], ...] = (
     DataSourceBlockedError,
+    # An OSError subclass, so it would otherwise match TRANSIENT below.
+    UnsupportedEnvironmentError,
     ValueError,
     TypeError,
     KeyError,
@@ -59,6 +66,10 @@ def should_retry(exc: BaseException) -> bool:
     """Decide whether a failure is worth another attempt."""
     if isinstance(exc, NEVER_RETRY):
         return False
+    # A ConnectionError subclass: decide on the status code, not the type, or a
+    # 404 for a mistyped symbol would be retried with backoff like a 503.
+    if isinstance(exc, HTTPStatusError):
+        return exc.is_transient
     return isinstance(exc, TRANSIENT)
 
 
