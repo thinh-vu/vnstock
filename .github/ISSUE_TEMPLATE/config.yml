@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Bắt đầu cùng trợ lý AI
+    url: https://vnstocks.com/onboard
+    about: Luồng cài đặt khuyên dùng cho mọi người dùng Vnstock.
+  - name: Hướng dẫn người dùng gói quyền sử dụng
+    url: https://vnstocks.com/onboard-member
+    about: Cài thư viện theo cấp quyền, quản lý thiết bị và xử lý lỗi.
+  - name: Các dự án Vnstock trên GitHub
+    url: https://github.com/vnstock-hq
+    about: Chọn đúng kho đang được phát triển để báo lỗi hoặc đề xuất thay đổi.
